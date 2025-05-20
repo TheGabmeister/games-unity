@@ -71,9 +71,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-DonkeyKong/Library
-DonkeyKong/.vsconfig
-DonkeyKong/Logs
-DonkeyKong/Temp
-DonkeyKong/UserSettings
-DonkeyKong/obj
+.vsconfig
