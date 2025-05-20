@@ -1,4 +1,4 @@
-using SimpleEventSystem;
+using EventBus;
 using UnityEngine;
 
 /*
@@ -6,7 +6,7 @@ using UnityEngine;
  * An alternative approach is to use robust naming scheme (Ex. Player_Jumped) and use partial classes.
  */
 
-namespace SimpleEventSystem
+namespace EventBus
 {
     public static class Events
     {

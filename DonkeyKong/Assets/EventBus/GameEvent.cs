@@ -2,22 +2,22 @@ using System;
 
 // A simple event system based on https://playable.design/a-simple-event-system-for-unity
 
-namespace SimpleEventSystem
+namespace EventBus
 {
     public class GameEvent
     {
         private event Action action = delegate { };
         public void Publish() => action?.Invoke();
-        public void Add(Action subscriber) => action += subscriber;
-        public void Remove(Action subscriber) => action -= subscriber;
+        public void Sub(Action subscriber) => action += subscriber;
+        public void Unsub(Action subscriber) => action -= subscriber;
     }
 
     public class GameEvent<T>
     {
         private event Action<T> action;
         public void Publish(T param) => action?.Invoke(param);
-        public void Add(Action<T> subscriber) => action += subscriber;
-        public void Remove(Action<T> subscriber) => action -= subscriber;
+        public void Sub(Action<T> subscriber) => action += subscriber;
+        public void Unsub(Action<T> subscriber) => action -= subscriber;
     }
 }
 
@@ -25,7 +25,7 @@ namespace SimpleEventSystem
 /* Example Usage
  
 using UnityEngine;
-using SimpleEventSystem;
+using EventBus;
 public class Player : MonoBehaviour
 {
     private void OnEnable()
@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
 
 
 using UnityEngine;
-using SimpleEventSystem;
+using EventBus;
 public class Pickup : MonoBehaviour
 {
     private void OnCollisionEnter(Collision other)

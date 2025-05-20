@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 /*
  * This is a template for a PlayerInputHandler using the new input system.
- * Based on a tutorial by SppedTutor: https://www.youtube.com/watch?v=lclDl-NGUMg
+ * Based on a tutorial by SpeedTutor: https://www.youtube.com/watch?v=lclDl-NGUMg
  * Documentation: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Workflow-Actions.html
  */
 
@@ -54,13 +54,13 @@ public class PlayerInputHandler : MonoBehaviour
 
         _jumpAction.started += context => Jump(context);
 
-        _fireAction.started += context => Fire(context);
+        //_fireAction.started += context => Fire(context);
     }
 
-    void Fire(InputAction.CallbackContext context)
+/*    void Fire(InputAction.CallbackContext context)
     {
         FireAction?.Invoke();
-    }
+    }*/
 
     void Jump(InputAction.CallbackContext context)
     {
