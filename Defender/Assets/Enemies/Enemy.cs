@@ -1,4 +1,5 @@
 using UnityEngine;
+using EventBus;
 
 public abstract class Enemy : MonoBehaviour, IHittable
 {
@@ -6,7 +7,7 @@ public abstract class Enemy : MonoBehaviour, IHittable
 
     public void OnHit()
     {
+        Bus.EnemyKilled.Publish(_score);
         Destroy(gameObject);
-
     }
 }
