@@ -102,11 +102,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b1b2f4f43b4f074fa5442add042c181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  thrustSpeed: 7
-  bulletPrefab: {fileID: 6539107334187680806, guid: 81d69eef1b887c64786959c65a8f838c, type: 3}
-  firePoint: {fileID: 5127506594935053824}
-  smartBombPrefab: {fileID: 0}
+  _moveSpeed: 5
+  _thrustSpeed: 7
+  _bulletPrefab: {fileID: 6539107334187680806, guid: 81d69eef1b887c64786959c65a8f838c, type: 3}
+  _firePoint: {fileID: 5127506594935053824}
+  _bulletSound: {fileID: 8300000, guid: a990b9bfeb9c32a498cb6a3a9b192cad, type: 3}
 --- !u!114 &5121926543904130269
 MonoBehaviour:
   m_ObjectHideFlags: 0

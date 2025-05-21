@@ -1,16 +1,29 @@
 using UnityEngine;
+using EventBus;
 
+[RequireComponent(typeof(AudioSource))]
 public class SfxManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    AudioSource _audioSource;
+
+    private void OnEnable()
     {
-        
+        Bus.SfxPlay.Sub(PlaySound);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        Bus.SfxPlay.Unsub(PlaySound);
+    }
+
+    private void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
+
+    void PlaySound(AudioClip clip)
+    {
+        _audioSource.PlayOneShot(clip);
     }
 }

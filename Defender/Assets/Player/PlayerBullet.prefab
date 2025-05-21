@@ -115,5 +115,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40acd2d185031c1458dfce454527663a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startCountdownImmediately: 0
+  _startCountdownImmediately: 1
   _destroyAfterSeconds: 3

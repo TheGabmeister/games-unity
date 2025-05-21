@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] float _thrustSpeed = 7f;
     [SerializeField] GameObject _bulletPrefab;
     [SerializeField] Transform _firePoint;
-    [SerializeField] Transform _bulletSound;
+    [SerializeField] AudioClip _bulletSound;
 
     Vector2 moveInput;
     bool isThrusting = false;
@@ -71,6 +71,7 @@ public class Player : MonoBehaviour
         if (_bulletPrefab && _firePoint)
         {
             Instantiate(_bulletPrefab, _firePoint.position, _firePoint.rotation);
+            Bus.SfxPlay.Publish(_bulletSound);
         }
     }
 
