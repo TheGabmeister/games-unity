@@ -9,6 +9,7 @@ namespace EventBus
 {
     public static class Bus
     {
+        public static readonly GameEvent PlayerKilled = new();
 
         public static readonly GameEvent<int> EnemyKilled = new();
 

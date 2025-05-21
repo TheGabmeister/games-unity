@@ -4,6 +4,7 @@ using EventBus;
 public class GameManager : MonoBehaviour
 {
     int _score = 0;
+    int _lives = 2;
 
     void OnEnable()
     {

@@ -2,13 +2,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using EventBus;
 
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour, IHittable
 {
     [SerializeField] float _moveSpeed = 5f;
-    //[SerializeField] float _thrustSpeed = 7f;
+    [SerializeField] float _thrustSpeed = 7f;
     [SerializeField] GameObject _bulletPrefab;
     [SerializeField] Transform _firePoint;
     [SerializeField] AudioClip _bulletSound;
+    [SerializeField] GameObject _deathParticleFx;
 
     Vector2 moveInput;
     bool isThrusting = false;
@@ -59,10 +62,10 @@ public class Player : MonoBehaviour, IHittable
     void Update()
     {
         Vector3 velocity = new Vector3(0, moveInput.y, 0) * _moveSpeed * Time.deltaTime;
- //       if (isThrusting)
-   //     {
-     //       velocity.y += _thrustSpeed * Time.deltaTime;
-       // }
+        if (isThrusting)
+        {
+           velocity.x += _thrustSpeed * Time.deltaTime;
+        }
         transform.position += velocity;
     }
 
@@ -103,6 +106,20 @@ public class Player : MonoBehaviour, IHittable
 
     public void OnHit()
     {
-        throw new System.NotImplementedException();
+        Die();
+    }
+
+
+
+    void OnTriggerEnter2D()
+    {
+        Die();
+    }
+
+    void Die()
+    {
+        Bus.PlayerKilled.Publish();
+        Instantiate(_deathParticleFx, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
 }
