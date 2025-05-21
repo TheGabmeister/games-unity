@@ -137,8 +137,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3098320519016046658}
+  - component: {fileID: 4362697714584310135}
   m_Layer: 0
-  m_Name: SoundManager
+  m_Name: SfxManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,3 +160,15 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2216558030067700646}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4362697714584310135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8994139979905724694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37a34e1775c299849885c70e151a00ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
