@@ -7,15 +7,6 @@
       "dependencies": {},
       "hash": "dbd76ed996483d219c39d240f785b1790aa039ed"
     },
-    "com.sag.main-scene-auto-loading": {
-      "version": "https://github.com/STARasGAMES/unity-main-scene-auto-loading.git#upm",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.editorcoroutines": "1.0.0"
-      },
-      "hash": "d06b5f0cabf669defeb627abc051503746f9b426"
-    },
     "com.unity.2d.animation": {
       "version": "10.1.4",
       "depth": 1,
@@ -128,13 +119,6 @@
         "com.unity.nuget.mono-cecil": "1.11.4",
         "com.unity.test-framework.performance": "3.0.3"
       },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.editorcoroutines": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
