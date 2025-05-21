@@ -58,7 +58,7 @@ public class Player : MonoBehaviour, IHittable
 
     void Update()
     {
-        Vector3 velocity = new Vector3(moveInput.x, moveInput.y, 0) * _moveSpeed * Time.deltaTime;
+        Vector3 velocity = new Vector3(0, moveInput.y, 0) * _moveSpeed * Time.deltaTime;
  //       if (isThrusting)
    //     {
      //       velocity.y += _thrustSpeed * Time.deltaTime;

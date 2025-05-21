@@ -9,12 +9,10 @@ namespace EventBus
 {
     public static class Bus
     {
-        // When there are too many events, you need to start categorizing each event to a separate class as shown in the example at the end.
-        // An alternative approach is to use robust naming scheme (Ex. Player_Jumped) and use partial classes.
 
-        public static readonly GameEvent OnJump = new();
-        public static readonly GameEvent<float> OnDamage = new();
-        public static readonly GameEvent<GameObject> OnPickup = new();
+        public static readonly GameEvent<int> EnemyKilled = new();
+
+        public static readonly GameEvent<int> UiUpdateScore = new();
 
         public static readonly GameEvent<AudioClip> SfxPlay = new();
     }

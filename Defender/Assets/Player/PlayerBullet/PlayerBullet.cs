@@ -5,7 +5,7 @@ public class PlayerBullet : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var hittable = other.GetComponent<IHittable>();
+        var hittable = other.gameObject.GetComponent<IHittable>();
         if (hittable != null)
         {
             hittable.OnHit();
