@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using EventBus;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] float moveSpeed = 5f;
-    [SerializeField] float thrustSpeed = 7f;
-    [SerializeField] GameObject bulletPrefab;
-    [SerializeField] Transform firePoint;
-    [SerializeField] GameObject smartBombPrefab;
+    [SerializeField] float _moveSpeed = 5f;
+    [SerializeField] float _thrustSpeed = 7f;
+    [SerializeField] GameObject _bulletPrefab;
+    [SerializeField] Transform _firePoint;
+    [SerializeField] Transform _bulletSound;
 
     Vector2 moveInput;
     bool isThrusting = false;
@@ -57,29 +58,26 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Vector3 velocity = new Vector3(moveInput.x, 0, 0) * moveSpeed * Time.deltaTime;
-        if (isThrusting)
-        {
-            velocity.y += thrustSpeed * Time.deltaTime;
-        }
+        Vector3 velocity = new Vector3(moveInput.x, moveInput.y, 0) * _moveSpeed * Time.deltaTime;
+ //       if (isThrusting)
+   //     {
+     //       velocity.y += _thrustSpeed * Time.deltaTime;
+       // }
         transform.position += velocity;
     }
 
     void Fire()
     {
-        if (bulletPrefab && firePoint)
+        if (_bulletPrefab && _firePoint)
         {
-            Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            Instantiate(_bulletPrefab, _firePoint.position, _firePoint.rotation);
         }
     }
 
     void UseSmartBomb()
     {
-        // Implement smart bomb logic (e.g., destroy all enemies on screen)
-        if (smartBombPrefab)
-        {
-            Instantiate(smartBombPrefab, transform.position, Quaternion.identity);
-        }
+
+            // Fire smart bomb event here
     }
 
     void UseHyperspace()
