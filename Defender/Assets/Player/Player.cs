@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using EventBus;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IHittable
 {
     [SerializeField] float _moveSpeed = 5f;
-    [SerializeField] float _thrustSpeed = 7f;
+    //[SerializeField] float _thrustSpeed = 7f;
     [SerializeField] GameObject _bulletPrefab;
     [SerializeField] Transform _firePoint;
     [SerializeField] AudioClip _bulletSound;
@@ -99,5 +99,10 @@ public class Player : MonoBehaviour
         scale.x *= -1;
         transform.localScale = scale;
         moveInput.x *= -1;
+    }
+
+    public void OnHit()
+    {
+        throw new System.NotImplementedException();
     }
 }
