@@ -7,9 +7,14 @@ public class GameManager : MonoBehaviour
     int _score = 0;
     int _highScore = 0;
 
+    [Header("Obstacles")]
+    [SerializeField] GameObject _obstaclePrefab;
+    [SerializeField] float _spawnInterval = 2f;
+    [SerializeField] float _minY = -1f;
+    [SerializeField] float _maxY = 1f;
     void Update()
     {
-        
+
     }
 
     void OnEnable()
@@ -50,5 +55,21 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void StartSpawningObstacles()
+    {
+        InvokeRepeating("SpawnObstacle", 0f, _spawnInterval);
+    }
+
+    void StopSpawningObstacles()
+    {
+        CancelInvoke("SpawnObstacle");
+    }
+
+        void SpawnObstacle()
+    {
+        float randomY = Random.Range(_minY, _maxY);
+        Vector2 spawnPosition = new Vector2(transform.position.x, randomY);
+        Instantiate(_obstaclePrefab, spawnPosition, Quaternion.identity);
+    }
 
 }
