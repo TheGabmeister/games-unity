@@ -13,6 +13,8 @@ namespace EventBus
         public static readonly GameEvent GameStart = new();
         public static readonly GameEvent GameRestart = new();
 
+        public static readonly GameEvent<float> CameraSetAlpha = new();
+
         public static readonly GameEvent PlayerKilled = new();
         public static readonly GameEvent<int> EnemyKilled = new();
 
