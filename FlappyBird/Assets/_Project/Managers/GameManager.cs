@@ -4,16 +4,28 @@ using EventBus;
 public class GameManager : MonoBehaviour
 {
     int _score = 0;
-    int _lives = 2;
+    int _highScore = 0;
 
     void OnEnable()
     {
         Bus.EnemyKilled.Sub(AddScore);
+        Bus.GameStart.Sub(StartGame);
     }
 
     void OnDisable()
     {
         Bus.EnemyKilled.Unsub(AddScore);
+        Bus.GameStart.Unsub(StartGame);
+    }
+
+    void Awake()
+    {
+        // load high score
+    }
+
+    void StartGame()
+    {
+        
     }
 
     void AddScore(int value)
@@ -21,4 +33,11 @@ public class GameManager : MonoBehaviour
         _score += value;
         Bus.UiUpdateScore.Publish(_score);
     }
+
+    void SaveHiScore(int value)
+    {
+
+    }
+
+
 }
