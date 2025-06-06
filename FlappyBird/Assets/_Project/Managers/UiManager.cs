@@ -48,4 +48,9 @@ public class UiManager : MonoBehaviour
         _menuUi.SetActive(false);
         _gameplayUi.SetActive(true);
     }
+
+    public void SendGameObject(GameObject go)
+    {
+
+    }
 }
