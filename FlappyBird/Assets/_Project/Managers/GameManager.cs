@@ -7,6 +7,11 @@ public class GameManager : MonoBehaviour
     int _score = 0;
     int _highScore = 0;
 
+    void Update()
+    {
+        
+    }
+
     void OnEnable()
     {
         Bus.EnemyKilled.Sub(AddScore);
@@ -26,8 +31,12 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
-        Bus.CameraSetAlpha.Publish(1.0f);
-        Bus.UiToggleGameplay.Publish();
+        Sequence.Create()
+            .ChainCallback(() => Bus.CameraFadeToBlack.Publish(0.5f))
+            .ChainDelay(0.5f)
+            .ChainCallback(() => Bus.UiToggleGameplay.Publish())
+            .ChainCallback(() => Bus.CameraFadeToClear.Publish(0.5f))
+        ;
     }
 
     void AddScore(int value)
