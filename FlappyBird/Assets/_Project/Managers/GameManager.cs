@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     {
         Bus.CameraSetAlpha.Publish(1.0f);
         Bus.UiToggleGameplay.Publish();
-
     }
 
     void AddScore(int value)

@@ -6,14 +6,11 @@ using EventBus;
 
 public class FadeCamera : MonoBehaviour
 {
-    public AnimationCurve FadeCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(0.6f, 0.7f, -1.8f, -1.2f), new Keyframe(1, 0));
-
     float _currentAlpha = 1;
     float _targetAlpha = 0;
 
     Texture2D _texture;
-    bool _done;
-    float _time;
+    bool _isClear = false;
 
     void OnEnable()
     {
@@ -27,17 +24,15 @@ public class FadeCamera : MonoBehaviour
 
     public void Reset()
     {
-        _done = false;
+        _isClear = false;
         _targetAlpha = 0;
         _currentAlpha = 1;
-        _time = 0;
     }
 
     void SetTargetAlpha(float value)
     {
         _targetAlpha = Mathf.Clamp01(value);
-        _done = false;
-        _time = 0;
+        _isClear = false;
     }
 
     [RuntimeInitializeOnLoadMethod]
@@ -48,20 +43,27 @@ public class FadeCamera : MonoBehaviour
 
     public void OnGUI()
     {
-        if (_done) return;
-        if (_texture == null) _texture = new Texture2D(1, 1);
+        if (_isClear) return;
+        if (_texture == null)
+        {
+            _texture = new Texture2D(1, 1);
 
-        _time += Time.deltaTime;
-        _currentAlpha = FadeCurve.Evaluate(_time);
+        }
+        _currentAlpha += Mathf.Sign(_targetAlpha - _currentAlpha) * Time.deltaTime;
 
         _texture.SetPixel(0, 0, new Color(0, 0, 0, _currentAlpha));
         _texture.Apply();
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), _texture);
 
+        if (_currentAlpha <= 0)
+        {
+            _isClear = true;
+            return;
+        }
+
         if (Mathf.Abs(_targetAlpha - _currentAlpha) < 0.01)
         {
             _currentAlpha = _targetAlpha;
-            _done = true;
             return;
         }
     }
