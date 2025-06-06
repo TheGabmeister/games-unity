@@ -1,4 +1,5 @@
 using UnityEngine;
+using PrimeTween;
 using EventBus;
 
 public class GameManager : MonoBehaviour
