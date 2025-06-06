@@ -6,27 +6,28 @@ public class GameManager : MonoBehaviour
 {
     int _score = 0;
     int _highScore = 0;
+    bool _isPreGame = false;
+
+    [SerializeField] GameObject _playerPrefab;
+    [SerializeField] Transform _playerSpawnPoint;
 
     [Header("Obstacles")]
     [SerializeField] GameObject _obstaclePrefab;
     [SerializeField] float _spawnInterval = 2f;
     [SerializeField] float _minY = -1f;
     [SerializeField] float _maxY = 1f;
-    void Update()
-    {
 
-    }
 
     void OnEnable()
     {
         Bus.EnemyKilled.Sub(AddScore);
-        Bus.GameStart.Sub(StartGame);
+        Bus.GameStart.Sub(StartPreGame);
     }
 
     void OnDisable()
     {
         Bus.EnemyKilled.Unsub(AddScore);
-        Bus.GameStart.Unsub(StartGame);
+        Bus.GameStart.Unsub(StartPreGame);
     }
 
     void Awake()
@@ -34,14 +35,32 @@ public class GameManager : MonoBehaviour
         // load high score
     }
 
-    void StartGame()
+    void StartPreGame()
     {
         Sequence.Create()
             .ChainCallback(() => Bus.CameraFadeToBlack.Publish(0.5f))
             .ChainDelay(0.5f)
             .ChainCallback(() => Bus.UiToggleGameplay.Publish())
             .ChainCallback(() => Bus.CameraFadeToClear.Publish(0.5f))
+            .ChainCallback(() => Instantiate(_playerPrefab, _playerSpawnPoint))
         ;
+    }
+
+    void Update()
+    {
+        if (_isPreGame)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                _isPreGame = false;
+                StartGame();
+            }
+        }
+    }
+
+    void StartGame()
+    {
+        Bus.GameStart.Publish();
     }
 
     void AddScore(int value)

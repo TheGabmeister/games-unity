@@ -1,17 +1,18 @@
 using UnityEngine;
+using EventBus;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float jumpForce = 200f;
-    [SerializeField] AudioClip jumpSound;
-    Rigidbody2D rb;
-    AudioSource audioSource;
+    [SerializeField] float _jumpForce = 200f;
+    [SerializeField] AudioClip _jumpSound;
+    Rigidbody2D _rb;
+
     bool isDead = false;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        audioSource = GetComponent<AudioSource>();
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -20,9 +21,9 @@ public class PlayerController : MonoBehaviour
         {
             if (!isDead)
             {
-                rb.linearVelocity = Vector2.zero;
-                rb.AddForce(new Vector2(0, jumpForce));
-                audioSource.PlayOneShot(jumpSound);
+                _rb.linearVelocity = Vector2.zero;
+                _rb.AddForce(new Vector2(0, _jumpForce));
+                Bus.SfxPlay.Publish(_jumpSound);
             }
         }
     }

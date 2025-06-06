@@ -53,6 +53,7 @@ SpriteRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -148,8 +149,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colliderTag: Player
   useGameEvent: 1
-  gameEvents:
-  - {fileID: 11400000, guid: 6ab94f1ea94348b46865b6acb78c6c8f, type: 2}
   useUnityEvent: 0
   unityEvent:
     m_PersistentCalls:
@@ -207,6 +206,7 @@ SpriteRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -302,8 +302,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colliderTag: Player
   useGameEvent: 1
-  gameEvents:
-  - {fileID: 11400000, guid: 6ab94f1ea94348b46865b6acb78c6c8f, type: 2}
   useUnityEvent: 0
   unityEvent:
     m_PersistentCalls:
@@ -401,8 +399,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colliderTag: Player
   useGameEvent: 1
-  gameEvents:
-  - {fileID: 11400000, guid: afd3063b09876214eaaf948c3c37bfb2, type: 2}
   useUnityEvent: 1
   unityEvent:
     m_PersistentCalls:
@@ -429,7 +425,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5788638676747263121}
   - component: {fileID: 867971478260029774}
-  - component: {fileID: 1717615086118643511}
   m_Layer: 0
   m_Name: Obstacle
   m_TagString: Untagged
@@ -464,21 +459,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 9115809234761465898}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b64f72e476c48f743aff6748c73e046d, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d84c68d5211f6345928208952f9fa7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startCountdownImmediately: 1
-  destroyAfterSeconds: 10
---- !u!114 &1717615086118643511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9115809234761465898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5ec010c3c896c24da64ddd8c8e9afae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  worldMovementSpeed: {fileID: 11400000, guid: 4458c72c5f3fdfd4db818dd6e2b9d4e1, type: 2}
+  _moveSpeed: 10
+  _localMoveDirection: {x: -1, y: 0}
