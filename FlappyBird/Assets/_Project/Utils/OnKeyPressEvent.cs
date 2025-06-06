@@ -1,4 +1,4 @@
-using ScriptableObjectArchitecture;
+//using ScriptableObjectArchitecture;
 using UnityEngine.Events;
 using UnityEngine;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ public class OnKeyPressEvent : MonoBehaviour
     [SerializeField] KeyCode key;
 
     [SerializeField] bool useGameEvent = false;
-    [SerializeField] List<GameEvent> gameEvents;
+    //[SerializeField] List<GameEvent> gameEvents;
 
     [SerializeField] bool useUnityEvent = true;
     [SerializeField] UnityEvent unityEvent;
@@ -19,9 +19,9 @@ public class OnKeyPressEvent : MonoBehaviour
         {
             if (useGameEvent)
             {
-                foreach (GameEvent gameEvent in gameEvents)
+                //foreach (GameEvent gameEvent in gameEvents)
                 {
-                    gameEvent.Raise();
+                    //gameEvent.Raise();
                 }
             }
             if (useUnityEvent)

@@ -1,10 +1,10 @@
-using ScriptableObjectArchitecture;
+//using ScriptableObjectArchitecture;
 using UnityEngine;
 using TMPro;
 
 public class UpdateScoreUI : MonoBehaviour
 {
-    [SerializeField] IntVariable currentScore;
+    //[SerializeField] IntVariable currentScore;
     [SerializeField] TMP_Text scoreDisplay;
     [SerializeField] TMP_Text gameOverText;
     [SerializeField] GameObject restartButton;
@@ -15,12 +15,12 @@ public class UpdateScoreUI : MonoBehaviour
         gameOverText.alpha = 0f;
         restartButton.SetActive(false);
 
-        currentScore.AddListener(UpdateScoreDisplay);
+        //currentScore.AddListener(UpdateScoreDisplay);
     }
 
     public void UpdateScoreDisplay()
     {
-         scoreDisplay.SetText("Score: " + currentScore.Value);
+         //scoreDisplay.SetText("Score: " + currentScore.Value);
     }
 
     public void StartGameOverUISequence()
