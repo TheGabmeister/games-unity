@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
-        
+        Bus.UiToggleGameplay.Publish();
     }
 
     void AddScore(int value)
