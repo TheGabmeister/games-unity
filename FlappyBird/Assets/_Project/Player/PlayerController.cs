@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] float _jumpForce = 1250f;
     [SerializeField] AudioClip _jumpSound;
+    [SerializeField] AudioClip _dieSound;
     Rigidbody2D _rb;
 
     bool isDead = false;
@@ -33,10 +34,21 @@ public class PlayerController : MonoBehaviour
         _rb.simulated = value;
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!isDead)
+        {
+            StartDeathSequence();
+        }
+    }
+  
     public void StartDeathSequence()
     {
         isDead = true;
         Events.PlayerDied.Publish();
+        Events.SfxPlay.Publish(_dieSound);
         Destroy(gameObject, 5.0f);
     }
+
+
 }

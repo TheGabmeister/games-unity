@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Obstacles")]
     [SerializeField] GameObject _obstaclePrefab;
+    [SerializeField] Transform _obstacleSpawnPoint;
     [SerializeField] float _spawnRate = 2f;
     [SerializeField] float _minY = -1f;
     [SerializeField] float _maxY = 1f;
@@ -95,11 +96,10 @@ public class GameManager : MonoBehaviour
         CancelInvoke("SpawnObstacle");
     }
 
-        void SpawnObstacle()
+    void SpawnObstacle()
     {
         float randomY = Random.Range(_minY, _maxY);
-        Vector2 spawnPosition = new Vector2(transform.position.x, randomY);
-        Instantiate(_obstaclePrefab, spawnPosition, Quaternion.identity);
+        Instantiate(_obstaclePrefab, new Vector2(_obstacleSpawnPoint.position.x, randomY), Quaternion.identity);
     }
 
 }
