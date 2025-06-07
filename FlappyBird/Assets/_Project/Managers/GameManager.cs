@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _playerPrefab;
     PlayerController _playerController;
     [SerializeField] Transform _playerSpawnPoint;
+    [SerializeField] UiManager _uiManager;
+    [SerializeField] ScreenFader _screenFader;
+
 
     [Header("Obstacles")]
     [SerializeField] GameObject _obstaclePrefab;
@@ -39,10 +42,10 @@ public class GameManager : MonoBehaviour
     void StartPreGame()
     {
         Sequence.Create()
-            .ChainCallback(() => Bus.CameraFadeToBlack.Publish(0.5f))
+            .ChainCallback(() => _screenFader.FadeToBlack(0.5f))
             .ChainDelay(0.5f)
-            .ChainCallback(() => Bus.UiToggleGameplay.Publish())
-            .ChainCallback(() => Bus.CameraFadeToClear.Publish(0.5f))
+            .ChainCallback(() => _uiManager.ToggleGameplayUi())
+            .ChainCallback(() => _screenFader.FadeToClear(0.5f))
             .ChainCallback(() => _playerPrefab = Instantiate(_playerPrefab, _playerSpawnPoint.position, _playerSpawnPoint.rotation))
             .ChainCallback(() => _playerController = _playerPrefab.GetComponent<PlayerController>())
             .ChainCallback(() => _playerController.ToggleControls(false))

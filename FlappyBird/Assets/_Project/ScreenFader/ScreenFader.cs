@@ -1,5 +1,4 @@
 using UnityEngine;
-using EventBus;
 
 // A simple black screen fader 
 
@@ -12,18 +11,6 @@ public class ScreenFader : MonoBehaviour
     bool _isDone = false;
     CanvasGroup canvasGroup;
 
-    void OnEnable()
-    {
-        Bus.CameraFadeToBlack.Sub(FadeToBlack);
-        Bus.CameraFadeToClear.Sub(FadeToClear);
-    }
-
-    void OnDisable()
-    {
-        Bus.CameraFadeToBlack.Unsub(FadeToBlack);
-        Bus.CameraFadeToClear.Unsub(FadeToClear);
-    }
-
     void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -35,14 +22,14 @@ public class ScreenFader : MonoBehaviour
         _currentAlpha = 1;
     }
 
-    void FadeToBlack(float duration)
+    public void FadeToBlack(float duration)
     {
         _duration = duration;
         _targetAlpha = 1.0f;
         _isDone = false;
     }
 
-    void FadeToClear(float duration)
+    public void FadeToClear(float duration)
     {
         _duration = duration;
         _targetAlpha = 0.0f;

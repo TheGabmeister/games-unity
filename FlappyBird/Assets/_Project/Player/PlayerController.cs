@@ -4,7 +4,7 @@ using EventBus;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float _jumpForce = 200f;
+    [SerializeField] float _jumpForce = 1250f;
     [SerializeField] AudioClip _jumpSound;
     Rigidbody2D _rb;
 

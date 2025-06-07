@@ -11,15 +11,11 @@ public class UiManager : MonoBehaviour
     private void OnEnable()
     {
         Bus.UiUpdateScore.Sub(UpdateScore);
-        Bus.UiToggleMenu.Sub(ToggleMenuUi);
-        Bus.UiToggleGameplay.Sub(ToggleGameplayUi);
     }
 
     private void OnDisable()
     {
         Bus.UiUpdateScore.Unsub(UpdateScore);
-        Bus.UiToggleMenu.Unsub(ToggleMenuUi);
-        Bus.UiToggleGameplay.Unsub(ToggleGameplayUi);
     }
 
     public void StartGame()
@@ -37,20 +33,16 @@ public class UiManager : MonoBehaviour
         _scoreText.text = value.ToString();
     }
 
-    void ToggleMenuUi()
+    public void ToggleMenuUi()
     {
         _menuUi.SetActive(true);
         _gameplayUi.SetActive(false);
     }
 
-    void ToggleGameplayUi()
+    public void ToggleGameplayUi()
     {
         _menuUi.SetActive(false);
         _gameplayUi.SetActive(true);
     }
 
-    public void SendGameObject(GameObject go)
-    {
-
-    }
 }

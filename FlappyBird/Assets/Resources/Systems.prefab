@@ -132,11 +132,33 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: da97be14b70912e4980fcd7a6dfb4d26, type: 3}
+--- !u!114 &3258715200199321196 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2661795013476114724, guid: da97be14b70912e4980fcd7a6dfb4d26, type: 3}
+  m_PrefabInstance: {fileID: 705323806317446984}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9dcf5eae64068d4895be762598c6784, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &5917795800168441474 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6623083863431913930, guid: da97be14b70912e4980fcd7a6dfb4d26, type: 3}
   m_PrefabInstance: {fileID: 705323806317446984}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8618921555829369027 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9103286944863301515, guid: da97be14b70912e4980fcd7a6dfb4d26, type: 3}
+  m_PrefabInstance: {fileID: 705323806317446984}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20461e1271a682a4887648adaa09de19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2233406335636890645
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -269,9 +291,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 849385105089136234}
     m_Modifications:
+    - target: {fileID: 3607752672180783442, guid: 95e346beebf84e04dafc53f664573f3a, type: 3}
+      propertyPath: _uiManager
+      value: 
+      objectReference: {fileID: 3258715200199321196}
+    - target: {fileID: 3607752672180783442, guid: 95e346beebf84e04dafc53f664573f3a, type: 3}
+      propertyPath: _screenFader
+      value: 
+      objectReference: {fileID: 8618921555829369027}
     - target: {fileID: 7360577626431434832, guid: 95e346beebf84e04dafc53f664573f3a, type: 3}
       propertyPath: m_Name
-      value: GamaManager
+      value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 8663458891135422966, guid: 95e346beebf84e04dafc53f664573f3a, type: 3}
       propertyPath: m_LocalPosition.x

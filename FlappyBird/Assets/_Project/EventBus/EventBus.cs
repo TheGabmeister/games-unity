@@ -9,20 +9,16 @@ namespace EventBus
 {
     public static class Bus
     {
-        public static readonly GameEvent GamePreStart = new();
+
         public static readonly GameEvent GameStart = new();
         public static readonly GameEvent GameRestart = new();
 
-        public static readonly GameEvent<float> CameraFadeToBlack = new();
-        public static readonly GameEvent<float> CameraFadeToClear = new();
 
         public static readonly GameEvent<bool> PlayerToggleControls = new();
         public static readonly GameEvent PlayerKilled = new();
         public static readonly GameEvent<int> EnemyKilled = new();
 
         public static readonly GameEvent<int> UiUpdateScore = new();
-        public static readonly GameEvent UiToggleGameplay = new();
-        public static readonly GameEvent UiToggleMenu = new();
 
         public static readonly GameEvent<AudioClip> MusicPlay = new(); 
         public static readonly GameEvent MusicPause = new(); 
