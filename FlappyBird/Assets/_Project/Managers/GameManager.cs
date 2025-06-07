@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     bool _isPreGame = false;
 
     [SerializeField] GameObject _playerPrefab;
+    PlayerController _playerController;
     [SerializeField] Transform _playerSpawnPoint;
 
     [Header("Obstacles")]
@@ -42,7 +43,10 @@ public class GameManager : MonoBehaviour
             .ChainDelay(0.5f)
             .ChainCallback(() => Bus.UiToggleGameplay.Publish())
             .ChainCallback(() => Bus.CameraFadeToClear.Publish(0.5f))
-            .ChainCallback(() => Instantiate(_playerPrefab, _playerSpawnPoint))
+            .ChainCallback(() => _playerPrefab = Instantiate(_playerPrefab, _playerSpawnPoint.position, _playerSpawnPoint.rotation))
+            .ChainCallback(() => _playerController = _playerPrefab.GetComponent<PlayerController>())
+            .ChainCallback(() => _playerController.ToggleControls(false))
+            .ChainCallback(() => _isPreGame = true)
         ;
     }
 
@@ -60,7 +64,8 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
-        Bus.GameStart.Publish();
+        //Bus.GameStart.Publish();
+        _playerController.ToggleControls(true);
     }
 
     void AddScore(int value)

@@ -16,7 +16,7 @@ namespace EventBus
         public static readonly GameEvent<float> CameraFadeToBlack = new();
         public static readonly GameEvent<float> CameraFadeToClear = new();
 
-        public static readonly GameEvent PlayerEnableControls = new();
+        public static readonly GameEvent<bool> PlayerToggleControls = new();
         public static readonly GameEvent PlayerKilled = new();
         public static readonly GameEvent<int> EnemyKilled = new();
 

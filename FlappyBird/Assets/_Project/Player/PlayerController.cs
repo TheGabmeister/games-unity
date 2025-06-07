@@ -8,9 +8,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip _jumpSound;
     Rigidbody2D _rb;
 
+    private void OnEnable()
+    {
+        Bus.PlayerToggleControls.Sub(ToggleControls);
+    }
+
+    private void OnDisable()
+    {
+        Bus.PlayerToggleControls.Unsub(ToggleControls);
+    }
+
     bool isDead = false;
 
-    void Start()
+    void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
     }
@@ -26,6 +36,11 @@ public class PlayerController : MonoBehaviour
                 Bus.SfxPlay.Publish(_jumpSound);
             }
         }
+    }
+
+    public void ToggleControls(bool value)
+    {
+        _rb.simulated = value;
     }
 
     public void StartDeathSequence()
