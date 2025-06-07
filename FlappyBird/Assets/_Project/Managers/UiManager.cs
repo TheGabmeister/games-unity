@@ -1,4 +1,4 @@
-using EventBus;
+using SimpleEventSystem;
 using UnityEngine;
 using TMPro;
 
@@ -10,22 +10,22 @@ public class UiManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Bus.UiUpdateScore.Sub(UpdateScore);
+        Events.UiUpdateScore.Sub(UpdateScore);
     }
 
     private void OnDisable()
     {
-        Bus.UiUpdateScore.Unsub(UpdateScore);
+        Events.UiUpdateScore.Unsub(UpdateScore);
     }
 
     public void StartGame()
     {
-        Bus.GameStart.Publish();
+        Events.GameStart.Publish();
     }
 
     public void RestartGame()
     {
-        Bus.GameRestart.Publish();
+        Events.GameRestart.Publish();
     }
 
     void UpdateScore(int value)

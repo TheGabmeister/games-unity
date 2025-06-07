@@ -1,5 +1,5 @@
 using UnityEngine;
-using EventBus;
+using SimpleEventSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -7,16 +7,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _jumpForce = 1250f;
     [SerializeField] AudioClip _jumpSound;
     Rigidbody2D _rb;
-
-    private void OnEnable()
-    {
-        Bus.PlayerToggleControls.Sub(ToggleControls);
-    }
-
-    private void OnDisable()
-    {
-        Bus.PlayerToggleControls.Unsub(ToggleControls);
-    }
 
     bool isDead = false;
 
@@ -33,7 +23,7 @@ public class PlayerController : MonoBehaviour
             {
                 _rb.linearVelocity = Vector2.zero;
                 _rb.AddForce(new Vector2(0, _jumpForce));
-                Bus.SfxPlay.Publish(_jumpSound);
+                Events.SfxPlay.Publish(_jumpSound);
             }
         }
     }
@@ -46,6 +36,7 @@ public class PlayerController : MonoBehaviour
     public void StartDeathSequence()
     {
         isDead = true;
+        Events.PlayerDied.Publish();
         Destroy(gameObject, 5.0f);
     }
 }

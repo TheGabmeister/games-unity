@@ -5,17 +5,16 @@ using UnityEngine;
 // This approach, while simple, allocates memory on the heap. A better (but more verbose) approach
 // is to allocate on the stack. Example: https://github.com/adammyhre/Unity-Event-Bus
 
-namespace EventBus
+namespace SimpleEventSystem
 {
-    public static class Bus
+    public static class Events
     {
 
         public static readonly GameEvent GameStart = new();
         public static readonly GameEvent GameRestart = new();
 
 
-        public static readonly GameEvent<bool> PlayerToggleControls = new();
-        public static readonly GameEvent PlayerKilled = new();
+        public static readonly GameEvent PlayerDied = new();
         public static readonly GameEvent<int> EnemyKilled = new();
 
         public static readonly GameEvent<int> UiUpdateScore = new();

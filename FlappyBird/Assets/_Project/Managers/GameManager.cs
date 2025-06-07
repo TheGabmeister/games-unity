@@ -1,12 +1,13 @@
 using UnityEngine;
 using PrimeTween;
-using EventBus;
+using SimpleEventSystem;
 
 public class GameManager : MonoBehaviour
 {
     int _score = 0;
     int _highScore = 0;
     bool _isPreGame = false;
+    [SerializeField] GameSettings _gameSettings;
 
     [SerializeField] GameObject _playerPrefab;
     PlayerController _playerController;
@@ -17,26 +18,28 @@ public class GameManager : MonoBehaviour
 
     [Header("Obstacles")]
     [SerializeField] GameObject _obstaclePrefab;
-    [SerializeField] float _spawnInterval = 2f;
+    [SerializeField] float _spawnRate = 2f;
     [SerializeField] float _minY = -1f;
     [SerializeField] float _maxY = 1f;
 
 
     void OnEnable()
     {
-        Bus.EnemyKilled.Sub(AddScore);
-        Bus.GameStart.Sub(StartPreGame);
+        Events.EnemyKilled.Sub(AddScore);
+        Events.GameStart.Sub(StartPreGame);
+        Events.PlayerDied.Sub(HandlePlayerDeath);
     }
 
     void OnDisable()
     {
-        Bus.EnemyKilled.Unsub(AddScore);
-        Bus.GameStart.Unsub(StartPreGame);
+        Events.EnemyKilled.Unsub(AddScore);
+        Events.GameStart.Unsub(StartPreGame);
+        Events.PlayerDied.Unsub(HandlePlayerDeath);
     }
 
     void Awake()
     {
-        // load high score
+        _spawnRate = _gameSettings.obstacleSpawnRate;
     }
 
     void StartPreGame()
@@ -53,6 +56,12 @@ public class GameManager : MonoBehaviour
         ;
     }
 
+    void StartGame()
+    {
+        _playerController.ToggleControls(true);
+        StartSpawningObstacles();
+    }
+
     void Update()
     {
         if (_isPreGame)
@@ -65,16 +74,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void StartGame()
-    {
-        //Bus.GameStart.Publish();
-        _playerController.ToggleControls(true);
-    }
-
     void AddScore(int value)
     {
         _score += value;
-        Bus.UiUpdateScore.Publish(_score);
+        Events.UiUpdateScore.Publish(_score);
     }
 
     void SaveHiScore(int value)
@@ -84,10 +87,10 @@ public class GameManager : MonoBehaviour
 
     void StartSpawningObstacles()
     {
-        InvokeRepeating("SpawnObstacle", 0f, _spawnInterval);
+        InvokeRepeating("SpawnObstacle", 0f, _spawnRate);
     }
 
-    void StopSpawningObstacles()
+    void HandlePlayerDeath()
     {
         CancelInvoke("SpawnObstacle");
     }

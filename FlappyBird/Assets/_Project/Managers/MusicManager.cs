@@ -1,5 +1,5 @@
 using UnityEngine;
-using EventBus;
+using SimpleEventSystem;
 
 [RequireComponent(typeof(AudioSource))]
 public class MusicManager : MonoBehaviour
@@ -8,16 +8,16 @@ public class MusicManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Bus.MusicPlay.Sub(PlayMusic);
-        Bus.MusicPause.Sub(PauseMusic);
-        Bus.MusicStop.Sub(StopMusic);
+        Events.MusicPlay.Sub(PlayMusic);
+        Events.MusicPause.Sub(PauseMusic);
+        Events.MusicStop.Sub(StopMusic);
     }
 
     private void OnDisable()
     {
-        Bus.MusicPlay.Unsub(PlayMusic);
-        Bus.MusicPause.Unsub(PauseMusic);
-        Bus.MusicStop.Unsub(StopMusic);
+        Events.MusicPlay.Unsub(PlayMusic);
+        Events.MusicPause.Unsub(PauseMusic);
+        Events.MusicStop.Unsub(StopMusic);
     }
 
     private void Awake()
