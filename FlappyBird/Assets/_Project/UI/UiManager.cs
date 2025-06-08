@@ -47,12 +47,12 @@ public class UiManager : MonoBehaviour
 
     public void StartGame()
     {
-        Events.GameStart.Publish();
+        Events.GameStart.Raise();
     }
 
     public void RestartGame()
     {
-        Events.GameRestart.Publish();
+        Events.GameRestart.Raise();
     }
 
     public void UpdateScore(int value)

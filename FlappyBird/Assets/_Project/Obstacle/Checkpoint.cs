@@ -6,7 +6,7 @@ public class Checkpoint : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Events.CheckpointPassed.Publish();
+        Events.CheckpointPassed.Raise();
         Destroy(gameObject);
     }
 }

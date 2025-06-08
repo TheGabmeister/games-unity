@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
             {
                 _rb.linearVelocity = Vector2.zero;
                 _rb.AddForce(new Vector2(0, _jumpForce));
-                Events.SfxPlay.Publish(_jumpSound);
+                Events.SfxPlay.Raise(_jumpSound);
             }
         }
     }
@@ -47,8 +47,8 @@ public class PlayerController : MonoBehaviour
     public void StartDeathSequence()
     {
         isDead = true;
-        Events.PlayerDied.Publish();
-        Events.SfxPlay.Publish(_dieSound);
+        Events.PlayerDied.Raise();
+        Events.SfxPlay.Raise(_dieSound);
         Instantiate(_deadPlayerPrefab, gameObject.transform.position, quaternion.identity);
         Destroy(gameObject);
     }

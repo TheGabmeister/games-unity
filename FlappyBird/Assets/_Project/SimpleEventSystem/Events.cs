@@ -27,7 +27,7 @@ namespace SimpleEventSystem
     public class GameEvent
     {
         private event Action action = delegate { };
-        public void Publish() => action?.Invoke();
+        public void Raise() => action?.Invoke();
         public void Sub(Action subscriber) => action += subscriber;
         public void Unsub(Action subscriber) => action -= subscriber;
     }
@@ -35,7 +35,7 @@ namespace SimpleEventSystem
     public class GameEvent<T>
     {
         private event Action<T> action;
-        public void Publish(T param) => action?.Invoke(param);
+        public void Raise(T param) => action?.Invoke(param);
         public void Sub(Action<T> subscriber) => action += subscriber;
         public void Unsub(Action<T> subscriber) => action -= subscriber;
     }
