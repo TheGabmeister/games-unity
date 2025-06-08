@@ -9,7 +9,9 @@ public class UiManager : MonoBehaviour
     [SerializeField] TMP_Text _scoreText;
     int _score = 100;
     [SerializeField] Image _gameOverImage;
+    [SerializeField] GameObject _gameOverButtons;
     [SerializeField] TMP_Text _gameOverScoreText;
+    
     [SerializeField] Image _medalImage;
     [SerializeField] GameObject _menuUi;
     [SerializeField] GameObject _gameplayUi;
@@ -26,10 +28,16 @@ public class UiManager : MonoBehaviour
         Events.PlayerDied.Unsub(StartGameOverUiSequence);
     }
 
+    void Start()
+    {
+        Init();        
+    }
+
     void Init()
     {
         ToggleMenuUi();
         _medalImage.enabled = false;
+        _gameOverButtons.SetActive(false);
         var color = _gameOverImage.color;
         color.a = 0f;
         _gameOverImage.color = color;
@@ -64,12 +72,7 @@ public class UiManager : MonoBehaviour
 
     public void StartGameOverUiSequence()
     {
-
-        //_gameOverText.DOFade(1f, 1f) 
-        //  .OnComplete(() =>
-        //  {
-        //      restartButton.SetActive(true);
-        //  });
+        GetComponent<Animation>().Play();
     }
 
     void AnimateScore()
@@ -80,5 +83,6 @@ public class UiManager : MonoBehaviour
         {
             _gameOverScoreText.text = Mathf.RoundToInt(value).ToString();
         });
+        _gameOverButtons.SetActive(true);
     }
 }
