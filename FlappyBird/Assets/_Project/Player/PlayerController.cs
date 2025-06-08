@@ -1,5 +1,6 @@
 using UnityEngine;
 using SimpleEventSystem;
+using Unity.Mathematics;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -7,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _jumpForce = 1250f;
     [SerializeField] AudioClip _jumpSound;
     [SerializeField] AudioClip _dieSound;
+    [SerializeField] GameObject _deadPlayerPrefab;
     Rigidbody2D _rb;
 
     bool isDead = false;
@@ -47,7 +49,8 @@ public class PlayerController : MonoBehaviour
         isDead = true;
         Events.PlayerDied.Publish();
         Events.SfxPlay.Publish(_dieSound);
-        Destroy(gameObject, 5.0f);
+        Instantiate(_deadPlayerPrefab, gameObject.transform.position, quaternion.identity);
+        Destroy(gameObject);
     }
 
 

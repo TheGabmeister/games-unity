@@ -7,10 +7,14 @@ public class GameManager : MonoBehaviour
     int _score = 0;
     int _highScore = 0;
     bool _isPreGame = false;
+    bool _isMoving = false;
+    float _speed = 10.0f;
+
     [SerializeField] GameSettings _gameSettings;
 
     [SerializeField] GameObject _playerPrefab;
     PlayerController _playerController;
+    [SerializeField] GameObject _camera;
     [SerializeField] Transform _playerSpawnPoint;
     [SerializeField] UiManager _uiManager;
     [SerializeField] ScreenFader _screenFader;
@@ -41,6 +45,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         _spawnRate = _gameSettings.obstacleSpawnRate;
+        _speed = _gameSettings.gameSpeed;
     }
 
     void StartPreGame()
@@ -50,7 +55,10 @@ public class GameManager : MonoBehaviour
             .ChainDelay(0.5f)
             .ChainCallback(() => _uiManager.ToggleGameplayUi())
             .ChainCallback(() => _screenFader.FadeToClear(0.5f))
-            .ChainCallback(() => _playerPrefab = Instantiate(_playerPrefab, _playerSpawnPoint.position, _playerSpawnPoint.rotation))
+            .ChainCallback(() => _playerPrefab = Instantiate(_playerPrefab,
+                                                    _playerSpawnPoint.position,
+                                                    _playerSpawnPoint.rotation,
+                                                    _camera.transform))
             .ChainCallback(() => _playerController = _playerPrefab.GetComponent<PlayerController>())
             .ChainCallback(() => _playerController.ToggleControls(false))
             .ChainCallback(() => _isPreGame = true)
@@ -61,6 +69,7 @@ public class GameManager : MonoBehaviour
     {
         _playerController.ToggleControls(true);
         StartSpawningObstacles();
+        _isMoving = true;
     }
 
     void Update()
@@ -72,6 +81,11 @@ public class GameManager : MonoBehaviour
                 _isPreGame = false;
                 StartGame();
             }
+        }
+
+        if (_isMoving)
+        {
+            _camera.transform.position += Vector3.right * _speed * Time.deltaTime;
         }
     }
 
@@ -94,6 +108,7 @@ public class GameManager : MonoBehaviour
     void HandlePlayerDeath()
     {
         CancelInvoke("SpawnObstacle");
+        _isMoving = false;
     }
 
     void SpawnObstacle()

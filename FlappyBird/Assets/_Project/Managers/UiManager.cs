@@ -1,21 +1,35 @@
 using SimpleEventSystem;
 using UnityEngine;
 using TMPro;
+using PrimeTween;
+using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
     [SerializeField] TMP_Text _scoreText;
+    [SerializeField] Image _gameOverImage;
     [SerializeField] GameObject _menuUi;
     [SerializeField] GameObject _gameplayUi;
 
     private void OnEnable()
     {
         Events.UiUpdateScore.Sub(UpdateScore);
+        Events.PlayerDied.Sub(StartGameOverUiSequence);
     }
 
     private void OnDisable()
     {
         Events.UiUpdateScore.Unsub(UpdateScore);
+        Events.PlayerDied.Unsub(StartGameOverUiSequence);
+    }
+
+    void Init()
+    {
+        ToggleMenuUi();
+
+        var color = _gameOverImage.color;
+        color.a = 0f;
+        _gameOverImage.color = color;
     }
 
     public void StartGame()
@@ -45,4 +59,13 @@ public class UiManager : MonoBehaviour
         _gameplayUi.SetActive(true);
     }
 
+    public void StartGameOverUiSequence()
+    {
+
+          //_gameOverText.DOFade(1f, 1f) 
+          //  .OnComplete(() =>
+          //  {
+          //      restartButton.SetActive(true);
+          //  });
+    }
 }
