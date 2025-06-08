@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     bool _isMoving = false;
     float _speed = 10.0f;
 
-    [SerializeField] GameSettings _gameSettings;
+  
 
     [SerializeField] GameObject _playerPrefab;
     GameObject _playerInstance;
@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _camera;
     [SerializeField] Transform _playerSpawnPoint;
     [SerializeField] UiManager _uiManager;
-    [SerializeField] ScreenFader _screenFader;
+  
 
     [Header("Obstacles")]
     [SerializeField] GameObject _obstaclePrefab;
@@ -53,10 +53,8 @@ public class GameManager : MonoBehaviour
     void StartPreGame()
     {
         Sequence.Create()
-            .ChainCallback(() => _screenFader.FadeToBlack(0.5f))
             .ChainDelay(0.5f)
             .ChainCallback(() => _uiManager.ToggleGameplayUi())
-            .ChainCallback(() => _screenFader.FadeToClear(0.5f))
             .ChainCallback(() => _playerInstance = Instantiate(_playerPrefab,
                                                     _playerSpawnPoint.position,
                                                     _playerSpawnPoint.rotation,
@@ -124,12 +122,12 @@ public class GameManager : MonoBehaviour
     void RestartGame()
     {
         Sequence.Create()
-            .ChainCallback(() => _screenFader.FadeToBlack(0.5f))
+            
             .ChainDelay(0.5f)
             .ChainCallback(() => _uiManager.Init())
             .ChainCallback(() => _camera.transform.position = new Vector3(0, 0, -10))
             .ChainCallback(() => _score = 0)
-            .ChainCallback(() => _screenFader.FadeToClear(0.5f))
+            
         ;
     }
 }

@@ -1,21 +1,19 @@
 using UnityEngine;
-//using SimpleEventSystem;
-using Unity.Mathematics;
+using EventBus;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float _jumpForce = 1250f;
     [SerializeField] AudioClip _jumpSound;
     [SerializeField] AudioClip _dieSound;
-    [SerializeField] GameObject _deadPlayerPrefab;
-    Rigidbody2D _rb;
+    Rigidbody _rb;
 
     bool isDead = false;
 
     void Awake()
     {
-        _rb = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -33,25 +31,6 @@ public class PlayerController : MonoBehaviour
 
     public void ToggleControls(bool value)
     {
-        _rb.simulated = value;
+        //_rb.simulated = value;
     }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (!isDead)
-        {
-            StartDeathSequence();
-        }
-    }
-  
-    public void StartDeathSequence()
-    {
-        isDead = true;
-        //Events.PlayerDied.Raise();
-        //Events.SfxPlay.Raise(_dieSound);
-        Instantiate(_deadPlayerPrefab, gameObject.transform.position, quaternion.identity);
-        Destroy(gameObject);
-    }
-
-
 }
