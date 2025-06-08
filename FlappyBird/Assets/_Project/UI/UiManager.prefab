@@ -1684,6 +1684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scoreText: {fileID: 5747146876987104079}
+  _preGameText: {fileID: 8713311869567549898}
   _gameOverImage: {fileID: 4385573887917729018}
   _gameOverButtons: {fileID: 7418826585949113294}
   _gameOverScoreText: {fileID: 6928847804371943614}

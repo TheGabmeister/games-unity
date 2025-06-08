@@ -9,7 +9,6 @@ namespace SimpleEventSystem
 {
     public static class Events
     {
-
         public static readonly GameEvent GameStart = new();
         public static readonly GameEvent GameRestart = new();
 

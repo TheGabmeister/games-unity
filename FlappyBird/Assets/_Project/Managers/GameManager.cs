@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] UiManager _uiManager;
     [SerializeField] ScreenFader _screenFader;
 
-
     [Header("Obstacles")]
     [SerializeField] GameObject _obstaclePrefab;
     [SerializeField] Transform _obstacleSpawnPoint;
@@ -72,6 +71,7 @@ public class GameManager : MonoBehaviour
         _playerController.ToggleControls(true);
         StartSpawningObstacles();
         _isMoving = true;
+        _uiManager.DisablePreGameText();
     }
 
     void Update()
@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
     void AddScore(int value)
     {
         _score += value;
-        Events.UiUpdateScore.Publish(_score);
+        _uiManager.UpdateScore(_score);
     }
 
     void SaveHiScore(int value)
@@ -111,6 +111,7 @@ public class GameManager : MonoBehaviour
     {
         CancelInvoke("SpawnObstacle");
         _isMoving = false;
+        _uiManager.StartGameOverUiSequence();
     }
 
     void SpawnObstacle()

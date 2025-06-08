@@ -8,6 +8,7 @@ public class UiManager : MonoBehaviour
 {
     [SerializeField] TMP_Text _scoreText;
     int _score = 100;
+    [SerializeField] GameObject _preGameText;
     [SerializeField] Image _gameOverImage;
     [SerializeField] GameObject _gameOverButtons;
     [SerializeField] TMP_Text _gameOverScoreText;
@@ -16,31 +17,25 @@ public class UiManager : MonoBehaviour
     [SerializeField] GameObject _menuUi;
     [SerializeField] GameObject _gameplayUi;
 
-    private void OnEnable()
-    {
-        //Events.UiUpdateScore.Sub(UpdateScore);
-        Events.PlayerDied.Sub(StartGameOverUiSequence);
-    }
-
-    private void OnDisable()
-    {
-        //Events.UiUpdateScore.Unsub(UpdateScore);
-        Events.PlayerDied.Unsub(StartGameOverUiSequence);
-    }
-
     void Start()
     {
         Init();        
     }
 
-    void Init()
+    public void Init()
     {
         ToggleMenuUi();
         _medalImage.enabled = false;
         _gameOverButtons.SetActive(false);
+        _preGameText.SetActive(true);
         var color = _gameOverImage.color;
         color.a = 0f;
         _gameOverImage.color = color;
+    }
+
+    public void DisablePreGameText()
+    {
+        _preGameText.SetActive(false);
     }
 
     public void StartGame()
@@ -53,7 +48,7 @@ public class UiManager : MonoBehaviour
         Events.GameRestart.Publish();
     }
 
-    void UpdateScore(int value)
+    public void UpdateScore(int value)
     {
         _scoreText.text = value.ToString();
     }
