@@ -75,14 +75,13 @@ public class UiManager : MonoBehaviour
         GetComponent<Animation>().Play();
     }
 
+    // Referenced in animation clip
     void AnimateScore()
     {
         float duration = 1f;
         int endValue = 100;
         Tween.Custom(0, endValue, duration, onValueChange: value =>
-        {
-            _gameOverScoreText.text = Mathf.RoundToInt(value).ToString();
-        });
-        _gameOverButtons.SetActive(true);
+            _gameOverScoreText.text = Mathf.RoundToInt(value).ToString()
+        ).OnComplete(() => _gameOverButtons.SetActive(true));
     }
 }

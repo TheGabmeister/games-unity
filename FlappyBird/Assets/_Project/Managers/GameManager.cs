@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     {
         Events.EnemyKilled.Sub(AddScore);
         Events.GameStart.Sub(StartPreGame);
+        Events.GameRestart.Sub(RestartGame);
         Events.PlayerDied.Sub(HandlePlayerDeath);
     }
 
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
     {
         Events.EnemyKilled.Unsub(AddScore);
         Events.GameStart.Unsub(StartPreGame);
+        Events.GameRestart.Unsub(RestartGame);
         Events.PlayerDied.Unsub(HandlePlayerDeath);
     }
 
@@ -117,4 +119,8 @@ public class GameManager : MonoBehaviour
         Instantiate(_obstaclePrefab, new Vector2(_obstacleSpawnPoint.position.x, randomY), Quaternion.identity);
     }
 
+    void RestartGame()
+    {
+
+    }
 }
