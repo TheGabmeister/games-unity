@@ -8,29 +8,36 @@ public class UiManager : MonoBehaviour
 {
     [SerializeField] TMP_Text _scoreText;
     int _score = 100;
+    Animation _anim;
     [SerializeField] GameObject _preGameText;
     [SerializeField] Image _gameOverImage;
     [SerializeField] GameObject _gameOverButtons;
     [SerializeField] TMP_Text _gameOverScoreText;
-    
+
     [SerializeField] Image _medalImage;
     [SerializeField] GameObject _menuUi;
     [SerializeField] GameObject _gameplayUi;
 
+    void Awake()
+    {
+        _anim = GetComponent<Animation>();
+    }
+
     void Start()
     {
-        Init();        
+        Init();
     }
 
     public void Init()
     {
+        _scoreText.text = "0";
         ToggleMenuUi();
-        _medalImage.enabled = false;
-        _gameOverButtons.SetActive(false);
         _preGameText.SetActive(true);
+        ResetGameOverAnimation();
         var color = _gameOverImage.color;
         color.a = 0f;
         _gameOverImage.color = color;
+        
     }
 
     public void DisablePreGameText()
@@ -78,5 +85,19 @@ public class UiManager : MonoBehaviour
         Tween.Custom(0, endValue, duration, onValueChange: value =>
             _gameOverScoreText.text = Mathf.RoundToInt(value).ToString()
         ).OnComplete(() => _gameOverButtons.SetActive(true));
+    }
+    
+    public void ResetGameOverAnimation()
+    {
+        _medalImage.enabled = false;
+        _gameOverButtons.SetActive(false);
+
+        if (_anim != null && _anim.clip != null)
+        {
+            _anim.Play(_anim.clip.name);
+            _anim[_anim.clip.name].time = 0f;
+            _anim.Sample();
+            _anim.Stop();
+        }
     }
 }

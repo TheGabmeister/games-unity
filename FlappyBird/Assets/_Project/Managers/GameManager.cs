@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameSettings _gameSettings;
 
     [SerializeField] GameObject _playerPrefab;
+    GameObject _playerInstance;
     PlayerController _playerController;
     [SerializeField] GameObject _camera;
     [SerializeField] Transform _playerSpawnPoint;
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        Events.EnemyKilled.Sub(AddScore);
+        Events.CheckpointPassed.Sub(AddScore);
         Events.GameStart.Sub(StartPreGame);
         Events.GameRestart.Sub(RestartGame);
         Events.PlayerDied.Sub(HandlePlayerDeath);
@@ -37,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     void OnDisable()
     {
-        Events.EnemyKilled.Unsub(AddScore);
+        Events.CheckpointPassed.Unsub(AddScore);
         Events.GameStart.Unsub(StartPreGame);
         Events.GameRestart.Unsub(RestartGame);
         Events.PlayerDied.Unsub(HandlePlayerDeath);
@@ -56,11 +57,11 @@ public class GameManager : MonoBehaviour
             .ChainDelay(0.5f)
             .ChainCallback(() => _uiManager.ToggleGameplayUi())
             .ChainCallback(() => _screenFader.FadeToClear(0.5f))
-            .ChainCallback(() => _playerPrefab = Instantiate(_playerPrefab,
+            .ChainCallback(() => _playerInstance = Instantiate(_playerPrefab,
                                                     _playerSpawnPoint.position,
                                                     _playerSpawnPoint.rotation,
                                                     _camera.transform))
-            .ChainCallback(() => _playerController = _playerPrefab.GetComponent<PlayerController>())
+            .ChainCallback(() => _playerController = _playerInstance.GetComponent<PlayerController>())
             .ChainCallback(() => _playerController.ToggleControls(false))
             .ChainCallback(() => _isPreGame = true)
         ;
@@ -91,9 +92,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void AddScore(int value)
+    void AddScore()
     {
-        _score += value;
+        _score += 1;
         _uiManager.UpdateScore(_score);
     }
 
@@ -122,6 +123,13 @@ public class GameManager : MonoBehaviour
 
     void RestartGame()
     {
-
+        Sequence.Create()
+            .ChainCallback(() => _screenFader.FadeToBlack(0.5f))
+            .ChainDelay(0.5f)
+            .ChainCallback(() => _uiManager.Init())
+            .ChainCallback(() => _camera.transform.position = new Vector3(0, 0, -10))
+            .ChainCallback(() => _score = 0)
+            .ChainCallback(() => _screenFader.FadeToClear(0.5f))
+        ;
     }
 }

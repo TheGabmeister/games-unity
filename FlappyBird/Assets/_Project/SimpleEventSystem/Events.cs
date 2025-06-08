@@ -14,9 +14,8 @@ namespace SimpleEventSystem
 
 
         public static readonly GameEvent PlayerDied = new();
-        public static readonly GameEvent<int> EnemyKilled = new();
+        public static readonly GameEvent CheckpointPassed = new();
 
-        public static readonly GameEvent<int> UiUpdateScore = new();
 
         public static readonly GameEvent<AudioClip> MusicPlay = new(); 
         public static readonly GameEvent MusicPause = new(); 
