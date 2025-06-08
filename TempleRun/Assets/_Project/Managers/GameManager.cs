@@ -46,8 +46,8 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        _spawnRate = _gameSettings.obstacleSpawnRate;
-        _speed = _gameSettings.gameSpeed;
+        //_spawnRate = _gameSettings.obstacleSpawnRate;
+        //_speed = _gameSettings.gameSpeed;
     }
 
     void StartPreGame()
