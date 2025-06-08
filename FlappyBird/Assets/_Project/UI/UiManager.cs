@@ -7,26 +7,29 @@ using UnityEngine.UI;
 public class UiManager : MonoBehaviour
 {
     [SerializeField] TMP_Text _scoreText;
+    int _score = 100;
     [SerializeField] Image _gameOverImage;
+    [SerializeField] TMP_Text _gameOverScoreText;
+    [SerializeField] Image _medalImage;
     [SerializeField] GameObject _menuUi;
     [SerializeField] GameObject _gameplayUi;
 
     private void OnEnable()
     {
-        Events.UiUpdateScore.Sub(UpdateScore);
+        //Events.UiUpdateScore.Sub(UpdateScore);
         Events.PlayerDied.Sub(StartGameOverUiSequence);
     }
 
     private void OnDisable()
     {
-        Events.UiUpdateScore.Unsub(UpdateScore);
+        //Events.UiUpdateScore.Unsub(UpdateScore);
         Events.PlayerDied.Unsub(StartGameOverUiSequence);
     }
 
     void Init()
     {
         ToggleMenuUi();
-
+        _medalImage.enabled = false;
         var color = _gameOverImage.color;
         color.a = 0f;
         _gameOverImage.color = color;
@@ -62,10 +65,20 @@ public class UiManager : MonoBehaviour
     public void StartGameOverUiSequence()
     {
 
-          //_gameOverText.DOFade(1f, 1f) 
-          //  .OnComplete(() =>
-          //  {
-          //      restartButton.SetActive(true);
-          //  });
+        //_gameOverText.DOFade(1f, 1f) 
+        //  .OnComplete(() =>
+        //  {
+        //      restartButton.SetActive(true);
+        //  });
+    }
+
+    void AnimateScore()
+    {
+        float duration = 1f;
+        int endValue = 100;
+        Tween.Custom(0, endValue, duration, onValueChange: value =>
+        {
+            _gameOverScoreText.text = Mathf.RoundToInt(value).ToString();
+        });
     }
 }
