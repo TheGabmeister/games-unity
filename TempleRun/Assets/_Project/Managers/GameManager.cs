@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     GameObject _playerInstance;
     PlayerController _playerController;
     [SerializeField] GameObject _camera;
-    [SerializeField] Transform _playerSpawnPoint;
   
 
     [Header("Obstacles")]
@@ -55,21 +54,14 @@ public class GameManager : MonoBehaviour
     {
         Sequence.Create()
             .ChainDelay(0.5f)
-            .ChainCallback(() => _playerInstance = Instantiate(_playerPrefab,
-                                                    _playerSpawnPoint.position,
-                                                    _playerSpawnPoint.rotation,
-                                                    _camera.transform))
-            .ChainCallback(() => _playerController = _playerInstance.GetComponent<PlayerController>())
+
             .ChainCallback(() => _playerController.ToggleControls(false))
         ;
     }
 
     void StartGame()
     {
-        // _playerController.ToggleControls(true);
-        // StartSpawningObstacles();
-        // _isMoving = true;
-        // _uiManager.DisablePreGameText();
+        Bus<EV_UiShowGameplay>.Raise();
     }
 
     void Update()
@@ -86,6 +78,8 @@ public class GameManager : MonoBehaviour
     {
         _score += _coinScore;
         _coins += 1;
+        Bus<EV_UiScoreUpdate>.Raise(new EV_UiScoreUpdate { value = _score });
+        Bus<EV_UiCoinsUpdate>.Raise(new EV_UiCoinsUpdate { value = _coins });
     }
 
     void SaveHiScore(int value)
@@ -102,7 +96,6 @@ public class GameManager : MonoBehaviour
     {
         CancelInvoke("SpawnObstacle");
         _isMoving = false;
-        _uiManager.StartGameOverUiSequence();
     }
 
     void SpawnObstacle()
@@ -116,7 +109,6 @@ public class GameManager : MonoBehaviour
         Sequence.Create()
             
             .ChainDelay(0.5f)
-            .ChainCallback(() => _uiManager.Init())
             .ChainCallback(() => _camera.transform.position = new Vector3(0, 0, -10))
             .ChainCallback(() => _score = 0)
             

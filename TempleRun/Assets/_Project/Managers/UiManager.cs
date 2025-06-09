@@ -8,14 +8,25 @@ public class UiManager : MonoBehaviour
 {
     [SerializeField] GameObject _startUi;
     [SerializeField] GameObject _gameplayUi;
+    [SerializeField] GameObject _gameOverUi;
     [SerializeField] TMP_Text _scoreText;
+    [SerializeField] TMP_Text _coinsText;
     int _score = 100;
     Animation _anim;
     
-    [SerializeField] TMP_Text _gameOverScoreText;
+    void OnEnable()
+    {
+        Bus<EV_UiShowStart>.Add(ShowStartUi);
+        Bus<EV_UiShowGameplay>.Add(ShowGameplayUi);
+        Bus<EV_UiShowGameOver>.Add(ShowGameOverUi);
+    }
 
-    [SerializeField] Image _medalImage;
-    [SerializeField] GameObject _menuUi;
+    void OnDisable()
+    {
+        Bus<EV_UiShowStart>.Remove(ShowStartUi);
+        Bus<EV_UiShowGameplay>.Remove(ShowGameplayUi);
+        Bus<EV_UiShowGameOver>.Remove(ShowGameOverUi);
+    }
     
 
     void Awake()
@@ -31,16 +42,14 @@ public class UiManager : MonoBehaviour
     public void Init()
     {
         _scoreText.text = "0";
-        ToggleMenuUi();
+        ShowStartUi();
         ResetGameOverAnimation();
-        
     }
 
 
     public void StartGame()
     {
-        _startUi.SetActive(false);
-        _gameplayUi.SetActive(true);
+        ShowGameplayUi();
         Bus<EV_GameStart>.Raise();
     }
 
@@ -54,16 +63,25 @@ public class UiManager : MonoBehaviour
         _scoreText.text = value.ToString();
     }
 
-    public void ToggleMenuUi()
+    void ShowStartUi()
     {
-        _menuUi.SetActive(true);
+        _startUi.SetActive(true);
         _gameplayUi.SetActive(false);
+        _gameOverUi.SetActive(false);
     }
 
-    public void ToggleGameplayUi()
+    void ShowGameplayUi()
     {
-        _menuUi.SetActive(false);
+        _startUi.SetActive(false);
         _gameplayUi.SetActive(true);
+        _gameOverUi.SetActive(false);
+    }
+
+    void ShowGameOverUi()
+    {
+        _startUi.SetActive(false);
+        _gameplayUi.SetActive(false);
+        _gameOverUi.SetActive(true);
     }
 
     public void StartGameOverUiSequence()

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8663458891135422966}
   - component: {fileID: 3607752672180783442}
+  - component: {fileID: 2468257717462872201}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -48,10 +49,20 @@ MonoBehaviour:
   _playerPrefab: {fileID: 1198116497981548308, guid: 4b98db73d2f138e46b43efc34a943fe5, type: 3}
   _camera: {fileID: 0}
   _playerSpawnPoint: {fileID: 0}
-  _uiManager: {fileID: 0}
-  _screenFader: {fileID: 0}
   _obstaclePrefab: {fileID: 9115809234761465898, guid: 3ca77f8d00933ea49b8094e6d6bd7092, type: 3}
   _obstacleSpawnPoint: {fileID: 0}
   _spawnRate: 2
   _minY: -1
   _maxY: 1
+--- !u!114 &2468257717462872201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360577626431434832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c406b770e36c0eb4d9813e294d1d3d7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
