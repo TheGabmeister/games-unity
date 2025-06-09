@@ -1,13 +1,13 @@
 using UnityEngine;
 using PrimeTween;
 using EventBus;
-//using SimpleEventSystem;
 
 public class GameManager : MonoBehaviour
 {
     int _score = 0;
+    int _coins = 0;
+    int _coinScore = 0;
     int _highScore = 0;
-    bool _isPreGame = false;
     bool _isMoving = false;
     float _initialSpeed = 10.0f;
     [SerializeField] GameSettings _gameSettings;
@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     PlayerController _playerController;
     [SerializeField] GameObject _camera;
     [SerializeField] Transform _playerSpawnPoint;
-    [SerializeField] UiManager _uiManager;
   
 
     [Header("Obstacles")]
@@ -34,6 +33,7 @@ public class GameManager : MonoBehaviour
         Bus<EV_GameStart>.Add(StartGame);
         Bus<EV_GameRestart>.Add(RestartGame);
         Bus<EV_PlayerDied>.Add(HandlePlayerDeath);
+        Bus<EV_CoinCollected>.Add(AddCoin);
 
     }
 
@@ -42,25 +42,25 @@ public class GameManager : MonoBehaviour
         Bus<EV_GameStart>.Remove(StartGame);
         Bus<EV_GameRestart>.Remove(RestartGame);
         Bus<EV_PlayerDied>.Remove(HandlePlayerDeath);
+        Bus<EV_CoinCollected>.Remove(AddCoin);
     }
 
     void Awake()
     {
         _initialSpeed = _gameSettings.initialSpeed;
+        _coinScore = _gameSettings.coinScore;
     }
 
     void StartPreGame()
     {
         Sequence.Create()
             .ChainDelay(0.5f)
-            .ChainCallback(() => _uiManager.ToggleGameplayUi())
             .ChainCallback(() => _playerInstance = Instantiate(_playerPrefab,
                                                     _playerSpawnPoint.position,
                                                     _playerSpawnPoint.rotation,
                                                     _camera.transform))
             .ChainCallback(() => _playerController = _playerInstance.GetComponent<PlayerController>())
             .ChainCallback(() => _playerController.ToggleControls(false))
-            .ChainCallback(() => _isPreGame = true)
         ;
     }
 
@@ -74,14 +74,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (_isPreGame)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                _isPreGame = false;
-                StartGame();
-            }
-        }
+
 
         if (_isMoving)
         {
@@ -89,10 +82,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void AddScore()
+    void AddCoin()
     {
-        _score += 1;
-        _uiManager.UpdateScore(_score);
+        _score += _coinScore;
+        _coins += 1;
     }
 
     void SaveHiScore(int value)
