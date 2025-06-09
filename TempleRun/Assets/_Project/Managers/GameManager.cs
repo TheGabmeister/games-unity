@@ -12,12 +12,9 @@ public class GameManager : MonoBehaviour
     bool _isMoving = false;
     float _initialSpeed = 10.0f;
     [SerializeField] GameSettings _gameSettings;
-  
-
     [SerializeField] GameObject _playerPrefab;
     GameObject _playerInstance;
     PlayerController _playerController;
-    [SerializeField] GameObject _camera;
   
 
     [Header("Obstacles")]
@@ -51,27 +48,11 @@ public class GameManager : MonoBehaviour
         _coinScore = _gameSettings.coinScore;
     }
 
-    void StartPreGame()
-    {
-        Sequence.Create()
-            .ChainDelay(0.5f)
-
-            .ChainCallback(() => _playerController.ToggleControls(false))
-        ;
-    }
-
     void StartGame()
     {
         Bus<EV_UiShowGameplay>.Raise();
         Bus<EV_MusicToggle>.Raise(new EV_MusicToggle { value = true });
-    }
-
-    void Update()
-    {
-        if (_isMoving)
-        {
-            _camera.transform.position += Vector3.right * _initialSpeed * Time.deltaTime;
-        }
+        Tween.Delay(3f).OnComplete(() => Bus<EV_PlayerEnableCam>.Raise());
     }
 
     void AddDistance()
@@ -123,7 +104,6 @@ public class GameManager : MonoBehaviour
         Sequence.Create()
             
             .ChainDelay(0.5f)
-            .ChainCallback(() => _camera.transform.position = new Vector3(0, 0, -10))
             .ChainCallback(() => _score = 0)
             
         ;

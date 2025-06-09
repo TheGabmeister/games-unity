@@ -7,17 +7,17 @@ public class SfxManager : MonoBehaviour
 
     AudioSource _audioSource;
 
-    private void OnEnable()
+    void OnEnable()
     {
         Bus<EV_SfxPlay>.Add(PlaySound);
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         Bus<EV_SfxPlay>.Remove(PlaySound);
     }
 
-    private void Awake()
+    void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
     }

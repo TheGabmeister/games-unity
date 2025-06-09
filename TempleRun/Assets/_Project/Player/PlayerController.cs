@@ -1,19 +1,24 @@
 using UnityEngine;
 using EventBus;
 
-[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float _jumpForce = 1250f;
+    [SerializeField] GameObject _camera;
     [SerializeField] AudioClip _jumpSound;
     [SerializeField] AudioClip _dieSound;
-    Rigidbody _rb;
-
+    [SerializeField] Rigidbody _rigidBody;
+    bool _isControllable = false;
     bool isDead = false;
 
-    void Awake()
+    void OnEnable()
     {
-        _rb = GetComponent<Rigidbody>();
+        Bus<EV_PlayerEnableCam>.Add(EnableCam);
+    }
+
+    void OnDisable()
+    {
+        Bus<EV_PlayerEnableCam>.Remove(EnableCam);
     }
 
     void OnJump()
@@ -30,13 +35,14 @@ public class PlayerController : MonoBehaviour
     //         {
     //             _rb.linearVelocity = Vector2.zero;
     //             _rb.AddForce(new Vector2(0, _jumpForce));
-                
+
     //         }
     //     }
     // }
 
-    public void ToggleControls(bool value)
+    public void EnableCam()
     {
-        //_rb.simulated = value;
+        _camera.SetActive(true);
+        
     }
 }
