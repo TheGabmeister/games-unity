@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
     void StartGame()
     {
         Bus<EV_UiShowGameplay>.Raise();
+        Bus<EV_MusicToggle>.Raise(new EV_MusicToggle { value = true });
     }
 
     void Update()
@@ -75,7 +76,7 @@ public class GameManager : MonoBehaviour
 
     void AddDistance()
     {
-        
+
     }
 
     void AddCoin()

@@ -1,5 +1,5 @@
 using UnityEngine;
-//using SimpleEventSystem;
+using EventBus;
 
 [RequireComponent(typeof(AudioSource))]
 public class SfxManager : MonoBehaviour
@@ -9,12 +9,12 @@ public class SfxManager : MonoBehaviour
 
     private void OnEnable()
     {
-        //Events.SfxPlay.Sub(PlaySound);
+        Bus<EV_SfxPlay>.Add(PlaySound);
     }
 
     private void OnDisable()
     {
-        //Events.SfxPlay.Unsub(PlaySound);
+        Bus<EV_SfxPlay>.Remove(PlaySound);
     }
 
     private void Awake()
@@ -22,8 +22,8 @@ public class SfxManager : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    void PlaySound(AudioClip clip)
+    void PlaySound(EV_SfxPlay e)
     {
-        _audioSource.PlayOneShot(clip);
+        _audioSource.PlayOneShot(e.clip);
     }
 }
