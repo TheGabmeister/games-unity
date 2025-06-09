@@ -2,10 +2,7 @@
 
 namespace EventBus
 { 
-    // Player Events
-    public struct EV_PlayerSpawned : IEvent { }
     public struct EV_PlayerDied : IEvent { }
-    public struct EV_PlayerDamaged : IEvent { public int value; }
 
 
     // GameManager Events 

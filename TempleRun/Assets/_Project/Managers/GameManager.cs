@@ -1,5 +1,6 @@
 using UnityEngine;
 using PrimeTween;
+using EventBus;
 //using SimpleEventSystem;
 
 public class GameManager : MonoBehaviour
@@ -8,8 +9,8 @@ public class GameManager : MonoBehaviour
     int _highScore = 0;
     bool _isPreGame = false;
     bool _isMoving = false;
-    float _speed = 10.0f;
-
+    float _initialSpeed = 10.0f;
+    [SerializeField] GameSettings _gameSettings;
   
 
     [SerializeField] GameObject _playerPrefab;
@@ -30,24 +31,22 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        // Events.CheckpointPassed.Sub(AddScore);
-        // Events.GameStart.Sub(StartPreGame);
-        // Events.GameRestart.Sub(RestartGame);
-        // Events.PlayerDied.Sub(HandlePlayerDeath);
+        Bus<EV_GameStart>.Add(StartGame);
+        Bus<EV_GameRestart>.Add(RestartGame);
+        Bus<EV_PlayerDied>.Add(HandlePlayerDeath);
+
     }
 
     void OnDisable()
     {
-        // Events.CheckpointPassed.Unsub(AddScore);
-        // Events.GameStart.Unsub(StartPreGame);
-        // Events.GameRestart.Unsub(RestartGame);
-        // Events.PlayerDied.Unsub(HandlePlayerDeath);
+        Bus<EV_GameStart>.Remove(StartGame);
+        Bus<EV_GameRestart>.Remove(RestartGame);
+        Bus<EV_PlayerDied>.Remove(HandlePlayerDeath);
     }
 
     void Awake()
     {
-        //_spawnRate = _gameSettings.obstacleSpawnRate;
-        //_speed = _gameSettings.gameSpeed;
+        _initialSpeed = _gameSettings.initialSpeed;
     }
 
     void StartPreGame()
@@ -67,10 +66,10 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
-        _playerController.ToggleControls(true);
-        StartSpawningObstacles();
-        _isMoving = true;
-        _uiManager.DisablePreGameText();
+        // _playerController.ToggleControls(true);
+        // StartSpawningObstacles();
+        // _isMoving = true;
+        // _uiManager.DisablePreGameText();
     }
 
     void Update()
@@ -86,7 +85,7 @@ public class GameManager : MonoBehaviour
 
         if (_isMoving)
         {
-            _camera.transform.position += Vector3.right * _speed * Time.deltaTime;
+            _camera.transform.position += Vector3.right * _initialSpeed * Time.deltaTime;
         }
     }
 
