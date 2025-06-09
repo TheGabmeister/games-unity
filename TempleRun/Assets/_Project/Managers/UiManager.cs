@@ -10,15 +10,17 @@ public class UiManager : MonoBehaviour
     [SerializeField] GameObject _gameplayUi;
     [SerializeField] GameObject _gameOverUi;
     [SerializeField] TMP_Text _scoreText;
+    [SerializeField] TMP_Text _distanceText;
     [SerializeField] TMP_Text _coinsText;
     int _score = 100;
     Animation _anim;
-    
+
     void OnEnable()
     {
         Bus<EV_UiShowStart>.Add(ShowStartUi);
         Bus<EV_UiShowGameplay>.Add(ShowGameplayUi);
         Bus<EV_UiShowGameOver>.Add(ShowGameOverUi);
+        Bus<EV_UiStatsUpdate>.Add(UpdateStats);
     }
 
     void OnDisable()
@@ -26,6 +28,7 @@ public class UiManager : MonoBehaviour
         Bus<EV_UiShowStart>.Remove(ShowStartUi);
         Bus<EV_UiShowGameplay>.Remove(ShowGameplayUi);
         Bus<EV_UiShowGameOver>.Remove(ShowGameOverUi);
+        Bus<EV_UiStatsUpdate>.Remove(UpdateStats);
     }
     
 
@@ -58,9 +61,11 @@ public class UiManager : MonoBehaviour
         Bus<EV_GameRestart>.Raise();
     }
 
-    public void UpdateScore(int value)
+    public void UpdateStats(EV_UiStatsUpdate e)
     {
-        _scoreText.text = value.ToString();
+        _scoreText.text = e.score.ToString();
+        _distanceText.text = e.distance.ToString();
+        _coinsText.text = e.coins.ToString();
     }
 
     void ShowStartUi()

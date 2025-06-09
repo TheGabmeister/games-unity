@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
             {
                 _rb.linearVelocity = Vector2.zero;
                 _rb.AddForce(new Vector2(0, _jumpForce));
-                //Events.SfxPlay.Raise(_jumpSound);
+                Bus<EV_SfxPlay>.Raise(new EV_SfxPlay { value = _jumpSound});
             }
         }
     }

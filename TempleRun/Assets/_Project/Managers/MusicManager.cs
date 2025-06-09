@@ -1,23 +1,19 @@
 using UnityEngine;
-//using SimpleEventSystem;
+using EventBus;
 
 [RequireComponent(typeof(AudioSource))]
 public class MusicManager : MonoBehaviour
 {
     AudioSource _audioSource;
 
-    private void OnEnable()
+    void OnEnable()
     {
-        // Events.MusicPlay.Sub(PlayMusic);
-        // Events.MusicPause.Sub(PauseMusic);
-        // Events.MusicStop.Sub(StopMusic);
+        Bus<EV_MusicToggle>.Add(ToggleMusic);
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
-        // Events.MusicPlay.Unsub(PlayMusic);
-        // Events.MusicPause.Unsub(PauseMusic);
-        // Events.MusicStop.Unsub(StopMusic);
+        Bus<EV_MusicToggle>.Remove(ToggleMusic);
     }
 
     private void Awake()
@@ -25,18 +21,11 @@ public class MusicManager : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    void PlayMusic(AudioClip clip)
+    void ToggleMusic(EV_MusicToggle e)
     {
-        _audioSource.PlayOneShot(clip);
-    }
-
-    void PauseMusic()
-    {
-        _audioSource.Pause();
-    }
-
-    void StopMusic()
-    {
-        _audioSource.Stop();
+        if (e.value)
+            _audioSource.Play();
+        else
+            _audioSource.Stop();
     }
 }

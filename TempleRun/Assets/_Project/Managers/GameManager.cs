@@ -5,6 +5,7 @@ using EventBus;
 public class GameManager : MonoBehaviour
 {
     int _score = 0;
+    int _distance = 0;
     int _coins = 0;
     int _coinScore = 0;
     int _highScore = 0;
@@ -66,20 +67,32 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-
-
         if (_isMoving)
         {
             _camera.transform.position += Vector3.right * _initialSpeed * Time.deltaTime;
         }
     }
 
+    void AddDistance()
+    {
+        
+    }
+
     void AddCoin()
     {
         _score += _coinScore;
         _coins += 1;
-        Bus<EV_UiScoreUpdate>.Raise(new EV_UiScoreUpdate { value = _score });
-        Bus<EV_UiCoinsUpdate>.Raise(new EV_UiCoinsUpdate { value = _coins });
+        UpdateUiStats();
+    }
+
+    void UpdateUiStats()
+    {
+        Bus<EV_UiStatsUpdate>.Raise(new EV_UiStatsUpdate
+        {
+            score = _score,
+            distance = _distance,
+            coins = _coins
+        });
     }
 
     void SaveHiScore(int value)
