@@ -99,19 +99,8 @@ public class GameManager : MonoBehaviour
         _isMoving = false;
     }
 
-    void SpawnObstacle()
-    {
-        float randomY = Random.Range(_minY, _maxY);
-        Instantiate(_obstaclePrefab, new Vector2(_obstacleSpawnPoint.position.x, randomY), Quaternion.identity);
-    }
-
     void RestartGame()
     {
-        Sequence.Create()
-            
-            .ChainDelay(0.5f)
-            .ChainCallback(() => _score = 0)
-            
-        ;
+        
     }
 }

@@ -45,10 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b722e2e7fdbccc54d859a9d99e985e24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameSettings: {fileID: 11400000, guid: d48506edde5bd2546bb30c3420819a13, type: 2}
+  _gameSettings: {fileID: 11400000, guid: 4ad785ffa58473248b022b4418337295, type: 2}
   _playerPrefab: {fileID: 1198116497981548308, guid: 4b98db73d2f138e46b43efc34a943fe5, type: 3}
-  _camera: {fileID: 0}
-  _playerSpawnPoint: {fileID: 0}
   _obstaclePrefab: {fileID: 9115809234761465898, guid: 3ca77f8d00933ea49b8094e6d6bd7092, type: 3}
   _obstacleSpawnPoint: {fileID: 0}
   _spawnRate: 2

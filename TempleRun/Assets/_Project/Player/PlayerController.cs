@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody _rigidBody;
     PlayerInput _input;
     bool _isMoving = false;
+    bool _isAlive = true;
 
 
     void OnEnable()
@@ -49,6 +50,14 @@ public class PlayerController : MonoBehaviour
         if (_isMoving)
         {
             transform.Translate(Vector3.forward * _speed * Time.deltaTime);
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+            // Simulate tilt with horizontal keys (A/D or Left/Right)
+            Vector3 tilt = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
+#else
+            Vector3 tilt = Input.acceleration;
+#endif
+            transform.Translate(Vector3.right * tilt.x * 3 * Time.deltaTime);
         }
     }
 
