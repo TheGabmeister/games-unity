@@ -7,23 +7,10 @@ public class GameManager : MonoBehaviour
     int _score = 0;
     int _distance = 0;
     int _coins = 0;
-    int _coinScore = 0;
+    int _coinScore = 10;
     int _highScore = 0;
-    bool _isMoving = false;
-    float _initialSpeed = 10.0f;
-    [SerializeField] GameSettings _gameSettings;
-    [SerializeField] GameObject _playerPrefab;
-    GameObject _playerInstance;
-    PlayerController _playerController;
   
-
-    [Header("Obstacles")]
-    [SerializeField] GameObject _obstaclePrefab;
-    [SerializeField] Transform _obstacleSpawnPoint;
-    [SerializeField] float _spawnRate = 2f;
-    [SerializeField] float _minY = -1f;
-    [SerializeField] float _maxY = 1f;
-
+    [SerializeField] GameObject _playerPrefab;
 
     void OnEnable()
     {
@@ -40,12 +27,6 @@ public class GameManager : MonoBehaviour
         Bus<EV_GameRestart>.Remove(RestartGame);
         Bus<EV_PlayerDied>.Remove(HandlePlayerDeath);
         Bus<EV_CoinCollected>.Remove(AddCoin);
-    }
-
-    void Awake()
-    {
-        _initialSpeed = _gameSettings.initialSpeed;
-        _coinScore = _gameSettings.coinScore;
     }
 
     void Start()
@@ -88,15 +69,9 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void StartSpawningObstacles()
-    {
-        InvokeRepeating("SpawnObstacle", 0f, _spawnRate);
-    }
-
     void HandlePlayerDeath()
     {
-        CancelInvoke("SpawnObstacle");
-        _isMoving = false;
+
     }
 
     void RestartGame()
