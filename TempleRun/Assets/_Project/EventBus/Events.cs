@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
 namespace EventBus
-{ 
-    public struct EV_PlayerEnableCam : IEvent { }
+{
+    public struct EV_PlayerPossess : IEvent { public bool value; }
     public struct EV_PlayerDied : IEvent { }
 
 

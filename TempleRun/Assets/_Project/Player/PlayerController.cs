@@ -1,48 +1,60 @@
 using UnityEngine;
 using EventBus;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] GameSettings _gameSettings;
+    float _speed = 10.0f;
     [SerializeField] float _jumpForce = 1250f;
     [SerializeField] GameObject _camera;
     [SerializeField] AudioClip _jumpSound;
     [SerializeField] AudioClip _dieSound;
     [SerializeField] Rigidbody _rigidBody;
-    bool _isControllable = false;
-    bool isDead = false;
+    PlayerInput _input;
+    bool _isMoving = false;
+
 
     void OnEnable()
     {
-        Bus<EV_PlayerEnableCam>.Add(EnableCam);
+        Bus<EV_PlayerPossess>.Add(Possess);
+        Bus<EV_GameStart>.Add(StartMoving);
     }
 
     void OnDisable()
     {
-        Bus<EV_PlayerEnableCam>.Remove(EnableCam);
+        Bus<EV_PlayerPossess>.Remove(Possess);
+        Bus<EV_GameStart>.Remove(StartMoving);
+    }
+
+    void Awake()
+    {
+        _input = GetComponent<PlayerInput>();
+        _speed = _gameSettings.initialSpeed;
     }
 
     void OnJump()
     {
-        Debug.Log("Hello");
+        _rigidBody.AddForce(new Vector3(0, _jumpForce, 0));
         Bus<EV_SfxPlay>.Raise(new EV_SfxPlay { clip = _jumpSound});
     }
 
-    // void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.Space))
-    //     {
-    //         if (!isDead)
-    //         {
-    //             _rb.linearVelocity = Vector2.zero;
-    //             _rb.AddForce(new Vector2(0, _jumpForce));
-
-    //         }
-    //     }
-    // }
-
-    public void EnableCam()
+    void StartMoving()
     {
-        _camera.SetActive(true);
-        
+        _isMoving = true;
+    }
+
+    void Update()
+    {
+        if (_isMoving)
+        {
+            transform.Translate(Vector3.forward * _speed * Time.deltaTime);
+        }
+    }
+
+    public void Possess(EV_PlayerPossess e)
+    {
+        _camera.SetActive(e.value);
+        _input.enabled = e.value;
     }
 }

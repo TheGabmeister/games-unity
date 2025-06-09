@@ -48,11 +48,17 @@ public class GameManager : MonoBehaviour
         _coinScore = _gameSettings.coinScore;
     }
 
+    void Start()
+    {
+        Bus<EV_PlayerPossess>.Raise(new EV_PlayerPossess { value = false });
+    }
+
     void StartGame()
     {
         Bus<EV_UiShowGameplay>.Raise();
         Bus<EV_MusicToggle>.Raise(new EV_MusicToggle { value = true });
-        Tween.Delay(3f).OnComplete(() => Bus<EV_PlayerEnableCam>.Raise());
+        Tween.Delay(3f).OnComplete(() =>
+            Bus<EV_PlayerPossess>.Raise(new EV_PlayerPossess { value = true }));
     }
 
     void AddDistance()
