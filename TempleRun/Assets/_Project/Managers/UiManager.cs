@@ -14,30 +14,24 @@ public enum UiState
 
 public class UiManager : MonoBehaviour
 {
-    [SerializeField] GameObject _startUi;
-    [SerializeField] GameObject _gameplayUi;
-    [SerializeField] GameObject _gameOverUi;
-    [SerializeField] GameObject _scoreUi;
+    [SerializeField] GameObject[] _uiElements;
     [SerializeField] TMP_Text _scoreText;
     [SerializeField] TMP_Text _distanceText;
     [SerializeField] TMP_Text _coinsText;
     int _score = 100;
     Animation _anim;
-
+    
+    
     void OnEnable()
     {
-        Bus<EV_UiShowStart>.Add(ShowStartUi);
-        Bus<EV_UiShowGameplay>.Add(ShowGameplayUi);
-        Bus<EV_UiShowGameOver>.Add(ShowGameOverUi);
         Bus<EV_UiStatsUpdate>.Add(UpdateStats);
+        Bus<EV_UiStateChange>.Add(ChangeState);
     }
 
     void OnDisable()
     {
-        Bus<EV_UiShowStart>.Remove(ShowStartUi);
-        Bus<EV_UiShowGameplay>.Remove(ShowGameplayUi);
-        Bus<EV_UiShowGameOver>.Remove(ShowGameOverUi);
         Bus<EV_UiStatsUpdate>.Remove(UpdateStats);
+        Bus<EV_UiStateChange>.Remove(ChangeState);
     }
     
 
@@ -54,14 +48,13 @@ public class UiManager : MonoBehaviour
     public void Init()
     {
         _scoreText.text = "0";
-        ShowStartUi();
+        ChangeState(new EV_UiStateChange { state = UiState.Start });
         ResetGameOverAnimation();
     }
 
 
     public void StartGame()
     {
-        ShowGameplayUi();
         Bus<EV_GameStart>.Raise();
     }
 
@@ -77,31 +70,31 @@ public class UiManager : MonoBehaviour
         _coinsText.text = e.coins.ToString();
     }
 
-    void ShowStartUi()
+    void ToggleUiElement(int index)
     {
-        _startUi.SetActive(true);
-        _gameplayUi.SetActive(false);
-        _gameOverUi.SetActive(false);
+        for (int i = 0; i < _uiElements.Length; i++)
+        {
+            _uiElements[i].SetActive(i == index);
+        }
     }
-
-    void ShowGameplayUi()
+    
+    void ChangeState(EV_UiStateChange e)
     {
-        _startUi.SetActive(false);
-        _gameplayUi.SetActive(true);
-        _gameOverUi.SetActive(false);
-    }
-
-    void ShowGameOverUi()
-    {
-        _startUi.SetActive(false);
-        _gameplayUi.SetActive(false);
-        _gameOverUi.SetActive(true);
-        _anim.Play();
-    }
-
-    void ShowScoreUi()
-    {
-        _gameOverUi.SetActive(false);
+        switch (e.state)
+        {
+            case UiState.Start:
+                ToggleUiElement(0);
+                break;
+            case UiState.Gameplay:
+                ToggleUiElement(1);
+                break;
+            case UiState.GameOver:
+                ToggleUiElement(2);
+                break;
+            case UiState.Score:
+                ToggleUiElement(3);
+                break;
+        }
         
     }
 

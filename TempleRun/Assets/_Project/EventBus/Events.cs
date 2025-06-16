@@ -11,10 +11,7 @@ namespace EventBus
     public struct EV_CoinCollected : IEvent { }
 
     public struct EV_UiStatsUpdate : IEvent { public int score, distance, coins; }
-
-    public struct EV_UiShowStart : IEvent { }
-    public struct EV_UiShowGameplay : IEvent { }
-    public struct EV_UiShowGameOver : IEvent { }
+    public struct EV_UiStateChange : IEvent { public UiState state; }
 
     public struct EV_MusicToggle : IEvent { public bool value; }
 

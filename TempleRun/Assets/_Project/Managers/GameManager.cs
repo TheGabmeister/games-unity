@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
-        Bus<EV_UiShowGameplay>.Raise();
+        Bus<EV_UiStateChange>.Raise(new EV_UiStateChange { state = UiState.Start });
         Bus<EV_MusicToggle>.Raise(new EV_MusicToggle { value = true });
         Tween.Delay(3f).OnComplete(() =>
             Bus<EV_PlayerPossess>.Raise(new EV_PlayerPossess { value = true }));
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
 
     void HandlePlayerDeath()
     {
-        Bus<EV_UiShowGameOver>.Raise();
+        Bus<EV_UiStateChange>.Raise(new EV_UiStateChange { state = UiState.GameOver });
     }
 
     void RestartGame()

@@ -5132,9 +5132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9dcf5eae64068d4895be762598c6784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startUi: {fileID: 750243800}
-  _gameplayUi: {fileID: 1759795002}
-  _gameOverUi: {fileID: 1090639997}
+  _uiElements: []
   _scoreText: {fileID: 1157345751}
   _distanceText: {fileID: 1595428728}
   _coinsText: {fileID: 234357520}
@@ -5149,6 +5147,7 @@ Animation:
   serializedVersion: 4
   m_Animation: {fileID: 7400000, guid: 5e3bf93f9f3b47f448fb52e949c8c2f5, type: 2}
   m_Animations:
+  - {fileID: 7400000, guid: 5e3bf93f9f3b47f448fb52e949c8c2f5, type: 2}
   - {fileID: 7400000, guid: 5e3bf93f9f3b47f448fb52e949c8c2f5, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 0
