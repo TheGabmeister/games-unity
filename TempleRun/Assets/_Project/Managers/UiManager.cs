@@ -21,17 +21,16 @@ public class UiManager : MonoBehaviour
     int _score = 100;
     Animation _anim;
     
-    
     void OnEnable()
     {
         Bus<EV_UiStatsUpdate>.Add(UpdateStats);
-        Bus<EV_UiStateChange>.Add(ChangeState);
+        Bus<EV_UiStateChange>.Add(ChangeStateHelper);
     }
 
     void OnDisable()
     {
         Bus<EV_UiStatsUpdate>.Remove(UpdateStats);
-        Bus<EV_UiStateChange>.Remove(ChangeState);
+        Bus<EV_UiStateChange>.Remove(ChangeStateHelper);
     }
     
 
@@ -48,7 +47,7 @@ public class UiManager : MonoBehaviour
     public void Init()
     {
         _scoreText.text = "0";
-        ChangeState(new EV_UiStateChange { state = UiState.Start });
+        ChangeState(UiState.Start);
         ResetGameOverAnimation();
     }
 
@@ -78,9 +77,14 @@ public class UiManager : MonoBehaviour
         }
     }
     
-    void ChangeState(EV_UiStateChange e)
+    void ChangeStateHelper(EV_UiStateChange e)
     {
-        switch (e.state)
+		ChangeState(e.state);
+    }
+
+	void ChangeState(UiState state)
+	{
+        switch (state)
         {
             case UiState.Start:
                 ToggleUiElement(0);
@@ -95,8 +99,7 @@ public class UiManager : MonoBehaviour
                 ToggleUiElement(3);
                 break;
         }
-        
-    }
+	}
 
     // Referenced in animation clip
     void AnimateScore()
