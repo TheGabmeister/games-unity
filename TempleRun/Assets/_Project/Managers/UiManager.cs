@@ -4,11 +4,20 @@ using TMPro;
 using PrimeTween;
 using UnityEngine.UI;
 
+public enum UiState
+{
+    Start,
+    Gameplay,
+    GameOver,
+    Score
+}
+
 public class UiManager : MonoBehaviour
 {
     [SerializeField] GameObject _startUi;
     [SerializeField] GameObject _gameplayUi;
     [SerializeField] GameObject _gameOverUi;
+    [SerializeField] GameObject _scoreUi;
     [SerializeField] TMP_Text _scoreText;
     [SerializeField] TMP_Text _distanceText;
     [SerializeField] TMP_Text _coinsText;
@@ -87,11 +96,13 @@ public class UiManager : MonoBehaviour
         _startUi.SetActive(false);
         _gameplayUi.SetActive(false);
         _gameOverUi.SetActive(true);
+        _anim.Play();
     }
 
-    public void StartGameOverUiSequence()
+    void ShowScoreUi()
     {
-        GetComponent<Animation>().Play();
+        _gameOverUi.SetActive(false);
+        
     }
 
     // Referenced in animation clip
@@ -118,3 +129,4 @@ public class UiManager : MonoBehaviour
         // }
     }
 }
+

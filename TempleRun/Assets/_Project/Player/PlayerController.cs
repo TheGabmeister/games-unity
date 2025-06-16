@@ -115,6 +115,5 @@ public class PlayerController : MonoBehaviour
 
         Tween.Custom(slowdownSpeed, _currentSpeed, duration: 1f, onValueChange: newVal => _currentSpeed = newVal);
         Tween.Delay(1.0f).OnComplete(() => _canCollide = true);
-        Debug.Log("Decelerate");
     }
 }

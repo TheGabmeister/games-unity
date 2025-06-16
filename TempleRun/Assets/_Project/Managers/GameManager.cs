@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
         Bus<EV_GameRestart>.Add(RestartGame);
         Bus<EV_PlayerDied>.Add(HandlePlayerDeath);
         Bus<EV_CoinCollected>.Add(AddCoin);
-
     }
 
     void OnDisable()
@@ -71,7 +70,7 @@ public class GameManager : MonoBehaviour
 
     void HandlePlayerDeath()
     {
-
+        Bus<EV_UiShowGameOver>.Raise();
     }
 
     void RestartGame()
