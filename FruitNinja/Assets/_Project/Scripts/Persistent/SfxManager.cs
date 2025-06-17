@@ -1,7 +1,8 @@
 using UnityEngine;
+using UnityServiceLocator;
 
 [RequireComponent(typeof(AudioSource))]
-public class SfxManager : MonoBehaviour
+public class SfxManager : MonoBehaviour, ISfxService
 {
 
     AudioSource _audioSource;
@@ -11,8 +12,13 @@ public class SfxManager : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    void PlaySound(AudioClip clip)
+    public void PlaySound(AudioClip clip)
     {
         _audioSource.PlayOneShot(clip);
     }
+}
+
+public interface ISfxService
+{
+    void PlaySound(AudioClip clip);
 }
