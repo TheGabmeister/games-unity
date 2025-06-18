@@ -4,18 +4,21 @@ using UnityEngine.SceneManagement;
 
 public class LoadSceneIndex : MonoBehaviour
 {
-    [SerializeField] private int _index = 1;
-    
-    void Start()
+    public void LoadSceneByIndex(int index)
     {
-        StartCoroutine(LoadSceneAsynchronously());
+        StartCoroutine(LoadSceneAsyncByIndex(index));
     }
     
-    private IEnumerator LoadSceneAsynchronously()
+    public void LoadSceneByName(string name)
     {
-        if (_index >= 0 && _index < SceneManager.sceneCountInBuildSettings)
+        StartCoroutine(LoadSceneAsyncByName(name));
+    }
+    
+    IEnumerator LoadSceneAsyncByIndex(int index)
+    {
+        if (index >= 0 && index < SceneManager.sceneCountInBuildSettings)
         {
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_index);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(index);
             
             // You can monitor the loading progress
             while (!asyncLoad.isDone)
@@ -29,8 +32,12 @@ public class LoadSceneIndex : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"Invalid scene build index: {_index}");
+            Debug.LogError($"Invalid scene build index: {index}");
         }
     }
 
+    IEnumerator LoadSceneAsyncByName(string name)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(name);
+    }
 }
