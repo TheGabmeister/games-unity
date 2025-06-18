@@ -204,6 +204,7 @@ GameObject:
   m_Component:
   - component: {fileID: 428728610}
   - component: {fileID: 428728611}
+  - component: {fileID: 428728612}
   m_Layer: 0
   m_Name: LoadNextScene
   m_TagString: Untagged
@@ -238,7 +239,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dd033385d2c73f42aa076cfe56b7b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _index: 1
+--- !u!114 &428728612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428728609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01abad869dca86f4c8e7ada988268f94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _delay: 1
+  _unityEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 428728611}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadSceneByIndex
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: Game
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1070232809
 GameObject:
   m_ObjectHideFlags: 0
