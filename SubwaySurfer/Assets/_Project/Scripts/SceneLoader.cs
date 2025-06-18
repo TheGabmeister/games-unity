@@ -18,12 +18,19 @@ public class SceneLoader : MonoBehaviour
     
     public void LoadSceneByName(string name)
     {
-        StartCoroutine(LoadSceneAsyncByName(name));
+        if (IsSceneInBuild(name))
+        {
+            StartCoroutine(LoadSceneAsyncByName(name));
+        }
+        else
+        {
+            Debug.LogError($"Scene '{name}' is not included in the build settings.");
+        }
+
     }
     
     IEnumerator LoadSceneAsyncByIndex(int index)
     {
-s
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(index);
             
         // You can monitor the loading progress
@@ -41,5 +48,22 @@ s
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(name);
         yield return null;
+    }
+    
+    private bool IsSceneInBuild(string sceneName)
+    {
+        int sceneCount = SceneManager.sceneCountInBuildSettings;
+        for (int i = 0; i < sceneCount; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            string sceneNameFromPath = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+        
+            if (string.Equals(sceneNameFromPath, sceneName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+    
+        return false;
     }
 }

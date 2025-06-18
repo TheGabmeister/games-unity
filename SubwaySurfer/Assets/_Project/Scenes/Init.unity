@@ -251,14 +251,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01abad869dca86f4c8e7ada988268f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _delay: 1
+  _delay: 0
   _unityEvent:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 428728611}
         m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadSceneByIndex
-        m_Mode: 3
+        m_MethodName: LoadSceneByName
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
