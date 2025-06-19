@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+// Define your events here. For larger projects, create separate files that group the events according 
+// to the system they manage: PlayerEvents.cs, GameStateEvents.cs, UIEvents.cs...
+
 namespace EventBus
 {
     public struct EV_PlayerPossess : IEvent { public bool value; }
