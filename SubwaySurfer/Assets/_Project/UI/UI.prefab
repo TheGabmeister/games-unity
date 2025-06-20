@@ -121,9 +121,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: b36627f44e3e39849a362b97a4876c06, type: 2}
-        m_TargetAssemblyTypeName: Obvious.Soap.ScriptableEventNoParam, Obvious.Soap
-        m_MethodName: Raise
+      - m_Target: {fileID: 3351011710652873089}
+        m_TargetAssemblyTypeName: UIPresenter, Assembly-CSharp
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1876,6 +1876,8 @@ MonoBehaviour:
   _scoreText: {fileID: 0}
   _distanceText: {fileID: 0}
   _coinsText: {fileID: 0}
+  _onUIStateChange: {fileID: 11400000, guid: 0449d56d97323734bb5214e2175bcf28, type: 2}
+  _onGameStateStart: {fileID: 11400000, guid: af49f6fdcdef55a43bda21e7a7367b18, type: 2}
 --- !u!1 &8952779893183745596
 GameObject:
   m_ObjectHideFlags: 0

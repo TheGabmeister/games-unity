@@ -7,29 +7,24 @@ public class GameStateManager : MonoBehaviour
     [Header("Listen to these events...")] 
     [SerializeField] ScriptableEventNoParam _onGameStateStart;
     
+    [Header("Call these events...")] 
+    [SerializeField] ScriptableEventUIState _onUIStateChange;
+    [SerializeField] ScriptableEventNoParam _onPlayerStartMoving;
+    
     void OnEnable()
     {
-        _onGameStateStart.OnRaised += OnTest;
+        _onGameStateStart.OnRaised += StartGameplay;
     }
     
     void OnDisable()
     {
-        _onGameStateStart.OnRaised -= OnTest;
+        _onGameStateStart.OnRaised -= StartGameplay;
     }
 
-    void Start()
-    {
-        GameState.InitGame();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     
-    void OnTest()
+    void StartGameplay()
     {
-        Debug.Log("Testing");
+        _onUIStateChange.Raise(UIState.GameOver);
+        _onPlayerStartMoving.Raise();
     }
 }

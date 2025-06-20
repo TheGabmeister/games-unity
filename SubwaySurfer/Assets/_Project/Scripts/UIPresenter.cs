@@ -10,11 +10,24 @@ public class UIPresenter : MonoBehaviour
     [SerializeField] TMP_Text _distanceText;
     [SerializeField] TMP_Text _coinsText;
     
+    [Header("Listen to these events...")] 
+    [SerializeField] ScriptableEventUIState _onUIStateChange;
+    
     [Header("Call these events...")] 
     [SerializeField] ScriptableEventNoParam _onGameStateStart;
     
     int _score = 100;
 
+    void OnEnable()
+    {
+        _onUIStateChange.OnRaised += ChangeState;
+    }
+    
+    void OnDisable()
+    {
+        _onUIStateChange.OnRaised -= ChangeState;
+    }
+    
     void Start()
     {
         ChangeState(UIState.Menu);
@@ -50,11 +63,11 @@ public class UIPresenter : MonoBehaviour
         }
 	}
     
-    private enum UIState
-    {
-        Menu,
-        Gameplay,
-        GameOver,
-    }
 }
 
+public enum UIState
+{
+    Menu,
+    Gameplay,
+    GameOver,
+}

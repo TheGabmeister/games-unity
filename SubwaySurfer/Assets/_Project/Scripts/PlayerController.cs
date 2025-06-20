@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using PrimeTween;
-
+using Obvious.Soap;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,15 +17,17 @@ public class PlayerController : MonoBehaviour
     bool _isAlive = true;
     bool _canCollide = true;
 
+    [Header("Listen to these events...")] 
+    [SerializeField] ScriptableEventNoParam _onPlayerStartMoving;
 
     void OnEnable()
     {
-
+        _onPlayerStartMoving.OnRaised += StartMoving;
     }
-
+    
     void OnDisable()
     {
-
+        _onPlayerStartMoving.OnRaised -= StartMoving;
     }
 
     void Awake()
