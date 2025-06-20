@@ -73,11 +73,11 @@ public class MainMenuUI : MonoBehaviour
 
     public void LoadGame()
     {
-        Bus<E_Game_Load>.Raise(new E_Game_Load { });
+        Bus<EV_GameLoad>.Raise(new EV_GameLoad { });
     }
     public void NewGame()
     {
-        Bus<E_Game_New>.Raise(new E_Game_New { });
+        Bus<EV_GameNew>.Raise(new EV_GameNew { });
     }
 
     public void SelectPlayerSlot(int num)

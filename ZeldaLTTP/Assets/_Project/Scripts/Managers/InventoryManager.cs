@@ -10,11 +10,11 @@ public class InventoryManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Bus<E_Inventory_Add>.Add(AddItem);
+        Bus<EV_InventoryAdd>.Add(AddItem);
     }
     private void OnDisable()
     {
-        Bus<E_Inventory_Add>.Remove(AddItem);
+        Bus<EV_InventoryAdd>.Remove(AddItem);
     }
 
     private void Start()
@@ -22,7 +22,7 @@ public class InventoryManager : MonoBehaviour
         
     }
 
-    void AddItem(E_Inventory_Add message)
+    void AddItem(EV_InventoryAdd message)
     {
         switch(message.value.type)
         {

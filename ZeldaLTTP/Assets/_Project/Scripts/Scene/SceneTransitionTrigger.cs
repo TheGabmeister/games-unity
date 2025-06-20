@@ -11,7 +11,7 @@ public class SceneTransitionTrigger : MonoBehaviour
         if(collision.CompareTag("Player"))
         {
             collision.gameObject.transform.position += gameObject.transform.right * 3;
-            Bus<E_Scene_Switch>.Raise(new E_Scene_Switch { value = _targetScene });
+            Bus<EV_SceneSwitch>.Raise(new EV_SceneSwitch { value = _targetScene });
         }
     }
 }

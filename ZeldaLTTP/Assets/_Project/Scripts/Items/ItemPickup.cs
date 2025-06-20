@@ -32,7 +32,7 @@ public class ItemPickup : MonoBehaviour
         //_onPlaySound?.Raise(_audioClip);
 
         _unityEvent?.Invoke();
-        Bus<E_Inventory_Add>.Raise(new E_Inventory_Add { value = _item, amount = _amount});
+        Bus<EV_InventoryAdd>.Raise(new EV_InventoryAdd { value = _item, amount = _amount});
 
         Destroy(gameObject);
     }

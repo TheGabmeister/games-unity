@@ -1,24 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using EventBus;
 using PrimeTween;
 
-public class LevelStreamer : MonoBehaviour
+public class SceneLoader : PersistentSingleton<SceneLoader>
 {
     string _currentScene;
     string _nextScene;
     bool _isLoading = false;
-
-    private void OnEnable()
-    {
-        Bus<E_Scene_Switch>.Add(SwitchScene);
-        Bus<E_Scene_Load>.Add(LoadScene);
-    }
-    private void OnDisable()
-    {
-        Bus<E_Scene_Switch>.Remove(SwitchScene);
-        Bus<E_Scene_Load>.Remove(LoadScene);
-    }
 
     private void Start()
     {
@@ -26,7 +14,7 @@ public class LevelStreamer : MonoBehaviour
     }
 
     // Loads the new scene. Afterwards, unloads the previous scene.
-    void SwitchScene(E_Scene_Switch message)
+    void SwitchScene(string sceneName)
     {
         if (_isLoading) 
         {
@@ -35,7 +23,7 @@ public class LevelStreamer : MonoBehaviour
         }
 
         _isLoading = true;
-        _nextScene = message.value;
+        _nextScene = sceneName;
         SceneManager.sceneLoaded += BeginUnloadingScene;
         SceneManager.LoadScene(_nextScene, LoadSceneMode.Additive);
     }
@@ -49,9 +37,9 @@ public class LevelStreamer : MonoBehaviour
         _isLoading = false;
     }
 
-    void LoadScene(E_Scene_Load message)
+    void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(message.value);
-        _currentScene = message.value;
+        SceneManager.LoadScene(sceneName);
+        _currentScene = sceneName;
     }
 }

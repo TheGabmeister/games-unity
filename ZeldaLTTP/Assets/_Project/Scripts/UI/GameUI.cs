@@ -9,13 +9,13 @@ public class GameUI : MonoBehaviour
 
     private void OnEnable()
     {
-        Bus<E_GameUI_ToggleMenu>.Add(ToggleSaveQuitMenu);
-        Bus<E_GameUI_ToggleInventory>.Add(ToggleInventory);
+        Bus<EV_UIToggleMenu>.Add(ToggleSaveQuitMenu);
+        Bus<EV_UIToggleInventory>.Add(ToggleInventory);
     }
     private void OnDisable()
     {
-        Bus<E_GameUI_ToggleMenu>.Remove(ToggleSaveQuitMenu);
-        Bus<E_GameUI_ToggleInventory>.Remove(ToggleInventory);
+        Bus<EV_UIToggleMenu>.Remove(ToggleSaveQuitMenu);
+        Bus<EV_UIToggleInventory>.Remove(ToggleInventory);
     }
 
     private void ToggleSaveQuitMenu()
@@ -27,12 +27,12 @@ public class GameUI : MonoBehaviour
     {
         if (_inventory.activeSelf)
         {
-            Bus<E_Game_Pause>.Raise(new E_Game_Pause { value = false});
+            Bus<EV_GamePause>.Raise(new EV_GamePause { value = false});
             _inventory.SetActive(false);
         }
         else
         {
-            Bus<E_Game_Pause>.Raise(new E_Game_Pause { value = true});
+            Bus<EV_GamePause>.Raise(new EV_GamePause { value = true});
             _inventory.SetActive(true);
         }
         
@@ -40,17 +40,17 @@ public class GameUI : MonoBehaviour
 
     public void Save()
     {
-        Bus<E_Game_Save>.Raise(new E_Game_Save { });
+        Bus<EV_GameSave>.Raise(new EV_GameSave { });
     }
 
     public void SaveAndQuit()
     {
-        Bus<E_Game_Save>.Raise(new E_Game_Save { });
-        Bus<E_Game_Restart>.Raise(new E_Game_Restart { });
+        Bus<EV_GameSave>.Raise(new EV_GameSave { });
+        Bus<EV_GameRestart>.Raise(new EV_GameRestart { });
     }
 
     public void Quit()
     {
-        Bus<E_Game_Restart>.Raise(new E_Game_Restart { });
+        Bus<EV_GameRestart>.Raise(new EV_GameRestart { });
     }
 }

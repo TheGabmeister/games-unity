@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     void ToggleMenu()
     {
-        Bus<E_GameUI_ToggleMenu>.Raise(new E_GameUI_ToggleMenu { });
+        Bus<EV_UIToggleMenu>.Raise(new EV_UIToggleMenu { });
     }
 
     void Interact()
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
 
     void ToggleInventory()
     {
-        Bus<E_GameUI_ToggleInventory>.Raise(new E_GameUI_ToggleInventory { });
+        Bus<EV_UIToggleInventory>.Raise(new EV_UIToggleInventory { });
     }
 
     void Attack()
