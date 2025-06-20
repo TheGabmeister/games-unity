@@ -14,21 +14,21 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Bus<E_Game_Restart>.Add(RestartGame);
-        Bus<E_Game_Save>.Add(SaveGame);
-        Bus<E_Game_Load>.Add(LoadGame);
-        Bus<E_Game_New>.Add(NewGame);
-        Bus<E_Game_Pause>.Add(PauseGame);
-        Bus<E_Scene_SetCurrentScene>.Add(SetCurrentScene);
+        Bus<EV_GameRestart>.Add(RestartGame);
+        Bus<EV_GameSave>.Add(SaveGame);
+        Bus<EV_GameLoad>.Add(LoadGame);
+        Bus<EV_GameNew>.Add(NewGame);
+        Bus<EV_GamePause>.Add(PauseGame);
+        Bus<EV_SceneSetCurrent>.Add(SetCurrentScene);
     }
     private void OnDisable()
     {
-        Bus<E_Game_Restart>.Remove(RestartGame);
-        Bus<E_Game_Save>.Remove(SaveGame);
-        Bus<E_Game_Load>.Remove(LoadGame);
-        Bus<E_Game_New>.Remove(NewGame);
-        Bus<E_Game_Pause>.Remove(PauseGame);
-        Bus<E_Scene_SetCurrentScene>.Remove(SetCurrentScene);
+        Bus<EV_GameRestart>.Remove(RestartGame);
+        Bus<EV_GameSave>.Remove(SaveGame);
+        Bus<EV_GameLoad>.Remove(LoadGame);
+        Bus<EV_GameNew>.Remove(NewGame);
+        Bus<EV_GamePause>.Remove(PauseGame);
+        Bus<EV_SceneSetCurrent>.Remove(SetCurrentScene);
     }
 
     void Start()
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
         // fade to black
         if (_player) Destroy(_player);
 
-        Bus<E_Scene_Load>.Raise(new E_Scene_Load { value = "MainMenu"});
+        Bus<EV_SceneLoad>.Raise(new EV_SceneLoad { value = "MainMenu"});
     }
 
     void NewGame()
@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
     void StartGame()
     {
         SceneManager.sceneLoaded += SpawnGamePrefabs;
-        Bus<E_Scene_Load>.Raise(new E_Scene_Load { value = _playerData.currentScene});
+        Bus<EV_SceneLoad>.Raise(new EV_SceneLoad { value = _playerData.currentScene});
     }
 
     void SpawnGamePrefabs(Scene scene, LoadSceneMode mode)
@@ -117,12 +117,12 @@ public class GameManager : MonoBehaviour
         StartGame();
     }
 
-    void SetCurrentScene(E_Scene_SetCurrentScene message)
+    void SetCurrentScene(EV_SceneSetCurrent message)
     {
         _playerData.currentScene = message.value;
     }
 
-    void PauseGame(E_Game_Pause message)
+    void PauseGame(EV_GamePause message)
     {
         if (message.value)
         {
