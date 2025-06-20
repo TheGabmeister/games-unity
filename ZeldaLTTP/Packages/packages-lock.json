@@ -14,6 +14,13 @@
       "dependencies": {},
       "hash": "dbd76ed996483d219c39d240f785b1790aa039ed"
     },
+    "com.stoneshelter.guid": {
+      "version": "https://github.com/stonesheltergames/Unity-GUID.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d119035cd7ca5eb335e182555c9fade8de1e3b06"
+    },
     "com.unity.2d.animation": {
       "version": "10.1.4",
       "depth": 1,
