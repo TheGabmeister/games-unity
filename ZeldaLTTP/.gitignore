@@ -74,6 +74,10 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+# Code editor files
 .vsconfig
 .vscode
 .idea
+
+# Third-party assets
+Assets/Plugins
