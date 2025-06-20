@@ -1766,7 +1766,7 @@ GameObject:
   - component: {fileID: 1659544452591450163}
   - component: {fileID: 3351011710652873089}
   m_Layer: 5
-  m_Name: UIController
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

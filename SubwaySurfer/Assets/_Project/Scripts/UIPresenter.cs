@@ -1,18 +1,29 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Obvious.Soap;
 
-
-public class UIManager : MonoBehaviour
+public class UIPresenter : MonoBehaviour
 {
     [SerializeField] GameObject[] _uiElements;
     [SerializeField] TMP_Text _scoreText;
     [SerializeField] TMP_Text _distanceText;
     [SerializeField] TMP_Text _coinsText;
     
+    [Header("Call these events...")] 
+    [SerializeField] ScriptableEventNoParam _onGameStateStart;
+    
     int _score = 100;
+
+    void Start()
+    {
+        ChangeState(UIState.Menu);
+    }
     
-    
+    public void StartGame()
+    {
+        _onGameStateStart.Raise();
+    }
 
     void ToggleUiElement(int index)
     {
@@ -39,11 +50,11 @@ public class UIManager : MonoBehaviour
         }
 	}
     
+    private enum UIState
+    {
+        Menu,
+        Gameplay,
+        GameOver,
+    }
 }
 
-public enum UIState
-{
-    Menu,
-    Gameplay,
-    GameOver,
-}
