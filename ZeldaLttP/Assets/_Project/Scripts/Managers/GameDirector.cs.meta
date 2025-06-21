@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: 406c1136071b6844a83c7ebdd06b44ba
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _playerPrefab: {instanceID: 0}
+  - _sceneData: {fileID: 11400000, guid: 3903c3206cdf42544a048a33eae541bb, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

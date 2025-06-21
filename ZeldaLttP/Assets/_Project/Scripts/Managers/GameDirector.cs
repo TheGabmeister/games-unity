@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using EventBus;
 using UnityEngine.SceneManagement;
+using Eflatun.SceneReference;
 
 public class GameDirector : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class GameDirector : MonoBehaviour
     [SerializeField] GameObject[] _prefabs;
 
     PlayerData _playerData;
+    [SerializeField] SceneData _sceneData;
 
     private void OnEnable()
     {
@@ -33,6 +35,8 @@ public class GameDirector : MonoBehaviour
 
     void Start()
     {
+        var testScene = new SceneReference(SceneManager.GetActiveScene().path);
+        
         string activeSceneName = SceneManager.GetActiveScene().name;
         if (activeSceneName == "MainMenu" || activeSceneName == "SplashScreen") return;
         Debug.Log(SceneView.lastActiveSceneView.camera.transform.position);

@@ -1,14 +1,14 @@
+using Eflatun.SceneReference;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SceneData", menuName = "Scriptable Objects/SceneData")]
 public class SceneData : ScriptableObject
 {
-    public string sceneName;
-    
+    public GenericDictionary<SceneReference, SceneType> SceneList;
 }
 
-public enum RegionType
+public enum SceneType
 {
-    Overworld,
-    Dungeon
+    Menu,
+    Gameplay
 }
