@@ -1,9 +1,8 @@
 using UnityEngine;
 using EventBus;
 using UnityEngine.SceneManagement;
-using UnityEditor;
 
-public class GameManager : MonoBehaviour
+public class GameDirector : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
 
