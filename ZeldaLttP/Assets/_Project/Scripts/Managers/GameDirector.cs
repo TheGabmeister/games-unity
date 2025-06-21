@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 using EventBus;
 using UnityEngine.SceneManagement;
 
@@ -32,9 +33,12 @@ public class GameDirector : MonoBehaviour
 
     void Start()
     {
-        if (SceneManager.GetActiveScene().name == "MainMenu") return;
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        if (activeSceneName == "MainMenu" || activeSceneName == "SplashScreen") return;
+        Debug.Log(SceneView.lastActiveSceneView.camera.transform.position);
+
         
-        SpawnGamePrefabs(default, default);
+        //SpawnGamePrefabs(default, default);
     }
 
     void RestartGame()
