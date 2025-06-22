@@ -18,28 +18,17 @@ public static class SaveManager
         return $"save{saveSlot}.es3";
     }
 
-    public static void CreateNewSave(int saveSlot = 1)
+    public static void CreateNewSave(int saveSlot, string username)
     {
         CurrentSaveSlot = saveSlot;
         _playerData = new PlayerData();
-        _playerData.username = "ASDF";
-        ES3.Save("playerData", _playerData, SaveFileName + saveSlot.ToString());
+        _playerData.username = username;
+        ES3.Save("playerData", _playerData, SaveFileName + saveSlot);
     }
 
-    public static void LoadData(int saveSlot = 1)
+    public static PlayerData LoadData(int saveSlot)
     {
-        CurrentSaveSlot = saveSlot;
-        string filename = GetSaveFilename(saveSlot);
-        
-        if (ES3.FileExists(filename) && ES3.KeyExists("playerData", filename))
-        {
-            _playerData = ES3.Load<PlayerData>("playerData", filename);
-            Debug.Log($"Loaded save slot {saveSlot}: {_playerData.username}");
-        }
-        else
-        {
-            Debug.LogWarning($"Save slot {saveSlot} does not exist");
-        }
+        return ES3.Load<PlayerData>("playerData", SaveFileName + saveSlot);
     }
     
     public static bool DoesSaveExist(int saveSlot)

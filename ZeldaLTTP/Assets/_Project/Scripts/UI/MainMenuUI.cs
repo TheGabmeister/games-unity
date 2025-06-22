@@ -29,10 +29,12 @@ public class MainMenuUI : MonoBehaviour
     {
         //ResetSelectedButton();
         //SaveManager.Init();
-        //SaveManager.CreateNewSave(1);
         for (int i = 1; i <= _saveSlots.Length; i++)
         {
-            Debug.Log(SaveManager.DoesSaveExist(i));
+            if (SaveManager.DoesSaveExist(i))
+            {
+                Debug.Log(SaveManager.LoadData(i).username);
+            }
         }
         
         

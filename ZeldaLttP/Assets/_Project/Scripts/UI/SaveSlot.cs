@@ -6,7 +6,6 @@ using EventBus;
 public class SaveSlot : MonoBehaviour
 {
     public static int slot = 0;
-    [SerializeField] string _filename;
     [SerializeField] TMP_Text _text;
     PlayerData _playerData;
     [SerializeField] MainMenuUI _mainMenu;

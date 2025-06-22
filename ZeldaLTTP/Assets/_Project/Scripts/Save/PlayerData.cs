@@ -1,6 +1,6 @@
 using UnityEngine;
 
-class PlayerData
+public class PlayerData
 {
     public string username;
     public Vector2 position;
