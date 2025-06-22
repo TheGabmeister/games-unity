@@ -36,22 +36,54 @@ public class GameDirector : MonoBehaviour
 
     void Start()
     {
-        string testScene = SceneManager.GetActiveScene().name;
-        
-        foreach (var sceneReference in _sceneDict.scenes)
+        if (IsGameplayScene())
         {
-            if(testScene == sceneReference.Key.Name)
-                Debug.Log(sceneReference.Value);
+            SpawnPlayer(GetPlayerStart());
         }
-        
-        string activeSceneName = SceneManager.GetActiveScene().name;
-        if (activeSceneName == "MainMenu" || activeSceneName == "SplashScreen") return;
-        Debug.Log(SceneView.lastActiveSceneView.camera.transform.position);
-
-        
-        //SpawnGamePrefabs(default, default);
     }
 
+    bool IsGameplayScene()
+    {
+        // Check if starting scene has SceneType.Gameplay
+        // Because the type SceneReference cannot be checked for equality, we instead
+        // iterate over the names of each SceneReference and compare that.
+        string startScene = SceneManager.GetActiveScene().name;
+        foreach (var sceneReference in _sceneDict.scenes)
+        {
+            if (startScene == sceneReference.Key.Name)
+            {
+                if(sceneReference.Value == SceneType.Gameplay)
+                {
+                    return true;
+                }
+                break;
+            }
+        }
+        Debug.LogError($"Scene '{startScene}' not found in scene dictionary!");
+        return false;
+    }
+    
+    Vector3 GetPlayerStart()
+    {
+        var playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+        if (!playerStart)
+        {
+            playerStart = GameObject.Find("PlayerStart");
+            if (!playerStart)
+            {
+                Debug.Log("No PlayerStart found. Will use camera view instead");
+                Vector3 cameraPos = SceneView.lastActiveSceneView.camera.transform.position;
+                return new Vector3(cameraPos.x, cameraPos.y, 0);
+            }
+        }
+        return playerStart.transform.position;
+    }
+
+    void SpawnPlayer(Vector3 pos)
+    {
+        
+    }
+    
     void RestartGame()
     {
         // play sound

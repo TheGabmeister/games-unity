@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7d4bab70d67f584292d546d9f6aed9a, type: 3}
   m_Name: SceneDictionary
   m_EditorClassIdentifier: 
-  SceneList:
+  scenes:
     list:
     - Key:
         asset: {fileID: 102900000, guid: 0e8f5c6848d01ba478f53c8ed33e0e71, type: 3}
@@ -25,5 +25,9 @@ MonoBehaviour:
     - Key:
         asset: {fileID: 102900000, guid: 3045769f973d56b4fa8e3c8d0288cc60, type: 3}
         guid: 3045769f973d56b4fa8e3c8d0288cc60
+      Value: 1
+    - Key:
+        asset: {fileID: 102900000, guid: ccfa645b88c435f46bca549c91fc5ac9, type: 3}
+        guid: ccfa645b88c435f46bca549c91fc5ac9
       Value: 1
     keyCollision: 0
