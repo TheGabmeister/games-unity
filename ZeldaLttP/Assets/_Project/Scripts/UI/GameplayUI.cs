@@ -2,7 +2,7 @@ using EventBus;
 using UnityEngine;
 
 
-public class GameUI : MonoBehaviour
+public class GameplayUI : MonoBehaviour
 {
     [SerializeField] GameObject _saveQuitMenu;
     [SerializeField] GameObject _inventory;
@@ -23,7 +23,7 @@ public class GameUI : MonoBehaviour
         _saveQuitMenu.SetActive(_saveQuitMenu.activeSelf ? false : true);    
     }
 
-    private void ToggleInventory()
+    public void ToggleInventory()
     {
         if (_inventory.activeSelf)
         {

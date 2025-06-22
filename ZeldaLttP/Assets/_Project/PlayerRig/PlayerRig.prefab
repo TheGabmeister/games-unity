@@ -471,6 +471,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15ae8f83c431abd46b4aba7abed4b535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameplayUI: {fileID: 8722059927160558385}
   _interactDistance: 1
   _weapon: {fileID: 7946595484320118108}
 --- !u!114 &4837030889502750914
@@ -876,3 +877,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7059417163989478403, guid: 7808d02e37786824480d01434c38a4a2, type: 3}
   m_PrefabInstance: {fileID: 4154279233641103198}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8722059927160558385 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4660114803562818671, guid: 7808d02e37786824480d01434c38a4a2, type: 3}
+  m_PrefabInstance: {fileID: 4154279233641103198}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a064f19d1472b4cb573e4ec3aedaf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

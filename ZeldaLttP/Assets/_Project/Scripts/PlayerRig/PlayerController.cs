@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
 
     PlayerInputHandler _input;
+    [SerializeField] GameplayUI _gameplayUI;
     [SerializeField] float _interactDistance = 1f;
     [SerializeField] Weapon _weapon;
 
@@ -61,7 +62,8 @@ public class PlayerController : MonoBehaviour
 
     void ToggleInventory()
     {
-        Bus<EV_UIToggleInventory>.Raise(new EV_UIToggleInventory { });
+        //Bus<EV_UIToggleInventory>.Raise(new EV_UIToggleInventory { });
+        _gameplayUI.ToggleInventory();
     }
 
     void Attack()
