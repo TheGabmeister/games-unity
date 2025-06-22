@@ -53,8 +53,8 @@ public class GameDirector : MonoBehaviour
         {
             case GameState.Bootup: 
                 break;
-            case GameState.StartMenu:
-                _state = GameState.StartMenu;
+            case GameState.MainMenu:
+                _state = GameState.MainMenu;
                 _sceneLoader.LoadSceneByIndex(1);
                 break;
             case GameState.Gameplay:
@@ -181,7 +181,7 @@ public class GameDirector : MonoBehaviour
 public enum GameState
 {
     Bootup,
-    StartMenu,
+    MainMenu,
     Gameplay,
     GameOver
 }

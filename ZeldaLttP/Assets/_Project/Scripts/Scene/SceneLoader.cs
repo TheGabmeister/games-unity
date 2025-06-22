@@ -42,7 +42,8 @@ public class SceneLoader : MonoBehaviour
     {
         if (index >= 0 && index < SceneManager.sceneCountInBuildSettings)
         {
-            StartCoroutine(LoadSceneAsyncByIndex(index));
+            //StartCoroutine(LoadSceneAsyncByIndex(index));
+            SceneManager.LoadScene(index);
         }
         else
         {

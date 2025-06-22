@@ -128,4 +128,17 @@ public class MainMenuUI : MonoBehaviour
         _saveSlots[SaveSlot.slot].Refresh();
         _inputName.text = "";
     }
+    
+    public void Test()
+    {
+        Debug.Log("test");
+    }
+
+    enum MainMenuUIState
+    {
+        StartAnimation,
+        AwaitingStartInput,
+        PlayerSelection,
+        NameRegistration
+    }
 }
