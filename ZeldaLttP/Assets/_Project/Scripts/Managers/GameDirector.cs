@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using EventBus;
@@ -12,8 +13,8 @@ public class GameDirector : MonoBehaviour
     [SerializeField] GameObject[] _prefabs;
 
     PlayerData _playerData;
-    [SerializeField] SceneData _sceneData;
-
+    [SerializeField] SceneDictionarySO _sceneDict;
+    
     private void OnEnable()
     {
         Bus<EV_GameRestart>.Add(RestartGame);
@@ -35,7 +36,13 @@ public class GameDirector : MonoBehaviour
 
     void Start()
     {
-        var testScene = new SceneReference(SceneManager.GetActiveScene().path);
+        string testScene = SceneManager.GetActiveScene().name;
+        
+        foreach (var sceneReference in _sceneDict.scenes)
+        {
+            if(testScene == sceneReference.Key.Name)
+                Debug.Log(sceneReference.Value);
+        }
         
         string activeSceneName = SceneManager.GetActiveScene().name;
         if (activeSceneName == "MainMenu" || activeSceneName == "SplashScreen") return;
