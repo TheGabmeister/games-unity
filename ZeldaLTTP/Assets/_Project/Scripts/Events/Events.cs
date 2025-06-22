@@ -33,6 +33,9 @@ namespace EventBus
     public struct EV_UIToggleMenu : IEvent { }
     public struct EV_UIToggleInventory : IEvent { }
 
+    public struct EV_ScreenFadeToBlack : IEvent { public float duration; }
+    public struct EV_ScreenFadeToClear : IEvent { public float duration; }
+    
     // MusicManager Events
     public struct EV_MusicChange : IEvent { public AudioClip value; }
     public struct EV_MusicTogglePause : IEvent { public bool value; }

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using TMPro;
+using PrimeTween;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -132,10 +133,17 @@ public class MainMenuUI : MonoBehaviour
     
     public void OnSubmit()
     {
+        
         if (_state == MainMenuUIState.AwaitingStartInput)
         {
-            ToggleActiveMenu(1);
-            _state = MainMenuUIState.PlayerSelection;
+            Sequence.Create()
+                .ChainCallback(() => Bus<EV_ScreenFadeToBlack>.Raise(new EV_ScreenFadeToBlack { duration = 0.5f }))
+                .ChainDelay(0.5f)
+                .ChainCallback(() => {
+                    ToggleActiveMenu(1);
+                    _state = MainMenuUIState.PlayerSelection;
+                })
+                .ChainCallback(() => Bus<EV_ScreenFadeToClear>.Raise(new EV_ScreenFadeToClear { duration = 0.5f }));
         }
     }
 
