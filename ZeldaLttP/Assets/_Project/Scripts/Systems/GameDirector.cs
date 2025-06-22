@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameDirector : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
-
+    int _saveSlot = 0;
     GameObject _player;
     GameState _state;
     [SerializeField] SceneLoader _sceneLoader;
@@ -14,12 +14,14 @@ public class GameDirector : MonoBehaviour
     
     private void OnEnable()
     {
+        Bus<EV_GameStart>.Add(StartGame);
         Bus<EV_GameRestart>.Add(RestartGame);
         Bus<EV_GamePause>.Add(PauseGame);
         Bus<EV_GameStateChange>.Add(ChangeState);
     }
     private void OnDisable()
     {
+        Bus<EV_GameStart>.Remove(StartGame);
         Bus<EV_GameRestart>.Remove(RestartGame);
         Bus<EV_GamePause>.Remove(PauseGame);
         Bus<EV_GameStateChange>.Add(ChangeState);
@@ -32,10 +34,16 @@ public class GameDirector : MonoBehaviour
         {
             SpawnPlayer(Utils.GetPlayerStart());
         }
-#else
-        
 #endif
 
+    }
+
+    void StartGame(EV_GameStart e)
+    {
+        _playerData = e.data;
+        _saveSlot = e.saveSlot;
+        _sceneLoader.LoadSceneByIndex(2);
+        SpawnPlayer(_playerData.position);
     }
 
     void ChangeState(EV_GameStateChange e)
@@ -80,7 +88,7 @@ public class GameDirector : MonoBehaviour
         return false;
     }
 
-    void SpawnPlayer(Vector3 pos)
+    void SpawnPlayer(Vector2 pos)
     {
         Instantiate(_playerPrefab, pos, Quaternion.identity);
     }
