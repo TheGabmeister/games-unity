@@ -38,12 +38,11 @@ public class SceneLoader : MonoBehaviour
         _isLoading = false;
     }
     
-    public void LoadSceneByIndex(int index)
+    public void LoadSceneByIndex(int index, System.Action onComplete = null)
     {
         if (index >= 0 && index < SceneManager.sceneCountInBuildSettings)
         {
-            //StartCoroutine(LoadSceneAsyncByIndex(index));
-            SceneManager.LoadScene(index);
+            StartCoroutine(LoadSceneAsyncByIndex(index, onComplete));
         }
         else
         {
@@ -72,7 +71,7 @@ public class SceneLoader : MonoBehaviour
         yield return null;
     }
     
-    IEnumerator LoadSceneAsyncByIndex(int index)
+    IEnumerator LoadSceneAsyncByIndex(int index, System.Action onComplete = null)
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(index);
             
@@ -85,6 +84,7 @@ public class SceneLoader : MonoBehaviour
             // Yield control back to Unity until next frame
             yield return null;
         }
+        onComplete?.Invoke();
     }
     
     private bool IsSceneInBuild(string sceneName)

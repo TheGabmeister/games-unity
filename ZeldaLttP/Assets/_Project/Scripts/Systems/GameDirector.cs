@@ -1,5 +1,6 @@
 using UnityEngine;
 using EventBus;
+using PrimeTween;
 using UnityEngine.SceneManagement;
 
 public class GameDirector : MonoBehaviour
@@ -42,8 +43,11 @@ public class GameDirector : MonoBehaviour
     {
         _playerData = e.data;
         _saveSlot = e.saveSlot;
-        _sceneLoader.LoadSceneByIndex(2);
-        SpawnPlayer(_playerData.position);
+        _sceneLoader.LoadSceneByIndex(2, () => {
+            SpawnPlayer(_playerData.position);
+        });
+
+        
     }
 
     void ChangeState(EV_GameStateChange e)
