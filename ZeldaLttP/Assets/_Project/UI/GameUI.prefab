@@ -1832,7 +1832,6 @@ GameObject:
   - component: {fileID: 4653003688759403862}
   - component: {fileID: 810463404324658719}
   - component: {fileID: 4660114803562818671}
-  - component: {fileID: 3041166886724448773}
   m_Layer: 5
   m_Name: GameUI
   m_TagString: Untagged
@@ -1935,23 +1934,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5289041619384882577}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc662d4a793b55a4190bc21e375eac33, type: 3}
+  m_Script: {fileID: 11500000, guid: 17a064f19d1472b4cb573e4ec3aedaf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _saveQuitMenu: {fileID: 5181792311284783907}
   _inventory: {fileID: 125823853252157442}
---- !u!114 &3041166886724448773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5289041619384882577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a9b7f37d9d393e44b72a1a226fa18a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5433177427627905104
 GameObject:
   m_ObjectHideFlags: 0
