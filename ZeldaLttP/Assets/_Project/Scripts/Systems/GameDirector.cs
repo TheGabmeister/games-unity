@@ -160,14 +160,14 @@ public class GameDirector : MonoBehaviour
         StartGame();
     }
 
-    void SetCurrentScene(EV_SceneSetCurrent message)
+    void SetCurrentScene(EV_SceneSetCurrent e)
     {
-        _playerData.currentScene = message.value;
+        _playerData.currentScene = e.value;
     }
 
-    void PauseGame(EV_GamePause message)
+    void PauseGame(EV_GamePause e)
     {
-        if (message.value)
+        if (e.value)
         {
             Time.timeScale = 0;
         }
