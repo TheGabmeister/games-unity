@@ -49,22 +49,17 @@ public class GameDirector : MonoBehaviour
 
     bool IsGameplayScene()
     {
-        // Check if starting scene has SceneType.Gameplay
+        // Check if starting scene is SceneType.Gameplay
         // Because the type SceneReference cannot be checked for equality, we instead
         // iterate over the names of each SceneReference and compare that.
         string startScene = SceneManager.GetActiveScene().name;
-        foreach (var sceneReference in _sceneDict.scenes)
+        foreach (var entry in _sceneDict.scenes)
         {
-            if (startScene == sceneReference.Key.Name)
+            if (entry.Key.Name == startScene)
             {
-                if(sceneReference.Value == SceneType.Gameplay)
-                {
-                    return true;
-                }
-                break;
+                return entry.Value == SceneType.Gameplay;
             }
         }
-        Debug.LogError($"Scene '{startScene}' not found in scene dictionary!");
         return false;
     }
 
