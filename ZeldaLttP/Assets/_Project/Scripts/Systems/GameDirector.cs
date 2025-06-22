@@ -1,9 +1,6 @@
-using System.Linq;
 using UnityEngine;
-using UnityEditor;
 using EventBus;
 using UnityEngine.SceneManagement;
-using Eflatun.SceneReference;
 
 public class GameDirector : MonoBehaviour
 {
@@ -23,6 +20,7 @@ public class GameDirector : MonoBehaviour
         Bus<EV_GameNew>.Add(NewGame);
         Bus<EV_GamePause>.Add(PauseGame);
         Bus<EV_SceneSetCurrent>.Add(SetCurrentScene);
+        Bus<EV_GameStateChange>.Add(ChangeState);
     }
     private void OnDisable()
     {
@@ -32,6 +30,7 @@ public class GameDirector : MonoBehaviour
         Bus<EV_GameNew>.Remove(NewGame);
         Bus<EV_GamePause>.Remove(PauseGame);
         Bus<EV_SceneSetCurrent>.Remove(SetCurrentScene);
+        Bus<EV_GameStateChange>.Add(ChangeState);
     }
 
     void Start()
@@ -47,6 +46,28 @@ public class GameDirector : MonoBehaviour
 
     }
 
+    void ChangeState(EV_GameStateChange e)
+    {
+        switch (e.state)
+        {
+            case GameState.Gameplay:
+                // Add your gameplay state handling logic here
+                break;
+            // Add other cases as needed
+            // case GameState.Bootup:
+            //     break;
+            // case GameState.StartMenu:
+            //     break;
+            // case GameState.GameOver:
+            //     break;
+            default:
+                Debug.Log("Unhandled game state: " + e.state);
+                break;
+        }
+
+
+    }
+    
     bool IsGameplayScene()
     {
         // Check if starting scene is SceneType.Gameplay
@@ -163,4 +184,12 @@ public class GameDirector : MonoBehaviour
             Time.timeScale = 1;
         }
     }
+}
+
+public enum GameState
+{
+    Bootup,
+    StartMenu,
+    Gameplay,
+    GameOver
 }

@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37b3925a48939f44f92b7541b9bcdc73, type: 3}
+  m_Script: {fileID: 11500000, guid: 339c8356181ffe04980982269eaff99a, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
-  animator: {fileID: 9100000, guid: 7d673dc3114093e4eb0d98e8da942925, type: 2}
-  attackAnimation: {fileID: 7400000, guid: 8b06e20df3c342446a17f518bb2619d0, type: 2}
-  attackLengthInSeconds: 0.3
+  animator: {fileID: 0}
+  attackAnimation: {fileID: 0}
   damage: 0

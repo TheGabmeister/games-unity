@@ -19,6 +19,8 @@ namespace EventBus
     public struct EV_GameNew : IEvent { }
     public struct EV_GamePause : IEvent { public bool value; }
 
+    public struct EV_GameStateChange : IEvent { public GameState state;}
+
     // SceneManager Events 
     public struct EV_SceneSwitch : IEvent { public string value; }
     public struct EV_SceneLoad : IEvent { public string value; }

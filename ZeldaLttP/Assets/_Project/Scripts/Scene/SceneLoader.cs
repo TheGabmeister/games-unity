@@ -3,12 +3,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using PrimeTween;
 
-public class SceneLoader : PersistentSingleton<SceneLoader>
+public class SceneLoader : MonoBehaviour
 {
     string _currentScene;
     string _nextScene;
     bool _isLoading = false;
 
+    
+    
     private void Start()
     {
         _currentScene = SceneManager.GetActiveScene().name;
