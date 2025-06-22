@@ -16,21 +16,13 @@ public class GameDirector : MonoBehaviour
     private void OnEnable()
     {
         Bus<EV_GameRestart>.Add(RestartGame);
-        Bus<EV_GameSave>.Add(SaveGame);
-        Bus<EV_GameLoad>.Add(LoadGame);
-        Bus<EV_GameNew>.Add(NewGame);
         Bus<EV_GamePause>.Add(PauseGame);
-        Bus<EV_SceneSetCurrent>.Add(SetCurrentScene);
         Bus<EV_GameStateChange>.Add(ChangeState);
     }
     private void OnDisable()
     {
         Bus<EV_GameRestart>.Remove(RestartGame);
-        Bus<EV_GameSave>.Remove(SaveGame);
-        Bus<EV_GameLoad>.Remove(LoadGame);
-        Bus<EV_GameNew>.Remove(NewGame);
         Bus<EV_GamePause>.Remove(PauseGame);
-        Bus<EV_SceneSetCurrent>.Remove(SetCurrentScene);
         Bus<EV_GameStateChange>.Add(ChangeState);
     }
 
@@ -101,68 +93,6 @@ public class GameDirector : MonoBehaviour
         if (_player) Destroy(_player);
 
         Bus<EV_SceneLoad>.Raise(new EV_SceneLoad { value = "MainMenu"});
-    }
-
-    void NewGame()
-    {
-        _playerData.currentScene = "Scene01";
-        _playerData.position = new Vector2(0, 0);
-        StartGame();
-    }
-
-    void StartGame()
-    {
-        SceneManager.sceneLoaded += SpawnGamePrefabs;
-        Bus<EV_SceneLoad>.Raise(new EV_SceneLoad { value = _playerData.currentScene});
-    }
-
-    void SpawnGamePrefabs(Scene scene, LoadSceneMode mode)
-    {
-        SceneManager.sceneLoaded -= SpawnGamePrefabs;
-        if (_playerPrefab)
-        {
-            var playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
-            if(playerStart) 
-                _player = Instantiate(_playerPrefab, playerStart.transform.position, Quaternion.identity);
-            else
-            {
-                if(_playerData != null)
-                {
-                    _player = Instantiate(_playerPrefab, _playerData.position, Quaternion.identity);
-                }
-                else
-                {
-                    Debug.LogError("No save data available!");
-                }
-            }
-                
-        }
-    }
-
-    void SaveGame()
-    {
-        foreach (Transform transform in _player.transform)
-        {
-            if (transform.CompareTag("Player"))
-            {
-                _playerData.position = new Vector2 (transform.position.x, transform.position.y);
-                break;
-            }
-        }
-
-        _playerData.currentScene = SceneManager.GetActiveScene().name;
-        ES3.Save("playerData", _playerData);
-    }
-
-    void LoadGame()
-    {
-        _playerData = ES3.Load<PlayerData>("playerData");
-        StartGame();
-    }
-
-    void SetCurrentScene(EV_SceneSetCurrent e)
-    {
-        _playerData.currentScene = e.value;
     }
 
     void PauseGame(EV_GamePause e)
