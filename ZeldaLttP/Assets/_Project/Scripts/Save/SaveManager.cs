@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class SaveManager
 {
-    static PlayerData _playerData;
+    public static PlayerData ActivePlayerData { get; private set; }
     public const string SaveFileName = "SaveFile";
-    public static int CurrentSaveSlot { get; private set; } = 0;
+    public static int ActiveSaveSlot { get; private set; } = 0;
 
     public static void Init()
     {
@@ -20,9 +20,9 @@ public static class SaveManager
 
     public static void CreateSave(int saveSlot, string username)
     {
-        _playerData = new PlayerData();
-        _playerData.username = username;
-        ES3.Save("playerData", _playerData, SaveFileName + saveSlot);
+        var playerData = new PlayerData();
+        playerData.username = username;
+        ES3.Save("playerData", playerData, SaveFileName + saveSlot);
     }
 
     public static PlayerData LoadData(int saveSlot)
@@ -38,8 +38,7 @@ public static class SaveManager
     
     public static void SaveGame()
     {
-        // Save to current slot
-        ES3.Save("playerData", _playerData, SaveFileName + CurrentSaveSlot);
+        //ES3.Save("playerData", _playerData, SaveFileName + ActiveSaveSlot);
     }
     
     public static void DeleteSave(int saveSlot)

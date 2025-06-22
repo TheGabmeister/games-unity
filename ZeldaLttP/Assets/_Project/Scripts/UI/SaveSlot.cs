@@ -45,14 +45,13 @@ public class SaveSlot : MonoBehaviour
 
     void OnClick()
     {
+        slot = transform.GetSiblingIndex();
         if (_playerData != null)
         {
-            _mainMenu.StartGame();
+            _mainMenu.StartGame(_playerData, slot);
         }
         else
         {
-            
-            slot = transform.GetSiblingIndex();
             _mainMenu.ToggleActiveMenu(2);
         }
     }

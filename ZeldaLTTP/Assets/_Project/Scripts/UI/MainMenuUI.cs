@@ -55,9 +55,11 @@ public class MainMenuUI : MonoBehaviour
         //ResetSelectedButton();
     }
 
-    public void StartGame()
+    public void StartGame(PlayerData d, int i)
     {
-        
+        // Play sound
+        // Fade to black
+        Bus<EV_GameStart>.Raise(new EV_GameStart { data = d, saveSlot = i});
     }
 
     private void LateUpdate()

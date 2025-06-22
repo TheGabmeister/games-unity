@@ -12,7 +12,11 @@ namespace EventBus
     public struct EV_EnemyDied : IEvent { public EnemySO value; }
 
     // GameManager Events 
-    public struct EV_GameStart : IEvent { }
+    public struct EV_GameStart : IEvent
+    {
+        public PlayerData data;
+        public int saveSlot;
+    }
     public struct EV_GameRestart : IEvent { }
     public struct EV_GameSave : IEvent { }
     public struct EV_GameLoad : IEvent { }
