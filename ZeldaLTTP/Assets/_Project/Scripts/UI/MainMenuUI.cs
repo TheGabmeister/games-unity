@@ -13,7 +13,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] TMP_Text _inputName;
     [SerializeField] SaveSlot[] _saveSlots;
     int _currentSaveIndex = 0;
-    private MainMenuUIState _state;
+    private bool _isAwaitingStartInput = true;
 
     private PlayerInput _input;
     bool _isInitialized = false;
@@ -55,6 +55,11 @@ public class MainMenuUI : MonoBehaviour
         //ResetSelectedButton();
     }
 
+    public void StartGame()
+    {
+        
+    }
+
     private void LateUpdate()
     {
         if (_input.currentControlScheme == "Gamepad")
@@ -87,15 +92,6 @@ public class MainMenuUI : MonoBehaviour
             _arrow.SetActive(false);
             _currentSelectedButton = null;
         }
-    }
-
-    public void LoadGame()
-    {
-        Bus<EV_GameLoad>.Raise(new EV_GameLoad { });
-    }
-    public void NewGame()
-    {
-        Bus<EV_GameNew>.Raise(new EV_GameNew { });
     }
 
     public void SelectPlayerSlot(int num)
@@ -133,29 +129,24 @@ public class MainMenuUI : MonoBehaviour
 
     public void CreateNewSave()
     {
-        SaveManager.CreateNewSave(_currentSaveIndex, _inputName.text);
+        SaveManager.CreateSave(_currentSaveIndex, _inputName.text);
+        _inputName.text = "";
         RefreshSaveSlots();
+        ToggleActiveMenu(1);
     }
     
     public void OnSubmit()
     {
-        if (_state == MainMenuUIState.AwaitingStartInput)
+        if (_isAwaitingStartInput)
         {
             Sequence.Create()
                 .ChainCallback(() => Bus<EV_ScreenFadeToBlack>.Raise(new EV_ScreenFadeToBlack { duration = 0.5f }))
                 .ChainDelay(0.5f)
                 .ChainCallback(() => {
                     ToggleActiveMenu(1);
-                    _state = MainMenuUIState.PlayerSelection;
                 })
                 .ChainCallback(() => Bus<EV_ScreenFadeToClear>.Raise(new EV_ScreenFadeToClear { duration = 0.5f }));
+            _isAwaitingStartInput = false;
         }
-    }
-
-    enum MainMenuUIState
-    {
-        AwaitingStartInput,
-        PlayerSelection,
-        NameRegistration
     }
 }

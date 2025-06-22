@@ -6,7 +6,7 @@ public static class SaveManager
 {
     static PlayerData _playerData;
     public const string SaveFileName = "SaveFile";
-    public static int CurrentSaveSlot { get; private set; } = 1;
+    public static int CurrentSaveSlot { get; private set; } = 0;
 
     public static void Init()
     {
@@ -18,9 +18,8 @@ public static class SaveManager
         return $"save{saveSlot}.es3";
     }
 
-    public static void CreateNewSave(int saveSlot, string username)
+    public static void CreateSave(int saveSlot, string username)
     {
-        CurrentSaveSlot = saveSlot;
         _playerData = new PlayerData();
         _playerData.username = username;
         ES3.Save("playerData", _playerData, SaveFileName + saveSlot);
@@ -28,19 +27,19 @@ public static class SaveManager
 
     public static PlayerData LoadData(int saveSlot)
     {
-        return ES3.Load<PlayerData>("playerData", SaveFileName + (saveSlot + 1));
+        return ES3.Load<PlayerData>("playerData", SaveFileName + (saveSlot));
     }
     
     public static bool DoesSaveExist(int saveSlot)
     {
-        string filename = SaveFileName + (saveSlot + 1);
+        string filename = SaveFileName + (saveSlot);
         return ES3.FileExists(filename) && ES3.KeyExists("playerData", filename);
     }
     
     public static void SaveGame()
     {
         // Save to current slot
-        ES3.Save("playerData", _playerData, GetSaveFilename(CurrentSaveSlot));
+        ES3.Save("playerData", _playerData, SaveFileName + CurrentSaveSlot);
     }
     
     public static void DeleteSave(int saveSlot)

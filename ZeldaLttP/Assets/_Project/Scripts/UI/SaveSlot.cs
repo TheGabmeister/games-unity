@@ -47,7 +47,7 @@ public class SaveSlot : MonoBehaviour
     {
         if (_playerData != null)
         {
-            //Bus<EV_GameStart>.Raise(new EV_GameStart { });
+            _mainMenu.StartGame();
         }
         else
         {
