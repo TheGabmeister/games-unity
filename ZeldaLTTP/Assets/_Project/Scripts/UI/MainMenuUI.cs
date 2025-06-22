@@ -28,7 +28,15 @@ public class MainMenuUI : MonoBehaviour
     private void Start()
     {
         //ResetSelectedButton();
-        GetSaveData();
+        //SaveManager.Init();
+        //SaveManager.CreateNewSave(1);
+        for (int i = 1; i <= _saveSlots.Length; i++)
+        {
+            Debug.Log(SaveManager.DoesSaveExist(i));
+        }
+        
+        
+        
     }
 
     public void OnControlsChanged()
@@ -103,9 +111,9 @@ public class MainMenuUI : MonoBehaviour
         _menus[num].SetActive(true);
     }
 
-    void GetSaveData()
+    bool DoesSaveDataExist()
     {
-
+        return false;
     }
 
     public void AppendLabel(string c)
@@ -122,13 +130,13 @@ public class MainMenuUI : MonoBehaviour
 
     public void CreateNewSave()
     {
-        string fileName = "SaveFile" + (SaveSlot.slot + 1) + ".es3";
-        var playerData = new PlayerData();
-        playerData.username = _inputName.text;
-        ES3.Save("playerData", playerData, fileName);
-        ToggleActiveMenu(1);
-        _saveSlots[SaveSlot.slot].Refresh();
-        _inputName.text = "";
+        // string fileName = "SaveFile" + (SaveSlot.slot + 1) + ".es3";
+        // var playerData = new PlayerData();
+        // playerData.username = _inputName.text;
+        // ES3.Save("playerData", playerData, fileName);
+        // ToggleActiveMenu(1);
+        // _saveSlots[SaveSlot.slot].Refresh();
+        // _inputName.text = "";
     }
     
     public void OnSubmit()

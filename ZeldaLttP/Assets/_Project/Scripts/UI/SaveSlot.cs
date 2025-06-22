@@ -24,18 +24,18 @@ public class SaveSlot : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        if (ES3.FileExists( _filename ) && ES3.KeyExists("playerData", _filename))
-        {
-            _playerData = ES3.Load<PlayerData>("playerData", _filename);
-        }
+        // if (ES3.FileExists( _filename ) && ES3.KeyExists("playerData", _filename))
+        // {
+        //     _playerData = ES3.Load<PlayerData>("playerData", _filename);
+        // }
     }
 
     private void Start()
     {
-        if(_playerData != null)
-        {
-            _text.text = _playerData.username;
-        }
+        // if(_playerData != null)
+        // {
+        //     _text.text = _playerData.username;
+        // }
     }
 
     void OnClick()
