@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         _input = GetComponent<PlayerInputHandler>();
+        _input.enabled = true;
     }
 
     private void Start()

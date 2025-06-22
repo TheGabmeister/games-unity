@@ -13,11 +13,10 @@ public class Weapon : MonoBehaviour
     private void Start()
     {
         _animator.runtimeAnimatorController = _weaponData.animator;
-        Debug.Log("Hello");
     }
 
     public void Attack()
     {
-        _animator.Play("SwordAttack");
+        //_animator.Play("SwordAttack");
     }
 }

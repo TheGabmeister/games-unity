@@ -81,7 +81,7 @@ public class GameDirector : MonoBehaviour
 
     void SpawnPlayer(Vector3 pos)
     {
-        
+        Instantiate(_playerPrefab, pos, Quaternion.identity);
     }
     
     void RestartGame()
