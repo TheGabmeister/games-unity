@@ -36,7 +36,7 @@ public class MainMenuUI : MonoBehaviour
         // Make sure this script's Awake is called first before other script attempt to call this.
         if (!_isInitialized) return;
 
-        ResetSelectedButton();
+        //ResetSelectedButton();
     }
 
     private void LateUpdate()
@@ -126,7 +126,7 @@ public class MainMenuUI : MonoBehaviour
         var playerData = new PlayerData();
         playerData.username = _inputName.text;
         ES3.Save("playerData", playerData, fileName);
-        ToggleActiveMenu(0);
+        ToggleActiveMenu(1);
         _saveSlots[SaveSlot.slot].Refresh();
         _inputName.text = "";
     }

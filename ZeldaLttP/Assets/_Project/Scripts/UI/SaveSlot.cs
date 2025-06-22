@@ -40,16 +40,16 @@ public class SaveSlot : MonoBehaviour
 
     void OnClick()
     {
-        if (_playerData != null)
-        {
-            Bus<EV_GameStart>.Raise(new EV_GameStart { });
-        }
-        else
-        {
+        // if (_playerData != null)
+        // {
+        //     Bus<EV_GameStart>.Raise(new EV_GameStart { });
+        // }
+        // else
+        // {
             
             slot = transform.GetSiblingIndex();
-            _mainMenu.ToggleActiveMenu(1);
-        }
+            _mainMenu.ToggleActiveMenu(2);
+        //}
     }
 
     public void Refresh()

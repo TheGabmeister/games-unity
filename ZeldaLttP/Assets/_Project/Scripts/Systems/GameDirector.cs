@@ -9,7 +9,6 @@ public class GameDirector : MonoBehaviour
     GameObject _player;
     GameState _state;
     [SerializeField] SceneLoader _sceneLoader;
-
     PlayerData _playerData;
     [SerializeField] SceneDictionarySO _sceneDict;
     
