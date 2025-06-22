@@ -7,7 +7,8 @@ public class GameDirector : MonoBehaviour
     [SerializeField] GameObject _playerPrefab;
 
     GameObject _player;
-    [SerializeField] GameObject[] _prefabs;
+    GameState _state;
+    [SerializeField] SceneLoader _sceneLoader;
 
     PlayerData _playerData;
     [SerializeField] SceneDictionarySO _sceneDict;
@@ -50,14 +51,18 @@ public class GameDirector : MonoBehaviour
     {
         switch (e.state)
         {
+            case GameState.Bootup: 
+                break;
+            case GameState.StartMenu:
+                _state = GameState.StartMenu;
+                _sceneLoader.LoadSceneByIndex(1);
+                break;
             case GameState.Gameplay:
                 // Add your gameplay state handling logic here
                 break;
             // Add other cases as needed
-            // case GameState.Bootup:
-            //     break;
-            // case GameState.StartMenu:
-            //     break;
+
+
             // case GameState.GameOver:
             //     break;
             default:
@@ -131,19 +136,6 @@ public class GameDirector : MonoBehaviour
                 }
             }
                 
-        }
-
-        if (_prefabs.Length != 0)
-        {
-            foreach (GameObject obj in _prefabs)
-            {
-                
-                Instantiate(obj, transform.position, Quaternion.identity);
-            }
-        }
-        else
-        {
-            Debug.Log("The array is empty or not assigned. Please assign GameObjects to the array.");
         }
     }
 

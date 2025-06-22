@@ -8,8 +8,6 @@ public class SceneLoader : MonoBehaviour
     string _currentScene;
     string _nextScene;
     bool _isLoading = false;
-
-    
     
     private void Start()
     {
@@ -17,7 +15,7 @@ public class SceneLoader : MonoBehaviour
     }
 
     // Loads the new scene. Afterwards, unloads the previous scene.
-    void SwitchScene(string sceneName)
+    public void SwitchScene(string sceneName)
     {
         if (_isLoading) 
         {
@@ -52,7 +50,7 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    void LoadSceneByName(string sceneName)
+    public void LoadSceneByName(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
         
@@ -80,8 +78,8 @@ public class SceneLoader : MonoBehaviour
         // You can monitor the loading progress
         while (!asyncLoad.isDone)
         {
-            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
-            Debug.Log($"Loading progress: {progress * 100}%");
+            //float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            //Debug.Log($"Loading progress: {progress * 100}%");
                 
             // Yield control back to Unity until next frame
             yield return null;
