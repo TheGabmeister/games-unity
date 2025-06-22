@@ -36,10 +36,15 @@ public class GameDirector : MonoBehaviour
 
     void Start()
     {
+#if UNITY_EDITOR
         if (IsGameplayScene())
         {
-            SpawnPlayer(GetPlayerStart());
+            SpawnPlayer(Utils.GetPlayerStart());
         }
+#else
+        
+#endif
+
     }
 
     bool IsGameplayScene()
@@ -61,22 +66,6 @@ public class GameDirector : MonoBehaviour
         }
         Debug.LogError($"Scene '{startScene}' not found in scene dictionary!");
         return false;
-    }
-    
-    Vector3 GetPlayerStart()
-    {
-        var playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
-        if (!playerStart)
-        {
-            playerStart = GameObject.Find("PlayerStart");
-            if (!playerStart)
-            {
-                Debug.Log("No PlayerStart found. Will use camera view instead");
-                Vector3 cameraPos = SceneView.lastActiveSceneView.camera.transform.position;
-                return new Vector3(cameraPos.x, cameraPos.y, 0);
-            }
-        }
-        return playerStart.transform.position;
     }
 
     void SpawnPlayer(Vector3 pos)
