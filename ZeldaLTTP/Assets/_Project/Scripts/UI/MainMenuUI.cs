@@ -12,7 +12,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] GameObject _arrow;
     [SerializeField] TMP_Text _inputName;
     [SerializeField] SaveSlot[] _saveSlots;
-    internal int _currentSaveSlot { private get; set; } = 0;
+    int _currentSaveIndex = 0;
     private MainMenuUIState _state;
 
     private PlayerInput _input;
@@ -27,18 +27,24 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        //ResetSelectedButton();
-        //SaveManager.Init();
-        for (int i = 1; i <= _saveSlots.Length; i++)
+        RefreshSaveSlots();
+    }
+
+    public void SetCurrentSaveIndex(int i)
+    {
+        _currentSaveIndex = i;
+    }
+    
+    public void RefreshSaveSlots()
+    {
+        for (int i = 0; i < _saveSlots.Length; i++)
         {
             if (SaveManager.DoesSaveExist(i))
             {
-                Debug.Log(SaveManager.LoadData(i).username);
+                var data = SaveManager.LoadData(i);
+                _saveSlots[i].PopulateSlot(data);
             }
         }
-        
-        
-        
     }
 
     public void OnControlsChanged()
@@ -113,11 +119,6 @@ public class MainMenuUI : MonoBehaviour
         _menus[num].SetActive(true);
     }
 
-    bool DoesSaveDataExist()
-    {
-        return false;
-    }
-
     public void AppendLabel(string c)
     {
         
@@ -132,18 +133,12 @@ public class MainMenuUI : MonoBehaviour
 
     public void CreateNewSave()
     {
-        // string fileName = "SaveFile" + (SaveSlot.slot + 1) + ".es3";
-        // var playerData = new PlayerData();
-        // playerData.username = _inputName.text;
-        // ES3.Save("playerData", playerData, fileName);
-        // ToggleActiveMenu(1);
-        // _saveSlots[SaveSlot.slot].Refresh();
-        // _inputName.text = "";
+        SaveManager.CreateNewSave(_currentSaveIndex, _inputName.text);
+        RefreshSaveSlots();
     }
     
     public void OnSubmit()
     {
-        
         if (_state == MainMenuUIState.AwaitingStartInput)
         {
             Sequence.Create()

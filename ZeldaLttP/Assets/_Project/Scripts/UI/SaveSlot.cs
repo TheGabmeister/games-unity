@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,27 +7,32 @@ using EventBus;
 public class SaveSlot : MonoBehaviour
 {
     public static int slot = 0;
-    [SerializeField] TMP_Text _text;
-    PlayerData _playerData;
+    [SerializeField] TMP_Text _username;
+    private PlayerData _playerData;
     [SerializeField] MainMenuUI _mainMenu;
+    Button _button;
 
-    private void OnEnable()
+    void Awake()
     {
-        GetComponent<Button>().onClick.AddListener(OnClick);
+        _button = GetComponent<Button>();
+    }
+
+    void OnEnable()
+    {
+        _button.onClick.AddListener(OnClick);
     }
 
     private void OnDisable()
     {
-        GetComponent<Button>().onClick.RemoveListener(OnClick);
+        _button.onClick.RemoveListener(OnClick);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Awake()
+    
+    
+    public void PopulateSlot(PlayerData data)
     {
-        // if (ES3.FileExists( _filename ) && ES3.KeyExists("playerData", _filename))
-        // {
-        //     _playerData = ES3.Load<PlayerData>("playerData", _filename);
-        // }
+        _playerData = data;
+        _username.text = data.username;
     }
 
     private void Start()
@@ -39,21 +45,15 @@ public class SaveSlot : MonoBehaviour
 
     void OnClick()
     {
-        // if (_playerData != null)
-        // {
-        //     Bus<EV_GameStart>.Raise(new EV_GameStart { });
-        // }
-        // else
-        // {
+        if (_playerData != null)
+        {
+            //Bus<EV_GameStart>.Raise(new EV_GameStart { });
+        }
+        else
+        {
             
             slot = transform.GetSiblingIndex();
             _mainMenu.ToggleActiveMenu(2);
-        //}
-    }
-
-    public void Refresh()
-    {
-        _playerData = ES3.Load<PlayerData>("playerData", _filename);
-        _text.text = _playerData.username;
+        }
     }
 }

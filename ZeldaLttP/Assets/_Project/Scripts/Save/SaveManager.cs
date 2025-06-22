@@ -28,12 +28,12 @@ public static class SaveManager
 
     public static PlayerData LoadData(int saveSlot)
     {
-        return ES3.Load<PlayerData>("playerData", SaveFileName + saveSlot);
+        return ES3.Load<PlayerData>("playerData", SaveFileName + (saveSlot + 1));
     }
     
     public static bool DoesSaveExist(int saveSlot)
     {
-        string filename = SaveFileName + saveSlot.ToString();
+        string filename = SaveFileName + (saveSlot + 1);
         return ES3.FileExists(filename) && ES3.KeyExists("playerData", filename);
     }
     
