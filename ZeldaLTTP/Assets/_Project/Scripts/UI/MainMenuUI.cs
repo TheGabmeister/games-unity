@@ -12,6 +12,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] TMP_Text _inputName;
     [SerializeField] SaveSlot[] _saveSlots;
     internal int _currentSaveSlot { private get; set; } = 0;
+    private MainMenuUIState _state;
 
     private PlayerInput _input;
     bool _isInitialized = false;
@@ -25,7 +26,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        ResetSelectedButton();
+        //ResetSelectedButton();
         GetSaveData();
     }
 
@@ -129,14 +130,17 @@ public class MainMenuUI : MonoBehaviour
         _inputName.text = "";
     }
     
-    public void Test()
+    public void OnSubmit()
     {
-        Debug.Log("test");
+        if (_state == MainMenuUIState.AwaitingStartInput)
+        {
+            ToggleActiveMenu(1);
+            _state = MainMenuUIState.PlayerSelection;
+        }
     }
 
     enum MainMenuUIState
     {
-        StartAnimation,
         AwaitingStartInput,
         PlayerSelection,
         NameRegistration
