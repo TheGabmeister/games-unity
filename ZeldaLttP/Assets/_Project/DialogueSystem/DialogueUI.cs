@@ -13,7 +13,7 @@ public class DialogueUI : MonoBehaviour
     void Start()
     {
         // Store the full text but start with an empty display
-        _fullText = "Hello World";
+        _fullText = _text.text;
         _text.text = "";
         
         // Start the typewriter effect
