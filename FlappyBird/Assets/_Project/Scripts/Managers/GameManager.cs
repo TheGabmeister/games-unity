@@ -10,8 +10,6 @@ public class GameManager : MonoBehaviour
     bool _isMoving = false;
     float _speed = 10.0f;
 
-    [SerializeField] GameSettings _gameSettings;
-
     [SerializeField] GameObject _playerPrefab;
     GameObject _playerInstance;
     PlayerController _playerController;
@@ -46,8 +44,8 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        _spawnRate = _gameSettings.obstacleSpawnRate;
-        _speed = _gameSettings.gameSpeed;
+        _spawnRate = GameSettings.obstacleSpawnRate;
+        _speed = GameSettings.gameSpeed;
     }
 
     void StartPreGame()
