@@ -5,7 +5,6 @@ using SimpleEventSystem;
 public class GameManager : MonoBehaviour
 {
     int _score = 0;
-    int _highScore = 0;
     bool _isPreGame = false;
     bool _isMoving = false;
     float _speed = 10.0f;

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class UiManager : MonoBehaviour
 {
     [SerializeField] TMP_Text _scoreText;
-    int _score = 100;
     Animation _anim;
     [SerializeField] GameObject _preGameText;
     [SerializeField] Image _gameOverImage;
