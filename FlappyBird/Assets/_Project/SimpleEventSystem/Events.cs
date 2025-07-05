@@ -1,10 +1,6 @@
 using System;
 using UnityEngine;
 
-// A simple event system based on https://playable.design/a-simple-event-system-for-unity
-// This approach, while simple, allocates memory on the heap. A better (but more verbose) approach
-// is to allocate on the stack. Example: https://github.com/adammyhre/Unity-Event-Bus
-
 namespace SimpleEventSystem
 {
     public static class Events

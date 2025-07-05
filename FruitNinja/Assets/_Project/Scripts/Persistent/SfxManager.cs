@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityServiceLocator;
 
 [RequireComponent(typeof(AudioSource))]
-public class SfxService : MonoBehaviour, ISfxService
+public class SfxManager : MonoBehaviour, ISfxManager
 {
     AudioSource _audioSource;
 
     void Awake()
     {
-        ServiceLocator.Global.Register<ISfxService>(this);
+        ServiceLocator.Global.Register<ISfxManager>(this);
         _audioSource = GetComponent<AudioSource>();
     }
 
@@ -18,7 +18,7 @@ public class SfxService : MonoBehaviour, ISfxService
     }
 }
 
-public interface ISfxService
+public interface ISfxManager
 {
     void PlaySound(AudioClip clip);
 }

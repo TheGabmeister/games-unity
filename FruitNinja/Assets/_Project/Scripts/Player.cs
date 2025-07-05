@@ -1,20 +1,50 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityServiceLocator;
 
 public class Player : MonoBehaviour
 {
-    ISfxService sfxService;
-
-    [SerializeField] private AudioClip swingSound;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    ISfxManager _sfxManager;
+    [SerializeField] private AudioClip _swingSound;
+    
     void Awake()
     {
-        ServiceLocator.Global.Get(out sfxService);
+        ServiceLocator.Global.Get(out _sfxManager);
     }
 
-    // Update is called once per frame
     void Start()
     {
-        sfxService.PlaySound(swingSound);
+        _sfxManager.PlaySound(_swingSound);
+    }
+    
+    private bool isDragging = false;
+    private Vector2 lastPointerPosition;
+
+    public void OnClick(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            isDragging = true;
+            lastPointerPosition = Mouse.current.position.ReadValue();
+            Debug.Log("Drag Start: " + lastPointerPosition);
+        }
+        else if (context.canceled)
+        {
+            isDragging = false;
+            Debug.Log("Drag End: " + Mouse.current.position.ReadValue());
+        }
+    }
+    
+    void Update()
+    {
+        if (isDragging)
+        {
+            Vector2 currentPointerPosition = Mouse.current.position.ReadValue();
+            Vector2 delta = currentPointerPosition - lastPointerPosition;
+            lastPointerPosition = currentPointerPosition;
+
+            // Handle the dragging logic here
+            Debug.Log("Dragging: " + delta);
+        }
     }
 }
