@@ -1,44 +1,37 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-
-public enum UiState
-{
-    Start,
-    Gameplay,
-    GameOver,
-    Score
-}
 
 public class UiManager : MonoBehaviour
 {
     [SerializeField] GameObject[] _uiElements;
     [SerializeField] TMP_Text _scoreText;
-    [SerializeField] TMP_Text _distanceText;
-    [SerializeField] TMP_Text _coinsText;
-    int _score = 100;
+    int _score = 0;
     Animation _anim;
-    
-    void OnEnable()
+
+    private void OnEnable()
     {
-
-    }
-
-    void OnDisable()
-    {
-
+        Events.GameScoreUpdated += OnGameScoreUpdated;
     }
     
+    private void OnDisable()
+    {
+        Events.GameScoreUpdated -= OnGameScoreUpdated;
+    }
+
+    void OnGameScoreUpdated(int score)
+    {
+        _score = score;
+        _scoreText.text = _score.ToString();
+    }
 
     void Awake()
     {
         _anim = GetComponent<Animation>();
     }
 
-    void Start()
-    {
-        Init();
-    }
+    void Start() => Init();
 
     public void Init()
     {
@@ -112,3 +105,10 @@ public class UiManager : MonoBehaviour
     }
 }
 
+public enum UiState
+{
+    Start,
+    Gameplay,
+    GameOver,
+    Score
+}

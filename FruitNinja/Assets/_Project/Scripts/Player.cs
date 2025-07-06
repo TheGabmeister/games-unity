@@ -1,21 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityServiceLocator;
+//using UnityServiceLocator;
 
 public class Player : MonoBehaviour
 {
-    ISfxManager _sfxManager;
     [SerializeField] private AudioClip _swingSound;
     
-    void Awake()
-    {
-        ServiceLocator.Global.Get(out _sfxManager);
-    }
-
-    void Start()
-    {
-        _sfxManager.PlaySound(_swingSound);
-    }
     
     private bool isDragging = false;
     private Vector2 lastPointerPosition;
@@ -26,12 +16,13 @@ public class Player : MonoBehaviour
         {
             isDragging = true;
             lastPointerPosition = Mouse.current.position.ReadValue();
-            Debug.Log("Drag Start: " + lastPointerPosition);
+            Services.GetSfxManager().PlaySound(_swingSound);
+            //Debug.Log("Drag Start: " + lastPointerPosition);
         }
         else if (context.canceled)
         {
             isDragging = false;
-            Debug.Log("Drag End: " + Mouse.current.position.ReadValue());
+            //Debug.Log("Drag End: " + Mouse.current.position.ReadValue());
         }
     }
     
@@ -44,7 +35,7 @@ public class Player : MonoBehaviour
             lastPointerPosition = currentPointerPosition;
 
             // Handle the dragging logic here
-            Debug.Log("Dragging: " + delta);
+            //Debug.Log("Dragging: " + delta);
         }
     }
 }

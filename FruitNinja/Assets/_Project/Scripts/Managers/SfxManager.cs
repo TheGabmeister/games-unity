@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityServiceLocator;
+//using UnityServiceLocator;
 
 [RequireComponent(typeof(AudioSource))]
 public class SfxManager : MonoBehaviour, ISfxManager
@@ -8,7 +8,7 @@ public class SfxManager : MonoBehaviour, ISfxManager
 
     void Awake()
     {
-        ServiceLocator.Global.Register<ISfxManager>(this);
+//        ServiceLocator.Global.Register<ISfxManager>(this);
         _audioSource = GetComponent<AudioSource>();
     }
 
