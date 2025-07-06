@@ -15,7 +15,7 @@ public class Fruit : MonoBehaviour
     {
         _collider.enabled = false;
         Instantiate(_fruitSlicedPrefab, transform.position, Quaternion.identity);
-        Services.GetGameManager().AddScore(_score);
+        Services.GetGameManager().UpdateScore(_score);
         Destroy(gameObject);
     }
 }

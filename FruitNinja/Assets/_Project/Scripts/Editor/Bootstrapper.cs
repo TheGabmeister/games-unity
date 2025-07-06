@@ -3,10 +3,24 @@ using UnityEngine;
 // Load a prefab "Systems" in the Resources folder 
 // https://low-scope.com/unity-tips-1-dont-use-your-first-scene-for-global-script-initialization/
 // https://www.youtube.com/watch?v=zJOxWmVveXU
+
 #if UNITY_EDITOR
 public static class Bootstrapper
 {
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void Execute() => Object.DontDestroyOnLoad(Object.Instantiate(Resources.Load("Systems")));
+    public static void Execute()
+    {
+        var settings = Resources.Load<BootstrapperSettings>("BootstrapperSettings");
+        if (settings != null && settings.enableBootstrapper)
+        {
+            Object.DontDestroyOnLoad(Object.Instantiate(Resources.Load("Systems")));
+        }
+    }
 }
 #endif
+
+[CreateAssetMenu(fileName = "BootstrapperSettings")]
+public class BootstrapperSettings : ScriptableObject
+{
+    public bool enableBootstrapper = true;
+}
