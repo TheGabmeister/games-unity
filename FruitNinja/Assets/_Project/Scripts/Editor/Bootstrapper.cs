@@ -18,9 +18,3 @@ public static class Bootstrapper
     }
 }
 #endif
-
-[CreateAssetMenu(fileName = "BootstrapperSettings")]
-public class BootstrapperSettings : ScriptableObject
-{
-    public bool enableBootstrapper = true;
-}

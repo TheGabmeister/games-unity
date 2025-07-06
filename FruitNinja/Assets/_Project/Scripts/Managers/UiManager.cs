@@ -6,29 +6,43 @@ using UnityEngine.UI;
 public class UiManager : MonoBehaviour
 {
     [SerializeField] GameObject[] _uiElements;
+    [SerializeField] GameObject _gameOverUI;
     [SerializeField] TMP_Text _scoreText;
-    int _score = 0;
+    [SerializeField] TMP_Text _livesText;
     Animation _anim;
 
     private void OnEnable()
     {
         Events.GameScoreUpdated += OnGameScoreUpdated;
+        Events.GameLivesUpdated += OnGameLivesUpdated;
+        Events.GameEnded += OnGameEnded;
     }
     
     private void OnDisable()
     {
         Events.GameScoreUpdated -= OnGameScoreUpdated;
-    }
-
-    void OnGameScoreUpdated(int score)
-    {
-        _score = score;
-        _scoreText.text = _score.ToString();
+        Events.GameLivesUpdated -= OnGameLivesUpdated;
+        Events.GameEnded -= OnGameEnded;
     }
 
     void Awake()
     {
         _anim = GetComponent<Animation>();
+    }
+    
+    void OnGameScoreUpdated(int score)
+    {
+        _scoreText.text = score.ToString();
+    }
+    
+    void OnGameLivesUpdated(int lives)
+    {
+        _livesText.text = lives.ToString();
+    }
+
+    void OnGameEnded()
+    {
+        _gameOverUI.SetActive(true);
     }
 
     void Start() => Init();
