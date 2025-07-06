@@ -3,8 +3,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class UiManager : MonoBehaviour
+public class UiController : MonoBehaviour
 {
+    [Header("GameplayUI")]
     [SerializeField] GameObject[] _uiElements;
     [SerializeField] GameObject _gameOverUI;
     [SerializeField] GameObject _TimeUpUI;
@@ -39,8 +40,17 @@ public class UiManager : MonoBehaviour
     {
         _anim = GetComponent<Animation>();
     }
-    
-    void Start() => Init();
+
+    void Start()
+    {
+        // play animation
+        
+    }
+
+    public void OnNewGameClicked()
+    {
+        Debug.Log("OnNewGameClicked");
+    }
     
     void OnGameScoreUpdated(int score)
     {
@@ -78,14 +88,6 @@ public class UiManager : MonoBehaviour
     {
         _gameOverUI.SetActive(true);
     }
-    
-    public void Init()
-    {
-        _scoreText.text = "0";
-        ChangeState(UiState.Start);
-        ResetGameOverAnimation();
-    }
-
 
     public void StartGame()
     {

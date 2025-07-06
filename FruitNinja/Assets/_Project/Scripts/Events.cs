@@ -10,4 +10,12 @@ public class Events
     public static Action GameZenModeEnded;
     public static Action<int> GameLivesUpdated;
     public static Action<int> GameTimerUpdated;
+
+    public static Action UiNewGameClicked;
+}
+
+public enum UiEvents
+{
+    NewGameClicked,
+    DojoClicked,
 }

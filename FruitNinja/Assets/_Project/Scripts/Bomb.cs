@@ -12,7 +12,7 @@ public class Bomb : MonoBehaviour
     void OnMouseDown()
     {
         _collider.enabled = false;
-        Services.GetGameManager().BombStrucked();
+        GameManager.Instance.BombStrucked();
         Destroy(gameObject);
     }
 }

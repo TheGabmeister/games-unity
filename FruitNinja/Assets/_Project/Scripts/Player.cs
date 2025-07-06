@@ -4,8 +4,6 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [SerializeField] private AudioClip _swingSound;
-    
-    
     private bool isDragging = false;
     private Vector2 lastPointerPosition;
 
@@ -15,7 +13,7 @@ public class Player : MonoBehaviour
         {
             isDragging = true;
             lastPointerPosition = Mouse.current.position.ReadValue();
-            Services.GetSfxManager().PlaySound(_swingSound);
+            SfxManager.Instance.PlaySound(_swingSound);
             //Debug.Log("Drag Start: " + lastPointerPosition);
         }
         else if (context.canceled)

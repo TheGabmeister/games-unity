@@ -3,23 +3,18 @@ using UnityEngine;
 using System.Collections;
 using PrimeTween;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
+    [SerializeField] Camera _camera;
+    [SerializeField] ScreenFader _screenFader;
     int _score = 0;
     int _highScore = 0;
     int _lives = 3;
     int _timeRemaining = 90;
-    ScreenFader _screenFader;
-    Camera _camera;
-    
-    void Awake()
-    {
-        _screenFader = Services.GetScreenFader();
-    }
 
     void Start()
     {
-        StartZenMode();
+        // StartZenMode();
     }
 
     void StartGameplay()
@@ -78,8 +73,6 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1);
             _timeRemaining -= 1;
             Events.GameTimerUpdated?.Invoke(_timeRemaining);
-            Debug.Log("Game Timer: " + _timeRemaining);
         }
-        Debug.Log("Game Over! Time's up!");
     }
 }
