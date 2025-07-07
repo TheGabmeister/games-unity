@@ -27,6 +27,11 @@ public class UIFruit : MonoBehaviour
     {
         Instantiate(_fruitSlicedPrefab, transform.position, Quaternion.identity);
         _events?.Invoke();
+        Exit();
+    }
+
+    public void Exit()
+    {
         _meshRenderer.enabled = false;
         _collider.enabled = false;
         Tween.Scale(transform, startValue: 1f, endValue: 0f, duration: 1f);

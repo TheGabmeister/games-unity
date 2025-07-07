@@ -2,9 +2,15 @@ using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using PrimeTween;
 
 public class UiController : MonoBehaviour
 {
+    [Header("MainMenuUI")]
+    [SerializeField] UIFruit[] _mainMenuFruits;
+    [Header("GameModeUI")]
+    [SerializeField] UIFruit[] _gameModeFruits;
+    
     [Header("GameplayUI")]
     [SerializeField] GameObject[] _uiElements;
     [SerializeField] GameObject _gameOverUI;
@@ -44,12 +50,32 @@ public class UiController : MonoBehaviour
     void Start()
     {
         // play animation
-        
     }
 
     public void OnNewGameClicked()
     {
-        Debug.Log("OnNewGameClicked");
+        Sequence.Create()
+            .ChainCallback(() =>
+            {
+                foreach (UIFruit fruit in _mainMenuFruits)
+                    fruit.Exit();
+            })
+            .ChainDelay(1f)
+            .ChainCallback(() =>
+            {
+                foreach (UIFruit fruit in _gameModeFruits)
+                    fruit.Init();
+            });
+    }
+
+    public void OnDojoClicked()
+    {
+        Debug.Log("OnDojoClicked");
+    }
+    
+    public void OnMoreGamesClicked()
+    {
+        Debug.Log("OnMoreGamesClicked");
     }
     
     void OnGameScoreUpdated(int score)
@@ -136,20 +162,6 @@ public class UiController : MonoBehaviour
         // Tween.Custom(0, endValue, duration, onValueChange: value =>
         //     _gameOverScoreText.text = Mathf.RoundToInt(value).ToString()
         // ).OnComplete(() => _gameOverButtons.SetActive(true));
-    }
-    
-    public void ResetGameOverAnimation()
-    {
-        // _medalImage.enabled = false;
-        // _gameOverButtons.SetActive(false);
-
-        // if (_anim != null && _anim.clip != null)
-        // {
-        //     _anim.Play(_anim.clip.name);
-        //     _anim[_anim.clip.name].time = 0f;
-        //     _anim.Sample();
-        //     _anim.Stop();
-        // }
     }
 }
 
