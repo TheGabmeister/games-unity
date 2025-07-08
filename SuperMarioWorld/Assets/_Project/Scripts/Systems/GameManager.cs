@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
 #endif
     }
     
-    public Vector3 GetPlayerStartPosition()
+    Vector3 GetPlayerStartPosition()
     {
         var playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
         if (!playerStart)
