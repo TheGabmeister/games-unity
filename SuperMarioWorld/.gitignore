@@ -80,3 +80,5 @@ crashlytics-build.properties
 .idea
 
 # Third-party assets
+Assets/TextMesh*Pro
+Assets/Plugins/Easy*Save*3
