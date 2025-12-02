@@ -76,7 +76,7 @@ namespace HelloWorld
             var label = new Label();
             label.name = name;
             label.text = content;
-            label.style.color = Color.black;
+            label.style.color = Color.gold;
             label.style.fontSize = 18;
             return label;
         }
@@ -128,7 +128,15 @@ namespace HelloWorld
             var mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
             string transport = "Transport: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name;
             string modeText = "Mode: " + mode;
-            SetStatusText($"{transport}\n{modeText}");
+
+            int connectedClientCount = 0;
+            if (NetworkManager.Singleton.ConnectedClientsIds != null)
+            {
+                connectedClientCount = NetworkManager.Singleton.ConnectedClientsIds.Count;
+            }
+            string clientsText = "Connected Clients: " + connectedClientCount;
+
+            SetStatusText($"{transport}\n{modeText}\n{clientsText}");
         }
 
         void SubmitNewPosition()
