@@ -2,7 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     float _moveInput = 0f;
 
@@ -21,14 +21,14 @@ public class PlayerController : MonoBehaviour
 
             if (NetworkManager.Singleton.IsClient)
             {
-                Move(displacement);
+                MoveRpc(displacement);
                 Debug.Log("Client Pressed");
             }    
         }
     }
 
     [Rpc(SendTo.Server)]
-    void Move(Vector3 value, RpcParams rpcParams = default)
+    void MoveRpc(Vector3 value, RpcParams rpcParams = default)
     {
         transform.Translate(value, Space.World);
         Debug.Log(value);
