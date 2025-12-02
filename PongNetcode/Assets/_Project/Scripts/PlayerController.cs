@@ -1,17 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class PlayerController : MonoBehaviour
 {
     float _moveInput = 0f;
 
     [SerializeField] private float moveSpeed = 5f;
-
-    public void OnJump()
-    {
-        Debug.Log("Jump");
-    }
 
     public void OnMove(InputValue value)
     {
