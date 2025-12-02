@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,7 +18,19 @@ public class PlayerController : MonoBehaviour
         if (Mathf.Abs(_moveInput) > 0.001f)
         {
             Vector3 displacement = Vector3.up * _moveInput * moveSpeed * Time.deltaTime;
-            transform.Translate(displacement, Space.World);
+
+            if (NetworkManager.Singleton.IsClient)
+            {
+                Move(displacement);
+                Debug.Log("Client Pressed");
+            }    
         }
+    }
+
+    [Rpc(SendTo.Server)]
+    void Move(Vector3 value, RpcParams rpcParams = default)
+    {
+        transform.Translate(value, Space.World);
+        Debug.Log(value);
     }
 }
