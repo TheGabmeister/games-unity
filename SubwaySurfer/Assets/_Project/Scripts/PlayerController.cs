@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_isMoving)
         {
-            transform.parent.Translate(Vector3.forward * _currentSpeed * Time.deltaTime);
+            transform.Translate(Vector3.forward * _currentSpeed * Time.deltaTime);
 
 #if UNITY_EDITOR || UNITY_STANDALONE
             // Simulate tilt with horizontal keys (A/D or Left/Right)
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
 #else
             Vector3 tilt = Input.acceleration;
 #endif
-            transform.parent.Translate(Vector3.right * tilt.x * 3 * Time.deltaTime);
+            transform.Translate(Vector3.right * tilt.x * 3 * Time.deltaTime);
         }
     }
 

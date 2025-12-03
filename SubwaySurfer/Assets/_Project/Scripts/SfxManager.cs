@@ -4,8 +4,10 @@ using Obvious.Soap;
 [RequireComponent(typeof(AudioSource))]
 public class SfxManager : MonoBehaviour
 {
-    [SerializeField] ScriptableEventAudioClip _onSfxPlay;
     AudioSource _audioSource;
+
+    [Header("Listen to these events...")]
+    [SerializeField] ScriptableEventAudioClip _onSfxPlay;
 
     void OnEnable()
     {

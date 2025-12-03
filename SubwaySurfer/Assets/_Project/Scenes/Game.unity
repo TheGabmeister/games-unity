@@ -288,7 +288,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 87c54bd09bb63d442ab7d7db57ef8d19, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 87c54bd09bb63d442ab7d7db57ef8d19, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -419,17 +419,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!108 &203844588
 Light:
   m_ObjectHideFlags: 0
@@ -570,6 +576,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -591,6 +599,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -704,7 +713,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -712,6 +720,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!81 &961739751
 AudioListener:
   m_ObjectHideFlags: 0
@@ -829,14 +838,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1198116497981548308, guid: b9d98fe42fb298746b17fabe42db6959, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6094953868221605038, guid: b9d98fe42fb298746b17fabe42db6959, type: 3}
-      propertyPath: m_IsKinematic
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 6085287434458698395, guid: b9d98fe42fb298746b17fabe42db6959, type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 961739749}
     - target: {fileID: 6651942957749946553, guid: b9d98fe42fb298746b17fabe42db6959, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -880,34 +885,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1198116497981548308, guid: b9d98fe42fb298746b17fabe42db6959, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1683353780}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9d98fe42fb298746b17fabe42db6959, type: 3}
---- !u!1 &1683353779 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1198116497981548308, guid: b9d98fe42fb298746b17fabe42db6959, type: 3}
-  m_PrefabInstance: {fileID: 1683353778}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1683353780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1683353779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d82cc6e9e86fd442ab386c1d6c2cb33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _initalSpeed: 10
-  _jumpForce: 1250
-  _camera: {fileID: 961739749}
-  _jumpSound: {fileID: 8300000, guid: 33a771a7bae9b3e4d8b000cd13a7fdba, type: 3}
-  _dieSound: {fileID: 8300000, guid: 9b88677ca7ffd274c996e59cfeb7133a, type: 3}
-  _onPlayerStartMoving: {fileID: 0}
 --- !u!1 &1901490802
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,7 +917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 954fcc0b0ba3c8543aec7e5073183d26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _onSfxPlay: {fileID: 0}
+  _onSfxPlay: {fileID: 11400000, guid: 3f44bf5c34cd1364c92505cd0651fd38, type: 2}
 --- !u!82 &1901490804
 AudioSource:
   m_ObjectHideFlags: 0
