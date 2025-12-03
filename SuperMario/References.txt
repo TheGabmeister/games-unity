@@ -1,0 +1,19 @@
+ULTIMATE 2D Platformer Controller for Unity
+https://www.youtube.com/watch?v=zHSWG05byEc
+
+2D Movement [Rigidbody vs Transform] Mastery Tutorial Unity (2021 edition)
+https://www.youtube.com/watch?v=fcKGqxUuENk
+
+Dynamic vs Kinematic Unity Rigidbody 2D Platformer Physics Explained
+https://www.youtube.com/watch?v=aM11L4egZcc
+
+Making enemy AI detect the player in Unity 2D
+https://www.youtube.com/watch?v=uOobLo2y3KI
+
+Assets:
+
+Pixel Adventure 1
+https://pixelfrog-assets.itch.io/pixel-adventure-1
+
+Pixel Adventure 2 
+https://pixelfrog-assets.itch.io/pixel-adventure-2
