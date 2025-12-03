@@ -20,15 +20,14 @@ public class PlayerController : MonoBehaviour
 
     void OnJump()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-            if (!isDead)
-            {
-                _rb.linearVelocity = Vector2.zero;
-                _rb.AddForce(new Vector2(0, _jumpForce));
-                Events.SfxPlay.Raise(_jumpSound);
-            }
-        //}
+
+        if (!isDead)
+        {
+            _rb.linearVelocity = Vector2.zero;
+            _rb.AddForce(new Vector2(0, _jumpForce));
+            Events.SfxPlay.Raise(_jumpSound);
+        }
+
     }
 
     public void ToggleControls(bool value)

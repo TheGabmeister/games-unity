@@ -1,6 +1,7 @@
-using UnityEngine;
 using PrimeTween;
 using SimpleEventSystem;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -76,7 +77,7 @@ public class GameManager : MonoBehaviour
     {
         if (_isPreGame)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
                 _isPreGame = false;
                 StartGame();
