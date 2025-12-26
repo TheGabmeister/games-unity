@@ -1,11 +1,24 @@
 using UnityEngine;
 using PrimeTween;
+using EventSystem;
 
 public class GameMode : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
+    [SerializeField] AudioClip _pauseAudioClip;
     [SerializeField] LevelData _levelData;
     int _remainingTime;
+    bool _isGamePaused = false;
+
+    private void OnEnable()
+    {
+        Events.PauseToggled.Sub(OnPauseToggled);
+    }
+
+    private void OnDisable()
+    {
+        Events.PauseToggled.Unsub(OnPauseToggled);
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -13,6 +26,7 @@ public class GameMode : MonoBehaviour
         Sequence.Create()
             .ChainDelay(2)
             .ChainCallback(() => SpawnPlayerPrefab())
+            .ChainCallback(() => Events.LevelDataObtained.Raise(_levelData))
             .ChainCallback(() => MusicManager.Instance.Play(_levelData.music))
             .ChainCallback(() => _remainingTime = _levelData.time)
             .ChainCallback(() => InvokeRepeating("UpdateTime", 0.0f, 1.0f))
@@ -43,14 +57,34 @@ public class GameMode : MonoBehaviour
     void UpdateTime()
     {
         _remainingTime -= 1;
+        Events.TimerUpdated.Raise(_remainingTime);
+
         if (_remainingTime == 100)
         {
-            //_onHunderedSecondsLeft?.Raise();
+            Events.TimerHundredSecondsLeft.Raise();
         }
 
         if (_remainingTime <= 0)
         {
-            //_onFinishedTime?.Raise();
+            Events.TimerFinished.Raise();
+        }
+    }
+
+    void OnPauseToggled()
+    {
+        if (_isGamePaused)
+        {
+            _isGamePaused = false;
+            //_onUnpauseGame.Raise();
+            //_onPlaySound.Raise(_pauseAudioClip);
+            Time.timeScale = 1;
+        }
+        else
+        {
+            _isGamePaused = true;
+            //_onPauseGame.Raise();
+            //_onPlaySound.Raise(_pauseAudioClip);
+            Time.timeScale = 0;
         }
     }
 }
