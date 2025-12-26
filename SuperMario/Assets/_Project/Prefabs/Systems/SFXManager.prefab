@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1757608074384515405}
   - component: {fileID: 5091858145958850175}
-  - component: {fileID: 4497332729445020803}
+  - component: {fileID: 7562768489559784862}
   m_Layer: 0
-  m_Name: SoundEffectsManager
+  m_Name: SFXManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,7 +130,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &4497332729445020803
+--- !u!114 &7562768489559784862
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,27 +139,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1648889405507336642}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b59f62474a8441eb57693365ea24e83, type: 3}
+  m_Script: {fileID: 11500000, guid: a9b472e11d6599f40afddfa73ebe2125, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  _showDebugFields: 0
-  _enableGizmoDebugging: 1
-  _debugColor: {r: 0, g: 1, b: 1, a: 1}
-  _previouslyRegisteredEvent: {fileID: 0}
-  _event: {fileID: 11400000, guid: 2983aa42df14fd545b786dea3a0e2ad5, type: 2}
-  _response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5091858145958850175}
-        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: PlayOneShot
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  _debugValue: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::SFXManager

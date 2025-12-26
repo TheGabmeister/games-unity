@@ -57,6 +57,7 @@ MonoBehaviour:
     _constantValue: 0
     _variable: {fileID: 11400000, guid: 1614210bb0b90f44d8dd04aa2b23920f, type: 2}
   _starModeMusic: {fileID: 8300000, guid: 3544912d426d76f43a5b23cc517bd362, type: 3}
+  _playerPrefab: {fileID: 5876549915286116900, guid: fa4f9cff1f2986645be7cdbd8b4cf832, type: 3}
   _onStartGame: {fileID: 11400000, guid: 5a291394ddbd5894b82a667437eb596e, type: 2}
   _onRestartStartGame: {fileID: 11400000, guid: d39ad576923dc0a4e99474af2af722ae, type: 2}
   _onPlayerDied: {fileID: 11400000, guid: 01eb0fab8daabbf4cb311d95967820b0, type: 2}

@@ -82,23 +82,17 @@ public class GameManager : MonoBehaviour
 
     void StartLevel()
     {
-        //StartCoroutine(StartLevelCoroutine());
-
-
+        Sequence.Create()
+            .ChainCallback(() => _toggleLoadingScreen.Raise(true))
+            .ChainCallback(() => _loadLevel.Raise(_levels[_currentLevelIndex].sceneName))
+            .ChainCallback(() => _initializeTimer.Raise(_levels[_currentLevelIndex].time))
+            .ChainCallback(() => _currentLevel.Value = _levels[_currentLevelIndex])
+            .ChainDelay(2)
+            .ChainCallback(() => _toggleLoadingScreen.Raise(false))
+            .ChainCallback(() => _changeMusic.Raise(_levels[_currentLevelIndex].musicName))
+            .ChainCallback(() => _startTimer.Raise())
+            ;
     }
-
-    IEnumerator StartLevelCoroutine()
-    {
-        _toggleLoadingScreen.Raise(true);
-        _loadLevel.Raise(_levels[_currentLevelIndex].sceneName);
-        _initializeTimer.Raise(_levels[_currentLevelIndex].time);
-        _currentLevel.Value = _levels[_currentLevelIndex];
-        yield return new WaitForSeconds(2);
-        _toggleLoadingScreen.Raise(false);
-        _changeMusic.Raise(_levels[_currentLevelIndex].musicName);
-        _startTimer.Raise();
-    }
-
 
     void StartNextLevel()
     {

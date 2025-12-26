@@ -225,6 +225,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3386479657152984207
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -243,6 +244,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -264,9 +267,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -6367560908665664636, guid: 40de9a8703e2e5a47882b0b86451c741, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -276,7 +281,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!50 &9066265761807106519
 Rigidbody2D:
@@ -355,12 +359,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _invulnerabilityTime: 2
+  _starModeTime: 8
   _moveSpeed: 8
   _swimSpeed: 3
   _jumpForce: 16
   _runSpeed: 12
-  _jumpSound: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
-  _deathSound: {fileID: 8300000, guid: 5fdb13d3756c84fecac96f5a2d124370, type: 3}
+  _jumpSound: {fileID: 8300000, guid: e0c940a0f65829d45b543d66c5d1e9f5, type: 3}
+  _deathSound: {fileID: 8300000, guid: f5b6335bd871b824dbe3561ba05ae2cf, type: 3}
+  _fireSound: {fileID: 8300000, guid: bfccfc8a21110204db44583547743174, type: 3}
   _fireBall: {fileID: 5170962617034495328, guid: 44bd5b4c6e3ff3745afea6ed9580253e, type: 3}
   _playerPosition:
     _useConstant: 0
@@ -370,7 +376,6 @@ MonoBehaviour:
   _onPlayerFell: {fileID: 11400000, guid: 00815072090c35f438a7b39ad4ce3896, type: 2}
   _onReachedFinishLine: {fileID: 11400000, guid: 1482d8f6569ad0549aa6b6e5b5e3bf48, type: 2}
   _onPlayerDamaged: {fileID: 11400000, guid: a3071bacf0fed104396a0a4ff08737c0, type: 2}
-  _onPlaySound: {fileID: 11400000, guid: 2983aa42df14fd545b786dea3a0e2ad5, type: 2}
   _onPlayerDied: {fileID: 11400000, guid: 01eb0fab8daabbf4cb311d95967820b0, type: 2}
   _onPauseGameToggle: {fileID: 11400000, guid: f9ef8cfcd5671a642b6c8896c443b608, type: 2}
   _toggleStarModeMusic: {fileID: 11400000, guid: e446add7e871e1b47a94fa45bfa90090, type: 2}

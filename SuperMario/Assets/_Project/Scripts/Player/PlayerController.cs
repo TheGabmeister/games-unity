@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _runSpeed = 8f;
     [SerializeField] AudioClip _jumpSound;
     [SerializeField] AudioClip _deathSound;
+    [SerializeField] AudioClip _fireSound;
     [SerializeField] GameObject _fireBall;
     [SerializeField] Vector2Reference _playerPosition;
 
@@ -41,7 +42,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameEvent _onPlayerDamaged;
 
     [Header("Call these events...")]
-    [SerializeField] AudioClipGameEvent _onPlaySound;
     [SerializeField] GameEvent _onPlayerDied;
     [SerializeField] GameEvent _onPauseGameToggle;
     [SerializeField] BoolGameEvent _toggleStarModeMusic;
@@ -136,6 +136,7 @@ public class PlayerController : MonoBehaviour
     {
         Instantiate(_fireBall, transform.position, transform.rotation);
         _playerPosition.Value = new Vector2(transform.position.x, transform.position.y);
+        SFXManager.Instance.Play(_fireSound);
     }
 
     void Jump()
@@ -144,7 +145,8 @@ public class PlayerController : MonoBehaviour
         {
             _rb.AddForce(new Vector2(0f, _jumpForce), ForceMode2D.Impulse);
             _isGrounded = false;
-            _onPlaySound.Raise(_jumpSound);
+            //_onPlaySound.Raise(_jumpSound);
+            SFXManager.Instance.Play(_jumpSound);
         }
     }
 
@@ -198,7 +200,7 @@ public class PlayerController : MonoBehaviour
     {
         // Death Animation
         //DisableInput();
-        _onPlaySound.Raise(_deathSound);
+        SFXManager.Instance.Play(_deathSound);
         _onPlayerDied.Raise();
         Destroy(gameObject);
     }
@@ -222,7 +224,7 @@ public class PlayerController : MonoBehaviour
     {
         _isInvulnerable = true;
 
-        Sequence sequence = Sequence.Create(cycles: -1, CycleMode.Yoyo)
+        Sequence sequence = Sequence.Create(cycles: -1, Sequence.SequenceCycleMode.Yoyo)
             .Chain(Tween.Color(_spriteRenderer, Color.clear, duration: 0.05f, ease: Ease.Linear))
             .Chain(Tween.Color(_spriteRenderer, Color.white, duration: 0.05f, ease: Ease.Linear));
 
@@ -234,7 +236,7 @@ public class PlayerController : MonoBehaviour
 
     public void ActivateStarMode()
     {
-        Sequence sequence = Sequence.Create(cycles: -1, CycleMode.Yoyo)
+        Sequence sequence = Sequence.Create(cycles: -1, Sequence.SequenceCycleMode.Yoyo)
             .Chain(Tween.Color(_spriteRenderer, Color.red, duration: 0.05f, ease: Ease.Linear))
             .Chain(Tween.Color(_spriteRenderer, Color.yellow, duration: 0.05f, ease: Ease.Linear))
             .Chain(Tween.Color(_spriteRenderer, Color.green, duration: 0.05f, ease: Ease.Linear))
