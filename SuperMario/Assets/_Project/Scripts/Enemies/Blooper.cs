@@ -44,7 +44,7 @@ public class Blooper : EnemyBase
         
         if (value)
         {
-            _sequence = Sequence.Create(cycles: -1, CycleMode.Restart)
+            _sequence = Sequence.Create(cycles: -1, Sequence.SequenceCycleMode.Restart)
                 .Chain(Tween.Delay(duration: _movePauseDuration, () => _isMoving = true))
                 .Chain(Tween.Delay(duration: _moveDuration, () => _isMoving = false));
         }

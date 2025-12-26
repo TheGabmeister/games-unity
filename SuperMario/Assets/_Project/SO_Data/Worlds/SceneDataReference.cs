@@ -1,9 +1,9 @@
 namespace ScriptableObjectArchitecture
 {
     [System.Serializable]
-    public sealed class SceneDataReference : BaseReference<SceneData, SceneDataVariable>
+    public sealed class SceneDataReference : BaseReference<LevelData, SceneDataVariable>
     {
         public SceneDataReference() : base() { }
-        public SceneDataReference(SceneData value) : base(value) { }
+        public SceneDataReference(LevelData value) : base(value) { }
     }
 }

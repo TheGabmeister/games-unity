@@ -8,6 +8,7 @@ public class SFXManager : PersistentSingleton<SFXManager>
     // Awake is called when the script instance is being loaded
     protected override void Awake()
     {
+        base.Awake();
         _audioSource = GetComponent<AudioSource>();
     }
 

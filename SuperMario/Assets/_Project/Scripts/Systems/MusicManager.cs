@@ -1,58 +1,30 @@
-using ScriptableObjectArchitecture;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class MusicManager : MonoBehaviour
+public class MusicManager : PersistentSingleton<MusicManager>
 {
     AudioSource _audioSource;
-    AudioClip _currentClip;
 
     [SerializeField] AudioClip _starMusic;
 
-    [Header("Listen to these events...")]
-    [SerializeField] AudioClipGameEvent _onChangeMusic;
-    [SerializeField] BoolGameEvent _onPlayMusic;
-    [SerializeField] BoolGameEvent _onPauseMusic;
-
-
-    private void OnEnable()
+    protected override void Awake()
     {
-        _onChangeMusic.AddListener(ChangeMusic);
-        _onPlayMusic.AddListener(TogglePlay);
-        _onPauseMusic.AddListener(TogglePause);
-    }
-
-    private void OnDisable()
-    {
-        _onChangeMusic.RemoveListener(ChangeMusic);
-        _onPlayMusic.RemoveListener(TogglePlay);
-        _onPauseMusic.RemoveListener(TogglePause);
-    }
-
-    private void Awake()
-    {
+        base.Awake();
         _audioSource = GetComponent<AudioSource>();
     }
 
-    private void ChangeMusic(AudioClip clip)
+    public void Play(AudioClip clip)
     {
         _audioSource.resource = clip;
         _audioSource.Play();
     }
 
-    private void TogglePlay(bool value)
+    public void Stop()
     {
-        if (value)
-        {
-            _audioSource.Play();
-        }
-        else
-        {
-            _audioSource.Stop();
-        }
+        _audioSource.Stop();
     }
 
-    private void TogglePause(bool value)
+    public void Pause(bool value)
     {
         if(value)
         {

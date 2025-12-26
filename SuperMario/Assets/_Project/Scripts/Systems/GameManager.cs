@@ -5,7 +5,7 @@ using PrimeTween;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] SceneData[] _levels;
+    [SerializeField] LevelData[] _levels;
     [SerializeField] SceneDataReference _currentLevel;
     SceneDataReference _nextLevel;
     int _currentLevelIndex = 0;
@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
             .ChainCallback(() => _currentLevel.Value = _levels[_currentLevelIndex])
             .ChainDelay(2)
             .ChainCallback(() => _toggleLoadingScreen.Raise(false))
-            .ChainCallback(() => _changeMusic.Raise(_levels[_currentLevelIndex].musicName))
+            .ChainCallback(() => _changeMusic.Raise(_levels[_currentLevelIndex].music))
             .ChainCallback(() => _startTimer.Raise())
             ;
     }
@@ -140,7 +140,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            _changeMusic.Raise(_levels[_currentLevelIndex].musicName);
+            _changeMusic.Raise(_levels[_currentLevelIndex].music);
         }
     }
 }

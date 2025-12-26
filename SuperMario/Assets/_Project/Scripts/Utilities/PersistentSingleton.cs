@@ -2,8 +2,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// A generic and persistent implementation of the Singleton design pattern. Use this for
-/// singletons that need to survive scene loading/unloading. 
+/// A generic and persistent implementation of the Singleton design pattern. 
 /// </summary>
 /// <typeparam name="T">The type of the MonoBehaviour that should be a Singleton.</typeparam>
 public class PersistentSingleton<T> : MonoBehaviour where T : Component

@@ -4,6 +4,7 @@ using PrimeTween;
 public class GameMode : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
+    [SerializeField] LevelData _levelData;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -11,6 +12,7 @@ public class GameMode : MonoBehaviour
         Sequence.Create()
             .ChainDelay(2)
             .ChainCallback(() => SpawnPlayerPrefab())
+            .ChainCallback(() => SFXManager.Instance.Play(_levelData.music))
             ;
     }
 
