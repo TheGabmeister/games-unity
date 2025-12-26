@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class MusicManager : PersistentSingleton<MusicManager>
+public class MusicManager : Singleton<MusicManager>
 {
     AudioSource _audioSource;
 

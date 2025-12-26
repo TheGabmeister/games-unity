@@ -12,7 +12,7 @@ public class GameMode : MonoBehaviour
         Sequence.Create()
             .ChainDelay(2)
             .ChainCallback(() => SpawnPlayerPrefab())
-            .ChainCallback(() => SFXManager.Instance.Play(_levelData.music))
+            .ChainCallback(() => MusicManager.Instance.Play(_levelData.music))
             ;
     }
 

@@ -2,10 +2,10 @@ using UnityEngine;
 
 
 /// <summary>
-/// A generic and persistent implementation of the Singleton design pattern. 
+/// A generic implementation of the Singleton design pattern. 
 /// </summary>
 /// <typeparam name="T">The type of the MonoBehaviour that should be a Singleton.</typeparam>
-public class PersistentSingleton<T> : MonoBehaviour where T : Component
+public class Singleton<T> : MonoBehaviour where T : Component
 {
     private static T _instance;
 
@@ -26,8 +26,6 @@ public class PersistentSingleton<T> : MonoBehaviour where T : Component
                         
                     // Name the singleton instance for the Type
                     singletonObject.name = typeof(T).ToString();
-
-                    DontDestroyOnLoad(singletonObject);
                 }
             }
             return _instance;
@@ -39,7 +37,6 @@ public class PersistentSingleton<T> : MonoBehaviour where T : Component
         if (_instance == null)
         {
             _instance = this as T;
-            DontDestroyOnLoad(this.gameObject);
         }
         else if (_instance != this)
         {
