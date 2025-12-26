@@ -5,6 +5,7 @@ public class GameMode : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
     [SerializeField] LevelData _levelData;
+    int _remainingTime;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -13,6 +14,8 @@ public class GameMode : MonoBehaviour
             .ChainDelay(2)
             .ChainCallback(() => SpawnPlayerPrefab())
             .ChainCallback(() => MusicManager.Instance.Play(_levelData.music))
+            .ChainCallback(() => _remainingTime = _levelData.time)
+            .ChainCallback(() => InvokeRepeating("UpdateTime", 0.0f, 1.0f))
             ;
     }
 
@@ -29,6 +32,25 @@ public class GameMode : MonoBehaviour
         {
             Debug.Log($"No GameObject with tag 'PlayerStart' found in the scene. Spawning in (0,0)...");
             Instantiate(_playerPrefab, Vector2.zero, Quaternion.identity);
+        }
+    }
+
+    void PauseTimer()
+    {
+        CancelInvoke();
+    }
+
+    void UpdateTime()
+    {
+        _remainingTime -= 1;
+        if (_remainingTime == 100)
+        {
+            //_onHunderedSecondsLeft?.Raise();
+        }
+
+        if (_remainingTime <= 0)
+        {
+            //_onFinishedTime?.Raise();
         }
     }
 }

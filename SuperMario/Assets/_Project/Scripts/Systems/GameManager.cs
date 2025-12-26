@@ -23,8 +23,6 @@ public class GameManager : MonoBehaviour
     [Header("Call these events...")]
     [SerializeField] StringGameEvent _loadLevel;
     [SerializeField] GameEvent _restartLevel;
-    [SerializeField] AudioClipGameEvent _changeMusic;
-    [SerializeField] BoolGameEvent _toggleMusicPlay;
     [SerializeField] BoolGameEvent _toggleLoadingScreen;
     [SerializeField] IntGameEvent _updateLives;
     [SerializeField] IntGameEvent _initializeTimer;
@@ -59,7 +57,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator HandlePlayerDeathCoroutine()
     {
-        _toggleMusicPlay.Raise(false);  // Or play death music
         yield return new WaitForSeconds(2);
 
         _updateLives.Raise(-1);
@@ -89,7 +86,6 @@ public class GameManager : MonoBehaviour
             .ChainCallback(() => _currentLevel.Value = _levels[_currentLevelIndex])
             .ChainDelay(2)
             .ChainCallback(() => _toggleLoadingScreen.Raise(false))
-            .ChainCallback(() => _changeMusic.Raise(_levels[_currentLevelIndex].music))
             .ChainCallback(() => _startTimer.Raise())
             ;
     }
@@ -106,7 +102,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator StartLevelEndSequenceCoroutine()
     {
-        _toggleMusicPlay.Raise(false);
         _pauseTimer.Raise();
         yield return new WaitForSeconds(2);
         // Play success music
@@ -136,11 +131,11 @@ public class GameManager : MonoBehaviour
     {
         if (value)
         {
-            _changeMusic.Raise(_starModeMusic);
+            //_changeMusic.Raise(_starModeMusic);
         }
         else
         {
-            _changeMusic.Raise(_levels[_currentLevelIndex].music);
+            //_changeMusic.Raise(_levels[_currentLevelIndex].music);
         }
     }
 }
