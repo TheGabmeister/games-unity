@@ -1,6 +1,7 @@
 using ScriptableObjectArchitecture;
 using System.Collections;
 using UnityEngine;
+using PrimeTween;
 
 public class GameManager : MonoBehaviour
 {
@@ -81,7 +82,9 @@ public class GameManager : MonoBehaviour
 
     void StartLevel()
     {
-        StartCoroutine(StartLevelCoroutine());
+        //StartCoroutine(StartLevelCoroutine());
+
+
     }
 
     IEnumerator StartLevelCoroutine()
