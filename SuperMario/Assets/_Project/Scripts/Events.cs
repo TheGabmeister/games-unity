@@ -9,7 +9,7 @@ namespace EventSystem
         public static readonly GameEvent TimerFinished = new();
 
 
-        public static readonly GameEvent<LevelData> LevelDataObtained = new();
+        public static readonly GameEvent<LevelData> LevelDataInitialized = new();
         public static readonly GameEvent PauseToggled = new();
 
 

@@ -25,7 +25,7 @@ public class GameUIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _gameMode.LevelDataInitialized += OnLevelDataInitialized;
+        Events.LevelDataInitialized.Sub(OnLevelDataInitialized);
         //_currentScore.AddListener(UpdateScoreText);
         //_coins.AddListener(UpdateCoinsText);
         //_lives.AddListener(UpdateLivesText);
@@ -38,7 +38,7 @@ public class GameUIManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _gameMode.LevelDataInitialized += OnLevelDataInitialized;
+        Events.LevelDataInitialized.Unsub(OnLevelDataInitialized);
         //_currentScore.RemoveListener(UpdateScoreText);
         //_coins.RemoveListener(UpdateCoinsText);
         //_lives.RemoveListener(UpdateLivesText);

@@ -11,8 +11,6 @@ public class GameMode : MonoBehaviour
     int _remainingTime;
     bool _isGamePaused = false;
 
-    public event Action<LevelData> LevelDataInitialized;
-
 
     private void OnEnable()
     {
@@ -29,7 +27,7 @@ public class GameMode : MonoBehaviour
         Sequence.Create()
             .ChainDelay(2)
             .ChainCallback(() => SpawnPlayerPrefab())
-            .ChainCallback(() => LevelDataInitialized?.Invoke(_levelData))
+            .ChainCallback(() => Events.LevelDataInitialized.Raise(_levelData))
             //.ChainCallback(() => MusicManager.Instance.Play(_levelData.music))
             .ChainCallback(() => _remainingTime = _levelData.time)
             .ChainCallback(() => InvokeRepeating("UpdateTime", 0.0f, 1.0f))
