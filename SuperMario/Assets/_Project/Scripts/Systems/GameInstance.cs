@@ -3,13 +3,13 @@ using System.Collections;
 using UnityEngine;
 using PrimeTween;
 
-public class GameManager : MonoBehaviour
+public class GameInstance : Singleton<GameInstance>
 {
     [SerializeField] LevelData[] _levels;
     [SerializeField] SceneDataReference _currentLevel;
     SceneDataReference _nextLevel;
-    int _currentLevelIndex = 0;
-    [SerializeField] IntReference _lives;
+    [SerializeField] int _lives;
+    public int Lives => _lives;
     [SerializeField] AudioClip _starModeMusic;
 
     [Header("Listen to these events...")]
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2);
 
         _updateLives.Raise(-1);
-        if (_lives.Value <= 0)
+        if (Lives <= 0)
         {
             StartGameOverSequence();
         }

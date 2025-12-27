@@ -1562,8 +1562,6 @@ GameObject:
   - component: {fileID: 7572657805050541662}
   - component: {fileID: 8922526143563853844}
   - component: {fileID: 6081771230860166370}
-  - component: {fileID: 990753364093530120}
-  - component: {fileID: 5879374313075961086}
   m_Layer: 5
   m_Name: GameUI
   m_TagString: Untagged
@@ -1674,22 +1672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b03ef3fe2f80a8949a76850f9a7ce679, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentScore:
-    _useConstant: 0
-    _constantValue: 0
-    _variable: {fileID: 11400000, guid: a493442bac492524f9f06a857b489c30, type: 2}
-  _coins:
-    _useConstant: 0
-    _constantValue: 0
-    _variable: {fileID: 11400000, guid: 26ecdfb3c5aa2904bae8dd16b3413e35, type: 2}
-  _lives:
-    _useConstant: 0
-    _constantValue: 0
-    _variable: {fileID: 11400000, guid: 1614210bb0b90f44d8dd04aa2b23920f, type: 2}
-  _remainingTime:
-    _useConstant: 0
-    _constantValue: 0
-    _variable: {fileID: 11400000, guid: a0b9da40052ed3743bb71e1a8b1a1f29, type: 2}
+  _gameMode: {fileID: 0}
   _loadingScreen: {fileID: 6637236678668649388}
   _gameOver: {fileID: 4244048775933744132}
   _scoreText: {fileID: 7490844344769464033}
@@ -1700,93 +1683,6 @@ MonoBehaviour:
   - {fileID: 1984205527948237984}
   _timeText: {fileID: 963579550725602949}
   _pauseMenu: {fileID: 577556374729458632}
-  _currentLevel:
-    _useConstant: 0
-    _constantValue: {fileID: 0}
-    _variable: {fileID: 11400000, guid: 93eb7ca983a85f844a128c7fbdb0b37a, type: 2}
-  _onToggleLoadingScreen: {fileID: 11400000, guid: 2524bc961d1e16d47930b69115198c63, type: 2}
-  _onPauseGame: {fileID: 11400000, guid: d1b634db8e21af6489ec3a8c7538f047, type: 2}
-  _onUnpauseGame: {fileID: 11400000, guid: 18424b26f5c53c049acf0bddb376a202, type: 2}
---- !u!114 &990753364093530120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7487672704276775870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5758ca93461aeeb4589456a052b07d74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DeveloperDescription:
-    _value: 
-  _showDebugFields: 0
-  _enableGizmoDebugging: 1
-  _debugColor: {r: 0, g: 1, b: 1, a: 1}
-  _previouslyRegisteredEvent: {fileID: 11400000, guid: d39ad576923dc0a4e99474af2af722ae, type: 2}
-  _event: {fileID: 11400000, guid: d39ad576923dc0a4e99474af2af722ae, type: 2}
-  _response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2295672203346048797}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 4244048775933744132}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &5879374313075961086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7487672704276775870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5758ca93461aeeb4589456a052b07d74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DeveloperDescription:
-    _value: 
-  _showDebugFields: 0
-  _enableGizmoDebugging: 1
-  _debugColor: {r: 0, g: 1, b: 1, a: 1}
-  _previouslyRegisteredEvent: {fileID: 11400000, guid: 8f2c57e4e033c644da10afd710c93b9f, type: 2}
-  _event: {fileID: 11400000, guid: 8f2c57e4e033c644da10afd710c93b9f, type: 2}
-  _response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4244048775933744132}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
 --- !u!1 &7654049622612017480
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: World1-2
   displayName: World 1 - 2
-  musicName: {fileID: 8300000, guid: 1d714ce52ed4a2946aae65e77c8c612d, type: 3}
+  music: {fileID: 8300000, guid: 1d714ce52ed4a2946aae65e77c8c612d, type: 3}
   time: 200

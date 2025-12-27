@@ -2,8 +2,9 @@ using UnityEngine;
 using TMPro;
 using EventSystem;
 
-public class UIManager : MonoBehaviour
+public class GameUIManager : MonoBehaviour
 {
+    [SerializeField] GameMode _gameMode;
     //[SerializeField] IntReference _currentScore;
     //[SerializeField] IntReference _coins;
     //[SerializeField] IntReference _lives;
@@ -30,6 +31,7 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        _gameMode.LevelDataInitialized += OnLevelDataInitialized;
         //_currentScore.AddListener(UpdateScoreText);
         //_coins.AddListener(UpdateCoinsText);
         //_lives.AddListener(UpdateLivesText);
@@ -42,6 +44,7 @@ public class UIManager : MonoBehaviour
 
     private void OnDisable()
     {
+        _gameMode.LevelDataInitialized += OnLevelDataInitialized;
         //_currentScore.RemoveListener(UpdateScoreText);
         //_coins.RemoveListener(UpdateCoinsText);
         //_lives.RemoveListener(UpdateLivesText);
@@ -52,21 +55,26 @@ public class UIManager : MonoBehaviour
         //_onUnpauseGame.RemoveListener(HidePauseMenu);
     }
 
-    public void UpdateScoreText()
+    void OnLevelDataInitialized(LevelData levelData)
+    {
+        //OnScoreUpdated()
+    }
+
+    public void OnScoreUpdated(int value)
     {
          //_scoreText.SetText("Score: " + _currentScore.Value);
     }
 
-    public void UpdateCoinsText()
+    public void OnCoinsUpdated(int value)
     {
         //_coinsText.SetText("Coins: " + _coins.Value);
     }
 
-    public void UpdateLivesText()
+    public void OnLivesUpdated(int value)
     {
         //_livesText.SetText("Lives: " + _lives.Value);
     }
-    private void OnTimerUpdated()
+    private void OnTimerUpdated(int value)
     {
         //_timeText.SetText("Time: " + _remainingTime.Value);
     }

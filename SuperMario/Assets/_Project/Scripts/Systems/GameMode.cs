@@ -1,6 +1,7 @@
-using UnityEngine;
-using PrimeTween;
 using EventSystem;
+using PrimeTween;
+using System;
+using UnityEngine;
 
 public class GameMode : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class GameMode : MonoBehaviour
     [SerializeField] LevelData _levelData;
     int _remainingTime;
     bool _isGamePaused = false;
+
+    public event Action<LevelData> LevelDataInitialized;
+
 
     private void OnEnable()
     {
@@ -20,17 +24,16 @@ public class GameMode : MonoBehaviour
         Events.PauseToggled.Unsub(OnPauseToggled);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Sequence.Create()
             .ChainDelay(2)
             .ChainCallback(() => SpawnPlayerPrefab())
-            .ChainCallback(() => Events.LevelDataObtained.Raise(_levelData))
-            .ChainCallback(() => MusicManager.Instance.Play(_levelData.music))
+            .ChainCallback(() => LevelDataInitialized?.Invoke(_levelData))
+            //.ChainCallback(() => MusicManager.Instance.Play(_levelData.music))
             .ChainCallback(() => _remainingTime = _levelData.time)
             .ChainCallback(() => InvokeRepeating("UpdateTime", 0.0f, 1.0f))
-            ;
+        ;
     }
 
     void SpawnPlayerPrefab()
