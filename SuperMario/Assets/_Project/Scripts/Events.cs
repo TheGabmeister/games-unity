@@ -12,6 +12,7 @@ namespace EventSystem
         public static readonly GameEvent<LevelData> LevelDataInitialized = new();
         public static readonly GameEvent PauseToggled = new();
 
+        public static readonly GameEvent<int> ScoreUpdated = new();
 
         public static readonly GameEvent PlayerDied = new();
         public static readonly GameEvent CheckpointPassed = new();
