@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8596265767163563042}
   - component: {fileID: 4127407705849714631}
   - component: {fileID: 2243484734237854116}
+  - component: {fileID: 5646342323806277777}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Untagged
@@ -128,3 +129,17 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &5646342323806277777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3554399131351793385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c184a516c2fd9f4185e2770955211d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupCoin
+  _pickupSound: {fileID: 8300000, guid: bc5ff69a7d8a4e04c898187a31bb4140, type: 3}
+  _score: 100

@@ -13,6 +13,7 @@ public class Pickup : MonoBehaviour
             SfxManager.Instance.Play(_pickupSound);
             GameInstance.Instance.UpdateScore(_score);
             TriggerEffect(other.gameObject);
+            Destroy(gameObject);
         }
     }
 

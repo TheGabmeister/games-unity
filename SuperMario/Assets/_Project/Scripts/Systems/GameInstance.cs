@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Eflatun.SceneReference;
+using EventSystem;
 
 public class GameInstance : Singleton<GameInstance>
 {
@@ -18,6 +19,8 @@ public class GameInstance : Singleton<GameInstance>
     int _lives = 3;
 
     [SerializeField] AudioClip _starModeMusic;
+
+
 
     private void OnEnable()
     {
@@ -36,12 +39,20 @@ public class GameInstance : Singleton<GameInstance>
 
     public void UpdateScore(int value)
     {
+        _score += value;
+        Events.StatsScoreUpdated.Raise(_score);
+    }
 
+    public void UpdateCoins(int value)
+    {
+        _coins += value;
+        Events.StatsCoinsUpdated.Raise(_coins);
     }
 
     public void UpdateLives(int value)
     {
         _lives += value;
+        Events.StatsLivesUpdated.Raise(_lives);
         if (_lives <= 0)
         {
             //_onZeroLivesLeft?.Raise();

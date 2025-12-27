@@ -26,27 +26,19 @@ public class GameUIManager : MonoBehaviour
     private void OnEnable()
     {
         Events.LevelDataInitialized.Sub(OnLevelDataInitialized);
-        //_currentScore.AddListener(UpdateScoreText);
-        //_coins.AddListener(UpdateCoinsText);
-        //_lives.AddListener(UpdateLivesText);
-        //_currentLevel.AddListener(UpdateWorldText);
-
-        //_onToggleLoadingScreen.AddListener(ToggleLoadingScreen);
-        //_onPauseGame.AddListener(ShowPauseMenu);
-        //_onUnpauseGame.AddListener(HidePauseMenu);
+        Events.StatsCoinsUpdated.Sub(OnCoinsUpdated);
+        Events.StatsScoreUpdated.Sub(OnScoreUpdated);
+        Events.StatsLivesUpdated.Sub(OnLivesUpdated);
+        Events.TimerUpdated.Sub(OnTimerUpdated);
     }
 
     private void OnDisable()
     {
         Events.LevelDataInitialized.Unsub(OnLevelDataInitialized);
-        //_currentScore.RemoveListener(UpdateScoreText);
-        //_coins.RemoveListener(UpdateCoinsText);
-        //_lives.RemoveListener(UpdateLivesText);
-        //_currentLevel.RemoveListener(UpdateWorldText);
-
-        //_onToggleLoadingScreen.RemoveListener(ToggleLoadingScreen);
-        //_onPauseGame.RemoveListener(ShowPauseMenu);
-        //_onUnpauseGame.RemoveListener(HidePauseMenu);
+        Events.StatsCoinsUpdated.Unsub(OnCoinsUpdated);
+        Events.StatsScoreUpdated.Unsub(OnScoreUpdated);
+        Events.StatsLivesUpdated.Unsub(OnLivesUpdated);
+        Events.TimerUpdated.Unsub(OnTimerUpdated);
     }
 
     public void RestartGame()
@@ -62,17 +54,17 @@ public class GameUIManager : MonoBehaviour
 
     public void OnScoreUpdated(int value)
     {
-         //_scoreText.SetText("Score: " + _currentScore.Value);
+         _scoreText.SetText("Score: " + value);
     }
 
     public void OnCoinsUpdated(int value)
     {
-        //_coinsText.SetText("Coins: " + _coins.Value);
+        _coinsText.SetText("Coins: " + value);
     }
 
     public void OnLivesUpdated(int value)
     {
-        //_livesText.SetText("Lives: " + _lives.Value);
+        _livesText.SetText("Lives: " + value);
     }
     private void OnTimerUpdated(int value)
     {

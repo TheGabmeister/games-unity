@@ -2896,51 +2896,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Coin
       objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 11400000, guid: 2983aa42df14fd545b786dea3a0e2ad5, type: 2}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Raise
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: StartDestroyCountdown
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: ScriptableObjectArchitecture.GameEventBase`1[[UnityEngine.AudioClip,
-        UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: DestroyAfterTime, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
-      value: 
-      objectReference: {fileID: 8300000, guid: 52320e590bf774734a288886eba557ba, type: 3}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.AudioClip, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661139647373375250, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
-      propertyPath: unityEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 8596265767163563042, guid: e02d1d6c21c692a468c7494eab38d7f2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3
