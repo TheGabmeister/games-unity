@@ -1,17 +1,23 @@
 using UnityEngine;
 using EventSystem;
 
-public abstract class Pickup : MonoBehaviour
+public class Pickup : MonoBehaviour
 {
     [SerializeField] AudioClip _pickupSound;
-    [SerializeField] int _score;
+    [SerializeField] int _score = 100;
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             SFXManager.Instance.Play(_pickupSound);
-            Events.ScoreUpdated.Raise(_score);
+            GameInstance.Instance.UpdateScore(_score);
+            TriggerEffect(other.gameObject);
         }
+    }
+
+    protected virtual void TriggerEffect(GameObject other)
+    {
+
     }
 }

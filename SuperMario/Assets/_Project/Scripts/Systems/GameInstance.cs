@@ -12,7 +12,11 @@ public class GameInstance : Singleton<GameInstance>
     [SerializeField] private SceneReference _mainMenuLevel;
     [SerializeField] private SceneReference _firstLevel;
 
-    public int Lives { get; private set; }
+    
+    int _score = 0;
+    int _coins = 0;
+    int _lives = 3;
+
     [SerializeField] AudioClip _starModeMusic;
 
     private void OnEnable()
@@ -30,6 +34,12 @@ public class GameInstance : Singleton<GameInstance>
         SceneManager.LoadScene(_firstLevel.Name);
     }
 
+    public void UpdateScore(int value)
+    {
+
+    }
+
+
 
     void HandlePlayerDeath()
     {
@@ -41,7 +51,7 @@ public class GameInstance : Singleton<GameInstance>
         yield return new WaitForSeconds(2);
 
         //_updateLives.Raise(-1);
-        if (Lives <= 0)
+        if (_lives <= 0)
         {
             StartGameOverSequence();
         }
