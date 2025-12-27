@@ -22,12 +22,6 @@ public class GameUIManager : MonoBehaviour
     //[SerializeField] BoolGameEvent _onToggleLoadingScreen;
     [SerializeField] GameEvent _onPauseGame;
     [SerializeField] GameEvent _onUnpauseGame;
-    
-
-    void Start()
-    {
-        ResetUI();
-    }
 
     private void OnEnable()
     {
@@ -53,6 +47,16 @@ public class GameUIManager : MonoBehaviour
         //_onToggleLoadingScreen.RemoveListener(ToggleLoadingScreen);
         //_onPauseGame.RemoveListener(ShowPauseMenu);
         //_onUnpauseGame.RemoveListener(HidePauseMenu);
+    }
+
+    void Start()
+    {
+        ResetUI();
+    }
+
+    public void RestartGame()
+    {
+        GameInstance.Instance.RestartGame();
     }
 
     void OnLevelDataInitialized(LevelData levelData)
@@ -120,4 +124,5 @@ public class GameUIManager : MonoBehaviour
         _livesText.SetText("Lives: 3");
         _gameOver.SetActive(false);
     }
+
 }

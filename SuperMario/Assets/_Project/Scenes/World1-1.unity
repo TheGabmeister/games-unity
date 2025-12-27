@@ -3156,14 +3156,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2322272448991093384, guid: ed92ac5f558cd7046bfc8e75032c05d9, type: 3}
-      propertyPath: _levelData
-      value: 
-      objectReference: {fileID: 11400000, guid: f7e08d7a434b4ed47b56a7439408c379, type: 2}
-    - target: {fileID: 2322272448991093384, guid: ed92ac5f558cd7046bfc8e75032c05d9, type: 3}
-      propertyPath: _pauseAudioClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 6b63e93cdc70400458bc2985f22cece2, type: 3}
     - target: {fileID: 6139165142531799315, guid: ed92ac5f558cd7046bfc8e75032c05d9, type: 3}
       propertyPath: m_Name
       value: GameMode

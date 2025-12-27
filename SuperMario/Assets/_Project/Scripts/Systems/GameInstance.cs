@@ -1,14 +1,17 @@
-using ScriptableObjectArchitecture;
 using System.Collections;
 using UnityEngine;
-using PrimeTween;
+using UnityEngine.SceneManagement;
+using Eflatun.SceneReference;
 
 public class GameInstance : Singleton<GameInstance>
 {
     [SerializeField] LevelData[] _levels;
-    [SerializeField] SceneDataReference _currentLevel;
-    SceneDataReference _nextLevel;
-    
+    //[SerializeField] SceneDataReference _currentLevel;
+    //SceneDataReference _nextLevel;
+
+    [SerializeField] private SceneReference _mainMenuLevel;
+    [SerializeField] private SceneReference _firstLevel;
+
     public int Lives { get; private set; }
     [SerializeField] AudioClip _starModeMusic;
 
@@ -20,6 +23,11 @@ public class GameInstance : Singleton<GameInstance>
     private void OnDisable()
     {
 
+    }
+
+    public void StartGame()
+    {
+        SceneManager.LoadScene(_firstLevel.Name);
     }
 
 
@@ -43,9 +51,9 @@ public class GameInstance : Singleton<GameInstance>
         }
     }
 
-    void RestartGame()
+    public void RestartGame()
     {
-
+        SceneManager.LoadScene(_mainMenuLevel.Name);
     }
 
     void StartLevel()
