@@ -10,7 +10,7 @@ public class Pickup : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            SFXManager.Instance.Play(_pickupSound);
+            SfxManager.Instance.Play(_pickupSound);
             GameInstance.Instance.UpdateScore(_score);
             TriggerEffect(other.gameObject);
         }

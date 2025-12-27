@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
     {
         Instantiate(_fireBall, transform.position, transform.rotation);
         _playerPosition.Value = new Vector2(transform.position.x, transform.position.y);
-        SFXManager.Instance.Play(_fireSound);
+        SfxManager.Instance.Play(_fireSound);
     }
 
     void Jump()
@@ -142,7 +142,7 @@ public class PlayerController : MonoBehaviour
             _rb.AddForce(new Vector2(0f, _jumpForce), ForceMode2D.Impulse);
             _isGrounded = false;
             //_onPlaySound.Raise(_jumpSound);
-            SFXManager.Instance.Play(_jumpSound);
+            SfxManager.Instance.Play(_jumpSound);
         }
     }
 
@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour
     {
         // Death Animation
         //DisableInput();
-        SFXManager.Instance.Play(_deathSound);
+        SfxManager.Instance.Play(_deathSound);
         _onPlayerDied.Raise();
         Destroy(gameObject);
     }

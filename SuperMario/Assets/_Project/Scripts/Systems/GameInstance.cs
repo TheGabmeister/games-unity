@@ -39,7 +39,14 @@ public class GameInstance : Singleton<GameInstance>
 
     }
 
-
+    public void UpdateLives(int value)
+    {
+        _lives += value;
+        if (_lives <= 0)
+        {
+            //_onZeroLivesLeft?.Raise();
+        }
+    }
 
     void HandlePlayerDeath()
     {

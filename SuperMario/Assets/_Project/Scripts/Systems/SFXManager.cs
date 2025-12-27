@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class SFXManager : Singleton<SFXManager>
+public class SfxManager : Singleton<SfxManager>
 {
     private AudioSource _audioSource;
 
