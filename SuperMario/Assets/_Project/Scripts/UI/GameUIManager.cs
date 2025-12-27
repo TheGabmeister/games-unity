@@ -49,11 +49,6 @@ public class GameUIManager : MonoBehaviour
         //_onUnpauseGame.RemoveListener(HidePauseMenu);
     }
 
-    void Start()
-    {
-        ResetUI();
-    }
-
     public void RestartGame()
     {
         GameInstance.Instance.RestartGame();
@@ -61,7 +56,8 @@ public class GameUIManager : MonoBehaviour
 
     void OnLevelDataInitialized(LevelData levelData)
     {
-        //OnScoreUpdated()
+        UpdateWorldText(levelData.displayName);
+        OnTimerUpdated(levelData.time);
     }
 
     public void OnScoreUpdated(int value)
@@ -80,15 +76,15 @@ public class GameUIManager : MonoBehaviour
     }
     private void OnTimerUpdated(int value)
     {
-        //_timeText.SetText("Time: " + _remainingTime.Value);
+        _timeText.SetText("Time: " + value);
     }
 
-    public void UpdateWorldText()
+    public void UpdateWorldText(string value)
     {
         foreach (TMP_Text text in _worldText)
         {
-            //_worldText[0].SetText(_currentLevel.Value.displayName);
-            //text.SetText(_currentLevel.Value.displayName);
+            _worldText[0].SetText(value);
+            text.SetText(value);
         }
             
     }

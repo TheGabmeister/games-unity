@@ -25,9 +25,9 @@ public class GameMode : MonoBehaviour
     void Start()
     {
         Sequence.Create()
+            .ChainCallback(() => Events.LevelDataInitialized.Raise(_levelData))
             .ChainDelay(2)
             .ChainCallback(() => SpawnPlayerPrefab())
-            .ChainCallback(() => Events.LevelDataInitialized.Raise(_levelData))
             //.ChainCallback(() => MusicManager.Instance.Play(_levelData.music))
             .ChainCallback(() => _remainingTime = _levelData.time)
             .ChainCallback(() => InvokeRepeating("UpdateTime", 0.0f, 1.0f))

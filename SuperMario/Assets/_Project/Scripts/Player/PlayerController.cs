@@ -68,16 +68,12 @@ public class PlayerController : MonoBehaviour
 
     void OnEnable()
     {
-        _onFinishedTimer.AddListener(StartDeathSequence);
-        _onPlayerFell.AddListener(StartDeathSequence);
-        _onPlayerDamaged.AddListener(TakeDamage);
+
     }
 
     void OnDisable()
     {
-        _onFinishedTimer.RemoveListener(StartDeathSequence);
-        _onPlayerFell.RemoveListener(StartDeathSequence);
-        _onPlayerDamaged.RemoveListener(TakeDamage);
+
     }
 
     private void Update()
