@@ -26,18 +26,18 @@ public class GameUIManager : MonoBehaviour
     private void OnEnable()
     {
         Events.LevelDataInitialized.Sub(OnLevelDataInitialized);
-        Events.StatsCoinsUpdated.Sub(OnCoinsUpdated);
-        Events.StatsScoreUpdated.Sub(OnScoreUpdated);
-        Events.StatsLivesUpdated.Sub(OnLivesUpdated);
+        GameInstance.StatsCoinsUpdated += OnCoinsUpdated;
+        GameInstance.StatsLivesUpdated += OnLivesUpdated;
+        GameInstance.StatsScoreUpdated += OnScoreUpdated;
         Events.TimerUpdated.Sub(OnTimerUpdated);
     }
 
     private void OnDisable()
     {
         Events.LevelDataInitialized.Unsub(OnLevelDataInitialized);
-        Events.StatsCoinsUpdated.Unsub(OnCoinsUpdated);
-        Events.StatsScoreUpdated.Unsub(OnScoreUpdated);
-        Events.StatsLivesUpdated.Unsub(OnLivesUpdated);
+        GameInstance.StatsCoinsUpdated -= OnCoinsUpdated;
+        GameInstance.StatsLivesUpdated -= OnLivesUpdated;
+        GameInstance.StatsScoreUpdated -= OnScoreUpdated;
         Events.TimerUpdated.Unsub(OnTimerUpdated);
     }
 

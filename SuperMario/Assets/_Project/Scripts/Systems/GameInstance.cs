@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Eflatun.SceneReference;
@@ -20,7 +21,9 @@ public class GameInstance : Singleton<GameInstance>
 
     [SerializeField] AudioClip _starModeMusic;
 
-
+    public static event Action<int> StatsScoreUpdated;
+    public static event Action<int> StatsCoinsUpdated;
+    public static event Action<int> StatsLivesUpdated;
 
     private void OnEnable()
     {
@@ -40,19 +43,19 @@ public class GameInstance : Singleton<GameInstance>
     public void UpdateScore(int value)
     {
         _score += value;
-        Events.StatsScoreUpdated.Raise(_score);
+        StatsScoreUpdated?.Invoke(_score);
     }
 
     public void UpdateCoins(int value)
     {
         _coins += value;
-        Events.StatsCoinsUpdated.Raise(_coins);
+        StatsCoinsUpdated?.Invoke(_coins);
     }
 
     public void UpdateLives(int value)
     {
         _lives += value;
-        Events.StatsLivesUpdated.Raise(_lives);
+        StatsLivesUpdated?.Invoke(_lives);
         if (_lives <= 0)
         {
             //_onZeroLivesLeft?.Raise();
