@@ -33,6 +33,9 @@ Recreate the core mechanics of Final Fantasy 1 (Pixel Remaster version) in Unity
 | Input | Input System 1.19.0 | Already installed; needs FF1-specific action map |
 | Tweening | PrimeTween 1.3.8 | Already installed; use for all animations |
 | UI | uGUI 2.0.0 | Already installed; use for all menus and HUD |
+| JSON | Newtonsoft JSON 3.2.1 | For save system serialization (Dictionary, HashSet, polymorphism) |
+| Inspector | Tri-Inspector 1.14.1 | Editor attributes ([ShowIf], [Required], [Dropdown], validation) for SO editing |
+| Async | Unity Awaitable (built-in) | async/await for battle flow, scene loading, dialogue, transitions. PrimeTween has native `GetAwaiter()` support — tweens are directly awaitable. |
 
 ### High-Level Architecture
 
@@ -115,6 +118,23 @@ The top-level FSM controls what input is routed where and what UI is visible. St
 - Each member gets a player-assigned name (max 6 characters, matching FF1)
 - No respec — class choice is permanent until class upgrade event
 
+#### Starting Game State
+After party creation confirms, the game initializes with:
+| Field | Value |
+|---|---|
+| Location | Cornelia Castle, throne room (post-rescue-princess opening in PR) or Cornelia town entrance |
+| Party level | 1 (all members) |
+| Gil | 400 |
+| Equipment | Class-default starter weapon per member (Warrior: Broadsword, Thief: Dagger, Monk: none, Red Mage: Rapier, White Mage: Staff, Black Mage: Staff). No armor/shield/helmet. |
+| Inventory | 0 consumables (player buys from Cornelia item shop) |
+| Spells | None (player buys from Cornelia magic shops) |
+| Key items | None |
+| Progression flags | None set |
+| Vehicles | Ship: not yet obtained. Canoe: not yet obtained. Airship: not yet obtained. |
+| Encounter counter | Randomized initial value within Cornelia region's MinSteps-MaxSteps range |
+
+*Exact values (Gil, starter weapons) should match Pixel Remaster. These are approximate — finalize during Phase 5 data entry.*
+
 #### The 6 Base Classes → Upgraded Classes
 | Base | Upgrade | Stat Focus | Equipment Access | Magic |
 |---|---|---|---|---|
@@ -151,14 +171,17 @@ Each class has a growth table: per-level-up stat increments with variance. Pixel
 - Collision check before movement: query tile passability + NPCs + interactables
 
 #### Interaction
-The player presses Confirm while facing a tile to interact with it. The system raycasts one tile in the facing direction and checks for:
-1. NPC → trigger dialogue
-2. Treasure chest → open and grant contents
-3. Door → check key item requirements, open if met
-4. Shop counter → enter shop
-5. Nothing → no response
+The player presses Confirm to interact. The system checks two locations:
+1. **Current tile** (under the player) — for: Airship boarding (player is standing on the landed airship).
+2. **Facing tile** (one tile in front) — for everything else:
+   - NPC → trigger dialogue
+   - Treasure chest → open and grant contents
+   - Door → check key item requirements, open if met
+   - Ship → board the ship
+   - Shop counter → enter shop
+   - Nothing → no response
 
-This is a single "Interact" action, not separate buttons per interaction type.
+Current-tile check runs first. This is a single "Interact" action, not separate buttons per interaction type.
 
 #### Run Speed
 Holding the Run button doubles movement speed (tile transition time halved from ~0.15s to ~0.075s). On the world map, running also doubles encounter step counter decrement rate — you fight more often per real-time second but cover more ground. In towns, no random encounters so run is purely a convenience.
@@ -187,14 +210,16 @@ Each tile needs metadata beyond visual:
 [Flags]
 public enum TilePassability
 {
-    None        = 0,
-    OnFoot      = 1 << 0,
-    Canoe       = 1 << 1,
-    Ship        = 1 << 2,
-    Airship     = 1 << 3,  // Airship can land here
-    AirshipFly  = 1 << 4,  // Airship can fly over (almost everything)
+    None         = 0,
+    OnFoot       = 1 << 0,
+    Canoe        = 1 << 1,
+    Ship         = 1 << 2,
+    AirshipLand  = 1 << 3,  // Airship can land on this tile (flat open ground)
+    AirshipFly   = 1 << 4,  // Airship can fly over this tile (nearly everything except void)
 }
 ```
+
+When airborne, movement checks `AirshipFly`. When landing (Confirm pressed), the tile under the shadow must have `AirshipLand`. Typical assignments: grass has both flags, forest has `AirshipFly` only, ocean has `AirshipFly` only, mountains have `AirshipFly` only.
 
 Passability is checked against current movement mode. Water tiles allow Ship but not OnFoot. River tiles allow Canoe but not Ship.
 
@@ -202,7 +227,7 @@ Passability is checked against current movement mode. Water tiles allow Ship but
 - Wrapping: The FF1 world map wraps horizontally and vertically (it's a torus). The tilemap must wrap or use teleport triggers at edges.
 - **Canoe:** NOT a placeable vehicle. Once obtained (key item), the player automatically enters canoe mode when walking onto a river tile and exits when stepping onto land. No boarding/exiting interaction needed. Canoe works on rivers only, not open ocean.
 - **Ship:** A physical object placed in the world. Player boards by pressing Confirm while facing it, exits by pressing Confirm when adjacent to a walkable land tile. Ship is left where you disembark — you must return to it to sail again.
-- **Airship:** A physical object. Board by pressing Confirm on top of it. Flies above all terrain (no collision). Land by pressing Confirm — only on tiles flagged `AirshipLand` (generally flat open ground, not forests/mountains/water). **No random encounters while airborne.** Airship stays where you land it.
+- **Airship:** A physical object. Board by pressing Confirm while standing on it (current-tile interaction, see Interaction section above). Flies above all terrain (checks `AirshipFly` passability). Land by pressing Confirm — only on tiles with the `AirshipLand` flag (flat open ground; not forests, mountains, or water). **No random encounters while airborne.** Airship stays where you land it.
 - Airship shadow: Airship flies above terrain. Need a visual indicator of ground position for landing.
 
 **Hard problem — world map wrapping:** Unity Tilemaps don't natively wrap. Options:
@@ -210,7 +235,11 @@ Passability is checked against current movement mode. Water tiles allow Ship but
 2. **Camera + position modulo:** Wrap player position mathematically and shift the camera. Tilemap doesn't know about wrapping.
 3. **Chunked loading with virtual coordinates:** Most robust but most complex.
 
-**Recommendation:** Option 2 — modulo position wrapping. The world map is 256x256 tiles in FF1. At that size, a single Tilemap fits in memory. Wrap player coordinates and let the camera follow.
+**Recommendation:** Option 1 (ghost border), refined. The world map is 256x256 tiles. The camera viewport is ~15x10 tiles. Duplicate a border strip of 8 tiles (half-viewport) on all four edges of the Tilemap, creating a 272x272 tile Tilemap where the outer 8 tiles on each side mirror the opposite edge. This costs 272² - 256² = ~8,000 extra tiles — negligible.
+
+Player position uses modulo math (e.g., `x = ((x % 256) + 256) % 256`). When the player crosses from tile 255 to tile 0, the position wraps and the camera sees the ghost border tiles seamlessly. The `GridData` metadata also wraps via the same modulo lookup.
+
+Collision at the seam works naturally because the ghost border tiles carry the same passability data as their source tiles. NPCs and vehicles near the seam are the one remaining concern — restrict vehicle parking and NPC patrol paths to at least 8 tiles from any map edge to avoid duplication logic.
 
 #### Town & Dungeon Specifics
 - No wrapping, bounded maps
@@ -236,7 +265,8 @@ public class EncounterTable : ScriptableObject
 {
     public int MinSteps;
     public int MaxSteps;
-    public EncounterEntry[] Encounters;  // weighted list of enemy formations
+    public BattleBackground Background;   // procedural background used for all encounters in this table
+    public EncounterEntry[] Encounters;    // weighted list of enemy formations
 }
 
 [System.Serializable]
@@ -248,13 +278,30 @@ public class EncounterEntry
 ```
 
 #### Enemy Formations
-A formation defines:
-- Which enemies appear (1-9 enemies)
-- Enemy positions in the battle scene
-- Whether it's a "boss" formation (no flee allowed)
-- Potential for preemptive strike or ambush
+```csharp
+[CreateAssetMenu]
+public class EnemyFormation : ScriptableObject
+{
+    public FormationSlot[] Slots;          // which enemies and where
+    public bool IsBoss;                    // true = flee disabled, unique battle music
+    public BattleBackground BackgroundOverride;  // null = use EncounterTable's default background
+    public int SurpriseResistance;         // modifier to preemptive/ambush calculation (bosses = high)
+}
 
-**Edge case — preemptive/ambush:** Based on party agility vs enemy agility. Preemptive = party gets a free round. Ambush = enemies get a free round. Must factor into turn order initialization.
+[System.Serializable]
+public class FormationSlot
+{
+    public EnemyData Enemy;
+    public int Count;                     // how many of this enemy (e.g., 3x Goblin)
+    public Vector2[] Positions;           // layout positions in battle scene (one per Count)
+}
+```
+
+- Formations hold 1-9 total enemies across all slots (e.g., 3x Goblin + 2x Wolf = 5 enemies)
+- `Positions` are normalized coordinates (0-1 range) mapped to the battle scene's enemy area. This allows the battle renderer to scale positions to screen size.
+- Duplicate enemies within a slot are auto-labeled (Goblin A, Goblin B, Goblin C) by the battle UI.
+
+**Edge case — preemptive/ambush:** Based on party average agility vs formation's average agility ± `SurpriseResistance`. Preemptive = party gets a free round (enemies skip turn 1). Ambush = enemies get a free round (party skips command input, enemies act first). Must factor into turn order initialization.
 
 ### 3.5 Battle System
 
@@ -298,10 +345,13 @@ This is the most complex system. FF1 Pixel Remaster uses a **turn-based system w
 ```
 Attack  — physical attack on one enemy
 Magic   — opens spell list (White/Black by level)
+Use     — cast a free spell from equipped item (only visible if character has equipment with CastableSpell)
 Item    — use consumable from inventory
 Defend  — halve incoming physical damage this turn, guaranteed to act first
-Flee    — entire party attempts to run (based on luck vs enemy level; bosses block)
+Flee    — entire party attempts to run (see Flee Mechanics below)
 ```
+
+The **Use** command is conditionally shown — it only appears if at least one of the character's equipped items has a non-null `CastableSpell`. Selecting it opens a sub-list of castable equipment (e.g., "Healing Staff → Cure"). The spell is cast at no MP cost, targeting follows the spell's normal `SpellTarget` rules. During **auto-battle**, Use is never auto-selected — auto-battle only repeats Attack or Magic commands.
 
 #### Auto-Battle (Pixel Remaster Feature)
 Toggled via a dedicated button (e.g., Right Trigger / Tab). When active:
@@ -467,11 +517,15 @@ In the NES original, if a character targeted an enemy that died before their tur
 **Decision: Implement auto-retarget** (Pixel Remaster behavior). Store this as a config toggle in case we want to support "classic" mode later.
 
 #### Flee Mechanics
-- Flee attempt is per-turn, whole party
-- Success rate: `(PartyAvgLevel * 2 + 80 - EnemyAvgLevel) / 256` per attempt
-- Boss encounters: flee is disabled (button grayed out)
-- On success: no EXP/Gil, return to exploration
-- On failure: enemies get a free round of attacks
+Flee is a **whole-party action**, not a per-character action. This creates a special case in the per-actor command input flow:
+
+1. When **any** party member selects Flee, command input for remaining party members is **skipped** — all party members are committed to the flee attempt.
+2. The flee action is always resolved **first** in the turn, before any other actions (it ignores agility sorting).
+3. Success rate: `(PartyAvgLevel * 2 + 80 - EnemyAvgLevel) / 256` per attempt.
+4. On **success:** Battle ends immediately. No EXP, no Gil, no drops. Return to exploration.
+5. On **failure:** The flee attempt wastes the party's entire turn. All queued party actions are discarded. Enemies still execute their full round of actions.
+6. Boss encounters: Flee option is **hidden** (not greyed out — removed entirely) from the command menu.
+7. If the first party member selects Flee, the player can still Cancel back and choose a different command before confirming.
 
 ### 3.6 Magic System
 
@@ -535,8 +589,9 @@ public class EquipmentData : ScriptableObject
     public bool TwoHanded;    // if true, blocks shield slot when equipped
     public Element[] ElementalResist;
     public StatusEffect[] StatusResist;
-    public WeaponType WeaponType;     // for weapons; ArmorType for armor pieces
-    public ClassFlag AllowedClasses;   // bitfield — derived from class weapon/armor whitelists, but overridable per item
+    public WeaponType WeaponType;     // only set when Slot == Weapon
+    public ArmorType ArmorType;       // only set when Slot == Shield, Helmet, or Armor
+    public ClassFlag AllowedClasses;   // derived from class weapon/armor whitelists at edit time; stored per item for runtime lookup
     public SpellData CastableSpell;    // some equipment casts spells when used in battle
     public int BuyPrice;
     public int SellPrice;             // usually half buy price
@@ -554,7 +609,7 @@ public class EquipmentData : ScriptableObject
 
 #### Inventory
 - Consumable items: Potions, Ethers, Phoenix Down, status cures, etc.
-- Key items: Separate list, not consumable, gate story progression
+- Key items are **not** stored in inventory — they live in `ProgressionManager` (see Section 3.10)
 - Stack limit: 99 per item type
 - Total inventory: uncapped in Pixel Remaster (NES had limits)
 - Items can be used in field (healing) or battle (healing, damage, status cure)
@@ -576,7 +631,7 @@ Reorder is drag/swap between the 4 slots. It does NOT affect stats or abilities 
 - **White magic shops** — sell White spells (by level)
 - **Black magic shops** — sell Black spells (by level)
 - **Item shops** — sell consumables
-- **Inn** — not a shop per se, but a paid service: pay Gil to fully restore all party HP, MP, and cure all status effects (except KO — KO'd members are revived at full HP). Each town has a different Inn price. Inn also acts as a "soft save point" — prompt to save after resting.
+- **Inn** — pay Gil to fully restore all party HP and MP, cure all status effects, **and revive KO'd members at full HP**. Each town has a different Inn price. Inn also acts as a "soft save point" — prompt to save after resting.
 - **Clinic** — revive KO'd party members for a per-character fee (alternative to Phoenix Down). Available in some towns.
 
 #### Shop UI Flow
@@ -592,8 +647,24 @@ For equipment shops, selecting an item shows a **stat comparison** per party mem
 
 ### 3.10 Progression & Story System
 
-#### Progression Flags
-FF1's progression is gated by key items and boss defeats. Implement as a `HashSet<string>` of flag IDs:
+#### Progression Flags & Key Items
+
+**Single source of truth:** `ProgressionManager` owns both flags and key items. The inventory system does NOT store key items — it only stores consumables and equipment. Key items are a `List<KeyItemData>` on `ProgressionManager`, displayed in a dedicated "Key Items" tab in the menu UI (read-only, no use/drop actions).
+
+Each `KeyItemData` ScriptableObject defines:
+```csharp
+public class KeyItemData : ScriptableObject
+{
+    public string ItemName;
+    public string Description;
+    public string GrantsFlag;            // flag auto-set when this item is obtained (e.g., "FLAG_MYSTIC_KEY")
+    public bool ConsumedOnUse;           // true = removed after triggering its event (e.g., Star Ruby). false = permanent (e.g., Mystic Key, Canoe)
+}
+```
+
+When a key item is obtained, `ProgressionManager` adds it to the key item list AND sets its `GrantsFlag`. Systems that check access (locked doors, vehicle availability, NPC dialogue) read **flags**, not the key item list directly. This means consumed key items still leave their flag behind — the door stays unlocked even after the key is gone.
+
+FF1's progression is additionally gated by boss defeats and story events. All gates are stored as a `HashSet<string>` of flag IDs:
 
 ```
 FLAG_GARLAND_DEFEATED
@@ -638,19 +709,33 @@ public class DialogueEntry
 
 ### 3.12 Save System
 
-#### Save Slots
-- 3-4 manual save slots (matching Pixel Remaster)
-- 1 auto-save slot (saves on map transitions)
-- Quick save (save anywhere, consumed on load — prevents save scumming)
+#### Save Types & Availability
+
+| Save Type | Slots | When Available | Behavior |
+|---|---|---|---|
+| **Manual save** | 4 numbered slots | World map only, or at designated save points in towns (via the inn prompt or specific NPCs). **Never** in dungeons, battles, or menus. | Persistent. Overwrites selected slot. |
+| **Auto-save** | 1 hidden slot | Triggers automatically on: entering/exiting a town or dungeon, resting at an inn, completing a boss fight. | Persistent. Silently overwrites. Player cannot write to this slot manually. |
+| **Quick save** | 1 hidden slot | Available anywhere during Exploration state (world map, towns, dungeons). **Never** during battle. Accessed from the pause menu. | **Consumed on load** — deleted after restoring. Prevents save-scumming. |
+
+The pause menu **Save** option is context-sensitive:
+- On the world map or at a save point: shows manual save slot picker + quick save option.
+- In a dungeon or non-save-point town area: shows quick save option only.
+- During battle: Save option is hidden entirely.
+
+**Continue (Title screen)** loads the most recent save across all types, determined by timestamp. The Title screen shows: slot name, location, play time, and level for each occupied slot.
 
 #### Serialized State
 ```
 SaveData
+├── SaveType              — Manual / Auto / Quick (so loader knows if to consume)
+├── SaveVersion           — schema version for migration
+├── Timestamp             — UTC datetime of save
 ├── PartyData[]           — stats, level, EXP, class, equipment, known spells, status
 ├── InventoryData         — all items and quantities
+├── KeyItems[]            — owned key items (see Section 3.10)
 ├── Gold                  — current gil
 ├── ProgressionFlags      — all set flags
-├── WorldState            — opened chests, defeated bosses, NPC states
+├── WorldState            — opened chests, defeated one-time enemies, NPC trigger states
 ├── LocationData          — current scene, player grid position, facing direction
 ├── VehiclePositions      — ship and airship world coordinates
 ├── EncounterCounter      — current step counter value (don't reset on load)
@@ -658,11 +743,11 @@ SaveData
 └── Settings              — text speed, battle speed, etc.
 ```
 
-**Format:** JSON for readability during development. Can switch to binary for release.
+**Format:** JSON (Newtonsoft) for readability during development. Can switch to binary for release.
 
 **Edge case — save corruption:** Write to temp file first, then atomic rename. Keep a backup of the previous save. Validate save data on load (version check, checksum).
 
-**Edge case — mid-battle saving:** FF1 Pixel Remaster only allows saving at save points (world map, specific spots in towns). Never mid-battle, never mid-dungeon (except quick save). Enforce save location restrictions.
+**Edge case — quick save consumed on crash:** Quick save writes to disk immediately. If the game crashes after loading a quick save but before the deletion completes, the quick save survives. This is acceptable — the alternative (deleting before loading) risks data loss on crash.
 
 ---
 
@@ -1010,7 +1095,7 @@ Every system that would play audio calls `AudioManager` with the appropriate enu
 | Use last Potion in battle | Item removed from list; cursor adjusts |
 | Equip item that another member is using | Each character has their own equipment (no sharing) |
 | Remove weapon on Monk | Attack power recalculates to bare-hand formula |
-| Key item used automatically | Remove from key items after event trigger |
+| Key item with `ConsumedOnUse` triggered | Remove from `ProgressionManager.KeyItems`, but flag remains set (see Section 3.10) |
 
 ### 7.4 Save/Load Edge Cases
 
