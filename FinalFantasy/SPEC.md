@@ -100,15 +100,11 @@ Assets/_Project/
 
 ```
 Title → PartyCreation → Exploration ⇄ Battle
-                            ↕
-                          Menu
-                            ↕
-                        Dialogue
-                            ↕
-                         Shop
+                          ↕  ↕  ↕
+                        Menu Dialogue Shop
 ```
 
-The top-level FSM controls what input is routed where and what UI is visible. States are exclusive — you cannot be in Battle and Menu simultaneously.
+The top-level FSM controls what input is routed where and what UI is visible. States are exclusive — you cannot be in Battle and Menu simultaneously. Menu, Dialogue, and Shop are **sibling sub-states** of Exploration, not a chain — each is entered independently (Menu from pause input, Dialogue from NPC interaction, Shop from shop NPC).
 
 **Critical detail:** The `Exploration` state has sub-states for movement mode (Walking, Canoe, Ship, Airship). Each has different movement rules, encounter tables, and tile passability.
 
@@ -133,7 +129,7 @@ The top-level FSM controls what input is routed where and what UI is visible. St
 ```
 Base Stats (from class):  HP, MP, Strength, Agility, Vitality, Intellect, Luck
 Level:                    1-99 (Pixel Remaster cap)
-Experience:               Tracked per character (shared from battles)
+Experience:               Shared equally among living members after battle (dead members get 0)
 Equipment Bonuses:        Additive modifiers to stats
 Status Effects:           Bitfield of active conditions
 ```
@@ -153,6 +149,34 @@ Each class has a growth table: per-level-up stat increments with variance. Pixel
 - Movement is smooth interpolation between grid cells (PrimeTween lerp over ~0.15s)
 - Hold direction to keep moving; tap to move one tile and stop
 - Collision check before movement: query tile passability + NPCs + interactables
+
+#### Interaction
+The player presses Confirm while facing a tile to interact with it. The system raycasts one tile in the facing direction and checks for:
+1. NPC → trigger dialogue
+2. Treasure chest → open and grant contents
+3. Door → check key item requirements, open if met
+4. Shop counter → enter shop
+5. Nothing → no response
+
+This is a single "Interact" action, not separate buttons per interaction type.
+
+#### Run Speed
+Holding the Run button doubles movement speed (tile transition time halved from ~0.15s to ~0.075s). On the world map, running also doubles encounter step counter decrement rate — you fight more often per real-time second but cover more ground. In towns, no random encounters so run is purely a convenience.
+
+#### Camera
+- **World map:** Smooth follow centered on the player. Pixel-perfect rendering (snap camera to pixel grid to prevent sub-pixel jitter). Camera viewport shows ~15x10 tiles.
+- **Towns/dungeons:** Same smooth follow, but camera is clamped to map bounds so it never shows void beyond the edges.
+- **Battle:** Static camera, no follow. Ortho size set to frame the full battle layout.
+
+Use URP's `PixelPerfectCamera` component (included in the 2D feature package) for crisp tile rendering.
+
+#### Scene Transitions
+- **Town/dungeon entry/exit:** Screen fades to black (0.3s), load new scene, fade in (0.3s). PrimeTween handles the fade via a full-screen UI overlay.
+- **Battle encounter:** FF1 PR uses a distinctive screen flash + spiral/swirl effect. Implement as: white flash (0.1s) → screen shatters/dissolves to black (0.4s) → load battle scene → fade in battle (0.3s). Post-battle: fade out (0.2s) → restore exploration → fade in (0.2s).
+- **Game Over:** Fade to red tint → "Game Over" text → fade to black → return to Title screen. Offer "Continue" which loads the most recent save.
+
+#### Encounter Suppression
+FF1 suppresses random encounters within a radius of ~2-4 tiles from town/dungeon entrances on the world map. Implement as a `SafeZone` flag on entrance-adjacent tiles or a distance check from warp points. This prevents the frustrating experience of getting ambushed immediately outside a town.
 
 #### Tilemap Approach
 Use Unity's built-in `Tilemap` system with **programmatically generated `Tile` assets** — no imported sprites. Each tile type gets a procedurally colored square (grass = green, water = blue, mountain = brown, etc.). Details in Section 6 (Rendering).
@@ -176,7 +200,9 @@ Passability is checked against current movement mode. Water tiles allow Ship but
 
 #### World Map Specifics
 - Wrapping: The FF1 world map wraps horizontally and vertically (it's a torus). The tilemap must wrap or use teleport triggers at edges.
-- Vehicles: Ship and Airship are "owned" objects placed in the world. Player boards/exits them. Ship is placed where you disembark. Airship returns to where you land it.
+- **Canoe:** NOT a placeable vehicle. Once obtained (key item), the player automatically enters canoe mode when walking onto a river tile and exits when stepping onto land. No boarding/exiting interaction needed. Canoe works on rivers only, not open ocean.
+- **Ship:** A physical object placed in the world. Player boards by pressing Confirm while facing it, exits by pressing Confirm when adjacent to a walkable land tile. Ship is left where you disembark — you must return to it to sail again.
+- **Airship:** A physical object. Board by pressing Confirm on top of it. Flies above all terrain (no collision). Land by pressing Confirm — only on tiles flagged `AirshipLand` (generally flat open ground, not forests/mountains/water). **No random encounters while airborne.** Airship stays where you land it.
 - Airship shadow: Airship flies above terrain. Need a visual indicator of ground position for landing.
 
 **Hard problem — world map wrapping:** Unity Tilemaps don't natively wrap. Options:
@@ -239,9 +265,9 @@ This is the most complex system. FF1 Pixel Remaster uses a **turn-based system w
 1. Encounter triggered → load Battle scene additively
 2. Determine surprise/preemptive/normal
 3. TURN LOOP:
-   a. Calculate turn order (all actors sorted by effective agility)
-   b. For each party member (in party order): show command menu, collect action
-   c. Re-sort all actions by speed
+   a. For each party member (in party slot order 1→4): show command menu, collect action
+   b. Assign enemy actions (AI selects based on weighted random)
+   c. Sort ALL queued actions (party + enemy) by effective agility (ties broken randomly)
    d. Execute actions in order:
       - Check if actor is alive/able to act (status effects)
       - Check if target is still valid
@@ -250,9 +276,22 @@ This is the most complex system. FF1 Pixel Remaster uses a **turn-based system w
       - Check for battle end (all enemies dead OR all party dead OR fled)
    e. Apply end-of-turn effects (poison tick, regen, etc.)
    f. If battle not over → next turn (back to step a)
-4. Victory: award EXP, Gil, item drops
-5. Defeat: Game Over screen
-6. Unload Battle scene
+4. Victory:
+   a. Award EXP equally to all living party members (KO'd/Stone'd get nothing)
+   b. Award Gil (flat amount per enemy in formation)
+   c. Roll item drops (per-enemy drop table, % chance)
+   d. Check level-ups for each member — display stat gains
+4e. Level-up display: for each member who leveled, show a stat comparison panel:
+      ```
+      Warrior reached Level 13!
+      HP: 245 → 268 (+23)
+      STR: 32 → 33 (+1)
+      AGI: 12 → 12
+      ...
+      ```
+      Player presses Confirm to dismiss each level-up. Multiple level-ups from a single battle are shown sequentially.
+5. Defeat: Game Over screen → return to Title (offer Continue from last save)
+6. Unload Battle scene, restore exploration camera and input
 ```
 
 #### Command Menu (per party member)
@@ -263,6 +302,17 @@ Item    — use consumable from inventory
 Defend  — halve incoming physical damage this turn, guaranteed to act first
 Flee    — entire party attempts to run (based on luck vs enemy level; bosses block)
 ```
+
+#### Auto-Battle (Pixel Remaster Feature)
+Toggled via a dedicated button (e.g., Right Trigger / Tab). When active:
+- Each party member **repeats their last-used command** automatically
+- If no previous command exists (first turn), default to basic Attack on a random enemy
+- Auto-battle skips the command input phase entirely — turns execute at accelerated speed
+- Player can cancel auto-battle at any time by pressing the toggle or any command input
+- Auto-battle does NOT auto-use items or auto-flee — only Attack and Magic
+- If a party member's repeated spell has insufficient MP, they fall back to Attack
+
+This is a core QoL feature of the Pixel Remaster and should be implemented in Phase 3.
 
 #### Damage Formulas
 
@@ -285,6 +335,26 @@ Resistance     = target.MagicDefense + elemental_resist_modifier
 Final Damage   = max(1, Damage - Resistance)
 Hit Chance     = 148 + spell.Accuracy - target.MagicEvasion
 ```
+
+**Healing Formula:**
+```
+Heal Amount = spell.BasePower + (Intellect / 2) + random(0, spell.BasePower)
+```
+Healing always hits (no accuracy roll). Multi-target heals (Healara on AllAllies) use the same formula per target.
+
+**Undead Healing Inversion:** Cure-type spells and healing items deal damage to Undead enemies instead of healing. The damage equals what the heal amount would have been. This also works in reverse — an Undead enemy using a Cure spell on itself takes damage (relevant for AI edge cases).
+
+**Buff/Debuff Spells:**
+| Spell Type | Mechanic | Duration | Stacking |
+|---|---|---|---|
+| Haste | Doubles hit count | Until battle ends | No — reapplying refreshes, doesn't double again |
+| Temper (NulDeath-era: TMPR) | +14 Attack per cast | Until battle ends | Yes — stacks additively, capped at +56 (4 casts) |
+| Protect (FOG) | +8 Defense per cast | Until battle ends | Yes — stacks additively |
+| NulFire/NulIce/NulLit | Grants resistance to element | Until battle ends | No — on/off |
+| Saber | +16 Attack + weapon becomes elemental | Until battle ends | No |
+| Slow | Halves hit count (enemies) | Until battle ends | No |
+
+Buffs are tracked as a `BattleBuffState` per actor, cleared when battle ends. Persistent status effects (Poison, Blind) carry over to the field; battle-only buffs do not.
 
 **Hard problem — multi-hit system:** FF1's physical attacks aren't single rolls. A high-level Warrior might have 8+ hit counts, each rolled independently. This creates high damage variance and makes the battle feel very different from single-roll systems. Critical hits also apply per-hit. This must be faithfully reproduced.
 
@@ -323,6 +393,50 @@ Equipment can grant elemental resistance. Some weapons deal elemental damage.
 **Edge case — Confuse targeting:** Confused allies use basic attacks on random targets (ally or enemy). They don't use spells or items. Physical hit from ally cures it but also deals damage.
 
 **Edge case — Poison field damage:** Poison ticks damage while walking. If a character hits 0 HP from poison while walking, they become KO'd. If all party members die from field poison, Game Over triggers.
+
+#### Enemy Data Structure
+Each enemy type is a single `EnemyData` ScriptableObject that ties together stats, rewards, AI, and visuals:
+```csharp
+public class EnemyData : ScriptableObject
+{
+    [Header("Identity")]
+    public string EnemyName;
+    public EnemyCategory Category;        // Normal, Boss, Undead, Dragon, etc.
+
+    [Header("Stats")]
+    public int MaxHP;
+    public int Attack;
+    public int Defense;
+    public int Accuracy;
+    public int Evasion;
+    public int MagicDefense;
+    public int MagicEvasion;
+    public int CritRate;
+    public int HitCount;                  // enemies also use multi-hit
+
+    [Header("Elemental Profile")]
+    public ElementalAffinity[] Affinities; // Weak, Resist, Null, Absorb per element
+    public StatusEffect[] StatusImmunities;
+
+    [Header("Rewards")]
+    public int EXPReward;
+    public int GilReward;
+    public ItemDrop[] DropTable;          // item + drop % chance
+
+    [Header("Behavior & Appearance")]
+    public EnemyAIProfile AIProfile;
+    public ProceduralAppearance Appearance;
+}
+
+[System.Serializable]
+public class ItemDrop
+{
+    public ItemData Item;
+    public float DropRate;               // 0.0 - 1.0
+}
+```
+
+The `Category` field matters for mechanics: `Undead` enemies take damage from healing magic and Cure items, `Boss` enemies block flee and are immune to instant-death.
 
 #### Enemy AI
 FF1 enemies use **weighted random action selection**, not complex decision trees:
@@ -374,20 +488,37 @@ public class SpellData : ScriptableObject
     public Element Element;
     public int BasePower;
     public int Accuracy;
+    public bool UsableInField;           // Cure, Poisona, etc. can be used outside battle
+    public bool UsableInBattle;          // most spells are battle-only; some buffs are field-usable
 }
 ```
 
 #### Spell Learning
-In Pixel Remaster, spells are **purchased from shops** (White/Black magic shops in towns), not learned by level. Each class has a list of learnable spell levels. A character can know up to 3 spells per level.
+In Pixel Remaster, spells are **purchased from shops** (White/Black magic shops in towns), not learned by level. Each class has a list of learnable spell levels. The Pixel Remaster **removed the NES 3-spells-per-level limit** — a character can learn all available spells at each level for their class.
 
-**Edge case — spell slots full:** If a character already knows 3 spells at a given level, they cannot buy another at that level. The shop must check and prevent purchase, or allow replacing.
+**Edge case — already known spell:** If a character already knows a spell, the shop must indicate this and prevent re-purchase for that character. Other party members who can learn it should still be offered the option.
 
 **Edge case — class upgrade spell access:** When a class upgrades (e.g., Warrior → Knight), they gain access to new spell levels. But they don't automatically learn spells — they still need to buy them.
+
+**Edge case — no valid learner:** If no party member can learn a spell (wrong school or already known by all eligible members), grey it out in the shop but still show it so players know it exists.
 
 ### 3.7 Equipment System
 
 #### Slots
 Each character has: **Weapon**, **Shield**, **Helmet**, **Armor** (body)
+
+#### Equipment Type Classification
+```csharp
+public enum WeaponType
+{
+    Sword, Dagger, Axe, Hammer, Staff, Nunchaku, Katana, Fist  // Fist = Monk bare hands (virtual)
+}
+public enum ArmorType
+{
+    Shield, LightArmor, HeavyArmor, Robe, Helmet, HeavyHelmet, Hat, Armlet, Gloves
+}
+```
+Each class defines a whitelist of allowed `WeaponType` and `ArmorType` values. This is more maintainable than per-item class flags and lets us validate equipment compatibility at the type level.
 
 #### Equipment Data
 ```csharp
@@ -401,9 +532,11 @@ public class EquipmentData : ScriptableObject
     public int MagicDefense;
     public int Accuracy;      // weapons
     public int CritRate;      // weapons
+    public bool TwoHanded;    // if true, blocks shield slot when equipped
     public Element[] ElementalResist;
     public StatusEffect[] StatusResist;
-    public ClassFlag AllowedClasses;   // bitfield of which classes can equip
+    public WeaponType WeaponType;     // for weapons; ArmorType for armor pieces
+    public ClassFlag AllowedClasses;   // bitfield — derived from class weapon/armor whitelists, but overridable per item
     public SpellData CastableSpell;    // some equipment casts spells when used in battle
     public int BuyPrice;
     public int SellPrice;             // usually half buy price
@@ -411,17 +544,29 @@ public class EquipmentData : ScriptableObject
 }
 ```
 
+**Edge case — two-handed weapons:** Some weapons (e.g., Masamune, some axes/hammers) are two-handed — equipping one removes the shield slot. The equipment UI must enforce this: selecting a two-handed weapon auto-unequips the shield and greys out the shield slot. Conversely, equipping a shield with a two-handed weapon equipped should prompt a swap.
+
 **Edge case — equipment spell casting:** Some weapons/armor can be "used" in battle to cast a free spell (no MP cost). This adds a hidden "Use" command in battle when such equipment is worn. Must be surfaced in the battle UI.
 
-**Edge case — optimizing equipment:** The Pixel Remaster has an "Optimize" button that auto-equips best gear. "Best" is not obvious — it optimizes for attack power (weapons) and defense (armor). Must implement a sorting heuristic.
+**Edge case — optimizing equipment:** The Pixel Remaster has an "Optimize" button that auto-equips best gear. "Best" is not obvious — it optimizes for attack power (weapons) and defense (armor). Must implement a sorting heuristic. Two-handed weapons should be considered if their attack power exceeds weapon+shield combined benefit.
 
-### 3.8 Inventory System
+### 3.8 Inventory & Party Management
 
+#### Inventory
 - Consumable items: Potions, Ethers, Phoenix Down, status cures, etc.
 - Key items: Separate list, not consumable, gate story progression
 - Stack limit: 99 per item type
 - Total inventory: uncapped in Pixel Remaster (NES had limits)
 - Items can be used in field (healing) or battle (healing, damage, status cure)
+- **Gil cap:** 999,999 (Pixel Remaster cap). Earning Gil beyond this is silently discarded. Display in UI should accommodate 6 digits.
+
+#### Party Order
+The main menu includes a **party reorder** option (called "Formation" or "Order"). This changes:
+- Which character sprite appears on the exploration map (always slot 1)
+- The order of command input in battle (slot 1 first)
+- Targeting priority for enemy single-target attacks (front slots slightly more likely)
+
+Reorder is drag/swap between the 4 slots. It does NOT affect stats or abilities — purely positional.
 
 ### 3.9 Shop System
 
@@ -431,15 +576,19 @@ public class EquipmentData : ScriptableObject
 - **White magic shops** — sell White spells (by level)
 - **Black magic shops** — sell Black spells (by level)
 - **Item shops** — sell consumables
+- **Inn** — not a shop per se, but a paid service: pay Gil to fully restore all party HP, MP, and cure all status effects (except KO — KO'd members are revived at full HP). Each town has a different Inn price. Inn also acts as a "soft save point" — prompt to save after resting.
+- **Clinic** — revive KO'd party members for a per-character fee (alternative to Phoenix Down). Available in some towns.
 
 #### Shop UI Flow
 ```
-Enter Shop → Browse items (show equip comparison for gear) → Buy/Sell → Confirm → Update gold
+Enter Shop → Buy/Sell toggle → Browse items → Select item → Choose quantity (1-99) → Confirm → Update gold
 ```
 
-**Edge case — spell shop for wrong class:** Player might try to buy a Black Magic spell with no Black Mage in the party. Allow purchase anyway (they might class-upgrade later? No — FF1 doesn't allow this). **Decision:** Show which party members can learn each spell. Allow purchase only if at least one member can learn it.
+For equipment shops, selecting an item shows a **stat comparison** per party member (current equipped vs. new item, with green/red delta). For magic shops, show which party members can learn each spell and whether they already know it.
 
-**Edge case — already owned spell:** Spells are learned permanently. If a character already knows a spell, the shop must indicate this and prevent re-purchase for that character.
+**Multi-quantity:** Item shops and sell mode support buying/selling multiple at once. Equipment and magic are always single transactions (you buy one sword, not five).
+
+**Edge case — spell shops:** Show which party members can learn each spell inline. See Section 3.6 for full spell purchase edge cases (already owned, no valid learner, class upgrade access).
 
 ### 3.10 Progression & Story System
 
@@ -504,6 +653,7 @@ SaveData
 ├── WorldState            — opened chests, defeated bosses, NPC states
 ├── LocationData          — current scene, player grid position, facing direction
 ├── VehiclePositions      — ship and airship world coordinates
+├── EncounterCounter      — current step counter value (don't reset on load)
 ├── PlayTime              — total elapsed time
 └── Settings              — text speed, battle speed, etc.
 ```
@@ -588,7 +738,23 @@ public class ShapeComposite
 
 **Tradeoff:** This will look abstract. It's intentional — the game is readable, and the system is easy to extend when real art is eventually added. The appearance data is fully decoupled from gameplay data.
 
-### 4.5 Spell & Battle Effects
+### 4.5 Battle Background
+
+The battle scene needs a background that conveys the environment where the encounter occurred. Since we have no art:
+
+| Context | Background |
+|---|---|
+| World map (grass) | Solid green gradient, bottom-to-top (dark→light) |
+| World map (forest) | Dark green with triangle tree silhouettes |
+| World map (ocean/ship) | Blue gradient with horizontal wave lines |
+| Dungeon (cave) | Dark gray/brown with rough edge shapes on sides |
+| Dungeon (castle) | Dark blue-gray with vertical column shapes |
+| Dungeon (volcano) | Dark red/orange with flickering glow at bottom |
+| Boss room | Black background with subtle animated particle effect |
+
+The background is a `BattleBackground` ScriptableObject referenced by each `EncounterTable`. A simple `SpriteRenderer` or UI `Image` with a procedurally generated gradient texture. Keep it minimal — the focus is on the actors, not the backdrop.
+
+### 4.6 Spell & Battle Effects
 
 - **Damage numbers:** Floating text that rises and fades (PrimeTween)
 - **Physical attack:** Quick lunge animation + white flash on target
@@ -601,7 +767,7 @@ public class ShapeComposite
 
 Use Unity's built-in `ParticleSystem` with simple shapes (no imported textures — use default particle sprite).
 
-### 4.6 Screen Shake & Juice
+### 4.7 Screen Shake & Juice
 
 Even without art, game feel matters:
 - Screen shake on big hits and boss attacks
@@ -674,6 +840,7 @@ Minimal overlay:
 │   Magic      │ Thief    Lv 11  HP 189/210  │
 │   Equipment  │ W.Mage   Lv 12  HP 156/156  │
 │   Status     │ B.Mage   Lv 11  HP 134/148  │
+│   Order      │                              │
 │   Config     │                              │
 │   Save       │ Gil: 24,580                  │
 │              │ Time: 4:32:10                │
@@ -725,6 +892,7 @@ Replace the current template input actions with:
 | Menu | Escape / C | Start | Open/close pause menu |
 | Run | Left Shift (hold) | B (hold) | Exploration (walk faster) |
 | Toggle Minimap | M | Select | Exploration |
+| Auto-Battle | Tab | Right Trigger | Battle (toggle) |
 
 ### 5.4 Navigation & Accessibility
 
@@ -807,6 +975,13 @@ Every system that would play audio calls `AudioManager` with the appropriate enu
 | Self-targeting confusion | Confused character can hit themselves |
 | Status effect on immune target | "Ineffective" message, no effect applied |
 | Double status application | No stacking; re-applying Sleep on sleeping target is wasted |
+| Cure spell on Undead enemy | Deals damage equal to heal amount (see Section 3.5) |
+| Cure item (Potion) on Undead | Also deals damage — same inversion rule |
+| Buff on dead character | Wasted — buffs require living target |
+| Haste on Hasted character | Refreshes duration, does NOT double again |
+| Silence on character mid-spell-select | In FF1 PR, Silence is checked at execution time, not input time — spell fizzles |
+| Enemy uses spell with 0 remaining targets | Action skipped entirely |
+| Auto-battle with insufficient MP | Falls back to basic Attack |
 
 ### 7.2 Exploration Edge Cases
 
@@ -820,6 +995,11 @@ Every system that would play audio calls `AudioManager` with the appropriate enu
 | Use key item at wrong location | Nothing happens; no error message |
 | NPC blocks path | Player cannot walk through NPCs |
 | World map edge (wrapping) | Seamless wrap to opposite side |
+| Enter canoe tile without canoe key item | Blocked (river tile treated as impassable) |
+| Board ship from wrong side | Must be directly adjacent and facing the ship tile |
+| Airship flying — no encounters | Step counter paused while airborne |
+| Walk onto damage floor with 1 HP | Character KO'd; check for party wipe |
+| Party leader is KO'd | Show KO'd sprite on map; can still move (party isn't dead until all 4 are) |
 
 ### 7.3 Inventory Edge Cases
 
@@ -876,7 +1056,10 @@ Many systems interact: equipping a weapon changes battle stats, learning a spell
 
 **Mitigation:** Clear ownership of data. Party stats are computed (base + equipment + buffs), never cached incorrectly. Use events (`OnEquipmentChanged`, `OnFlagSet`) to propagate changes reactively rather than polling.
 
-### 8.7 No Undo in Party Creation
+### 8.7 EXP Tables & Multi-Level-Up
+Each class has its own EXP-to-level curve (Warriors need less EXP than Mages to reach the same level). These are ~99-entry tables per class that must be data-driven. A single high-EXP battle can trigger **multiple level-ups at once** (e.g., fighting a boss 10 levels above you). The level-up display must handle showing stat gains for each level sequentially, and stat growth must be applied per-level (not just final delta) since growth includes random variance per level.
+
+### 8.8 No Undo in Party Creation
 FF1 has no respec. If we don't communicate this clearly, players will be frustrated by a bad party composition.
 
 **Mitigation:** Show clear class descriptions and stat previews during party creation. Consider adding a "are you sure?" confirmation.
@@ -953,37 +1136,45 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
 ## 10. Implementation Phases
 
 ### Phase 1 — Foundation (Skeleton)
-- GameManager singleton + state machine
-- Scene loading infrastructure (Boot → Title → Exploration)
-- Input system with FF1-specific action map
+- GameManager singleton + state machine (with sub-states for exploration modes)
+- Scene loading infrastructure (Boot → Title → Exploration) with fade transitions
+- Input system with FF1-specific action map (replace template actions)
 - Procedural tile factory + test map (small 20x20 grid)
-- Player grid movement with collision
-- Camera follow
-- UI framework (blue windows, cursor navigation)
+- Player grid movement with collision + interaction system (Confirm to interact)
+- Run speed toggle
+- Camera follow (pixel-perfect, clamped to bounds)
+- UI framework (blue windows, cursor navigation, text box with typewriter effect)
 - Audio manager stub
-- Save/load infrastructure (JSON serialization)
+- Save/load infrastructure (JSON serialization, atomic writes)
 
 ### Phase 2 — Party & Data
-- Class definitions (all 6 base classes as SOs)
+- Class definitions (all 6 base classes as SOs, including EXP tables and equipment whitelists)
 - Party creation screen (class select + naming)
-- Stat system (base stats, growth tables, level-up)
+- Stat system (base stats, growth tables, level-up with variance)
 - PartyManager with full stat computation
-- Main menu (Items, Equipment, Magic, Status, Config)
-- Equipment system (equip/unequip, stat recalc, class restrictions)
-- Inventory system (add, remove, use items)
+- Main menu (Items, Equipment, Magic, Status, Order, Config)
+- Equipment system (equip/unequip, stat recalc, class restrictions, two-handed)
+- Inventory system (add, remove, use items, Gil cap)
+- Field spell/item usage (Cure, Antidote outside battle)
 
 ### Phase 3 — Battle System
-- Battle scene (additive loading, layout, cameras)
-- Turn order calculation
+- Battle scene (additive loading, layout, cameras, procedural backgrounds)
+- Encounter transition effect (flash + dissolve)
+- Turn order calculation (agility sort with random tiebreak)
 - Command input (Attack, Magic, Item, Defend, Flee)
-- Physical damage formula (multi-hit system)
-- Magical damage formula
-- Enemy AI (weighted random)
-- Status effects (at least KO, Poison, Sleep)
-- Battle rewards (EXP, Gil, level-up)
+- Auto-battle toggle (repeat last commands)
+- Physical damage formula (multi-hit system, critical hits)
+- Magical damage formula + healing formula
+- Buff/debuff system (Haste, Temper, Protect, Saber, Slow)
+- Undead healing inversion
+- Elemental weakness/resistance/null/absorb
+- Enemy AI (weighted random + boss scripted patterns)
+- Status effects (all persistent + battle-only effects)
+- Battle rewards (shared EXP, Gil, item drops, level-up display)
 - Flee mechanics
+- Auto-retargeting (with classic mode toggle)
 - Battle animations (lunge, flash, particles)
-- Damage numbers
+- Damage numbers + "Miss" / "Ineffective" text
 
 ### Phase 4 — World Building
 - World map tilemap (full 256x256 or representative subset)
