@@ -1288,6 +1288,22 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
 - Audio manager stub
 - Save/load infrastructure (JSON serialization, atomic writes)
 
+**Debug tools built in Phase 1:**
+- **Debug Overlay (toggle with F1):** An on-screen panel showing current game state (FSM state, current scene, player grid position, facing direction, FPS). Always accessible during play mode. Built with uGUI, renders on top of everything.
+- **Debug Console (toggle with backtick/tilde):** A text input field that executes debug commands. Minimal initial command set, expanded each phase.
+
+**Phase 1 verification:**
+- [ ] Boot → Title → Exploration flow runs without errors
+- [ ] Player moves on 20x20 grid, collides with walls, cannot walk out of bounds
+- [ ] Confirm interaction facing an empty tile does nothing; facing a wall does nothing
+- [ ] Run toggle doubles movement speed visibly
+- [ ] Camera stays within map bounds (no void visible at edges)
+- [ ] Fade transitions play on scene change (no pop-in)
+- [ ] Save a file to disk, quit play mode, re-enter, load it — player position restores
+- [ ] All input works on both keyboard and gamepad; switching mid-session works
+- [ ] Audio stub logs debug messages when play/stop are called (verify in Console)
+- [ ] Debug overlay shows correct state, position, and FPS
+
 ### Phase 2 — Party & Data
 - Class definitions (all 6 base classes as SOs, including EXP tables and equipment whitelists)
 - Party creation screen (class select + naming)
@@ -1297,6 +1313,27 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
 - Equipment system (equip/unequip, stat recalc, class restrictions, two-handed)
 - Inventory system (add, remove, use items, Gil cap)
 - Field spell/item usage (Cure, Antidote outside battle)
+
+**Debug tools added in Phase 2:**
+- **Debug overlay additions:** Show party summary (names, classes, levels, HP/MP) and Gil.
+- **Debug console commands:**
+  - `setlevel <slot> <level>` — set a party member's level (triggers stat recalc)
+  - `addgil <amount>` — add Gil (test Gil cap at 999,999)
+  - `additem <id> <count>` — add items to inventory
+  - `addequip <id>` — add equipment
+  - `levelup <slot>` — force a level-up and display stat gains
+
+**Phase 2 verification:**
+- [ ] Party creation: select 4 classes (try all-same-class), name each, confirm → spawns on map
+- [ ] Pause menu opens, shows correct party stats, Gil, play time
+- [ ] Equipment screen: equip a weapon → stat preview shows correct delta → confirm → stats update
+- [ ] Equipment screen: try equipping wrong class item → blocked
+- [ ] Equipment screen: equip two-handed weapon → shield slot greys out, shield unequipped
+- [ ] Inventory: use Potion in field → HP increases → item count decreases
+- [ ] Inventory: use Potion at full HP → still consumed (FF1 behavior)
+- [ ] Gil cap: `addgil 999999`, buy an item, verify Gil doesn't exceed 999,999
+- [ ] `setlevel 0 50` → verify stat block recalculates, HP/MP update
+- [ ] Party order: reorder slots → map sprite changes to new slot 1 character
 
 ### Phase 3 — Battle System
 - Battle scene (additive loading, layout, cameras, procedural backgrounds)
@@ -1317,6 +1354,42 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
 - Battle animations (lunge, flash, particles)
 - Damage numbers + "Miss" / "Ineffective" text
 
+**Debug tools added in Phase 3:**
+- **Debug overlay additions (battle mode):** Show turn order queue, current actor, action being executed, all actor HP/status, buff states, per-hit damage rolls.
+- **Debug console commands:**
+  - `encounter <formation_id>` — force a specific encounter immediately
+  - `kill` — kill all enemies instantly (end battle with rewards)
+  - `godmode` — party takes 0 damage (toggle)
+  - `setstat <slot> <stat> <value>` — override a stat for testing formulas
+  - `inflict <slot> <status>` — apply a status effect to a party member
+  - `cure <slot>` — remove all status effects from a party member
+  - `nobattles` — disable random encounters (toggle)
+
+**Phase 3 verification:**
+- [ ] Walking on encounter tiles triggers battle after step counter reaches 0
+- [ ] Encounter transition plays cleanly (no frame hitch, no camera jitter)
+- [ ] Battle scene loads additively — exploration scene is paused underneath
+- [ ] Turn order: give one character high agility via `setstat` → they act first consistently
+- [ ] Attack command: select enemy, attack hits, damage number appears, multi-hit rolls visible in debug overlay
+- [ ] Magic command: cast Fire on enemy weak to Fire → 2x damage shown
+- [ ] Magic command: cast Cure on undead enemy → deals damage instead
+- [ ] Item command: use Potion on ally → HP restored, item consumed
+- [ ] Use command: equip item with CastableSpell → Use appears in menu → cast works at 0 MP cost
+- [ ] Defend: character defends → incoming physical damage halved (verify via debug overlay)
+- [ ] Flee: attempt flee on non-boss → success exits battle, failure → enemies get free round
+- [ ] Flee: attempt on boss → Flee option is hidden from menu
+- [ ] Auto-battle: toggle on → party repeats last commands → toggle off mid-turn returns control
+- [ ] Auto-retarget: kill an enemy mid-turn → next attacker targeting that enemy redirects to living enemy
+- [ ] Status: inflict Sleep → character skips turn; hit sleeping character → they wake up
+- [ ] Status: inflict Confuse → character attacks random target (ally or enemy)
+- [ ] Status: inflict Silence → character tries to cast spell → "Silenced!" → action fizzles
+- [ ] Status: inflict Poison → damage ticks at end of turn in battle
+- [ ] All party KO'd → Game Over screen → return to title
+- [ ] Victory: EXP split among living members, KO'd get 0 (verify with debug overlay)
+- [ ] Victory: level-up display shows correct stat deltas per level
+- [ ] `encounter <formation>` with 9 enemies → verify layout isn't overlapping
+- [ ] Battle ends → exploration resumes at exact same position, step counter intact
+
 ### Phase 4 — World Building
 - World map tilemap (full 256x256 or representative subset)
 - World map wrapping
@@ -1328,6 +1401,42 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
 - Warp tiles (stairs, town exits, dungeon transitions)
 - Encounter tables per region
 - Vehicles (ship, canoe, airship)
+
+**Debug tools added in Phase 4:**
+- **Debug overlay additions:** Show current encounter table name, step counter value, current tile passability flags, vehicle state.
+- **Debug console commands:**
+  - `warp <scene> <x> <y>` — teleport to any scene at any grid position
+  - `setflag <flag_id>` — set a progression flag
+  - `clearflag <flag_id>` — remove a progression flag
+  - `flags` — list all set flags
+  - `giveship` / `givecanoe` / `giveairship` — grant vehicles
+  - `openall` — mark all chests in current scene as opened
+  - `noclip` — walk through walls (toggle)
+
+**Phase 4 verification:**
+- [ ] World map wrapping: walk off right edge → appear on left edge; same for top/bottom
+- [ ] World map wrapping: camera shows no visual seam at the wrap boundary
+- [ ] Town entry: walk onto town tile → fade → town scene loads → player at entrance
+- [ ] Town exit: walk to exit tile → fade → world map loads → player at correct position
+- [ ] Dungeon entry/exit: warp tiles move between floors correctly (verify with `warp`)
+- [ ] NPC dialogue: talk to NPC → text box appears → Confirm advances → box closes
+- [ ] NPC dialogue: set a progression flag → talk to same NPC → dialogue changes
+- [ ] Shop (weapon): browse list → stat comparison shows per-member → buy → Gil deducted, item in inventory
+- [ ] Shop (magic): shows learnable spells per member → buy → character knows spell → re-entering shop shows "learned"
+- [ ] Shop: attempt to buy with insufficient Gil → blocked
+- [ ] Inn: rest → all HP/MP restored, status cured, KO'd revived → Gil deducted → save prompt
+- [ ] Treasure chest: open → item granted → chest visually open → save/reload → chest still open
+- [ ] Treasure chest: open already-opened chest → "Already empty" message
+- [ ] Chest PersistentID: copy a chest in editor → editor script logs duplicate ID warning
+- [ ] Locked door: interact without Mystic Key → nothing. `setflag FLAG_MYSTIC_KEY` → interact → door opens
+- [ ] Ship: board from adjacent tile → movement switches to ocean tiles → disembark on land → ship stays
+- [ ] Canoe: walk onto river with canoe key item → auto-enters canoe mode → step onto land → exits
+- [ ] Airship: board by standing on it + Confirm → fly mode → land on grass tile → airship stays
+- [ ] Airship: attempt landing on forest/mountain/water → blocked
+- [ ] Airship: no encounters while flying (verify step counter paused in debug overlay)
+- [ ] Encounter suppression: walk near town entrance on world map → no encounter for first ~3 tiles
+- [ ] Damage floor: walk on lava tile → HP decreases per step (verify in debug overlay)
+- [ ] `warp Town_Cornelia 5 5` → teleports correctly, camera adjusts
 
 ### Phase 5 — Content & Polish
 - All enemy data (formations, AI profiles, appearances)
@@ -1344,12 +1453,47 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
 - Config screen (text speed, battle speed, volume)
 - Minimap
 
+**Debug tools added in Phase 5:**
+- **Debug console commands:**
+  - `upgrade <slot>` — force class upgrade on a party member
+  - `allspells <slot>` — teach all learnable spells to a party member
+  - `allkeys` — grant all key items
+  - `skipto <milestone>` — set all flags up to a progression milestone (e.g., `skipto fiend_earth` sets all flags needed to reach Earth Crystal)
+
+**Phase 5 verification:**
+- [ ] Every enemy type: force encounter via `encounter` → verify appearance is distinct, AI works, rewards are correct
+- [ ] Every spell: cast each → verify damage/healing/status/element/targeting all match spell data
+- [ ] Every equipment piece: equip → verify stat change matches SO data → verify class restriction works
+- [ ] Every shop: verify stock matches expected items for that town
+- [ ] Every map: walk every accessible tile → no collision holes, no stuck points
+- [ ] Class upgrade: trigger Bahamut event → classes upgrade → new spell levels accessible → equipment whitelist updates
+- [ ] Boss fight (each Fiend): force encounter → full fight → verify AI pattern, rewards, flag set
+- [ ] Full progression: `skipto` each milestone → verify NPC dialogue, door access, vehicle availability changes
+- [ ] Minimap: toggle on → shows correct map with player position → toggle off
+- [ ] Config: change text speed → dialogue respects new speed. Change volume → audio stub logs new volume.
+- [ ] Game Over → title → Continue loads correct most-recent save
+- [ ] Victory/ending sequence plays after final boss
+
 ### Phase 6 — Hardening
 - Save migration / versioning
 - Edge case testing (all cases in Section 7)
 - Balance pass (if formulas feel off, tune coefficients)
 - Performance profiling (world map, large battles)
 - Memory leak audit (scene loads/unloads)
+
+**Debug tools used in Phase 6:**
+All previously built tools. No new tools — Phase 6 is about using existing tools to stress-test.
+
+**Phase 6 verification:**
+- [ ] Save version migration: create a save, change `SaveVersion`, load old save → migration runs or error is shown cleanly
+- [ ] Save corruption: truncate a save file mid-write → load → error displayed, other slots still accessible
+- [ ] Quick save lifecycle: quick save in dungeon → load → position restored → quick save slot is consumed
+- [ ] Run every edge case from Section 7 tables (battle, exploration, inventory, save/load)
+- [ ] Performance: world map 256x256 → maintain 60 FPS while walking
+- [ ] Performance: battle with 9 enemies → maintain 60 FPS during animations
+- [ ] Memory: enter and exit 20 battles in a row → no memory growth (check Profiler)
+- [ ] Memory: transition between 10 different scenes → no leaked GameObjects (check Profiler)
+- [ ] Full playthrough: New Game → party creation → Cornelia → Temple of Chaos → first boss → verify complete loop
 
 ---
 
