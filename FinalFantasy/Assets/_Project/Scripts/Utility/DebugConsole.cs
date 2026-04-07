@@ -173,7 +173,8 @@ public class DebugConsole : MonoBehaviour
         switch (cmd)
         {
             case "help":
-                Log("Commands: help, state <state>, pos <x> <y>, save <slot>, load <slot>, scene <name>");
+                Log("Phase 1: help, state, pos, save, load, scene");
+                Log("Phase 2: setlevel, addgil, additem, addequip, levelup");
                 break;
 
             case "state":
@@ -240,6 +241,50 @@ public class DebugConsole : MonoBehaviour
                 if (parts.Length < 2) { Log("Usage: scene <sceneName>"); break; }
                 Log($"Loading scene: {parts[1]}");
                 _ = GameManager.Instance?.SceneLoader?.LoadScene(parts[1]);
+                break;
+
+            case "setlevel":
+                if (parts.Length < 3) { Log("Usage: setlevel <slot 0-3> <level>"); break; }
+                if (int.TryParse(parts[1], out int slSlot) && int.TryParse(parts[2], out int slLevel))
+                {
+                    GameManager.Instance?.PartyManager?.SetLevel(slSlot, slLevel);
+                    var m = GameManager.Instance?.PartyManager?.GetMember(slSlot);
+                    if (m != null) Log($"{m.Name} set to level {m.Level}");
+                    else Log($"No member in slot {slSlot}");
+                }
+                break;
+
+            case "addgil":
+                if (parts.Length < 2) { Log("Usage: addgil <amount>"); break; }
+                if (int.TryParse(parts[1], out int gilAmt))
+                {
+                    GameManager.Instance?.InventoryManager?.AddGil(gilAmt);
+                    Log($"Gil: {GameManager.Instance?.InventoryManager?.Gil:N0}");
+                }
+                break;
+
+            case "additem":
+                Log("additem requires ItemData SOs — use editor to create test items.");
+                break;
+
+            case "addequip":
+                Log("addequip requires EquipmentData SOs — use editor to create test equipment.");
+                break;
+
+            case "levelup":
+                if (parts.Length < 2) { Log("Usage: levelup <slot 0-3>"); break; }
+                if (int.TryParse(parts[1], out int luSlot))
+                {
+                    var result = GameManager.Instance?.PartyManager?.LevelUp(luSlot);
+                    if (result != null)
+                    {
+                        Log($"Level {result.OldLevel} → {result.NewLevel}");
+                        Log($"HP: {result.OldHP} → {result.NewHP} | STR: {result.OldStr} → {result.NewStr}");
+                        Log($"AGI: {result.OldAgi} → {result.NewAgi} | VIT: {result.OldVit} → {result.NewVit}");
+                        Log($"INT: {result.OldInt} → {result.NewInt} | LCK: {result.OldLuck} → {result.NewLuck}");
+                    }
+                    else Log($"Cannot level up slot {luSlot}");
+                }
                 break;
 
             default:

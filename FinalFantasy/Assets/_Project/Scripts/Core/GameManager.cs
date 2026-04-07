@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public SceneLoader SceneLoader { get; private set; }
     public InputManager InputManager { get; private set; }
     public DataRepository DataRepository { get; private set; }
+    public PartyManager PartyManager { get; private set; }
+    public InventoryManager InventoryManager { get; private set; }
+    public ProgressionManager ProgressionManager { get; private set; }
 
     void Awake()
     {
@@ -28,6 +31,9 @@ public class GameManager : MonoBehaviour
         SceneLoader = GetComponentInChildren<SceneLoader>();
         InputManager = GetComponentInChildren<InputManager>();
         DataRepository = GetComponentInChildren<DataRepository>();
+        PartyManager = GetComponentInChildren<PartyManager>();
+        InventoryManager = GetComponentInChildren<InventoryManager>();
+        ProgressionManager = GetComponentInChildren<ProgressionManager>();
     }
 
     async Awaitable Start()

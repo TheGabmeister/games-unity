@@ -9,7 +9,8 @@
       "Bash(python3 -c \"import json; json.load\\(open\\('c:/dev/games-unity/FinalFantasy/Assets/_Project/Input/InputSystem_Actions.inputactions'\\)\\); print\\('Valid JSON'\\)\")",
       "Bash(python -c \"import json; json.load\\(open\\('c:/dev/games-unity/FinalFantasy/Assets/_Project/Input/InputSystem_Actions.inputactions'\\)\\); print\\('Valid JSON'\\)\")",
       "Bash(python3 -c \"import json; f=open\\('Assets/_Project/Input/InputSystem_Actions.inputactions','r'\\); data=json.load\\(f\\); f.close\\(\\); maps=[m['name'] for m in data['maps']]; print\\('Maps:', maps\\); [print\\(f'  {m[\\\\\"name\\\\\"]}: {[a[\\\\\"name\\\\\"] for a in m[\\\\\"actions\\\\\"]]}'\\) for m in data['maps']]; print\\('Control schemes:', [s['name'] for s in data.get\\('controlSchemes',[]\\)]\\)\")",
-      "Bash(node -e \"const d=require\\('./Assets/_Project/Input/InputSystem_Actions.inputactions'\\); console.log\\('Maps:', d.maps.map\\(m=>m.name\\)\\); d.maps.forEach\\(m=>console.log\\('  '+m.name+':', m.actions.map\\(a=>a.name\\)\\)\\); console.log\\('Schemes:', \\(d.controlSchemes||[]\\).map\\(s=>s.name\\)\\)\")"
+      "Bash(node -e \"const d=require\\('./Assets/_Project/Input/InputSystem_Actions.inputactions'\\); console.log\\('Maps:', d.maps.map\\(m=>m.name\\)\\); d.maps.forEach\\(m=>console.log\\('  '+m.name+':', m.actions.map\\(a=>a.name\\)\\)\\); console.log\\('Schemes:', \\(d.controlSchemes||[]\\).map\\(s=>s.name\\)\\)\")",
+      "Bash(ls -la \"c:/dev/games-unity/FinalFantasy/Assets/_Project/Scripts/UI/\"*.cs)"
     ]
   }
 }

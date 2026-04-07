@@ -44,7 +44,7 @@ public class DebugOverlay : MonoBehaviour
         rect.anchorMax = new Vector2(0, 1);
         rect.pivot = new Vector2(0, 1);
         rect.anchoredPosition = new Vector2(10, -10);
-        rect.sizeDelta = new Vector2(300, 150);
+        rect.sizeDelta = new Vector2(340, 220);
 
         var textRect = displayText.rectTransform;
         textRect.anchorMin = Vector2.zero;
@@ -87,13 +87,27 @@ public class DebugOverlay : MonoBehaviour
         string playerPos = player != null ? player.GridPosition.ToString() : "N/A";
         string facing = player != null ? GetDirectionName(player.FacingDirection) : "N/A";
 
+        // Party summary
+        string partySummary = "";
+        var pm = gm?.PartyManager;
+        if (pm != null && pm.IsPartyCreated)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                var m = pm.GetMember(i);
+                if (m != null)
+                    partySummary += $"{m.Name}({m.ClassDef?.Abbreviation}) Lv{m.Level} {m.CurrentHP}/{m.MaxHP}\n";
+            }
+        }
+
+        string gilStr = gm?.InventoryManager != null ? $"Gil: {gm.InventoryManager.Gil:N0}" : "";
+
         displayText.text =
             $"FPS: {currentFPS:F1}\n" +
-            $"State: {state}\n" +
-            $"Scene: {scene}\n" +
-            $"Mode: {explorationMode}\n" +
-            $"Pos: {playerPos}\n" +
-            $"Facing: {facing}";
+            $"State: {state} | Scene: {scene}\n" +
+            $"Mode: {explorationMode} | Pos: {playerPos} | {facing}\n" +
+            $"{gilStr}\n" +
+            partySummary;
     }
 
     string GetDirectionName(int dir) => dir switch

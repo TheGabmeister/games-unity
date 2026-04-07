@@ -31,11 +31,21 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        CreatePlayerSprite();
+        spriteRenderer.sortingOrder = 10;
+        UpdateSprite();
     }
 
-    void CreatePlayerSprite()
+    /// Rebuild the sprite from the party leader's class color. Call after party changes.
+    public void UpdateSprite()
     {
+        Color32 color = new Color32(50, 100, 220, 255); // default blue
+        var leader = GameManager.Instance?.PartyManager?.Leader;
+        if (leader?.ClassDef != null)
+        {
+            var c = leader.ClassDef.ClassColor;
+            color = new Color32((byte)(c.r * 255), (byte)(c.g * 255), (byte)(c.b * 255), 255);
+        }
+
         int size = 16;
         var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
         tex.filterMode = FilterMode.Point;
@@ -46,26 +56,16 @@ public class PlayerController : MonoBehaviour
         float radius = size / 2f - 1;
 
         for (int y = 0; y < size; y++)
-        {
             for (int x = 0; x < size; x++)
             {
                 float dist = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), center);
-                pixels[y * size + x] = dist <= radius
-                    ? new Color32(50, 100, 220, 255)
-                    : new Color32(0, 0, 0, 0);
+                pixels[y * size + x] = dist <= radius ? color : new Color32(0, 0, 0, 0);
             }
-        }
 
         tex.SetPixels32(pixels);
         tex.Apply();
 
-        spriteRenderer.sprite = Sprite.Create(
-            tex,
-            new Rect(0, 0, size, size),
-            new Vector2(0.5f, 0.5f),
-            16f
-        );
-        spriteRenderer.sortingOrder = 10;
+        spriteRenderer.sprite = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 16f);
     }
 
     public void SetPosition(Vector2Int pos)

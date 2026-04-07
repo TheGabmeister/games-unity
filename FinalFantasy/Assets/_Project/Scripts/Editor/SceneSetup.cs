@@ -32,6 +32,7 @@ public class SceneSetup
         // Create scenes
         CreateBootScene();
         CreateTitleScene();
+        CreatePartyCreationScene();
         CreateExplorationScene(palette);
 
         // Add scenes to build settings
@@ -39,6 +40,7 @@ public class SceneSetup
         {
             new EditorBuildSettingsScene("Assets/_Project/Scenes/Boot.unity", true),
             new EditorBuildSettingsScene("Assets/_Project/Scenes/Title.unity", true),
+            new EditorBuildSettingsScene("Assets/_Project/Scenes/PartyCreation.unity", true),
             new EditorBuildSettingsScene("Assets/_Project/Scenes/Exploration.unity", true)
         };
         EditorBuildSettings.scenes = scenes.ToArray();
@@ -46,9 +48,9 @@ public class SceneSetup
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        Debug.Log("[SceneSetup] Phase 1 scenes created and added to Build Settings.");
+        Debug.Log("[SceneSetup] All scenes created and added to Build Settings.");
         EditorUtility.DisplayDialog("Scene Setup Complete",
-            "Boot, Title, and Exploration scenes have been created.\n\n" +
+            "Boot, Title, PartyCreation, and Exploration scenes have been created.\n\n" +
             "Build Settings have been updated.\n\n" +
             "Open Boot scene to start the game.",
             "OK");
@@ -85,6 +87,28 @@ public class SceneSetup
         var dataGO = new GameObject("DataRepository");
         dataGO.transform.SetParent(gmGO.transform);
         dataGO.AddComponent<DataRepository>();
+
+        var partyGO = new GameObject("PartyManager");
+        partyGO.transform.SetParent(gmGO.transform);
+        partyGO.AddComponent<PartyManager>();
+
+        var inventoryGO = new GameObject("InventoryManager");
+        inventoryGO.transform.SetParent(gmGO.transform);
+        inventoryGO.AddComponent<InventoryManager>();
+
+        var progressionGO = new GameObject("ProgressionManager");
+        progressionGO.transform.SetParent(gmGO.transform);
+        progressionGO.AddComponent<ProgressionManager>();
+
+        // --- HUD (persistent, child of GameManager) ---
+        var hudGO = new GameObject("HUD");
+        hudGO.transform.SetParent(gmGO.transform);
+        hudGO.AddComponent<HudUI>();
+
+        // --- MainMenu (persistent, child of GameManager) ---
+        var mainMenuGO = new GameObject("MainMenu");
+        mainMenuGO.transform.SetParent(gmGO.transform);
+        mainMenuGO.AddComponent<MainMenuUI>();
 
         // --- FadeCanvas ---
         var fadeGO = new GameObject("FadeCanvas");
@@ -176,6 +200,28 @@ public class SceneSetup
         // Save scene
         EditorSceneManager.SaveScene(scene, "Assets/_Project/Scenes/Title.unity");
         Debug.Log("[SceneSetup] Title scene created");
+    }
+
+    static void CreatePartyCreationScene()
+    {
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        // --- Main Camera ---
+        var cameraGO = new GameObject("Main Camera");
+        cameraGO.tag = "MainCamera";
+        var cam = cameraGO.AddComponent<Camera>();
+        cam.orthographic = true;
+        cam.orthographicSize = 5f;
+        cam.backgroundColor = Color.black;
+        cam.clearFlags = CameraClearFlags.SolidColor;
+
+        // --- PartyCreation Canvas ---
+        var pcCanvasGO = new GameObject("PartyCreationCanvas");
+        pcCanvasGO.AddComponent<PartyCreationUI>();
+
+        // Save scene
+        EditorSceneManager.SaveScene(scene, "Assets/_Project/Scenes/PartyCreation.unity");
+        Debug.Log("[SceneSetup] PartyCreation scene created");
     }
 
     static void CreateExplorationScene(TilePalette palette)

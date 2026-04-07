@@ -132,9 +132,8 @@ public class TitleScreenUI : MonoBehaviour
     async void OnNewGame()
     {
         GameManager.Instance?.Audio?.PlaySFX(SoundEffect.Confirm);
-        // For Phase 1: go straight to Exploration (no party creation)
-        GameManager.Instance?.StateManager?.ChangeState(GameState.Exploration);
-        await GameManager.Instance.SceneLoader.LoadScene("Exploration");
+        GameManager.Instance?.StateManager?.ChangeState(GameState.Transition);
+        await GameManager.Instance.SceneLoader.LoadScene("PartyCreation");
     }
 
     async void OnContinue()
