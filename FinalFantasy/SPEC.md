@@ -87,7 +87,8 @@ Assets/_Project/
 │   ├── Spells/             — SO instances for spells
 │   ├── Encounters/         — SO encounter tables per region
 │   ├── Maps/               — Tilemap data, warp definitions
-│   └── Shops/              — SO shop inventories
+│   ├── Shops/              — SO shop inventories
+│   └── Dialogue/           — DialogueDatabase SOs (one per region)
 ├── Scenes/
 ├── Prefabs/
 ├── Input/
@@ -724,16 +725,47 @@ NPCs check flags to determine dialogue. Warp tiles / doors check flags for acces
 - Some NPCs give key items or trigger events
 - Text speed: instant or typewriter-style (player preference)
 
+#### Centralized Dialogue Database
+
+All NPC dialogue lives in `DialogueDatabase` ScriptableObjects — one per region (Cornelia, Pravoka, Elfheim, etc.), not inline on NPC objects. This keeps all text searchable and reviewable in one place, which is critical for verifying progression flow across ~150 NPCs with flag-dependent variants.
+
 ```csharp
+[CreateAssetMenu]
+public class DialogueDatabase : ScriptableObject
+{
+    public NPCDialogue[] Entries;
+}
+
+[System.Serializable]
+public class NPCDialogue
+{
+    public string NPCID;                  // matches the NPC's identifier in the scene
+    public DialogueEntry[] Variants;      // evaluated top-to-bottom; first matching entry wins
+}
+
 [System.Serializable]
 public class DialogueEntry
 {
-    public string RequiredFlag;    // empty = default
-    public string[] Lines;         // sequential text boxes
-    public string SetFlagOnComplete;
-    public KeyItem GiveItem;
+    public string RequiredFlag;           // flag that must be set for this variant (empty = default fallback)
+    public string[] Lines;               // sequential text boxes shown to the player
+    public string SetFlagOnComplete;     // flag set after the player dismisses the last text box
+    public KeyItemData GiveKeyItem;      // key item granted on complete (null = none)
 }
 ```
+
+**Lookup at runtime:** NPC MonoBehaviours store only their `NPCID` string + a reference to their region's `DialogueDatabase`. On interaction, the dialogue system finds the `NPCDialogue` entry by ID, then iterates `Variants` top-to-bottom and picks the **first entry whose `RequiredFlag` is set** (or the first entry with an empty flag as the default fallback).
+
+**Ordering matters:** Variants are priority-ordered. Put the most-progressed flag first, default last. Example:
+```
+NPC: "Cornelia_Guard_01"
+  [0] RequiredFlag: "FLAG_BRIDGE_BUILT"    → "The bridge to the north is complete! Safe travels."
+  [1] RequiredFlag: "FLAG_GARLAND_DEFEATED" → "You saved the princess! The King wishes to see you."
+  [2] RequiredFlag: ""                      → "The princess has been kidnapped! Please, help us!"
+```
+
+**Edge case — NPC ID mismatch:** If an NPC's `NPCID` has no match in the database, log a warning and show nothing. Don't crash. This catches renamed NPCs or missing data entries during development.
+
+**Edge case — flag + give item on same NPC:** Some NPCs both give a key item and set a flag. The `SetFlagOnComplete` and `GiveKeyItem` fields fire after the player dismisses the last line. On subsequent interactions, the higher-priority variant (with the newly set flag) should activate, so the NPC doesn't repeat the gift.
 
 ### 3.12 Save System
 
