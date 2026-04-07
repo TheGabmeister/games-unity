@@ -138,7 +138,9 @@ public class PlayerController : MonoBehaviour
     void Interact()
     {
         Vector2Int facingPos = GridPosition + DirectionVectors[FacingDirection];
-        Debug.Log($"[Player] Interact at {facingPos} (facing {FacingDirection})");
-        GameManager.Instance?.Audio?.PlaySFX(SoundEffect.Confirm);
+
+        // Phase 1: no interactables exist yet.
+        // Future phases will check for NPCs, chests, doors, etc. here.
+        // Per spec: facing an empty tile or wall does nothing.
     }
 }

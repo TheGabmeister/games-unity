@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
 
@@ -48,7 +49,7 @@ public class DebugConsole : MonoBehaviour
         outputText.fontSize = 14;
         outputText.color = Color.green;
         outputText.alignment = TextAlignmentOptions.BottomLeft;
-        outputText.enableWordWrapping = true;
+        outputText.textWrappingMode = TextWrappingModes.Normal;
         outputText.overflowMode = TextOverflowModes.Truncate;
         outputText.raycastTarget = false;
 
@@ -110,7 +111,7 @@ public class DebugConsole : MonoBehaviour
     void Update()
     {
         // Toggle with backtick key
-        bool togglePressed = UnityEngine.Input.GetKeyDown(KeyCode.BackQuote);
+        bool togglePressed = Keyboard.current != null && Keyboard.current.backquoteKey.wasPressedThisFrame;
         if (!togglePressed)
         {
             var input = GameManager.Instance?.InputManager;
@@ -135,10 +136,21 @@ public class DebugConsole : MonoBehaviour
         var bg = GetComponent<Image>();
         if (bg != null) bg.enabled = visible;
 
-        if (visible && inputField != null)
+        // Switch input routing so gameplay doesn't consume keystrokes
+        var inputManager = GameManager.Instance?.InputManager;
+        if (visible)
         {
-            inputField.ActivateInputField();
-            inputField.Select();
+            inputManager?.EnableUI();
+            if (inputField != null)
+            {
+                inputField.ActivateInputField();
+                inputField.Select();
+            }
+        }
+        else
+        {
+            if (GameManager.Instance?.StateManager?.CurrentState == GameState.Exploration)
+                inputManager?.EnableGameplay();
         }
     }
 

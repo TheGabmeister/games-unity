@@ -35,15 +35,18 @@ public class SaveManager : MonoBehaviour
         string path = GetSavePath(slot);
         string tmpPath = path + ".tmp";
 
-        // Atomic write: write to temp, backup old, rename
+        // Atomic write: write to temp, then single-step replace
         File.WriteAllText(tmpPath, json);
 
         if (File.Exists(path))
-            File.Copy(path, GetBackupPath(slot), overwrite: true);
-
-        if (File.Exists(path))
-            File.Delete(path);
-        File.Move(tmpPath, path);
+        {
+            // File.Replace atomically swaps tmp→path and moves old path→backup
+            File.Replace(tmpPath, path, GetBackupPath(slot));
+        }
+        else
+        {
+            File.Move(tmpPath, path);
+        }
 
         Debug.Log($"[Save] Saved slot {slot} to {path}");
         GameManager.Instance?.Audio?.PlaySFX(SoundEffect.SaveGame);
@@ -58,19 +61,28 @@ public class SaveManager : MonoBehaviour
             return null;
         }
 
-        string json = File.ReadAllText(path);
-        var data = JsonConvert.DeserializeObject<SaveData>(json, jsonSettings);
-        Debug.Log($"[Save] Loaded slot {slot}");
-        GameManager.Instance?.Audio?.PlaySFX(SoundEffect.LoadGame);
-
-        // If quick save, consume it
-        if (data.Type == SaveType.Quick)
+        try
         {
-            File.Delete(path);
-            Debug.Log("[Save] Quick save consumed");
-        }
+            string json = File.ReadAllText(path);
+            var data = JsonConvert.DeserializeObject<SaveData>(json, jsonSettings);
+            if (data == null) throw new JsonException("Deserialized to null");
 
-        return data;
+            Debug.Log($"[Save] Loaded slot {slot}");
+            GameManager.Instance?.Audio?.PlaySFX(SoundEffect.LoadGame);
+
+            if (data.Type == SaveType.Quick)
+            {
+                File.Delete(path);
+                Debug.Log("[Save] Quick save consumed");
+            }
+
+            return data;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[Save] Corrupt save at slot {slot}: {e.Message}");
+            return null;
+        }
     }
 
     public bool SlotExists(int slot) => File.Exists(GetSavePath(slot));
@@ -81,18 +93,27 @@ public class SaveManager : MonoBehaviour
         if (!File.Exists(path))
             return new SaveSlotInfo { Exists = false };
 
-        string json = File.ReadAllText(path);
-        var data = JsonConvert.DeserializeObject<SaveData>(json, jsonSettings);
-
-        return new SaveSlotInfo
+        try
         {
-            Exists = true,
-            Type = data.Type,
-            Timestamp = data.Timestamp,
-            LocationName = data.CurrentScene,
-            PlayTimeSeconds = data.PlayTimeSeconds,
-            Gil = data.Gil
-        };
+            string json = File.ReadAllText(path);
+            var data = JsonConvert.DeserializeObject<SaveData>(json, jsonSettings);
+            if (data == null) return new SaveSlotInfo { Exists = false };
+
+            return new SaveSlotInfo
+            {
+                Exists = true,
+                Type = data.Type,
+                Timestamp = data.Timestamp,
+                LocationName = data.CurrentScene,
+                PlayTimeSeconds = data.PlayTimeSeconds,
+                Gil = data.Gil
+            };
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[Save] Corrupt save at slot {slot}, skipping: {e.Message}");
+            return new SaveSlotInfo { Exists = false };
+        }
     }
 
     public void DeleteSlot(int slot)

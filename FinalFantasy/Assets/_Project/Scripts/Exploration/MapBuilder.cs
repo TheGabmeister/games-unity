@@ -21,7 +21,11 @@ public class MapBuilder : MonoBehaviour
 
     public void BuildTestMap()
     {
-        if (tileFactory != null && palette != null)
+        // Create default palette if none assigned
+        if (palette == null)
+            palette = ScriptableObject.CreateInstance<TilePalette>();
+
+        if (tileFactory != null)
             tileFactory.Initialize(palette);
 
         int w = 20, h = 20;

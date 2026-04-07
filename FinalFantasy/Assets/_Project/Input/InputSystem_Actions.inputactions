@@ -73,14 +73,13 @@
                 {
                     "name": "WASD",
                     "id": "10a1b2c3-d4e5-f678-90ab-cdef12345678",
-                    "path": "",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Move",
                     "isComposite": true,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "up",
@@ -91,8 +90,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "down",
@@ -103,8 +101,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "left",
@@ -115,8 +112,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "right",
@@ -127,20 +123,18 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "Arrows",
                     "id": "15a1b2c3-d4e5-f678-90ab-cdef12345678",
-                    "path": "",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Move",
                     "isComposite": true,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "up",
@@ -151,8 +145,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "down",
@@ -163,8 +156,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "left",
@@ -175,8 +167,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "right",
@@ -187,8 +178,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -199,8 +189,7 @@
                     "groups": "Gamepad",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -211,8 +200,7 @@
                     "groups": "Gamepad",
                     "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -223,8 +211,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Confirm",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -235,8 +222,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Confirm",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -247,8 +233,7 @@
                     "groups": "Gamepad",
                     "action": "Confirm",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -259,8 +244,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Cancel",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -271,8 +255,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Cancel",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -283,8 +266,7 @@
                     "groups": "Gamepad",
                     "action": "Cancel",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -295,8 +277,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Menu",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -307,8 +288,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Menu",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -319,8 +299,7 @@
                     "groups": "Gamepad",
                     "action": "Menu",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -331,8 +310,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Run",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -343,8 +321,7 @@
                     "groups": "Gamepad",
                     "action": "Run",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -355,8 +332,7 @@
                     "groups": "KeyboardMouse",
                     "action": "DebugOverlay",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -367,8 +343,7 @@
                     "groups": "KeyboardMouse",
                     "action": "DebugConsole",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -426,14 +401,13 @@
                 {
                     "name": "WASD",
                     "id": "b0c1d2e3-f4a5-6789-0bcd-ef1234567890",
-                    "path": "",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Navigate",
                     "isComposite": true,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "up",
@@ -444,8 +418,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "down",
@@ -456,8 +429,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "left",
@@ -468,8 +440,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "right",
@@ -480,20 +451,18 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "Arrows",
                     "id": "b5c1d2e3-f4a5-6789-0bcd-ef1234567890",
-                    "path": "",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Navigate",
                     "isComposite": true,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "up",
@@ -504,8 +473,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "down",
@@ -516,8 +484,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "left",
@@ -528,8 +495,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "right",
@@ -540,8 +506,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -552,8 +517,7 @@
                     "groups": "Gamepad",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -564,8 +528,7 @@
                     "groups": "Gamepad",
                     "action": "Navigate",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -576,8 +539,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Submit",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -588,8 +550,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Submit",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -600,8 +561,7 @@
                     "groups": "Gamepad",
                     "action": "Submit",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -612,8 +572,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Cancel",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -624,8 +583,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Cancel",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -636,8 +594,7 @@
                     "groups": "Gamepad",
                     "action": "Cancel",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -648,8 +605,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Point",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
@@ -660,8 +616,7 @@
                     "groups": "KeyboardMouse",
                     "action": "Click",
                     "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
+                    "isPartOfComposite": false
                 }
             ]
         }

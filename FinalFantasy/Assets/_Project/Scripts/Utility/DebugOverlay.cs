@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class DebugOverlay : MonoBehaviour
@@ -54,8 +55,8 @@ public class DebugOverlay : MonoBehaviour
 
     void Update()
     {
-        // Toggle with F1 (also check InputManager if available)
-        bool togglePressed = UnityEngine.Input.GetKeyDown(KeyCode.F1);
+        // Toggle with F1
+        bool togglePressed = Keyboard.current != null && Keyboard.current.f1Key.wasPressedThisFrame;
         if (!togglePressed)
         {
             var input = GameManager.Instance?.InputManager;
