@@ -1325,16 +1325,16 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
 - **Debug Console (toggle with backtick/tilde):** A text input field that executes debug commands. Minimal initial command set, expanded each phase.
 
 **Phase 1 verification:**
-- [ ] Boot → Title → Exploration flow runs without errors
-- [ ] Player moves on 20x20 grid, collides with walls, cannot walk out of bounds
-- [ ] Confirm interaction facing an empty tile does nothing; facing a wall does nothing
-- [ ] Run toggle doubles movement speed visibly
-- [ ] Camera stays within map bounds (no void visible at edges)
-- [ ] Fade transitions play on scene change (no pop-in)
-- [ ] Save a file to disk, quit play mode, re-enter, load it — player position restores
-- [ ] All input works on both keyboard and gamepad; switching mid-session works
-- [ ] Audio stub logs debug messages when play/stop are called (verify in Console)
-- [ ] Debug overlay shows correct state, position, and FPS
+- [x] Boot → Title → Exploration flow runs without errors
+- [x] Player moves on 20x20 grid, collides with walls, cannot walk out of bounds
+- [x] Confirm interaction facing an empty tile does nothing; facing a wall does nothing
+- [x] Run toggle doubles movement speed visibly
+- [x] Camera stays within map bounds (no void visible at edges)
+- [x] Fade transitions play on scene change (no pop-in)
+- [x] Save a file to disk, quit play mode, re-enter, load it — player position restores
+- [x] All input works on both keyboard and gamepad; switching mid-session works
+- [x] Audio stub logs debug messages when play/stop are called (verify in Console)
+- [x] Debug overlay shows correct state, position, and FPS
 
 ### Phase 2 — Party & Data
 - Class definitions (all 6 base classes as SOs, including EXP tables and equipment whitelists)
