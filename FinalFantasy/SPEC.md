@@ -30,7 +30,7 @@ Recreate the core mechanics of Final Fantasy 1 (Pixel Remaster version) in Unity
 |---|---|---|
 | Engine | Unity 6 (6000.3.12f1) | LTS target |
 | Render Pipeline | URP 2D | Already configured with Renderer2D |
-| Input | Input System 1.19.0 | Already installed; needs FF1-specific action map |
+| Input | Input System 1.19.0 | Built-in — no third-party input plugin needed. Replace template action map with FF1-specific actions. `InputSystemUIInputModule` drives uGUI menu navigation. |
 | Tweening | PrimeTween 1.3.8 | Already installed; use for all animations |
 | UI | uGUI 2.0.0 | Already installed; use for all menus and HUD |
 | JSON | Newtonsoft JSON 3.2.1 | For save system serialization (Dictionary, HashSet, polymorphism) |
@@ -241,10 +241,38 @@ Player position uses modulo math (e.g., `x = ((x % 256) + 256) % 256`). When the
 
 Collision at the seam works naturally because the ghost border tiles carry the same passability data as their source tiles. NPCs and vehicles near the seam are the one remaining concern — restrict vehicle parking and NPC patrol paths to at least 8 tiles from any map edge to avoid duplication logic.
 
+#### Persistent IDs for World State
+
+Every scene object that has persistent state (treasure chests, boss triggers, one-time NPC events, locked doors) gets a `PersistentID` MonoBehaviour:
+
+```csharp
+public class PersistentID : MonoBehaviour
+{
+    [SerializeField, ReadOnly] string id;   // auto-generated GUID, never hand-edited
+
+    public string ID => id;
+
+    #if UNITY_EDITOR
+    void OnValidate()
+    {
+        if (string.IsNullOrEmpty(id))
+            id = System.Guid.NewGuid().ToString();
+    }
+    #endif
+}
+```
+
+Complemented by an editor script (`PersistentIDValidator`) that:
+- Runs on scene save and on play mode entry
+- Scans all `PersistentID` components in the scene for duplicate `id` values
+- Logs an error with the GameObjects involved so duplicates (from copy/paste) are caught immediately
+
+The save system uses these IDs as keys: `WorldState[id] = true` means "this chest is opened" or "this boss is defeated." Because IDs are GUIDs serialized into scene data, they survive GameObject renames, hierarchy moves, and scene refactors. The only thing that breaks them is deleting and recreating the object — which is fine, since that's intentional.
+
 #### Town & Dungeon Specifics
 - No wrapping, bounded maps
 - NPCs with schedules (FF1 NPCs are mostly static, some walk set paths)
-- Treasure chests: opened state tracked in `ProgressionManager`
+- Treasure chests: opened state tracked in `ProgressionManager` via `PersistentID`
 - Warp tiles: stairs, exits, entrances — defined as `WarpDefinition` ScriptableObjects linking coordinates between scenes
 - Locked doors: Key items gate access (Mystic Key, etc.)
 - Damage floors: specific dungeon tiles deal damage per step (lava in Gurgu Volcano, etc.)
@@ -979,13 +1007,41 @@ Replace the current template input actions with:
 | Toggle Minimap | M | Select | Exploration |
 | Auto-Battle | Tab | Right Trigger | Battle (toggle) |
 
-### 5.4 Navigation & Accessibility
+### 5.4 Menu Navigation Architecture
 
-- All menus are **cursor-based** (list navigation, not mouse pointer)
-- Mouse/touch NOT supported initially (FF1 feel is controller/keyboard)
+Build on **uGUI's Selectable system** with `InputSystemUIInputModule`. This gives us keyboard, gamepad, and mouse support from the same code. Input mode hot-switches automatically — if the player moves the mouse, hover/click works; if they press d-pad or arrow keys, cursor-based selection activates. No manual mode switching needed.
+
+#### Three navigation tiers
+
+**Tier 1 — Simple menus (use raw Selectables):**
+Title screen, pause menu, config screen, inn/clinic confirmations, yes/no dialogs. Each menu item is a `Button` with `Navigation` set to `Explicit`. Wire Up/Down/Left/Right in the Inspector. Call `EventSystem.SetSelectedGameObject()` to set initial selection on screen open.
+
+No custom code beyond wiring. Mouse clicks and gamepad/keyboard both work via uGUI's built-in routing.
+
+**Tier 2 — Dynamic list menus (reusable `CursorList` component):**
+Item inventory, shop stock, equipment list, spell list. These are scrollable lists where entries change at runtime (buying/selling items, filtering equipment by class+slot).
+
+`CursorList` responsibilities:
+- Spawns `Selectable` entries from a data source
+- Wires explicit navigation between entries (re-wires when list changes)
+- Handles wrap-around (last item → first item and vice versa)
+- Manages scroll viewport (keeps selected item visible)
+- Fires `OnItemSelected(int index)` and `OnItemConfirmed(int index)` events
+- Supports greyed-out but navigable entries (e.g., spells you can't learn)
+
+One component, reused across every list-based screen. Each screen provides its own data binding and item template.
+
+**Tier 3 — Battle target selector (fully custom):**
+Navigates enemy/ally positions in 2D space, not a list. Highlights the geometric shape under the cursor. Supports switching between single-target and multi-target (all-enemies, all-allies) based on the selected spell/item. Cycles through valid targets with Left/Right (enemies) or Up/Down (allies). Mouse click on a target also works via collider raycasts.
+
+This shares nothing with menu navigation — it is its own input handler active only during target selection within the battle command flow.
+
+#### General navigation rules
 - Wrap cursor at list boundaries (pressing up on first item goes to last)
-- Confirm/Cancel sounds (stub audio calls)
-- Text box auto-advance option and manual advance
+- Confirm/Cancel audio calls on every selection (stub AudioManager)
+- Cancel always returns to the parent context (never closes multiple layers at once)
+- Opening any menu forces an initial selection (no "nothing selected" state)
+- Text boxes: Confirm to advance, auto-advance option in config, typewriter effect skippable by pressing Confirm mid-line
 
 ---
 
