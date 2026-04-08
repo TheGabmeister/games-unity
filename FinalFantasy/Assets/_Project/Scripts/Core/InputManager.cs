@@ -24,14 +24,18 @@ public class InputManager : MonoBehaviour
     public InputAction DebugOverlayAction { get; private set; }
     public InputAction DebugConsoleAction { get; private set; }
 
+    // Tracks which mode we're in (gameplay map's .enabled is unreliable
+    // because individually re-enabling debug actions marks the map as enabled)
+    bool uiMode;
+
     // Run and Menu are gameplay-only
     public InputAction RunAction => gameplayRun;
     public InputAction MenuAction => gameplayMenu;
 
     // These resolve to whichever map is currently active
-    public InputAction MoveAction => gameplayMap != null && gameplayMap.enabled ? gameplayMove : uiNavigate;
-    public InputAction ConfirmAction => gameplayMap != null && gameplayMap.enabled ? gameplayConfirm : uiSubmit;
-    public InputAction CancelAction => gameplayMap != null && gameplayMap.enabled ? gameplayCancel : uiCancel;
+    public InputAction MoveAction => uiMode ? uiNavigate : gameplayMove;
+    public InputAction ConfirmAction => uiMode ? uiSubmit : gameplayConfirm;
+    public InputAction CancelAction => uiMode ? uiCancel : gameplayCancel;
 
     void Awake()
     {
@@ -59,12 +63,14 @@ public class InputManager : MonoBehaviour
 
     public void EnableGameplay()
     {
+        uiMode = false;
         uiMap?.Disable();
         gameplayMap?.Enable();
     }
 
     public void EnableUI()
     {
+        uiMode = true;
         gameplayMap?.Disable();
         uiMap?.Enable();
         // Keep debug actions active
