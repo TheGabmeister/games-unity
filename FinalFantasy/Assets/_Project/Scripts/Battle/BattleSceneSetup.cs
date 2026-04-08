@@ -29,21 +29,8 @@ public class BattleSceneSetup : MonoBehaviour
         PositionParty(partyActors);
     }
 
-    List<Camera> disabledCameras = new(); // stored to re-enable on destroy
-
     void SetupCamera()
     {
-        // Disable ALL existing cameras (exploration, etc.) before creating battle camera.
-        // Use FindObjectsByType to find cameras across all loaded scenes.
-        foreach (var cam in FindObjectsByType<Camera>(FindObjectsSortMode.None))
-        {
-            if (cam.enabled)
-            {
-                cam.enabled = false;
-                disabledCameras.Add(cam);
-            }
-        }
-
         var camObj = new GameObject("BattleCamera");
         camObj.transform.SetParent(transform);
         battleCamera = camObj.AddComponent<Camera>();
@@ -312,16 +299,6 @@ public class BattleSceneSetup : MonoBehaviour
         tRect.sizeDelta = Vector2.zero;
     }
 
-    void OnDestroy()
-    {
-        // Re-enable all cameras we disabled
-        foreach (var cam in disabledCameras)
-        {
-            if (cam != null)
-                cam.enabled = true;
-        }
-        disabledCameras.Clear();
-    }
 
     // --- Drawing helpers ---
 
