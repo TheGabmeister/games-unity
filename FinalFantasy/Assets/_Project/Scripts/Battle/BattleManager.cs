@@ -25,8 +25,6 @@ public class BattleManager : MonoBehaviour
     bool isBossEncounter;
     bool godMode; // debug: party takes 0 damage
 
-    // Exploration scene hiding
-    List<GameObject> hiddenRootObjects = new();
 
     // Formation being fought
     EncounterFormation currentFormation;
@@ -73,9 +71,6 @@ public class BattleManager : MonoBehaviour
         var musicTrack = formation.HasOverrideMusic ? formation.OverrideMusic : (isBossEncounter ? MusicTrack.BossBattle : MusicTrack.Battle);
         GameManager.Instance?.Audio?.PlayBGM(musicTrack);
         GameManager.Instance?.Audio?.PlaySFX(SoundEffect.EncounterStart);
-
-        // Hide exploration scene objects so the battle camera doesn't see them
-        HideExplorationScene();
 
         // Load battle scene additively
         await GameManager.Instance.SceneLoader.LoadSceneAdditive("Battle");
@@ -684,9 +679,6 @@ public class BattleManager : MonoBehaviour
         try { await GameManager.Instance.SceneLoader.UnloadScene("Battle"); }
         catch (Exception) { /* Scene may not exist if debug-started */ }
 
-        // Restore exploration scene objects
-        ShowExplorationScene();
-
         // Restore state
         GameManager.Instance?.StateManager?.ChangeState(GameState.Exploration);
         GameManager.Instance?.InputManager?.EnableGameplay();
@@ -749,31 +741,6 @@ public class BattleManager : MonoBehaviour
         currentFormation = null;
     }
 
-    // --- Exploration Scene Visibility ---
-
-    void HideExplorationScene()
-    {
-        hiddenRootObjects.Clear();
-        var explorationScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        foreach (var root in explorationScene.GetRootGameObjects())
-        {
-            if (root.activeSelf)
-            {
-                root.SetActive(false);
-                hiddenRootObjects.Add(root);
-            }
-        }
-    }
-
-    void ShowExplorationScene()
-    {
-        foreach (var root in hiddenRootObjects)
-        {
-            if (root != null)
-                root.SetActive(true);
-        }
-        hiddenRootObjects.Clear();
-    }
 
     // --- Helpers ---
 

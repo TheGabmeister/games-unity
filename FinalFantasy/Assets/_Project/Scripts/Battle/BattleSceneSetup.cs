@@ -29,6 +29,9 @@ public class BattleSceneSetup : MonoBehaviour
         PositionParty(partyActors);
     }
 
+    // Battle scene is placed far away from the exploration scene so cameras don't overlap
+    const float BattleYOffset = 100f;
+
     void SetupCamera()
     {
         var camObj = new GameObject("BattleCamera");
@@ -37,9 +40,9 @@ public class BattleSceneSetup : MonoBehaviour
         battleCamera.orthographic = true;
         battleCamera.orthographicSize = 4f;
         battleCamera.clearFlags = CameraClearFlags.SolidColor;
-        battleCamera.backgroundColor = new Color(0.05f, 0.02f, 0.1f); // dark purple
+        battleCamera.backgroundColor = new Color(0.05f, 0.02f, 0.1f);
         battleCamera.depth = 10;
-        camObj.transform.position = new Vector3(0, 0, -10);
+        camObj.transform.position = new Vector3(0, BattleYOffset, -10);
     }
 
     void SetupBackground()
@@ -47,7 +50,7 @@ public class BattleSceneSetup : MonoBehaviour
         // Procedural background: gradient quad
         backgroundObj = new GameObject("Background");
         backgroundObj.transform.SetParent(transform);
-        backgroundObj.transform.position = new Vector3(0, 0, 5);
+        backgroundObj.transform.position = new Vector3(0, BattleYOffset, 5);
 
         var sr = backgroundObj.AddComponent<SpriteRenderer>();
         sr.sprite = CreateBackgroundSprite();
@@ -110,7 +113,7 @@ public class BattleSceneSetup : MonoBehaviour
             int inThisRow = Mathf.Min(maxPerRow, count - idx);
             float totalWidth = (inThisRow - 1) * enemySpacing;
             float startX = -totalWidth / 2f;
-            float y = enemyYCenter + (rows > 1 ? (row - (rows - 1) / 2f) * 1.2f : 0);
+            float y = BattleYOffset + enemyYCenter + (rows > 1 ? (row - (rows - 1) / 2f) * 1.2f : 0);
 
             for (int col = 0; col < inThisRow; col++)
             {
@@ -140,7 +143,7 @@ public class BattleSceneSetup : MonoBehaviour
         {
             var actor = party[i];
             float x = startX + i * partySpacing;
-            var pos = new Vector3(x, partyYCenter, 0);
+            var pos = new Vector3(x, BattleYOffset + partyYCenter, 0);
 
             var visual = CreatePartyVisual(actor, pos);
             actor.Visual = visual;
