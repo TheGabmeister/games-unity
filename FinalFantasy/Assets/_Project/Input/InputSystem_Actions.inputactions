@@ -598,6 +598,17 @@
                 },
                 {
                     "name": "",
+                    "id": "d3e1f2a3-b4c5-6789-0def-123456789012",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e0f1a2b3-c4d5-6789-0ef1-234567890123",
                     "path": "<Mouse>/position",
                     "interactions": "",
