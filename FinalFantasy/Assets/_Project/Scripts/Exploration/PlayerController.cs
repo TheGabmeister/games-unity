@@ -145,6 +145,10 @@ public class PlayerController : MonoBehaviour
         await Tween.Position(transform, targetWorld, duration);
 
         isMoving = false;
+
+        // Notify encounter system of completed step
+        var encounter = FindAnyObjectByType<EncounterSystem>();
+        encounter?.OnPlayerStep();
     }
 
     void Interact()

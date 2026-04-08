@@ -34,6 +34,7 @@ public class SceneSetup
         CreateTitleScene();
         CreatePartyCreationScene();
         CreateExplorationScene(palette);
+        CreateBattleScene();
 
         // Add scenes to build settings
         var scenes = new List<EditorBuildSettingsScene>
@@ -41,7 +42,8 @@ public class SceneSetup
             new EditorBuildSettingsScene("Assets/_Project/Scenes/Boot.unity", true),
             new EditorBuildSettingsScene("Assets/_Project/Scenes/Title.unity", true),
             new EditorBuildSettingsScene("Assets/_Project/Scenes/PartyCreation.unity", true),
-            new EditorBuildSettingsScene("Assets/_Project/Scenes/Exploration.unity", true)
+            new EditorBuildSettingsScene("Assets/_Project/Scenes/Exploration.unity", true),
+            new EditorBuildSettingsScene("Assets/_Project/Scenes/Battle.unity", true)
         };
         EditorBuildSettings.scenes = scenes.ToArray();
 
@@ -50,7 +52,7 @@ public class SceneSetup
 
         Debug.Log("[SceneSetup] All scenes created and added to Build Settings.");
         EditorUtility.DisplayDialog("Scene Setup Complete",
-            "Boot, Title, PartyCreation, and Exploration scenes have been created.\n\n" +
+            "Boot, Title, PartyCreation, Exploration, and Battle scenes have been created.\n\n" +
             "Build Settings have been updated.\n\n" +
             "Open Boot scene to start the game.",
             "OK");
@@ -99,6 +101,11 @@ public class SceneSetup
         var progressionGO = new GameObject("ProgressionManager");
         progressionGO.transform.SetParent(gmGO.transform);
         progressionGO.AddComponent<ProgressionManager>();
+
+        // --- BattleManager (persistent, child of GameManager) ---
+        var battleMgrGO = new GameObject("BattleManager");
+        battleMgrGO.transform.SetParent(gmGO.transform);
+        battleMgrGO.AddComponent<BattleManager>();
 
         // --- HUD (persistent, child of GameManager) ---
         var hudGO = new GameObject("HUD");
@@ -279,6 +286,10 @@ public class SceneSetup
         camSO.FindProperty("gridData").objectReferenceValue = gridData;
         camSO.ApplyModifiedPropertiesWithoutUndo();
 
+        // --- EncounterSystem ---
+        var encounterGO = new GameObject("EncounterSystem");
+        encounterGO.AddComponent<EncounterSystem>();
+
         // --- ExplorationInitializer ---
         var initGO = new GameObject("ExplorationInitializer");
         var initializer = initGO.AddComponent<ExplorationInitializer>();
@@ -291,6 +302,31 @@ public class SceneSetup
         // Save scene
         EditorSceneManager.SaveScene(scene, "Assets/_Project/Scenes/Exploration.unity");
         Debug.Log("[SceneSetup] Exploration scene created");
+    }
+
+    static void CreateBattleScene()
+    {
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        // --- BattleSceneSetup ---
+        var setupGO = new GameObject("BattleSceneSetup");
+        setupGO.AddComponent<BattleSceneSetup>();
+
+        // --- BattleUI ---
+        var battleUIGO = new GameObject("BattleUI");
+        battleUIGO.AddComponent<BattleUI>();
+
+        // --- BattleVictoryUI ---
+        var victoryUIGO = new GameObject("BattleVictoryUI");
+        victoryUIGO.AddComponent<BattleVictoryUI>();
+
+        // --- GameOverUI ---
+        var gameOverUIGO = new GameObject("GameOverUI");
+        gameOverUIGO.AddComponent<GameOverUI>();
+
+        // Save scene
+        EditorSceneManager.SaveScene(scene, "Assets/_Project/Scenes/Battle.unity");
+        Debug.Log("[SceneSetup] Battle scene created");
     }
 
     static void EnsureDirectory(string path)

@@ -44,7 +44,7 @@ public class DebugOverlay : MonoBehaviour
         rect.anchorMax = new Vector2(0, 1);
         rect.pivot = new Vector2(0, 1);
         rect.anchoredPosition = new Vector2(10, -10);
-        rect.sizeDelta = new Vector2(340, 220);
+        rect.sizeDelta = new Vector2(400, 360);
 
         var textRect = displayText.rectTransform;
         textRect.anchorMin = Vector2.zero;
@@ -96,18 +96,64 @@ public class DebugOverlay : MonoBehaviour
             {
                 var m = pm.GetMember(i);
                 if (m != null)
-                    partySummary += $"{m.Name}({m.ClassDef?.Abbreviation}) Lv{m.Level} {m.CurrentHP}/{m.MaxHP}\n";
+                {
+                    string statusStr = m.StatusEffects != StatusEffectFlags.None ? $" [{m.StatusEffects}]" : "";
+                    partySummary += $"{m.Name}({m.ClassDef?.Abbreviation}) Lv{m.Level} {m.CurrentHP}/{m.MaxHP}{statusStr}\n";
+                }
             }
         }
 
         string gilStr = gm?.InventoryManager != null ? $"Gil: {gm.InventoryManager.Gil:N0}" : "";
 
+        // Encounter info
+        string encounterStr = "";
+        var enc = Object.FindFirstObjectByType<EncounterSystem>();
+        if (enc != null)
+            encounterStr = $"Enc: {enc.TableName} Steps: {enc.StepsRemaining}{(enc.EncountersDisabled ? " [OFF]" : "")}";
+
+        // Battle info
+        string battleStr = "";
+        var bm = BattleManager.Instance;
+        if (bm != null && bm.CurrentPhase != BattleManager.BattlePhase.Inactive)
+        {
+            battleStr = $"Battle: {bm.CurrentPhase} Turn:{bm.TurnNumber}";
+            if (bm.GodMode) battleStr += " [GOD]";
+            if (bm.IsAutoBattleActive) battleStr += " [AUTO]";
+            battleStr += "\n";
+
+            // Enemy HP
+            foreach (var e in bm.EnemyActors)
+            {
+                string eStatus = e.StatusEffects != StatusEffectFlags.None ? $" [{e.StatusEffects}]" : "";
+                string alive = e.IsAlive ? "" : " DEAD";
+                battleStr += $"  {e.Name}: {e.CurrentHP}/{e.MaxHP}{eStatus}{alive}\n";
+            }
+
+            // Buff states
+            foreach (var a in bm.PartyActors)
+            {
+                var b = a.Buffs;
+                string buffs = "";
+                if (b.HasHaste) buffs += "Haste ";
+                if (b.HasSlow) buffs += "Slow ";
+                if (b.TemperStacks > 0) buffs += $"Temper({b.TemperStacks}) ";
+                if (b.ProtectStacks > 0) buffs += $"Protect({b.ProtectStacks}) ";
+                if (b.HasSaber) buffs += "Saber ";
+                if (b.NulFire) buffs += "NulFire ";
+                if (b.NulIce) buffs += "NulIce ";
+                if (b.NulLit) buffs += "NulLit ";
+                if (buffs.Length > 0)
+                    battleStr += $"  {a.Name}: {buffs}\n";
+            }
+        }
+
         displayText.text =
             $"FPS: {currentFPS:F1}\n" +
             $"State: {state} | Scene: {scene}\n" +
             $"Mode: {explorationMode} | Pos: {playerPos} | {facing}\n" +
-            $"{gilStr}\n" +
-            partySummary;
+            $"{gilStr}  {encounterStr}\n" +
+            partySummary +
+            battleStr;
     }
 
     string GetDirectionName(int dir) => dir switch

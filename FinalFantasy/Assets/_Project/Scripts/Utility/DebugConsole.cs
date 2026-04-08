@@ -175,6 +175,7 @@ public class DebugConsole : MonoBehaviour
             case "help":
                 Log("Phase 1: help, state, pos, save, load, scene");
                 Log("Phase 2: setlevel, addgil, levelup, learnspell, addequip, additem");
+                Log("Phase 3: encounter, kill, godmode, setstat, inflict, cure, nobattles");
                 break;
 
             case "state":
@@ -361,6 +362,127 @@ public class DebugConsole : MonoBehaviour
                 }
                 break;
 
+            case "encounter":
+                {
+                    // Force a battle encounter. Creates a test formation if no ID given.
+                    int enemyCount = 3;
+                    string enemyName = "Goblin";
+                    if (parts.Length >= 2) enemyName = parts[1];
+                    if (parts.Length >= 3 && int.TryParse(parts[2], out int ec)) enemyCount = Mathf.Clamp(ec, 1, 9);
+
+                    var enemyData = FindOrCreateTestEnemy(enemyName);
+                    var formation = new EncounterFormation
+                    {
+                        FormationName = $"Debug: {enemyCount}x {enemyName}",
+                        Groups = new[] { new EnemyGroup { Enemy = enemyData, Count = enemyCount } },
+                        IsBoss = enemyName.ToLower().Contains("boss"),
+                    };
+
+                    Log($"Starting encounter: {enemyCount}x {enemyName}");
+                    var encounterSys = Object.FindFirstObjectByType<EncounterSystem>();
+                    if (encounterSys != null)
+                        encounterSys.ForceEncounter(formation);
+                    else if (BattleManager.Instance != null)
+                        _ = BattleManager.Instance.StartBattle(formation);
+                    else
+                        Log("No BattleManager found!");
+                }
+                break;
+
+            case "kill":
+                {
+                    var bm = BattleManager.Instance;
+                    if (bm == null || bm.CurrentPhase == BattleManager.BattlePhase.Inactive)
+                    { Log("Not in battle"); break; }
+                    foreach (var enemy in bm.EnemyActors)
+                    {
+                        enemy.TakeDamage(enemy.CurrentHP);
+                    }
+                    Log("All enemies killed");
+                }
+                break;
+
+            case "godmode":
+                {
+                    var bm = BattleManager.Instance;
+                    if (bm == null) { Log("No BattleManager"); break; }
+                    bm.SetGodMode(!bm.GodMode);
+                    Log($"God mode: {(bm.GodMode ? "ON" : "OFF")}");
+                }
+                break;
+
+            case "setstat":
+                {
+                    if (parts.Length < 4) { Log("Usage: setstat <slot 0-3> <stat> <value>"); break; }
+                    if (!int.TryParse(parts[1], out int ssSlot) || !int.TryParse(parts[3], out int ssVal))
+                    { Log("Invalid arguments"); break; }
+                    var ssMember = GameManager.Instance?.PartyManager?.GetMember(ssSlot);
+                    if (ssMember == null) { Log($"No member in slot {ssSlot}"); break; }
+
+                    string stat = parts[2].ToLower();
+                    switch (stat)
+                    {
+                        case "str": case "strength": ssMember.BaseStr = ssVal; break;
+                        case "agi": case "agility": ssMember.BaseAgi = ssVal; break;
+                        case "vit": case "vitality": ssMember.BaseVit = ssVal; break;
+                        case "int": case "intellect": ssMember.BaseInt = ssVal; break;
+                        case "luck": ssMember.BaseLuck = ssVal; break;
+                        case "hp": ssMember.BaseMaxHP = ssVal; break;
+                        case "mp": ssMember.BaseMaxMP = ssVal; break;
+                        case "acc": case "accuracy": ssMember.BaseAccuracy = ssVal; break;
+                        case "eva": case "evasion": ssMember.BaseEvasion = ssVal; break;
+                        case "mdef": case "magicdef": ssMember.BaseMagicDef = ssVal; break;
+                        default: Log($"Unknown stat: {stat}"); break;
+                    }
+                    ssMember.RecalculateStats();
+                    Log($"{ssMember.Name}: {stat} set to {ssVal}");
+                }
+                break;
+
+            case "inflict":
+                {
+                    if (parts.Length < 3) { Log("Usage: inflict <slot 0-3> <status>"); break; }
+                    if (!int.TryParse(parts[1], out int infSlot))
+                    { Log("Invalid slot"); break; }
+                    var infMember = GameManager.Instance?.PartyManager?.GetMember(infSlot);
+                    if (infMember == null) { Log($"No member in slot {infSlot}"); break; }
+
+                    if (System.Enum.TryParse<StatusEffectFlags>(parts[2], true, out var infStatus))
+                    {
+                        infMember.StatusEffects |= infStatus;
+                        if (infStatus == StatusEffectFlags.KO) infMember.CurrentHP = 0;
+                        Log($"{infMember.Name}: inflicted {infStatus}");
+                    }
+                    else Log($"Unknown status: {parts[2]}");
+                }
+                break;
+
+            case "cure":
+                {
+                    if (parts.Length < 2) { Log("Usage: cure <slot 0-3>"); break; }
+                    if (!int.TryParse(parts[1], out int cureSlot))
+                    { Log("Invalid slot"); break; }
+                    var cureMember = GameManager.Instance?.PartyManager?.GetMember(cureSlot);
+                    if (cureMember == null) { Log($"No member in slot {cureSlot}"); break; }
+
+                    cureMember.StatusEffects = StatusEffectFlags.None;
+                    if (cureMember.CurrentHP <= 0) cureMember.CurrentHP = cureMember.MaxHP;
+                    Log($"{cureMember.Name}: all statuses cured, HP restored");
+                }
+                break;
+
+            case "nobattles":
+                {
+                    var enc = Object.FindFirstObjectByType<EncounterSystem>();
+                    if (enc != null)
+                    {
+                        enc.EncountersDisabled = !enc.EncountersDisabled;
+                        Log($"Random encounters: {(enc.EncountersDisabled ? "OFF" : "ON")}");
+                    }
+                    else Log("No EncounterSystem found");
+                }
+                break;
+
             default:
                 Log($"Unknown command: {cmd}. Type 'help' for commands.");
                 break;
@@ -378,6 +500,67 @@ public class DebugConsole : MonoBehaviour
         }
         if (outputText != null)
             outputText.text = outputLog;
+    }
+
+    EnemyData FindOrCreateTestEnemy(string name)
+    {
+        var allEnemies = Resources.FindObjectsOfTypeAll<EnemyData>();
+        foreach (var e in allEnemies)
+        {
+            if (e.EnemyName != null && e.EnemyName.Equals(name, System.StringComparison.OrdinalIgnoreCase))
+                return e;
+        }
+
+        // Create a test enemy
+        var enemy = ScriptableObject.CreateInstance<EnemyData>();
+        enemy.name = name;
+        enemy.EnemyName = name;
+        enemy.Category = EnemyCategory.Normal;
+
+        string lower = name.ToLower();
+        if (lower.Contains("boss"))
+        {
+            enemy.Category = EnemyCategory.Boss;
+            enemy.MaxHP = 200; enemy.Attack = 25; enemy.Defense = 10;
+            enemy.Accuracy = 20; enemy.Evasion = 5; enemy.Agility = 10;
+            enemy.EXPReward = 500; enemy.GilReward = 1000;
+            enemy.PrimaryColor = new Color(0.6f, 0, 0); enemy.Shape = EnemyShape.Hexagon; enemy.SizeScale = 1.5f;
+        }
+        else if (lower.Contains("undead") || lower.Contains("zombie") || lower.Contains("skeleton"))
+        {
+            enemy.Category = EnemyCategory.Undead;
+            enemy.MaxHP = 30; enemy.Attack = 12; enemy.Defense = 2;
+            enemy.Accuracy = 10; enemy.Agility = 3;
+            enemy.EXPReward = 30; enemy.GilReward = 20;
+            enemy.PrimaryColor = new Color(0.4f, 0.5f, 0.3f); enemy.Shape = EnemyShape.Triangle;
+            enemy.Affinities = new[] {
+                new ElementalAffinityEntry { Element = Element.Fire, Affinity = ElementalAffinity.Weak },
+                new ElementalAffinityEntry { Element = Element.Holy, Affinity = ElementalAffinity.Weak },
+            };
+        }
+        else if (lower.Contains("dragon") || lower.Contains("wyrm"))
+        {
+            enemy.Category = EnemyCategory.Dragon;
+            enemy.MaxHP = 100; enemy.Attack = 20; enemy.Defense = 8;
+            enemy.Accuracy = 15; enemy.Evasion = 3; enemy.Agility = 8;
+            enemy.EXPReward = 200; enemy.GilReward = 300;
+            enemy.PrimaryColor = new Color(0.1f, 0.5f, 0.1f); enemy.Shape = EnemyShape.Diamond; enemy.SizeScale = 1.3f;
+        }
+        else
+        {
+            // Generic enemy
+            enemy.MaxHP = 20; enemy.Attack = 8; enemy.Defense = 2;
+            enemy.Accuracy = 10; enemy.Evasion = 2; enemy.Agility = 5;
+            enemy.EXPReward = 15; enemy.GilReward = 10;
+            enemy.PrimaryColor = new Color(0.7f, 0.2f, 0.2f); enemy.Shape = EnemyShape.Circle;
+        }
+
+        enemy.HitCount = 1;
+        enemy.MagicDefense = 5;
+        enemy.MagicEvasion = 5;
+        enemy.Actions = new[] { new EnemyAction { Type = EnemyActionType.Attack, Weight = 10 } };
+
+        return enemy;
     }
 
     EquipmentData CreateTestEquipment(string name)
