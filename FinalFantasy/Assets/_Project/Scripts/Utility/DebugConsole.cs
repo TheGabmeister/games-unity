@@ -174,7 +174,7 @@ public class DebugConsole : MonoBehaviour
         {
             case "help":
                 Log("Phase 1: help, state, pos, save, load, scene");
-                Log("Phase 2: setlevel, addgil, additem, addequip, levelup");
+                Log("Phase 2: setlevel, addgil, levelup, learnspell");
                 break;
 
             case "state":
@@ -206,16 +206,7 @@ public class DebugConsole : MonoBehaviour
                 if (parts.Length < 2) { Log("Usage: save <slot 0-3>"); break; }
                 if (int.TryParse(parts[1], out int saveSlot))
                 {
-                    var player = Object.FindFirstObjectByType<PlayerController>();
-                    var data = new SaveData
-                    {
-                        Type = SaveType.Manual,
-                        CurrentScene = GameManager.Instance?.SceneLoader?.CurrentSceneName ?? "Exploration",
-                        PlayerGridX = player?.GridPosition.x ?? 0,
-                        PlayerGridY = player?.GridPosition.y ?? 0,
-                        FacingDirection = player?.FacingDirection ?? 2,
-                        PlayTimeSeconds = Time.time
-                    };
+                    var data = SaveHelper.CreateSaveData(SaveType.Manual);
                     GameManager.Instance?.SaveManager?.Save(saveSlot, data);
                     Log($"Saved to slot {saveSlot}");
                 }
@@ -229,9 +220,7 @@ public class DebugConsole : MonoBehaviour
                     if (data != null)
                     {
                         Log($"Loaded slot {loadSlot}: scene={data.CurrentScene} pos=({data.PlayerGridX},{data.PlayerGridY})");
-                        // Apply position
-                        var player = Object.FindFirstObjectByType<PlayerController>();
-                        player?.SetPosition(new Vector2Int(data.PlayerGridX, data.PlayerGridY));
+                        SaveHelper.ApplySaveData(data);
                     }
                     else Log($"No save at slot {loadSlot}");
                 }
@@ -263,12 +252,54 @@ public class DebugConsole : MonoBehaviour
                 }
                 break;
 
-            case "additem":
-                Log("additem requires ItemData SOs — use editor to create test items.");
-                break;
+            case "learnspell":
+                if (parts.Length < 2) { Log("Usage: learnspell <slot 0-3> [spellName]"); break; }
+                if (int.TryParse(parts[1], out int lsSlot))
+                {
+                    var member = GameManager.Instance?.PartyManager?.GetMember(lsSlot);
+                    if (member == null) { Log($"No member in slot {lsSlot}"); break; }
 
-            case "addequip":
-                Log("addequip requires EquipmentData SOs — use editor to create test equipment.");
+                    if (parts.Length >= 3)
+                    {
+                        string spellName = parts[2];
+                        var allSpells = Resources.FindObjectsOfTypeAll<SpellData>();
+                        SpellData found = null;
+                        foreach (var sp in allSpells)
+                        {
+                            if (sp.SpellName.Equals(spellName, System.StringComparison.OrdinalIgnoreCase))
+                            { found = sp; break; }
+                        }
+                        if (found != null)
+                        {
+                            if (!member.KnownSpells.Contains(found))
+                                member.KnownSpells.Add(found);
+                            Log($"{member.Name} learned {found.SpellName}");
+                        }
+                        else
+                        {
+                            Log($"Spell '{spellName}' not found. Creating test Cure spell.");
+                            var cure = CreateTestSpell("Cure", MagicSchool.White, 1, 3, SpellEffectType.Heal, 30, true);
+                            member.KnownSpells.Add(cure);
+                            Log($"{member.Name} learned Cure (test)");
+                        }
+                    }
+                    else
+                    {
+                        // No spell name given — grant a set of test spells
+                        var testSpells = new[]
+                        {
+                            CreateTestSpell("Cure", MagicSchool.White, 1, 3, SpellEffectType.Heal, 30, true),
+                            CreateTestSpell("Fire", MagicSchool.Black, 1, 3, SpellEffectType.Damage, 20, false),
+                            CreateTestSpell("Poisona", MagicSchool.White, 1, 3, SpellEffectType.StatusCure, 0, true),
+                        };
+                        foreach (var sp in testSpells)
+                        {
+                            if (!member.KnownSpells.Contains(sp))
+                                member.KnownSpells.Add(sp);
+                        }
+                        Log($"{member.Name} learned Cure, Fire, Poisona (test spells)");
+                    }
+                }
                 break;
 
             case "levelup":
@@ -304,5 +335,26 @@ public class DebugConsole : MonoBehaviour
         }
         if (outputText != null)
             outputText.text = outputLog;
+    }
+
+    SpellData CreateTestSpell(string spellName, MagicSchool school, int level, int mpCost,
+        SpellEffectType effectType, int basePower, bool usableInField)
+    {
+        var spell = ScriptableObject.CreateInstance<SpellData>();
+        spell.SpellName = spellName;
+        spell.School = school;
+        spell.Level = level;
+        spell.MPCost = mpCost;
+        spell.Effects = new[] { effectType };
+        spell.BasePower = basePower;
+        spell.UsableInField = usableInField;
+        spell.UsableInBattle = true;
+        spell.Targeting = effectType == SpellEffectType.Heal || effectType == SpellEffectType.StatusCure
+            ? SpellTarget.SingleAlly
+            : SpellTarget.SingleEnemy;
+        if (effectType == SpellEffectType.StatusCure)
+            spell.CuresStatus = StatusEffectFlags.Poison;
+        spell.name = spellName;
+        return spell;
     }
 }

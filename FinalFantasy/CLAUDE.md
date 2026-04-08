@@ -4,62 +4,84 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Final Fantasy 1 (Pixel Remaster) mechanical recreation in Unity 6. Faithful game mechanics with procedural/primitive visuals — no imported sprites, textures, or audio assets. **SPEC.md is the single source of truth** for all mechanics, data schemas, architecture decisions, and implementation phases.
+Final Fantasy 1 (Pixel Remaster) mechanical recreation in Unity 6. Faithful game mechanics with procedural/primitive visuals — no imported sprites, textures, or audio assets. **SPEC.md is the single source of truth** for all mechanics, data schemas, architecture decisions, and implementation phases (Sections 1-10). When code conflicts with SPEC.md, follow the user's latest instruction first, then SPEC.md.
 
 ## Engine & Tooling
 
 - **Unity 6** (6000.3.12f1) with **URP 2D** renderer
 - **PrimeTween** for all animations — tweens are directly awaitable via `await tween`. Never use coroutines for animation.
-- **Unity Awaitable** for async flows (scene loading, battle sequencing, dialogue). No UniTask.
+- **Unity Awaitable** for async flows (scene loading, battle sequencing, dialogue). No UniTask. No `async Task`.
 - **Newtonsoft JSON** (3.2.2) for save system serialization (supports Dictionary, HashSet, polymorphism that JsonUtility cannot).
 - **Tri-Inspector** for editor attributes (`[ShowIf]`, `[Required]`, `[ReadOnly]`, etc.). Not NaughtyAttributes (broken on Unity 6).
 - **Eflatun.SceneReference** for type-safe scene references in the Inspector. Never use raw string scene names in ScriptableObjects.
 - **uGUI** for all UI. Not UI Toolkit.
-- **Input System** 1.19.0 with `InputSystemUIInputModule` for menu navigation. No third-party input plugins.
+- **Input System** 1.19.0 with `InputSystemUIInputModule` for menu navigation. No third-party input plugins. Old `UnityEngine.Input` API is disabled — use `Keyboard.current` or InputAction for direct key checks.
 
 ## Architecture
 
-Singleton-based manager hierarchy under `GameManager` (DontDestroyOnLoad):
+Singleton-based manager hierarchy under `GameManager` (DontDestroyOnLoad). All managers are child GameObjects discovered via `GetComponentInChildren<>()` in Awake:
 
 ```
 GameManager
 ├── GameStateManager        — Top-level FSM (Title, Exploration, Battle, Menu, Dialogue, Shop)
 ├── PartyManager            — Party data, formation, class state, stat computation
-├── InventoryManager        — Consumable items, equipment, Gil
-├── ProgressionManager      — Story flags (HashSet<string>), key items, world state (PersistentID lookups)
+├── InventoryManager        — Consumable items, equipment, Gil (cap 999,999)
+├── ProgressionManager      — Story flags (HashSet<string>), key items, world state
 ├── SaveManager             — JSON serialization, 4 manual + 1 auto + 1 quick save slot
-├── AudioManager            — Stub with full API (enum → null AudioClip, logs on call)
+├── AudioManager            — Stub with full API (enum → Debug.Log on call)
 ├── SceneLoader             — Async scene loading with fade transitions
-└── DataRepository          — Central access to all ScriptableObject databases
+├── InputManager            — Wraps InputActionAsset, swaps Gameplay/UI action maps
+├── DataRepository          — Central access to all ScriptableObject databases (stub)
+├── HUD                     — Gil display overlay (HudUI)
+├── MainMenu                — Pause menu + sub-screens (MainMenuUI)
+├── DebugCanvas             — DebugOverlay (F1) + DebugConsole (backtick)
+└── EventSystem             — InputSystemUIInputModule
 ```
 
-**Battle scenes load additively** on top of the exploration scene. The exploration scene is not unloaded — it pauses underneath and resumes after battle. Each scene has its own camera.
+Also DontDestroyOnLoad: **FadeOverlay** (separate singleton, sort order 999).
 
-**All game data is ScriptableObjects** stored in `Assets/_Project/Data/`. Classes, enemies, spells, equipment, items, encounter tables, shops — everything is an SO instance.
+### Input Routing
 
-**World state persistence** uses `PersistentID` MonoBehaviours on scene objects (chests, boss triggers, locked doors). Each auto-generates a GUID; the save system maps `PersistentID.ID → bool`.
+`InputManager` has two action maps: **Gameplay** (Move, Confirm, Cancel, Menu, Run, DebugOverlay, DebugConsole) and **UI** (Navigate, Submit, Cancel, Point, Click). The properties `MoveAction`, `ConfirmAction`, `CancelAction` auto-resolve to whichever map is currently enabled, so callers don't need to know which map is active. `RunAction` and `MenuAction` are gameplay-only. Call `EnableGameplay()` or `EnableUI()` to switch maps.
+
+### Scene Flow
+
+```
+Boot → Title → PartyCreation → Exploration ⇄ Battle (additive)
+                                 ↕  ↕  ↕
+                               Menu Dialogue Shop
+```
+
+Battle scenes load additively on top of exploration. The exploration scene is not unloaded — it pauses underneath and resumes after battle. Each scene has its own camera.
+
+### Stat System
+
+`PartyMember` (plain serializable class, not MonoBehaviour) stores base stats accumulated from level-ups. Computed stats = base + all equipment bonuses, recalculated via `RecalculateStats()`. Key formulas: `HitCount = Accuracy/32 + 1`, `MagicEvasion = Agility/4`, `Attack = Strength/2 + weapon.Attack`. `PreviewEquip()` is pure — it computes hypothetical stats without mutating live state.
 
 ## Folder Structure
 
 ```
 Assets/_Project/
-├── Scripts/{Core,Battle,Exploration,Party,Inventory,Magic,UI,Data,Save,Audio,Rendering,Utility}/
-├── Data/{Classes,Enemies,Items,Equipment,Spells,Encounters,Maps,Shops,Dialogue}/
-├── Scenes/
+├── Scripts/{Core,Battle,Exploration,Party,Inventory,Magic,UI,Data,Save,Audio,Rendering,Utility,Editor}/
+├── Data/                — ScriptableObject asset instances
+├── Scenes/              — Boot, Title, PartyCreation, Exploration (+ future scenes)
 ├── Prefabs/
-├── Input/          — InputSystem action maps
-├── Settings/       — URP renderer, volume profiles
-└── Materials/      — Procedural materials/shaders
+├── Input/               — InputSystem_Actions.inputactions (Gameplay + UI maps)
+├── Settings/            — URP renderer, volume profiles
+└── Materials/           — Procedural materials/shaders
 ```
+
+Editor scripts go in `Scripts/Editor/` — these are excluded from builds.
 
 ## Key Patterns
 
-- **Battle action resolution:** Command pattern with a pre-execution validator chain (ActorAliveCheck → StatusCheck → ConfuseOverride → SilenceCheck → TargetValidation), then pure-function damage/healing calculators that return `BattleResult` structs, then apply + animate.
-- **Menu navigation:** Built on uGUI Selectables with explicit navigation. Three tiers: raw Selectables for simple menus, reusable `CursorList` for dynamic lists, custom handler for battle target selection.
+- **All game data is ScriptableObjects** with `[CreateAssetMenu]`: ClassDefinition, EquipmentData, ItemData, SpellData, KeyItemData, TilePalette. Test instances created at runtime via `ScriptableObject.CreateInstance<>()` when no asset is assigned.
+- **UI built programmatically** at runtime. `UIWindow` adds the FF1 blue window styling (dark blue `#000044` + white Outline border). TMPro for all text. No prefab dependencies for menus.
+- **Menu sub-screens** implement `IMenuSubScreen` (Initialize, Show, Hide) and are managed by `MainMenuUI`. Each screen handles its own input polling in Update.
 - **Progression gating:** `ProgressionManager` owns both flags and key items. Systems check flags, not key item lists. Key items set their flag on acquisition; consumed items leave the flag.
-- **Dialogue:** Centralized `DialogueDatabase` SOs (one per region), not inline on NPC objects. NPCs store only their `NPCID` + database reference. Variants are flag-priority-ordered, evaluated top-to-bottom, first match wins.
-- **Procedural visuals:** All tiles, characters, and enemies are colored geometric primitives. Colors and shapes defined in ScriptableObjects for easy theming.
-- **Scene references:** Always use `Eflatun.SceneReference` in SOs and MonoBehaviours. Never store scene names as strings — they break on rename.
+- **Save system:** `SaveHelper.CreateSaveData()` snapshots all live state; `SaveHelper.ApplySaveData()` restores it. Atomic writes via `File.Replace()`. Equipment/items saved by asset name (string).
+- **Procedural visuals:** `ProceduralTileFactory` generates 16x16 pixel Texture2D sprites at runtime. Player is a colored circle matching party leader's class color.
+- **Debug console commands** (`learnspell`, `setlevel`, `addgil`, `levelup`, `pos`, `save`, `load`, `scene`) provide test coverage for systems before content exists.
 
 ## Build & Test
 
@@ -73,16 +95,16 @@ No custom build scripts yet. Use Unity Editor (File → Build and Run) or:
 "C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe" -batchmode -projectPath . -runTests -testResults ./TestResults.xml -quit
 ```
 
-Tests go in `Assets/_Project/Tests/` with a dedicated `.asmdef` referencing the modules under test.
+**Scene setup:** Run menu item **FF1 > Setup Phase 1 Scenes** (in `SceneSetup.cs`) to regenerate Boot/Title/PartyCreation/Exploration scenes with all managers wired. Must re-run after adding new managers to GameManager.
 
-**Testing constraints:** Unity locks the project to one editor instance. If the user has the Editor open, CLI test/build commands will fail. Edit Mode tests (pure C# logic — damage formulas, stat calculation, turn ordering, save serialization) can run in batchmode without a game window. Play Mode tests requiring scene loading and rendering need the Editor.
+**Testing constraints:** Unity locks the project to one editor instance. If the user has the Editor open, CLI test/build commands will fail.
 
 ## Code Conventions
 
-- C# with Unity 6 / .NET Standard 2.1 APIs
+- C# with Unity 6 / .NET Standard 2.1 APIs. No namespaces (global namespace).
 - `async Awaitable` for async methods, not `async Task` or coroutines
-- ScriptableObjects use `[CreateAssetMenu]` with clear `menuName` paths
+- `[SerializeField]` for inspector fields, `[Header("Section")]` for organization
+- ScriptableObjects use `[CreateAssetMenu]` with clear `menuName` paths under "FF1/"
 - Equipment/class compatibility uses `WeaponType`/`ArmorType` enums + per-class whitelists
-- Elemental interactions and status effects are data-driven, not hardcoded switch blocks
-- Debug overlay (F1) and debug console (backtick) available in play mode — see SPEC.md Section 10 for commands per phase
-- `PersistentID` on every scene object with persistent state (chests, boss triggers, doors). Auto-generates GUID in `OnValidate()`. Editor script detects duplicates from copy/paste.
+- Elemental interactions and status effects are data-driven (flags enums, not switch blocks)
+- `PersistentID` on every scene object with persistent state. Auto-generates GUID in `OnValidate()`. Editor script `PersistentIDValidator` detects duplicates from copy/paste.

@@ -107,6 +107,9 @@ Avoid editing generated or third-party content unless the task explicitly requir
 - Input should follow the FF1-specific action map described in `SPEC.md`.
 - Keep menu navigation explicit and deterministic.
 - Maintain the blue-window FF1-inspired visual language unless the user requests a redesign.
+- If a screen switches to UI input mode, do not keep polling disabled gameplay actions from code. Manual input handling must read from the currently enabled action map, or the screen must intentionally keep the required map enabled.
+- `InputSystemUIInputModule` and custom menu polling must agree on which actions are active. Avoid half-switched states where gameplay is disabled but menu code still reads gameplay actions.
+- Opening debug or menu UI must not leak movement/confirm inputs into exploration.
 
 ## Saves and Data Safety
 
@@ -114,6 +117,16 @@ Avoid editing generated or third-party content unless the task explicitly requir
 - Prefer additive, backward-compatible save changes when possible.
 - If changing saved data structures, consider migration impact immediately.
 - Do not silently reset progression, inventory, or world state.
+- When a phase adds player-facing state such as party members, levels, spells, equipment, inventory, gil, or progression, update save/load in the same phase. Do not ship a feature that appears complete in-session but is lost on load.
+- Keep save previews, load flows, and Continue behavior resilient to corrupt or partial files. Bad saves should be skipped or reported cleanly rather than breaking the title flow.
+- Preserve true atomic write behavior on Windows. Prefer `File.Replace` or an equivalent single-step replacement over delete-then-move sequences.
+
+## Implementation Guardrails
+
+- Treat editor-generated scenes, assets, and build settings as source-controlled deliverables. If a setup script changes runtime scenes, commit the resulting scene and build-setting updates instead of relying on a one-off local editor action.
+- Equipment/stat preview code must be side-effect free. Previewing an item must not mutate live equipment, HP/MP, or any other persistent party state.
+- Party order changes must update all dependent runtime presentation immediately, including the exploration leader representation.
+- If a phase checklist or debug command is marked implemented in the spec, do not leave it as a stub unless the user explicitly agrees to defer it.
 
 ## Testing and Verification
 

@@ -150,10 +150,13 @@ public class TitleScreenUI : MonoBehaviour
         var data = saveManager.Load(slot.Value);
         if (data == null) return;
 
-        // Set pending position before scene loads so ExplorationInitializer uses it
+        // Set pending position and load scene
         ExplorationInitializer.PendingPlayerPosition = new Vector2Int(data.PlayerGridX, data.PlayerGridY);
 
         GameManager.Instance?.StateManager?.ChangeState(GameState.Exploration);
         await GameManager.Instance.SceneLoader.LoadScene(data.CurrentScene);
+
+        // Restore party/inventory/flags after scene loads
+        SaveHelper.ApplySaveData(data);
     }
 }

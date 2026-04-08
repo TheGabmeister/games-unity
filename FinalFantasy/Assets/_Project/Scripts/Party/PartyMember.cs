@@ -220,10 +220,10 @@ public class PartyMember
         _ => null
     };
 
-    /// Preview stat changes from equipping an item without actually equipping
+    /// Preview stat changes from equipping an item without mutating live state.
+    /// Computes hypothetical stats by simulating equipment bonuses directly.
     public StatPreview PreviewEquip(EquipmentData newEquip)
     {
-        // Snapshot current stats
         var preview = new StatPreview
         {
             OldAttack = Attack, OldDefense = Defense, OldEvasion = Evasion,
@@ -232,18 +232,42 @@ public class PartyMember
             OldInt = Intellect, OldLuck = Luck,
         };
 
-        // Temporarily equip
-        var oldEquip = GetEquipment(newEquip.Slot);
-        Equip(newEquip);
+        // Build hypothetical equipment set
+        var w = Weapon; var s = Shield; var h = Helmet; var a = Armor;
+        switch (newEquip.Slot)
+        {
+            case EquipmentSlot.Weapon:
+                w = newEquip;
+                if (newEquip.TwoHanded) s = null; // two-handed clears shield
+                break;
+            case EquipmentSlot.Shield:
+                if (w != null && w.TwoHanded) { preview.CopyNewFromOld(); return preview; } // can't equip shield with 2H
+                s = newEquip;
+                break;
+            case EquipmentSlot.Helmet: h = newEquip; break;
+            case EquipmentSlot.Armor:  a = newEquip; break;
+        }
 
-        preview.NewAttack = Attack; preview.NewDefense = Defense; preview.NewEvasion = Evasion;
-        preview.NewMagicDef = MagicDefense; preview.NewMaxHP = MaxHP; preview.NewMaxMP = MaxMP;
-        preview.NewStr = Strength; preview.NewAgi = Agility; preview.NewVit = Vitality;
-        preview.NewInt = Intellect; preview.NewLuck = Luck;
+        // Compute stats from base + hypothetical equipment
+        int str = BaseStr, agi = BaseAgi, vit = BaseVit, intel = BaseInt, luck = BaseLuck;
+        int atk = BaseStr / 2, def = 0, eva = BaseEvasion, mdef = BaseMagicDef;
+        int maxHP = BaseMaxHP, maxMP = BaseMaxMP;
 
-        // Restore old equipment
-        if (oldEquip != null) Equip(oldEquip);
-        else Unequip(newEquip.Slot);
+        void Add(EquipmentData eq)
+        {
+            if (eq == null) return;
+            atk += eq.Attack; def += eq.Defense; eva += eq.Evasion; mdef += eq.MagicDefense;
+            str += eq.StrengthBonus; agi += eq.AgilityBonus; vit += eq.VitalityBonus;
+            intel += eq.IntellectBonus; luck += eq.LuckBonus;
+            maxHP += eq.HPBonus; maxMP += eq.MPBonus;
+        }
+
+        Add(w); Add(s); Add(h); Add(a);
+
+        preview.NewAttack = atk; preview.NewDefense = def; preview.NewEvasion = eva;
+        preview.NewMagicDef = mdef; preview.NewMaxHP = maxHP; preview.NewMaxMP = maxMP;
+        preview.NewStr = str; preview.NewAgi = agi; preview.NewVit = vit;
+        preview.NewInt = intel; preview.NewLuck = luck;
 
         return preview;
     }
@@ -309,6 +333,15 @@ public class StatPreview
     public int OldVit, NewVit;
     public int OldInt, NewInt;
     public int OldLuck, NewLuck;
+
+    /// Sets all New values equal to Old (no change preview)
+    public void CopyNewFromOld()
+    {
+        NewAttack = OldAttack; NewDefense = OldDefense; NewEvasion = OldEvasion;
+        NewMagicDef = OldMagicDef; NewMaxHP = OldMaxHP; NewMaxMP = OldMaxMP;
+        NewStr = OldStr; NewAgi = OldAgi; NewVit = OldVit;
+        NewInt = OldInt; NewLuck = OldLuck;
+    }
 }
 
 [Serializable]

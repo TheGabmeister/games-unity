@@ -35,6 +35,18 @@ public class PlayerController : MonoBehaviour
         UpdateSprite();
     }
 
+    void OnEnable()
+    {
+        var pm = GameManager.Instance?.PartyManager;
+        if (pm != null) pm.OnPartyChanged += UpdateSprite;
+    }
+
+    void OnDestroy()
+    {
+        var pm = GameManager.Instance?.PartyManager;
+        if (pm != null) pm.OnPartyChanged -= UpdateSprite;
+    }
+
     /// Rebuild the sprite from the party leader's class color. Call after party changes.
     public void UpdateSprite()
     {
