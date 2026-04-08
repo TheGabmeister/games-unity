@@ -1356,16 +1356,16 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
   - `levelup <slot>` — force a level-up and display stat gains
 
 **Phase 2 verification:**
-- [ ] Party creation: select 4 classes (try all-same-class), name each, confirm → spawns on map
-- [ ] Pause menu opens, shows correct party stats, Gil, play time
-- [ ] Equipment screen: equip a weapon → stat preview shows correct delta → confirm → stats update
-- [ ] Equipment screen: try equipping wrong class item → blocked
-- [ ] Equipment screen: equip two-handed weapon → shield slot greys out, shield unequipped
-- [ ] Inventory: use Potion in field → HP increases → item count decreases
-- [ ] Inventory: use Potion at full HP → still consumed (FF1 behavior)
-- [ ] Gil cap: `addgil 999999`, buy an item, verify Gil doesn't exceed 999,999
-- [ ] `setlevel 0 50` → verify stat block recalculates, HP/MP update
-- [ ] Party order: reorder slots → map sprite changes to new slot 1 character
+- [x] Party creation: select 4 classes (try all-same-class), name each, confirm → spawns on map
+- [x] Pause menu opens, shows correct party stats, Gil, play time
+- [x] Equipment screen: equip a weapon → stat preview shows correct delta → confirm → stats update
+- [x] Equipment screen: try equipping wrong class item → blocked
+- [x] Equipment screen: equip two-handed weapon → shield slot greys out, shield unequipped
+- [x] Inventory: use Potion in field → HP increases → item count decreases
+- [x] Inventory: use Potion at full HP → still consumed (FF1 behavior)
+- [x] Gil cap: `addgil 999999`, buy an item, verify Gil doesn't exceed 999,999
+- [x] `setlevel 0 50` → verify stat block recalculates, HP/MP update
+- [x] Party order: reorder slots → map sprite changes to new slot 1 character
 
 ### Phase 3 — Battle System
 - Battle scene (additive loading, layout, cameras, procedural backgrounds)
