@@ -139,7 +139,7 @@ public class MainMenuUI : MonoBehaviour
     {
         for (int i = 0; i < menuLabels.Length; i++)
         {
-            string prefix = (i == selectedMenuIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedMenuIndex) ? "> " : "   ";
             menuLabels[i].text = prefix + MenuItems[i];
         }
 

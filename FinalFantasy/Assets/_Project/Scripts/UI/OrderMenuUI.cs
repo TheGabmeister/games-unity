@@ -145,11 +145,11 @@ public class OrderMenuUI : MonoBehaviour, IMenuSubScreen
             string prefix;
 
             if (i == firstSwapIndex && i == selectedIndex)
-                prefix = "\u25B6*";
+                prefix = ">*";
             else if (i == firstSwapIndex)
                 prefix = "  *";
             else if (i == selectedIndex)
-                prefix = "\u25B6 ";
+                prefix = "> ";
             else
                 prefix = "   ";
 

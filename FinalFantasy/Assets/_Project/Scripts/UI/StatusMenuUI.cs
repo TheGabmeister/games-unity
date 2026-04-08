@@ -86,7 +86,7 @@ public class StatusMenuUI : MonoBehaviour, IMenuSubScreen
 
         if (member == null)
         {
-            titleText.text = "Status \u2014 (empty)";
+            titleText.text = "Status - (empty)";
             classLevelText.text = "";
             expText.text = "";
             hpmpText.text = "";
@@ -104,7 +104,7 @@ public class StatusMenuUI : MonoBehaviour, IMenuSubScreen
         }
 
         string className = member.ClassDef != null ? member.ClassDef.ClassName : "???";
-        titleText.text = $"Status \u2014 {member.Name}";
+        titleText.text = $"Status - {member.Name}";
 
         if (titleText.color != Color.white && member.ClassDef != null)
             titleText.color = Color.white;
@@ -129,7 +129,7 @@ public class StatusMenuUI : MonoBehaviour, IMenuSubScreen
         helmetText.text = $"Helmet: {(member.Helmet != null ? member.Helmet.ItemName : "(none)")}";
         armorText.text = $"Armor:  {(member.Armor != null ? member.Armor.ItemName : "(none)")}";
 
-        navHintText.text = $"\u25C0 {currentMemberIndex + 1}/4 \u25B6";
+        navHintText.text = $"< {currentMemberIndex + 1}/4 >";
     }
 
     // --- UI Building ---
@@ -150,7 +150,7 @@ public class StatusMenuUI : MonoBehaviour, IMenuSubScreen
         windowRect.sizeDelta = Vector2.zero;
 
         // Title
-        titleText = CreateStatLine("Title", "Status \u2014 ???", 22, new Vector2(0.03f, 0.9f), new Vector2(0.97f, 0.98f), windowRect);
+        titleText = CreateStatLine("Title", "Status - ???", 22, new Vector2(0.03f, 0.9f), new Vector2(0.97f, 0.98f), windowRect);
 
         // Class and level
         classLevelText = CreateStatLine("ClassLevel", "Class: ???     Level: 1", 18, new Vector2(0.03f, 0.82f), new Vector2(0.97f, 0.9f), windowRect);
@@ -188,7 +188,7 @@ public class StatusMenuUI : MonoBehaviour, IMenuSubScreen
         armorText = CreateStatLine("Armor", "Armor:  (none)", 18, new Vector2(0.5f, 0.04f), new Vector2(0.97f, 0.12f), windowRect);
 
         // Nav hint
-        navHintText = CreateStatLine("NavHint", "\u25C0 1/4 \u25B6", 16, new Vector2(0.35f, 0.0f), new Vector2(0.65f, 0.06f), windowRect);
+        navHintText = CreateStatLine("NavHint", "< 1/4 >", 16, new Vector2(0.35f, 0.0f), new Vector2(0.65f, 0.06f), windowRect);
         navHintText.alignment = TextAlignmentOptions.Center;
         navHintText.color = new Color(0.7f, 0.7f, 0.7f);
     }

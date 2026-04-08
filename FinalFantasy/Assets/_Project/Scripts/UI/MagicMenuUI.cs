@@ -129,7 +129,7 @@ public class MagicMenuUI : MonoBehaviour, IMenuSubScreen
         var pm = GameManager.Instance?.PartyManager;
         for (int i = 0; i < 4; i++)
         {
-            string prefix = (i == selectedMemberIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedMemberIndex) ? "> " : "   ";
             var member = pm?.GetMember(i);
             if (member != null)
                 memberLabels[i].text = $"{prefix}{member.Name}  MP {member.CurrentMP}/{member.MaxMP}";
@@ -155,7 +155,7 @@ public class MagicMenuUI : MonoBehaviour, IMenuSubScreen
         targetPanel.SetActive(false);
 
         var member = GameManager.Instance?.PartyManager?.GetMember(selectedMemberIndex);
-        titleText.text = $"Magic \u2014 {member?.Name ?? "???"}";
+        titleText.text = $"Magic - {member?.Name ?? "???"}";
 
         RefreshSpellList();
         selectedSpellIndex = 0;
@@ -294,7 +294,7 @@ public class MagicMenuUI : MonoBehaviour, IMenuSubScreen
         for (int i = 0; i < spellLabels.Count; i++)
         {
             var spell = displayedSpells[i];
-            string prefix = (i == selectedSpellIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedSpellIndex) ? "> " : "   ";
             string fieldTag = spell.UsableInField ? " (field)" : "";
             bool canCast = member != null && member.CurrentMP >= spell.MPCost;
             spellLabels[i].color = canCast ? Color.white : new Color(0.5f, 0.5f, 0.5f);
@@ -374,7 +374,7 @@ public class MagicMenuUI : MonoBehaviour, IMenuSubScreen
         var pm = GameManager.Instance?.PartyManager;
         for (int i = 0; i < 4; i++)
         {
-            string prefix = (i == selectedTargetIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedTargetIndex) ? "> " : "   ";
             var member = pm?.GetMember(i);
             if (member != null)
                 targetLabels[i].text = $"{prefix}{member.Name}  HP {member.CurrentHP}/{member.MaxHP}";

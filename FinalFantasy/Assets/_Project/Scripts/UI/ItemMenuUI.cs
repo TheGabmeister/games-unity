@@ -149,7 +149,7 @@ public class ItemMenuUI : MonoBehaviour, IMenuSubScreen
         for (int i = 0; i < itemLabels.Count; i++)
         {
             var slot = displayedItems[i];
-            string prefix = (i == selectedItemIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedItemIndex) ? "> " : "   ";
             string usable = slot.Item.UsableInField ? "" : " <color=#888888>(battle only)</color>";
             itemLabels[i].text = $"{prefix}{slot.Item.ItemName}  x{slot.Count}{usable}";
         }
@@ -170,7 +170,7 @@ public class ItemMenuUI : MonoBehaviour, IMenuSubScreen
         for (int i = 0; i < 4; i++)
         {
             var member = pm?.GetMember(i);
-            string prefix = (i == selectedTargetIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedTargetIndex) ? "> " : "   ";
             if (member != null)
                 targetLabels[i].text = $"{prefix}{member.Name}  HP {member.CurrentHP}/{member.MaxHP}";
             else

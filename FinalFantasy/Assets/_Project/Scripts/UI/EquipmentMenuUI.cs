@@ -133,7 +133,7 @@ public class EquipmentMenuUI : MonoBehaviour, IMenuSubScreen
         var pm = GameManager.Instance?.PartyManager;
         for (int i = 0; i < 4; i++)
         {
-            string prefix = (i == selectedMemberIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedMemberIndex) ? "> " : "   ";
             var member = pm?.GetMember(i);
             if (member != null)
                 memberLabels[i].text = $"{prefix}{member.Name}  {member.ClassDef?.Abbreviation ?? "??"}  Lv {member.Level}";
@@ -161,7 +161,7 @@ public class EquipmentMenuUI : MonoBehaviour, IMenuSubScreen
         selectedSlotIndex = 0;
 
         var member = GameManager.Instance?.PartyManager?.GetMember(selectedMemberIndex);
-        titleText.text = $"{member?.Name ?? "???"} \u2014 Equipment";
+        titleText.text = $"{member?.Name ?? "???"} - Equipment";
 
         RefreshSlotDisplay();
         UpdateSlotCursor();
@@ -226,7 +226,7 @@ public class EquipmentMenuUI : MonoBehaviour, IMenuSubScreen
             string equipName;
 
             if (i == 1 && member.Weapon != null && member.Weapon.TwoHanded)
-                equipName = "\u2014Blocked\u2014";
+                equipName = "-Blocked-";
             else if (equipped != null)
                 equipName = equipped.ItemName;
             else
@@ -245,11 +245,11 @@ public class EquipmentMenuUI : MonoBehaviour, IMenuSubScreen
         {
             var slot = (EquipmentSlot)i;
             var equipped = member.GetEquipment(slot);
-            string prefix = (i == selectedSlotIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedSlotIndex) ? "> " : "   ";
             string equipName;
 
             if (i == 1 && member.Weapon != null && member.Weapon.TwoHanded)
-                equipName = "\u2014Blocked\u2014";
+                equipName = "-Blocked-";
             else if (equipped != null)
                 equipName = equipped.ItemName;
             else
@@ -428,7 +428,7 @@ public class EquipmentMenuUI : MonoBehaviour, IMenuSubScreen
         int totalCount = displayedEquipment.Count + 1; // +1 for remove
         for (int i = 0; i < equipLabels.Count; i++)
         {
-            string prefix = (i == selectedEquipIndex) ? "\u25B6 " : "   ";
+            string prefix = (i == selectedEquipIndex) ? "> " : "   ";
             if (i < displayedEquipment.Count)
             {
                 var equip = displayedEquipment[i];

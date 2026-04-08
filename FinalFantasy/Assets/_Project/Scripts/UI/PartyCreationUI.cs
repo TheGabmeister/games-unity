@@ -298,7 +298,7 @@ public class PartyCreationUI : MonoBehaviour
         labelLayout.preferredWidth = 70;
 
         // Left arrow
-        var leftArrow = CreateText($"LeftArrow_{index}", "\u25C0", 16, TextAlignmentOptions.Center, rowRect);
+        var leftArrow = CreateText($"LeftArrow_{index}", "<", 16, TextAlignmentOptions.Center, rowRect);
         var leftLayout = leftArrow.AddComponent<LayoutElement>();
         leftLayout.preferredWidth = 25;
 
@@ -309,7 +309,7 @@ public class PartyCreationUI : MonoBehaviour
         classLabels[index] = classGO.GetComponent<TextMeshProUGUI>();
 
         // Right arrow
-        var rightArrow = CreateText($"RightArrow_{index}", "\u25B6", 16, TextAlignmentOptions.Center, rowRect);
+        var rightArrow = CreateText($"RightArrow_{index}", ">", 16, TextAlignmentOptions.Center, rowRect);
         var rightLayout = rightArrow.AddComponent<LayoutElement>();
         rightLayout.preferredWidth = 25;
 
