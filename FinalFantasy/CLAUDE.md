@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Final Fantasy 1 (Pixel Remaster) mechanical recreation in Unity 6. Faithful game mechanics with procedural/primitive visuals — no imported sprites, textures, or audio assets. **SPEC.md is the single source of truth** for all mechanics, data schemas, architecture decisions, and implementation phases (Sections 1-10). When code conflicts with SPEC.md, follow the user's latest instruction first, then SPEC.md.
 
+**Current status:** Phase 2 (Party, Menu, Inventory, Equipment) is in progress. Battle/Magic script folders exist but have no implementations yet (Phase 3).
+
 ## Engine & Tooling
 
 - **Unity 6** (6000.3.12f1) with **URP 2D** renderer
@@ -42,7 +44,17 @@ Also DontDestroyOnLoad: **FadeOverlay** (separate singleton, sort order 999).
 
 ### Input Routing
 
-`InputManager` has two action maps: **Gameplay** (Move, Confirm, Cancel, Menu, Run, DebugOverlay, DebugConsole) and **UI** (Navigate, Submit, Cancel, Point, Click). The properties `MoveAction`, `ConfirmAction`, `CancelAction` auto-resolve to whichever map is currently enabled, so callers don't need to know which map is active. `RunAction` and `MenuAction` are gameplay-only. Call `EnableGameplay()` or `EnableUI()` to switch maps.
+`InputManager` has two action maps: **Gameplay** (Move, Confirm, Cancel, Menu, Run, DebugOverlay, DebugConsole) and **UI** (Navigate, Submit, Cancel, Point, Click). The properties `MoveAction`, `ConfirmAction`, `CancelAction` auto-resolve based on an internal `uiMode` flag. `RunAction` and `MenuAction` are gameplay-only. Call `EnableGameplay()` or `EnableUI()` to switch maps.
+
+**Critical gotcha:** `EnableUI()` re-enables `DebugOverlayAction` and `DebugConsoleAction` individually so F1/backtick work in menus. This makes `gameplayMap.enabled` return `true` even though the map was disabled. Never check `gameplayMap.enabled` to determine which map is active — use the `uiMode` flag instead. The auto-resolving properties (`MoveAction`, `ConfirmAction`, `CancelAction`) already handle this correctly.
+
+**Key bindings** (from `InputSystem_Actions.inputactions`):
+- Move/Navigate: WASD, Arrow keys, Gamepad dpad/stick
+- Confirm/Submit: Z, Enter, Gamepad South
+- Cancel: X, Backspace, Escape, Gamepad East
+- Menu (gameplay-only): Escape, C, Gamepad Start
+- Run: Left Shift, Gamepad Right Trigger
+- Debug Overlay: F1 | Debug Console: Backtick
 
 ### Scene Flow
 
@@ -76,12 +88,13 @@ Editor scripts go in `Scripts/Editor/` — these are excluded from builds.
 ## Key Patterns
 
 - **All game data is ScriptableObjects** with `[CreateAssetMenu]`: ClassDefinition, EquipmentData, ItemData, SpellData, KeyItemData, TilePalette. Test instances created at runtime via `ScriptableObject.CreateInstance<>()` when no asset is assigned.
-- **UI built programmatically** at runtime. `UIWindow` adds the FF1 blue window styling (dark blue `#000044` + white Outline border). TMPro for all text. No prefab dependencies for menus.
-- **Menu sub-screens** implement `IMenuSubScreen` (Initialize, Show, Hide) and are managed by `MainMenuUI`. Each screen handles its own input polling in Update.
+- **UI built programmatically** at runtime. `UIWindow` adds the FF1 blue window styling (dark blue `#000044` + white Outline border). TMPro for all text. No prefab dependencies for menus. Use only ASCII characters in UI text (LiberationSans SDF lacks Unicode arrows/symbols like ▶◀— — use `>`, `<`, `-` instead).
+- **Menu sub-screens** implement `IMenuSubScreen` (Initialize, Show, Hide) and are managed by `MainMenuUI`. Sub-screens are added as components on the MainMenu GameObject at runtime (`AddComponent<>()`). Each screen handles its own input polling in Update, guarded by `rootPanel.activeSelf`. `Show()` receives an `Action onClose` callback that MainMenuUI uses to restore state when the sub-screen exits.
 - **Progression gating:** `ProgressionManager` owns both flags and key items. Systems check flags, not key item lists. Key items set their flag on acquisition; consumed items leave the flag.
 - **Save system:** `SaveHelper.CreateSaveData()` snapshots all live state; `SaveHelper.ApplySaveData()` restores it. Atomic writes via `File.Replace()`. Equipment/items saved by asset name (string).
 - **Procedural visuals:** `ProceduralTileFactory` generates 16x16 pixel Texture2D sprites at runtime. Player is a colored circle matching party leader's class color.
-- **Debug console commands** (`learnspell`, `setlevel`, `addgil`, `levelup`, `pos`, `save`, `load`, `scene`) provide test coverage for systems before content exists.
+- **Debug console commands** provide test coverage for systems before content exists. Commands: `help`, `state`, `pos`, `save`, `load`, `scene`, `setlevel`, `addgil`, `levelup`, `learnspell`, `addequip`, `additem`. Commands that reference game data (equipment, items, spells) first search loaded assets via `Resources.FindObjectsOfTypeAll<>()`, then fall back to creating runtime test instances via `ScriptableObject.CreateInstance<>()` with stats inferred from name keywords.
+- **Starter weapons** are created at runtime in `PartyCreationUI.GetDefaultClasses()` and auto-equipped by `PartyMember.Create()`. Each class except Monk gets a weapon (Warrior: Broadsword, Thief: Dagger, Red Mage: Rapier, White/Black Mage: Staff).
 
 ## Build & Test
 

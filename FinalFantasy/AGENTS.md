@@ -20,6 +20,7 @@ This project recreates the core mechanics of Final Fantasy 1 Pixel Remaster in U
 - Newtonsoft JSON for save serialization
 - Tri-Inspector for editor tooling
 - uGUI for runtime UI
+- TextMeshPro for runtime text
 - Eflatun.SceneReference for inspector-safe scene references
 
 ## Core Rules
@@ -45,6 +46,11 @@ GameManager
 |- SaveManager
 |- AudioManager
 |- SceneLoader
+|- InputManager
+|- HUD
+|- MainMenu
+|- DebugCanvas
+|- EventSystem
 \- DataRepository
 ```
 
@@ -55,6 +61,8 @@ Important project assumptions:
 - World state persistence should be stable and explicit.
 - `ProgressionManager` owns progression flags and world-state gating.
 - `DataRepository` is the central read access point for content databases.
+- `GameManager` discovers its child managers with `GetComponentInChildren<>()`; keep persistent runtime wiring compatible with that pattern.
+- `FadeOverlay` is a separate persistent singleton-style object, not a child manager under `GameManager`.
 
 ## Repo Layout
 
@@ -74,6 +82,7 @@ Assets/_Project/
 |  |- Save/
 |  |- Audio/
 |  |- Rendering/
+|  |- Editor/
 |  \- Utility/
 |- Data/
 |- Scenes/
@@ -107,9 +116,12 @@ Avoid editing generated or third-party content unless the task explicitly requir
 - Input should follow the FF1-specific action map described in `SPEC.md`.
 - Keep menu navigation explicit and deterministic.
 - Maintain the blue-window FF1-inspired visual language unless the user requests a redesign.
+- The project uses an `InputManager` wrapper over the `Gameplay` and `UI` action maps. Prefer its `MoveAction`, `ConfirmAction`, and `CancelAction` properties instead of reading raw maps directly.
+- Do not infer active input mode from `gameplayMap.enabled`. `EnableUI()` re-enables debug actions individually, so the gameplay map can look enabled even when UI mode is active.
 - If a screen switches to UI input mode, do not keep polling disabled gameplay actions from code. Manual input handling must read from the currently enabled action map, or the screen must intentionally keep the required map enabled.
 - `InputSystemUIInputModule` and custom menu polling must agree on which actions are active. Avoid half-switched states where gameplay is disabled but menu code still reads gameplay actions.
 - Opening debug or menu UI must not leak movement/confirm inputs into exploration.
+- Debug overlay and debug console are expected to remain toggleable in UI mode via the dedicated debug actions.
 
 ## Saves and Data Safety
 
@@ -118,15 +130,24 @@ Avoid editing generated or third-party content unless the task explicitly requir
 - If changing saved data structures, consider migration impact immediately.
 - Do not silently reset progression, inventory, or world state.
 - When a phase adds player-facing state such as party members, levels, spells, equipment, inventory, gil, or progression, update save/load in the same phase. Do not ship a feature that appears complete in-session but is lost on load.
+- `SaveHelper.CreateSaveData()` and `SaveHelper.ApplySaveData()` are the central snapshot/restore path. Keep them in sync whenever runtime state changes.
 - Keep save previews, load flows, and Continue behavior resilient to corrupt or partial files. Bad saves should be skipped or reported cleanly rather than breaking the title flow.
 - Preserve true atomic write behavior on Windows. Prefer `File.Replace` or an equivalent single-step replacement over delete-then-move sequences.
+- Preserve the slot model unless the user asks otherwise: 4 manual slots, 1 auto-save slot, and 1 quick-save slot. Quick saves are consumed on load; Continue should prefer the most recent valid timestamp across all slots.
 
 ## Implementation Guardrails
 
 - Treat editor-generated scenes, assets, and build settings as source-controlled deliverables. If a setup script changes runtime scenes, commit the resulting scene and build-setting updates instead of relying on a one-off local editor action.
 - Equipment/stat preview code must be side-effect free. Previewing an item must not mutate live equipment, HP/MP, or any other persistent party state.
 - Party order changes must update all dependent runtime presentation immediately, including the exploration leader representation.
+- `PartyManager.OnPartyChanged` is the main hook for party-dependent presentation. If party composition, ordering, stats, or leader visuals change, make sure affected UI/runtime listeners refresh immediately.
 - If a phase checklist or debug command is marked implemented in the spec, do not leave it as a stub unless the user explicitly agrees to defer it.
+
+## Scene and Setup Workflow
+
+- `FF1 > Setup Phase 1 Scenes` regenerates the core Boot/Title/PartyCreation/Exploration scenes, rewires the persistent hierarchy, and updates Build Settings.
+- If you add or rename persistent managers, always-on UI, or boot-time systems, update `SceneSetup.cs` in the same change so a regenerated project stays valid.
+- The setup flow wires the shared `InputSystem_Actions.inputactions` asset into both `InputManager` and `InputSystemUIInputModule`; keep those references aligned.
 
 ## Testing and Verification
 
