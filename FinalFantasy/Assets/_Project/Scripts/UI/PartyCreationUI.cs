@@ -468,6 +468,22 @@ public class PartyCreationUI : MonoBehaviour
 
     // --- Default Class Definitions ---
 
+    static EquipmentData CreateStarterWeapon(string itemName, WeaponType weaponType,
+        int attack, int accuracy, int critRate, int buyPrice)
+    {
+        var weapon = ScriptableObject.CreateInstance<EquipmentData>();
+        weapon.name = itemName;
+        weapon.ItemName = itemName;
+        weapon.Slot = EquipmentSlot.Weapon;
+        weapon.WeaponType = weaponType;
+        weapon.Attack = attack;
+        weapon.Accuracy = accuracy;
+        weapon.CritRate = critRate;
+        weapon.BuyPrice = buyPrice;
+        weapon.SellPrice = buyPrice / 2;
+        return weapon;
+    }
+
     public static ClassDefinition[] GetDefaultClasses()
     {
         var classes = new ClassDefinition[6];
@@ -486,6 +502,7 @@ public class PartyCreationUI : MonoBehaviour
         classes[0].BaseAccuracy = 10; classes[0].BaseEvasion = 5; classes[0].BaseMagicDefense = 15;
         classes[0].AllowedWeapons = new[] { WeaponType.Sword, WeaponType.Axe, WeaponType.Hammer };
         classes[0].AllowedArmor = new[] { ArmorType.Shield, ArmorType.HeavyArmor, ArmorType.HeavyHelmet, ArmorType.Gloves };
+        classes[0].StarterWeapon = CreateStarterWeapon("Broadsword", WeaponType.Sword, 15, 10, 5, 1500);
 
         // Thief
         classes[1] = ScriptableObject.CreateInstance<ClassDefinition>();
@@ -501,6 +518,7 @@ public class PartyCreationUI : MonoBehaviour
         classes[1].BaseAccuracy = 10; classes[1].BaseEvasion = 5; classes[1].BaseMagicDefense = 15;
         classes[1].AllowedWeapons = new[] { WeaponType.Dagger, WeaponType.Sword };
         classes[1].AllowedArmor = new[] { ArmorType.LightArmor, ArmorType.Shield, ArmorType.Hat, ArmorType.Armlet };
+        classes[1].StarterWeapon = CreateStarterWeapon("Dagger", WeaponType.Dagger, 5, 10, 3, 200);
 
         // Monk
         classes[2] = ScriptableObject.CreateInstance<ClassDefinition>();
@@ -531,6 +549,7 @@ public class PartyCreationUI : MonoBehaviour
         classes[3].BaseAccuracy = 10; classes[3].BaseEvasion = 5; classes[3].BaseMagicDefense = 15;
         classes[3].AllowedWeapons = new[] { WeaponType.Sword, WeaponType.Dagger };
         classes[3].AllowedArmor = new[] { ArmorType.LightArmor, ArmorType.Shield, ArmorType.Hat, ArmorType.Armlet };
+        classes[3].StarterWeapon = CreateStarterWeapon("Rapier", WeaponType.Sword, 9, 10, 5, 600);
 
         // White Mage
         classes[4] = ScriptableObject.CreateInstance<ClassDefinition>();
@@ -546,6 +565,7 @@ public class PartyCreationUI : MonoBehaviour
         classes[4].BaseAccuracy = 10; classes[4].BaseEvasion = 5; classes[4].BaseMagicDefense = 15;
         classes[4].AllowedWeapons = new[] { WeaponType.Staff, WeaponType.Hammer };
         classes[4].AllowedArmor = new[] { ArmorType.Robe, ArmorType.Hat, ArmorType.Armlet };
+        classes[4].StarterWeapon = CreateStarterWeapon("Staff", WeaponType.Staff, 6, 10, 0, 200);
 
         // Black Mage
         classes[5] = ScriptableObject.CreateInstance<ClassDefinition>();
@@ -561,6 +581,7 @@ public class PartyCreationUI : MonoBehaviour
         classes[5].BaseAccuracy = 10; classes[5].BaseEvasion = 5; classes[5].BaseMagicDefense = 15;
         classes[5].AllowedWeapons = new[] { WeaponType.Dagger, WeaponType.Staff };
         classes[5].AllowedArmor = new[] { ArmorType.Robe, ArmorType.Hat, ArmorType.Armlet };
+        classes[5].StarterWeapon = CreateStarterWeapon("Staff", WeaponType.Staff, 6, 10, 0, 200);
 
         return classes;
     }

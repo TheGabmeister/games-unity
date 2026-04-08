@@ -174,7 +174,7 @@ public class DebugConsole : MonoBehaviour
         {
             case "help":
                 Log("Phase 1: help, state, pos, save, load, scene");
-                Log("Phase 2: setlevel, addgil, levelup, learnspell");
+                Log("Phase 2: setlevel, addgil, levelup, learnspell, addequip, additem");
                 break;
 
             case "state":
@@ -318,6 +318,49 @@ public class DebugConsole : MonoBehaviour
                 }
                 break;
 
+            case "addequip":
+                if (parts.Length < 2) { Log("Usage: addequip <name>"); break; }
+                {
+                    string equipName = string.Join(" ", parts, 1, parts.Length - 1);
+                    var allEquip = Resources.FindObjectsOfTypeAll<EquipmentData>();
+                    EquipmentData foundEquip = null;
+                    foreach (var eq in allEquip)
+                    {
+                        if (eq.ItemName != null && eq.ItemName.Equals(equipName, System.StringComparison.OrdinalIgnoreCase))
+                        { foundEquip = eq; break; }
+                    }
+                    if (foundEquip == null)
+                        foundEquip = CreateTestEquipment(equipName);
+                    GameManager.Instance?.InventoryManager?.AddEquipment(foundEquip);
+                    Log($"Added {foundEquip.ItemName} ({foundEquip.Slot}, ATK:{foundEquip.Attack} DEF:{foundEquip.Defense})");
+                }
+                break;
+
+            case "additem":
+                if (parts.Length < 2) { Log("Usage: additem <name> [count]"); break; }
+                {
+                    int itemCount = 1;
+                    int nameEnd = parts.Length;
+                    if (parts.Length >= 3 && int.TryParse(parts[parts.Length - 1], out int pc))
+                    {
+                        itemCount = Mathf.Max(1, pc);
+                        nameEnd = parts.Length - 1;
+                    }
+                    string iName = string.Join(" ", parts, 1, nameEnd - 1);
+                    var allItems = Resources.FindObjectsOfTypeAll<ItemData>();
+                    ItemData foundItem = null;
+                    foreach (var it in allItems)
+                    {
+                        if (it.ItemName != null && it.ItemName.Equals(iName, System.StringComparison.OrdinalIgnoreCase))
+                        { foundItem = it; break; }
+                    }
+                    if (foundItem == null)
+                        foundItem = CreateTestItem(iName);
+                    GameManager.Instance?.InventoryManager?.AddItem(foundItem, itemCount);
+                    Log($"Added {foundItem.ItemName} x{itemCount}");
+                }
+                break;
+
             default:
                 Log($"Unknown command: {cmd}. Type 'help' for commands.");
                 break;
@@ -335,6 +378,81 @@ public class DebugConsole : MonoBehaviour
         }
         if (outputText != null)
             outputText.text = outputLog;
+    }
+
+    EquipmentData CreateTestEquipment(string name)
+    {
+        var equip = ScriptableObject.CreateInstance<EquipmentData>();
+        equip.name = name;
+        equip.ItemName = name;
+        equip.BuyPrice = 100;
+        equip.SellPrice = 50;
+
+        string lower = name.ToLower();
+        if (lower.Contains("shield") || lower.Contains("buckler"))
+        {
+            equip.Slot = EquipmentSlot.Shield;
+            equip.ArmorType = ArmorType.Shield;
+            equip.Defense = 4; equip.Evasion = 2;
+        }
+        else if (lower.Contains("helm") || lower.Contains("cap"))
+        {
+            equip.Slot = EquipmentSlot.Helmet;
+            equip.ArmorType = lower.Contains("heavy") ? ArmorType.HeavyHelmet : ArmorType.Hat;
+            equip.Defense = 3;
+        }
+        else if (lower.Contains("armor") || lower.Contains("mail") || lower.Contains("robe"))
+        {
+            equip.Slot = EquipmentSlot.Armor;
+            equip.ArmorType = lower.Contains("robe") ? ArmorType.Robe : ArmorType.HeavyArmor;
+            equip.Defense = 8;
+        }
+        else // weapon
+        {
+            equip.Slot = EquipmentSlot.Weapon;
+            if (lower.Contains("staff"))
+            { equip.WeaponType = WeaponType.Staff; equip.Attack = 6; equip.Accuracy = 10; }
+            else if (lower.Contains("dagger") || lower.Contains("knife"))
+            { equip.WeaponType = WeaponType.Dagger; equip.Attack = 7; equip.Accuracy = 10; equip.CritRate = 3; }
+            else if (lower.Contains("axe"))
+            { equip.WeaponType = WeaponType.Axe; equip.Attack = 16; equip.Accuracy = 5; equip.TwoHanded = true; }
+            else if (lower.Contains("hammer") || lower.Contains("mace"))
+            { equip.WeaponType = WeaponType.Hammer; equip.Attack = 9; equip.Accuracy = 10; }
+            else if (lower.Contains("nunchaku"))
+            { equip.WeaponType = WeaponType.Nunchaku; equip.Attack = 12; equip.Accuracy = 10; }
+            else if (lower.Contains("katana"))
+            { equip.WeaponType = WeaponType.Katana; equip.Attack = 18; equip.Accuracy = 15; equip.CritRate = 10; }
+            else // default to sword
+            { equip.WeaponType = WeaponType.Sword; equip.Attack = 10; equip.Accuracy = 10; equip.CritRate = 5; }
+        }
+        return equip;
+    }
+
+    ItemData CreateTestItem(string name)
+    {
+        var item = ScriptableObject.CreateInstance<ItemData>();
+        item.name = name;
+        item.ItemName = name;
+        item.UsableInField = true;
+        item.UsableInBattle = true;
+        item.Targeting = SpellTarget.SingleAlly;
+
+        string lower = name.ToLower();
+        if (lower.Contains("ether"))
+        { item.EffectType = ItemEffectType.HealMP; item.Power = 30; item.BuyPrice = 1000; }
+        else if (lower.Contains("phoenix") || lower.Contains("fenix"))
+        { item.EffectType = ItemEffectType.Revive; item.Power = 25; item.BuyPrice = 5000; }
+        else if (lower.Contains("antidote"))
+        { item.EffectType = ItemEffectType.CureStatus; item.CuresStatus = StatusEffectFlags.Poison; item.BuyPrice = 75; }
+        else if (lower.Contains("gold needle") || lower.Contains("soft"))
+        { item.EffectType = ItemEffectType.CureStatus; item.CuresStatus = StatusEffectFlags.Stone; item.BuyPrice = 800; }
+        else if (lower.Contains("eye drop"))
+        { item.EffectType = ItemEffectType.CureStatus; item.CuresStatus = StatusEffectFlags.Blind; item.BuyPrice = 50; }
+        else // Default: Potion
+        { item.EffectType = ItemEffectType.HealHP; item.Power = 30; item.BuyPrice = 60; }
+
+        item.SellPrice = item.BuyPrice / 2;
+        return item;
     }
 
     SpellData CreateTestSpell(string spellName, MagicSchool school, int level, int mpCost,
