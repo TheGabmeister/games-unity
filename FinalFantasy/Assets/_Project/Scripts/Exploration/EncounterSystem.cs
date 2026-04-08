@@ -18,6 +18,8 @@ public class EncounterSystem : MonoBehaviour
 
     void Start()
     {
+        if (encounterTable == null)
+            encounterTable = CreateDefaultTable();
         RollStepCounter();
     }
 
@@ -94,5 +96,39 @@ public class EncounterSystem : MonoBehaviour
     {
         encounterTable = table;
         RollStepCounter();
+    }
+
+    EncounterTable CreateDefaultTable()
+    {
+        var goblin = ScriptableObject.CreateInstance<EnemyData>();
+        goblin.EnemyName = "Goblin";
+        goblin.MaxHP = 20; goblin.Attack = 8; goblin.Defense = 2;
+        goblin.Accuracy = 10; goblin.Evasion = 2; goblin.Agility = 5;
+        goblin.HitCount = 1; goblin.MagicDefense = 5; goblin.MagicEvasion = 5;
+        goblin.EXPReward = 15; goblin.GilReward = 10;
+        goblin.PrimaryColor = new Color(0.7f, 0.2f, 0.2f);
+        goblin.Shape = EnemyShape.Circle;
+        goblin.Actions = new[] { new EnemyAction { Type = EnemyActionType.Attack, Weight = 10 } };
+
+        var table = ScriptableObject.CreateInstance<EncounterTable>();
+        table.TableName = "Default";
+        table.BaseStepCount = 25;
+        table.StepVariance = 8;
+        table.Formations = new[]
+        {
+            new EncounterFormation
+            {
+                FormationName = "2x Goblin",
+                Groups = new[] { new EnemyGroup { Enemy = goblin, Count = 2 } },
+                Weight = 10,
+            },
+            new EncounterFormation
+            {
+                FormationName = "3x Goblin",
+                Groups = new[] { new EnemyGroup { Enemy = goblin, Count = 3 } },
+                Weight = 5,
+            },
+        };
+        return table;
     }
 }
