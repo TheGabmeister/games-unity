@@ -1398,11 +1398,11 @@ FF1 has no respec. If we don't communicate this clearly, players will be frustra
   - `nobattles` — disable random encounters (toggle)
 
 **Phase 3 verification:**
-- [ ] Walking on encounter tiles triggers battle after step counter reaches 0
-- [ ] Encounter transition plays cleanly (no frame hitch, no camera jitter)
-- [ ] Battle scene loads additively — exploration scene is paused underneath
-- [ ] Turn order: give one character high agility via `setstat` → they act first consistently
-- [ ] Attack command: select enemy, attack hits, damage number appears, multi-hit rolls visible in debug overlay
+- [x] Walking on encounter tiles triggers battle after step counter reaches 0
+- [x] Encounter transition plays cleanly (no frame hitch, no camera jitter)
+- [x] Battle scene loads additively — exploration scene is paused underneath
+- [x] Turn order: give one character high agility via `setstat` → they act first consistently
+- [x] Attack command: select enemy, attack hits, damage number appears, multi-hit rolls visible in debug overlay
 - [ ] Magic command: cast Fire on enemy weak to Fire → 2x damage shown
 - [ ] Magic command: cast Cure on undead enemy → deals damage instead
 - [ ] Item command: use Potion on ally → HP restored, item consumed

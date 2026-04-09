@@ -32,6 +32,7 @@ This project recreates the core mechanics of Final Fantasy 1 Pixel Remaster in U
 - Use `Eflatun.SceneReference` in serialized data instead of raw scene name strings.
 - Keep mechanics data-driven where the spec intends that: classes, items, equipment, spells, encounters, shops, progression gates.
 - Keep battle formulas and effect resolution isolated and testable.
+- Keep turn ordering, damage formulas, elemental/status logic, and enemy AI in the battle domain (`TurnSystem`, `DamageCalculator`, `EnemyAI`) rather than embedding them in UI or scene setup code.
 
 ## Architecture Expectations
 
@@ -46,6 +47,7 @@ GameManager
 |- SaveManager
 |- AudioManager
 |- SceneLoader
+|- BattleManager
 |- InputManager
 |- HUD
 |- MainMenu
@@ -58,6 +60,8 @@ Important project assumptions:
 
 - Battle loads as an additive scene on top of exploration.
 - Exploration state remains alive underneath battle.
+- `BattleManager` is persistent under `GameManager`; the loaded `Battle` scene provides presentation objects such as `BattleSceneSetup`, `BattleUI`, `BattleVictoryUI`, and `GameOverUI`.
+- `EncounterSystem` lives in exploration scenes and owns the random step counter plus handoff into battle.
 - World state persistence should be stable and explicit.
 - `ProgressionManager` owns progression flags and world-state gating.
 - `DataRepository` is the central read access point for content databases.
@@ -109,6 +113,16 @@ Avoid editing generated or third-party content unless the task explicitly requir
 - Preserve the 4-member party model, class upgrades, tile-based exploration, and step-counter encounters.
 - Keep visuals procedural and readable rather than asset-driven.
 - Stub audio APIs are allowed; missing clips should not break gameplay flows.
+- Encounter pacing should remain table-driven via `EncounterTable` data. Runtime-created fallback tables and enemies are for development safety, not a substitute for authored content.
+
+## Battle and Encounters
+
+- Exploration movement notifies `EncounterSystem` after a completed tile move; avoid changes that decrement encounter steps on failed moves or while non-exploration states are active.
+- Battle starts from `EncounterSystem` or debug commands, switches the top-level game state to `Battle`, enables UI input, and loads the `Battle` scene additively.
+- Battle participants are wrapped in `BattleActor` runtime objects. Battle-only buffs, temporary targeting state, and visuals belong there, not on `PartyMember`.
+- Persistent party HP and status must stay synchronized through the established `BattleActor` sync path and `BattleManager.EndBattle()`. Do not introduce a parallel battle-state copy that can diverge from party data.
+- Keep encounter formations, enemy groups, boss flags, and override music data-driven through `EncounterFormation` and `EncounterTable`.
+- `BattleConfig` is the tunable source for combat constants and timing. Prefer changing config data over scattering new hardcoded formula constants.
 
 ## UI and Input
 
@@ -141,13 +155,16 @@ Avoid editing generated or third-party content unless the task explicitly requir
 - Equipment/stat preview code must be side-effect free. Previewing an item must not mutate live equipment, HP/MP, or any other persistent party state.
 - Party order changes must update all dependent runtime presentation immediately, including the exploration leader representation.
 - `PartyManager.OnPartyChanged` is the main hook for party-dependent presentation. If party composition, ordering, stats, or leader visuals change, make sure affected UI/runtime listeners refresh immediately.
+- Battle UI is built programmatically at runtime. Preserve the existing FF1-style windowing unless the task explicitly calls for a broader UI-authoring change.
+- Battle scene presentation is spatially separated from exploration with a dedicated battle camera and large Y offset. If you change battle staging, make sure additive cameras and world-space labels still behave correctly.
 - If a phase checklist or debug command is marked implemented in the spec, do not leave it as a stub unless the user explicitly agrees to defer it.
 
 ## Scene and Setup Workflow
 
-- `FF1 > Setup Phase 1 Scenes` regenerates the core Boot/Title/PartyCreation/Exploration scenes, rewires the persistent hierarchy, and updates Build Settings.
-- If you add or rename persistent managers, always-on UI, or boot-time systems, update `SceneSetup.cs` in the same change so a regenerated project stays valid.
+- `FF1 > Setup Phase 1 Scenes` currently regenerates Boot, Title, PartyCreation, Exploration, and Battle scenes, rewires the persistent hierarchy, and updates Build Settings.
+- If you add or rename persistent managers, always-on UI, encounter or battle scene objects, or boot-time systems, update `SceneSetup.cs` in the same change so a regenerated project stays valid.
 - The setup flow wires the shared `InputSystem_Actions.inputactions` asset into both `InputManager` and `InputSystemUIInputModule`; keep those references aligned.
+- The generated Boot scene is expected to include `BattleManager`; the generated Exploration scene is expected to include `EncounterSystem`; the generated Battle scene is expected to include the battle setup and battle UI objects.
 
 ## Testing and Verification
 
@@ -162,6 +179,9 @@ Useful Unity CLI examples:
 ```powershell
 "C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe" -batchmode -projectPath . -buildTarget Win64 -quit
 ```
+
+- The debug overlay (`F1`) and debug console (backtick) are part of the normal verification loop. Keep them working when changing input, battle flow, encounters, stats, or save/load.
+- Current debug coverage includes battle and exploration helpers such as `encounter`, `kill`, `godmode`, `setstat`, `inflict`, `cure`, and `nobattles`. Update docs and verification habits if those workflows change.
 
 If you cannot run Unity validation locally, say so clearly in your final handoff.
 

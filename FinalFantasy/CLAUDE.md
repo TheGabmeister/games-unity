@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Final Fantasy 1 (Pixel Remaster) mechanical recreation in Unity 6. Faithful game mechanics with procedural/primitive visuals — no imported sprites, textures, or audio assets. **SPEC.md is the single source of truth** for all mechanics, data schemas, architecture decisions, and implementation phases (Sections 1-10). When code conflicts with SPEC.md, follow the user's latest instruction first, then SPEC.md.
 
-**Current status:** Phase 2 (Party, Menu, Inventory, Equipment) is in progress. Battle/Magic script folders exist but have no implementations yet (Phase 3).
+**Current status:** Phase 3 (Battle System) is implemented. Core battle loop, damage formulas, enemy AI, turn ordering, command menus, victory/defeat/flee, and debug commands are functional. Phase 4 (World Building) is next.
 
 ## Engine & Tooling
 
@@ -34,6 +34,7 @@ GameManager
 ├── SceneLoader             — Async scene loading with fade transitions
 ├── InputManager            — Wraps InputActionAsset, swaps Gameplay/UI action maps
 ├── DataRepository          — Central access to all ScriptableObject databases (stub)
+├── BattleManager           — Battle lifecycle, turn execution, auto-battle (static Instance)
 ├── HUD                     — Gil display overlay (HudUI)
 ├── MainMenu                — Pause menu + sub-screens (MainMenuUI)
 ├── DebugCanvas             — DebugOverlay (F1) + DebugConsole (backtick)
@@ -64,7 +65,7 @@ Boot → Title → PartyCreation → Exploration ⇄ Battle (additive)
                                Menu Dialogue Shop
 ```
 
-Battle scenes load additively on top of exploration. The exploration scene is not unloaded — it pauses underneath and resumes after battle. Each scene has its own camera.
+Battle scenes load additively on top of exploration. The exploration scene is not unloaded — it stays underneath and resumes after battle. Each scene has its own camera. **Spatial separation:** Battle objects are placed at Y=100 in world space so the battle camera (at Y=100) can't see the exploration scene (near Y=0) and vice versa. No layers or object hiding needed.
 
 ### Stat System
 
@@ -76,7 +77,7 @@ Battle scenes load additively on top of exploration. The exploration scene is no
 Assets/_Project/
 ├── Scripts/{Core,Battle,Exploration,Party,Inventory,Magic,UI,Data,Save,Audio,Rendering,Utility,Editor}/
 ├── Data/                — ScriptableObject asset instances
-├── Scenes/              — Boot, Title, PartyCreation, Exploration (+ future scenes)
+├── Scenes/              — Boot, Title, PartyCreation, Exploration, Battle
 ├── Prefabs/
 ├── Input/               — InputSystem_Actions.inputactions (Gameplay + UI maps)
 ├── Settings/            — URP renderer, volume profiles
@@ -93,8 +94,23 @@ Editor scripts go in `Scripts/Editor/` — these are excluded from builds.
 - **Progression gating:** `ProgressionManager` owns both flags and key items. Systems check flags, not key item lists. Key items set their flag on acquisition; consumed items leave the flag.
 - **Save system:** `SaveHelper.CreateSaveData()` snapshots all live state; `SaveHelper.ApplySaveData()` restores it. Atomic writes via `File.Replace()`. Equipment/items saved by asset name (string).
 - **Procedural visuals:** `ProceduralTileFactory` generates 16x16 pixel Texture2D sprites at runtime. Player is a colored circle matching party leader's class color.
-- **Debug console commands** provide test coverage for systems before content exists. Commands: `help`, `state`, `pos`, `save`, `load`, `scene`, `setlevel`, `addgil`, `levelup`, `learnspell`, `addequip`, `additem`. Commands that reference game data (equipment, items, spells) first search loaded assets via `Resources.FindObjectsOfTypeAll<>()`, then fall back to creating runtime test instances via `ScriptableObject.CreateInstance<>()` with stats inferred from name keywords.
+- **Debug console commands** provide test coverage for systems before content exists. Commands that reference game data (equipment, items, spells, enemies) first search loaded assets via `Resources.FindObjectsOfTypeAll<>()`, then fall back to creating runtime test instances via `ScriptableObject.CreateInstance<>()` with stats inferred from name keywords.
+  - Phase 1: `help`, `state`, `pos`, `save`, `load`, `scene`
+  - Phase 2: `setlevel`, `addgil`, `levelup`, `learnspell`, `addequip`, `additem`
+  - Phase 3: `encounter <name> [count]`, `kill`, `godmode`, `setstat <slot> <stat> <value>`, `inflict <slot> <status>`, `cure <slot>`, `nobattles`
 - **Starter weapons** are created at runtime in `PartyCreationUI.GetDefaultClasses()` and auto-equipped by `PartyMember.Create()`. Each class except Monk gets a weapon (Warrior: Broadsword, Thief: Dagger, Red Mage: Rapier, White/Black Mage: Staff).
+
+### Battle System
+
+- **`BattleActor`** wraps either a `PartyMember` or `EnemyData` with runtime HP/status/buffs. Stat properties resolve from backing data + buff state. `SyncToPartyMember()` writes battle state back to the underlying PartyMember.
+- **`BattleManager`** orchestrates the full battle lifecycle as an `async Awaitable` loop: command input → agility-sorted execution → end-of-turn effects → repeat. Phases: Inactive, Starting, CommandInput, Executing, Victory, Defeat, Fleeing.
+- **`DamageCalculator`** is static — implements all FF1 formulas: multi-hit physical (per-hit crit/hit rolls), magical damage, healing, elemental modifiers (weak/resist/null/absorb), undead healing inversion, buff/debuff resolution, flee rolls.
+- **`TurnSystem`** sorts actions by agility with random tiebreak. Flee always resolves first; Defend gets max priority.
+- **`EnemyAI`** uses weighted random action selection from `EnemyData.Actions[]`. Supports boss scripted patterns via `EveryNTurns` field.
+- **`EncounterSystem`** (in Exploration scene) decrements a step counter per tile move. Creates a default encounter table at runtime if none is assigned.
+- **`BattleSceneSetup`** (in Battle scene) creates the battle camera, procedural background, and positions enemy/party visuals. All positioned at `BattleYOffset = 100f` for spatial separation from exploration.
+- **`BattleUI`** handles command menu, spell/item/Use submenus, target selection, damage popups, and battle log. All built programmatically like other UI.
+- **`BattleConfig`** ScriptableObject holds tunable constants (hit chances, elemental multipliers, buff values, flee formula). Falls back to runtime defaults if no asset exists.
 
 ## Build & Test
 
@@ -108,7 +124,7 @@ No custom build scripts yet. Use Unity Editor (File → Build and Run) or:
 "C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe" -batchmode -projectPath . -runTests -testResults ./TestResults.xml -quit
 ```
 
-**Scene setup:** Run menu item **FF1 > Setup Phase 1 Scenes** (in `SceneSetup.cs`) to regenerate Boot/Title/PartyCreation/Exploration scenes with all managers wired. Must re-run after adding new managers to GameManager.
+**Scene setup:** Run menu item **FF1 > Setup Phase 1 Scenes** (in `SceneSetup.cs`) to regenerate Boot/Title/PartyCreation/Exploration/Battle scenes with all managers wired. Must re-run after adding new managers to GameManager.
 
 **Testing constraints:** Unity locks the project to one editor instance. If the user has the Editor open, CLI test/build commands will fail.
 
