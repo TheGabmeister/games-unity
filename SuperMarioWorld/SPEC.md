@@ -6,7 +6,8 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 
 ### Goals
 - Faithful recreation of SMW's core platformer feel: physics, jumping, power-ups, enemies, blocks, level flow.
-- A complete vertical slice: overworld map → enter level → play level → exit at goal → return to map.
+- A complete **vertical slice of the gameplay loop**: overworld map → enter level → play level → exit at goal → return to map. The *loop* is the slice, not the feature count — V1 deliberately exercises every major system (Yoshi, cape, P-switches, save slots, secret exits) so the architecture is validated end-to-end before content authoring begins. This means V1 is wider than a minimal slice would be; that is intentional and called out in §5.
+- The minimal playable slice (one level, Mario only, no Yoshi/cape/overworld branching) is reachable by the end of Phase 6 — *that* is the slice gate. Phase 7 then adds the remaining V1 content on top.
 - Architecture clean enough that adding the missing presentation layer (sprites, animations, audio) is purely additive — no rewrites.
 
 ### Non-Goals
@@ -67,7 +68,9 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
           └──────┘ └───────┘ └────────┘
 ```
 
-- **Scene per top-level state**: `Boot`, `Title`, `Overworld`, `Level`. Levels are loaded **additively** on top of a persistent `Systems` scene that hosts `GameServices`.
+- **Scene per top-level state**: `Boot`, `Systems` (persistent), `Title`, `Overworld`, `Level`. Levels are loaded **additively** on top of `Systems`. `Title` and `Overworld` are also loaded additively on top of `Systems` and unloaded on transition.
+- **`Paused` and `GameOver` are NOT scenes** — they are modal states overlaid on whatever scene is currently active (almost always `Level`). Their UI lives on the persistent HUDRoot canvas (§4.17) so it can appear regardless of which level is loaded.
+- **`Title` and `Overworld` own their own Canvases and cameras inside their scenes.** The persistent HUDRoot canvas is *only* used for in-level HUD, the pause menu, and the game-over overlay. This is the canonical rule — see §4.17 for the panel breakdown.
 - **Bootstrap**: a `Boot.unity` scene with a single `Bootstrapper` GameObject loads the persistent `Systems.unity` scene additively, then transitions to `Title`.
 - **No `FindAnyObjectByType` / `FindFirstObjectByType` in hot paths** (and never the deprecated `FindObjectOfType`). Cross-system references are resolved once at scene load via `GameServices` or per-level `LevelContext` and cached.
 
@@ -75,10 +78,15 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 
 ### 4.1 Input
 - `InputSystem_Actions.inputactions` already exists. Define action maps:
-  - `Player`: `Move (Vector2)`, `Jump (Button)`, `SpinJump (Button)`, `Run (Button, hold)`, `Crouch (Button)`, `Pause (Button)`.
+  - `Player`: `Move (Vector2)`, `Jump (Button)`, `SpinJump (Button)`, `Action (Button)`, `Crouch (Button)`, `Pause (Button)`.
   - `Overworld`: `Move (Vector2)`, `Confirm (Button)`, `Cancel (Button)`.
   - `UI`: standard navigation set.
 - Switch maps via a single `InputRouter` component so subsystems never enable/disable maps directly.
+- **The `Action` button is overloaded by design** — this matches SMW's Y button. `PlayerInputBinding` exposes both the **hold state** and **press/release events** of the same `Action` input:
+  - **Hold** → run (gradual acceleration past walk cap, fills P-meter; see §4.2).
+  - **Press** → context-sensitive single-shot: throw fireball (Fire Mario), cape sweep (Cape Mario, on ground), Yoshi tongue (mounted on Yoshi), pickup carryable (next to a stunned shell / P-switch / springboard), drop / throw held object.
+  - The controller resolves which press-event meaning applies via priority: held-object-throw > Yoshi-tongue > power-state attack > pickup. Only one fires per press.
+- Every other system in this spec refers to this single button as **"Action"**. Avoid using "Run", "Fire", or "Y button" in code or docs — it's `Action` everywhere.
 
 ### 4.2 Player Controller (Mario)
 SMW physics are deliberately *non-Newtonian*. Use a **dynamic Rigidbody2D with `gravityScale = 0`**, then write velocity directly each `FixedUpdate` from the controller. We let Physics2D handle solid-vs-collider penetration but never let it apply gravity, friction, or impulses to the player. (Pure kinematic was considered but loses `OnCollision*` callbacks and forces us to reimplement depenetration; the dynamic-zero-gravity pattern is the standard Unity 6 approach for tight platformer feel.)
@@ -94,13 +102,13 @@ Components on the `Player` prefab:
 Required mechanics (these are the things that *make it feel like SMW*; do not skip any):
 - **Variable jump height** based on jump button hold duration (≈ 0–18 frames @ 60Hz cuts gravity). Hold-time is measured in `FixedUpdate` ticks, not real seconds, so behavior stays stable across frame rates.
 - **Coyote time** (~6 frames after walking off a ledge) and **jump buffering** (~6 frames before landing).
-- **Run speed gate**: holding Run gradually accelerates Mario past the walk cap; only at full sprint can he perform a *long jump* (extra horizontal velocity). Sprint also fills the "P-meter" used for cape flight.
+- **Run speed gate**: holding `Action` (§4.1) gradually accelerates Mario past the walk cap; only at full sprint can he perform a *long jump* (extra horizontal velocity). Sprint also fills the "P-meter" used for cape flight.
 - **Spin jump** (separate input): slightly lower jump arc, can break rotating/used blocks from above, **kills most enemies on contact like a stomp** (with no rebound height), and lets Mario safely land on spiked enemies (Buzzy Beetle, spike-shelled Koopa) that would otherwise damage him.
 - **Slope handling**: walking down slopes preserves grounded state (no airborne flicker); running down slopes accelerates.
 - **Skidding**: turning while at high velocity produces a deceleration state with its own visual.
 - **Crouch / duck slide** (Super+ only): Small Mario cannot crouch. Ducking while sliding on a slope produces a damaging slide.
 - **Ceiling hit cancels upward velocity** without rebounding.
-- **Pickup & throw**: pressing Run while next to a stunned shell, P-switch, or springboard picks it up; releasing Run drops it; pressing Run while moving throws it horizontally. Held objects move with the carry transform and disable their own collisions until release.
+- **Pickup & throw**: pressing `Action` (§4.1) while next to a stunned shell, P-switch, or springboard picks it up. While carrying, releasing `Action` drops it gently; tapping `Action` while moving throws it horizontally. Held objects move with the carry transform and disable their own collisions until release. Holding `Action` continues to fill the P-meter while carrying.
 - **Pipe entry** (down/right pipes): triggered by holding the directional input over a flagged pipe segment; smoothly tweens position into the pipe via PrimeTween, then triggers a sub-area transition (§4.5).
 - **Star invincibility** (overlay state): timer-based, kills any enemy on touch including normally-invulnerable ones (except Boo and bosses), grants no flight or block-break privileges, and replaces music via a music stack push (§4.16). Implemented as a *modifier* on top of the power-up FSM, not a state in it.
 
@@ -145,7 +153,7 @@ Small ─Mushroom─▶ Super                      │
 - **Interactive tiles** (brick, `?`, note block, used, rotating, P-switch) are *not* TileBase types. They're marker tiles painted on the `Interactive` tilemap layer that the `InteractiveBlockSpawner` (§4.6) replaces with prefab GameObjects on level load. Per-tile mutable state belongs to those GameObjects, not the tilemap.
 - **Slopes**: Unity's `TilemapCollider2D` does not natively produce slope shapes — every tile becomes a box. To get real slope physics, `SlopeTile.GetTileData` must set `colliderType = Tile.ColliderType.Sprite` and supply a sprite whose **Custom Physics Shape** is a triangle. The `CompositeCollider2D` will then merge adjacent slope sprites into a continuous polygon edge. Document this in the slope tile's tooltip — it's the most likely thing to forget when authoring new slope variants.
 - **Sub-areas** (pipe / door destinations): for V1, sub-areas live as **separate regions of the same Level scene** at a large coordinate offset (e.g. `+10000` units on Y). Pipe entry tweens Mario into the pipe, then snaps the camera + Mario to the destination region's `SpawnMarker` and tweens out. This avoids additive scene loads on every pipe and keeps level state in one place. Each sub-area has its own `LevelBounds` so the camera respects the right rectangle. Switch to additive scenes only if a level grows large enough to hurt scene-load time, which won't happen in V1.
-- **Checkpoints / midway**: a `MidwayGate` GameObject placed in the level. Crossing it stores its `CheckpointId` on the player. On death, respawn happens at the most recent checkpoint instead of level start. Crossing a midway when Small also auto-grants a Mushroom (SMW behavior).
+- **Checkpoints / midway**: a `MidwayGate` GameObject placed in the level. Crossing it stores its `CheckpointId` on the `LevelRunState` (§4.25), NOT on the player or the save file. On death, the level scene reloads and Mario respawns at the matching `SpawnMarker` for that checkpoint. Crossing a midway when Small also auto-grants a Mushroom (SMW behavior). Midway state is wiped when the player exits the level (whether by goal, voluntary back-to-overworld, or game over) — see §4.25.
 
 ### 4.6 Block & Object Interactions
 Blocks that need GameObject behavior (animated bumps, contained items, P-switches, switch-palace blocks) are spawned as **runtime GameObjects** by an `InteractiveBlockSpawner` that scans the `Interactive` tilemap layer on level load, instantiates the matching prefab at the tile's world position, and **clears the marker tile** so it doesn't double up. This keeps the tilemap as the source of truth for layout while letting blocks have their own scripts.
@@ -178,10 +186,10 @@ These six cover: stomping, shells, projectile spawners, multi-hit enemies, line-
 
 ### 4.8 Yoshi
 - Yoshi is a `RideableMount` component. When active, the player rigidbody is parented to Yoshi's saddle transform and the `PlayerController`'s physics step is suspended; a `YoshiController` drives Yoshi's body, which forwards `Jump` input to a Yoshi-specific jump (with the well-known "extended jump" — Mario can jump again from Yoshi's apex). The player power-up state machine and HUD remain unchanged.
-- **Tongue**: a short box-cast attack on Fire input. The first eligible target (enemy, edible berry, certain pickups) is parented to a `Mouth` transform and tweened in. Pressing Fire again swallows it; the swallow effect depends on the target.
+- **Tongue**: a short box-cast attack on `Action` press (§4.1). The first eligible target (enemy, edible berry, certain pickups) is parented to a `Mouth` transform and tweened in. Pressing `Action` again swallows it; the swallow effect depends on the target.
 - **Yoshi color** (`YoshiData` SO: Green/Red/Blue/Yellow) determines passive abilities (e.g. Blue gives flight when holding any shell). Yoshi color is intrinsic — it does NOT come from the held shell. *In SMW the held shell can grant a temporary borrowed ability to Green Yoshi*; that's a separate `BorrowedShellAbility` flag set when Green Yoshi has a colored shell in mouth.
 - **V1 scope**: Green Yoshi only. The `YoshiData` plumbing exists so other colors can be added without code changes, but Phase 5 ships only Green and the swallow → spit-fireball / wings-from-shell logic for Green-with-colored-shell. Other colors are a stretch goal.
-- **Dismount on damage**: Yoshi panics, runs offscreen for ~3 seconds while flashing, and becomes uncatchable. If the player can recover Yoshi within the window, they remount with no damage taken.
+- **Dismount on damage**: Mario takes a hit while mounted → he is forcibly dismounted with no power-state loss; Yoshi enters a *panic* state, runs in the direction Mario was facing, flashes, and is **catchable for ~3 seconds**. If Mario touches Yoshi during the panic window, he remounts. If the panic timer expires or Yoshi crosses a `LevelBounds` edge, Yoshi is lost for the rest of the attempt.
 
 ### 4.9 Pickups / Collectibles
 - Single `Pickup` MonoBehaviour + `PickupData` SO (coin, dragon coin, 1-up mushroom, super mushroom, fire flower, cape feather, star).
@@ -211,7 +219,7 @@ A top-level FSM with states: `Boot`, `Title`, `Overworld`, `Level`, `Paused`, `G
 ### 4.15 Save System
 - `SaveManager` writes one JSON file per slot at `Application.persistentDataPath/save_{slot}.json` (slots 1–3).
 - A small `SaveIndex.json` tracks which slot is "current" + last-played metadata for the file select screen.
-- Persisted in `SaveData`: lives, score, current overworld node id, completed-level map (normal/secret exit flags per level id), switch palace states (4 bools), collected-dragon-coins bitmask per level, midway-checkpoint flags per level, audio volume preferences.
+- Persisted in `SaveData`: lives, score, total coin count (the rolling counter that triggers 1-ups every 100), current overworld node id, completed-level map (normal/secret exit flags per level id), switch palace states (4 bools), collected-dragon-coins bitmask per cleared level, audio volume preferences. **Midway checkpoints are NOT in save data** — they're per-attempt state (§4.25).
 - Serialization uses `JsonUtility` for V1. It can't round-trip polymorphic class hierarchies or `Dictionary<,>`, so all persisted collections are `List<T>` of plain structs with explicit id fields. If that becomes painful, swap to `Newtonsoft.Json` (already pulled in transitively via Eflatun.SceneReference).
 - Saves happen at: level clear, overworld node move, switch palace activation, file-select. Never mid-level.
 
@@ -228,15 +236,20 @@ AudioBus  ──▶  SfxChannel    (one-shot 2D sounds)
 - `SfxId`, `MusicId`, `JingleId` are enums. An `AudioCatalog` ScriptableObject maps each id → `AudioClip` reference. While the catalog is empty, calls log at `Debug.Log` level (gated by a `verbose` flag) and return early.
 - `MusicChannel` supports stack-based push/pop with crossfade. Star power and P-switch push; level boss music replaces (clears the stack). On pop, the previous track resumes from where it left off (track current playback position before pushing).
 - `JingleChannel` is separate: one-shot non-loopable cues like 1-up jingle, course clear fanfare, game-over. Jingles pause the music stack temporarily and resume it when the jingle ends — they do NOT push onto the stack.
-- All channels use **unscaled time** (`AudioSource.ignoreListenerPause` / explicit `unscaledTime` driven crossfades) so menu music continues during `Time.timeScale = 0` pauses, while gameplay SFX honor `AudioListener.pause = true` set by the pause flow (§4.23).
+- **Pause behavior** (canonical — see also §4.23): when `AudioListener.pause = true` is set by the pause flow, *all* channels (`SfxChannel`, `MusicChannel`, `JingleChannel`, `AmbientChannel`) pause. The `MusicChannel` stack is preserved as-is — Unity's per-`AudioSource` playback head freezes — so on unpause everything resumes from where it stopped. There is no ducking, no fade-out, no music-stack manipulation on pause. Music simply stops and resumes.
+- The only exception is a single dedicated **`UiSfxChannel`** `AudioSource` with `ignoreListenerPause = true`, used for the pause-toggle SFX itself, menu navigation cues, and any other UI sound that must play *while* `AudioListener.pause` is true. Gameplay code never touches this channel directly — it's reached via `AudioBus.PlayUiSfx(...)`.
+- Crossfades on `MusicChannel` / `JingleChannel` use unscaled time (`Time.unscaledDeltaTime`) so a crossfade kicked off just before pause doesn't get stuck mid-blend, and so menu transitions in non-Level scenes (where there's no `Time.timeScale = 0`) work uniformly.
 - Master/SFX/Music volume sliders feed an `AudioMixer` asset that already has the routing wired up. Volume settings persist via the save system.
 
 When real assets land, the only work is filling out `AudioCatalog` entries — no gameplay code changes.
 
 ### 4.17 UI / HUD
 - **uGUI** (Unity's `Canvas`-based UI). Package `com.unity.ugui` 2.0.0 is already in the manifest and ships TextMeshPro bundled in Unity 6, so TMP is available without an extra import.
-- A single persistent **`HUDRoot` GameObject** in the `Systems` scene holds a `Canvas` set to *Screen Space - Overlay* with a `CanvasScaler` configured for *Scale With Screen Size* (reference resolution `256x224` × an upscale factor, matching the SNES aspect). This canvas is `DontDestroyOnLoad`-equivalent because it lives in the persistent scene.
-- The canvas hosts child panels — `HudPanel`, `PauseMenuPanel`, `TitlePanel`, `FileSelectPanel`, `GameOverPanel` — each on its own GameObject with a `CanvasGroup` for fade/visibility and an interactivity toggle. Only the panel matching the current `GameStateMachine` state is interactive at any time.
+- UI is split across three canvases by ownership (matching the scene model in §3):
+  - **`HUDRoot`** — a persistent `Canvas` in the `Systems` scene. *Screen Space - Overlay*, `CanvasScaler` set to *Scale With Screen Size* (reference resolution `256x224` × an upscale factor). Hosts only the in-level UI: `HudPanel`, `PauseMenuPanel`, `GameOverPanel`. These panels live here because they need to appear over whichever Level scene is currently loaded without re-instantiating per level.
+  - **`TitleCanvas`** — lives in `Title.unity`. Hosts `TitlePanel` and `FileSelectPanel`. Disappears when the Title scene unloads.
+  - **`OverworldCanvas`** — lives in `Overworld.unity`. Hosts `OverworldHudPanel` (lives, score, level name) and the level-entry confirmation popup.
+- Panels are GameObjects with a `CanvasGroup` for fade/visibility. Only the panel matching the current `GameStateMachine` state is interactive at any time.
 - The `HudPanel` shows: lives, coin count, score, timer (countdown), current power state indicator, dragon coin count, P-switch / star timers when active. Built from `Image` (background bars, icons drawn as procedural primitive sprites) and `TextMeshProUGUI` (numeric counters).
 - Each panel has a small `XxxView` MonoBehaviour that holds `[SerializeField]` references to its `TextMeshProUGUI` / `Image` children. The view subscribes to events from a `HudViewModel` (`OnLivesChanged`, `OnCoinsChanged`, `OnPowerStateChanged`, `OnTimerTick`, etc.) and writes to the UI components in the handler — no `Update()` polling of player fields.
 - Buttons in menu panels use `Button` + Input System's `InputSystemUIInputModule` (already part of the input system package) so gamepad navigation works. Selection state is driven by `EventSystem.SetSelectedGameObject` on panel show.
@@ -281,15 +294,17 @@ A single `ScoreService` registered on `GameServices`. All point awards funnel th
 `ScoreReason` is an enum so we never pass magic numbers around.
 
 ### 4.22 Level Timer
-- `LevelTimer` component on the level scene root, configured by `LevelMetadata` (default 300 in-game seconds).
+- `LevelTimer` component on the level scene root, configured by `LevelData.timeLimitSeconds` (default 300 in-game seconds).
 - In-game seconds tick faster than real seconds (~0.4s real per tick, matching SMW). Use `Time.deltaTime` accumulation, not real time.
 - Fires `OnLowTime` (~100s remaining) which pushes a "hurry up" jingle and pitches the music up via the `AudioBus`.
 - At zero: kill the player via the same path as enemy contact while Small (no special "time over" state needed).
 - Pauses with `Time.timeScale = 0` automatically.
 
 ### 4.23 Pause & Time
-- Pause sets `Time.timeScale = 0` AND `AudioListener.pause = true`. UI animations use PrimeTween's `useUnscaledTime: true` flag so they keep running. Background music is on the `AudioBus` which is configured to ignore listener pause for menu music only.
-- Unpausing restores both. The pause flow lives on `GameStateMachine.Push(PausedState)`.
+- Pause sets `Time.timeScale = 0` AND `AudioListener.pause = true`. All gameplay simulation, particle systems, and audio (music + SFX + jingles) freeze together. The pause-toggle SFX and menu navigation cues are played via `AudioBus.PlayUiSfx(...)` which routes to a `ignoreListenerPause = true` source — see §4.16 for the canonical rules.
+- Pause-menu UI animations (slide-in, button highlights) use PrimeTween with `useUnscaledTime: true` so they keep running while `Time.timeScale = 0`.
+- Unpausing reverts both flags. Music resumes from the exact playback head it was paused at; the music stack is unchanged.
+- The pause flow lives on `GameStateMachine.Push(PausedState)`. Pause is only allowed while in the `Level` state.
 - Avoid coroutines in gameplay code that need to keep running while paused — use PrimeTween with unscaled time instead.
 
 ### 4.24 Particles & Feedback
@@ -297,16 +312,54 @@ A single `ScoreService` registered on `GameServices`. All point awards funnel th
 - Each effect is a small pooled prefab using `ParticleSystem` with shape-only rendering (no textures — built-in default particle is fine, tinted by palette role).
 - Score popups (`+200`, `+1UP`) use a pooled world-space `Canvas` (set to *World Space*, not Overlay) containing a `TextMeshProUGUI` that fades and rises via PrimeTween, then returns to the pool. TMP is bundled with `com.unity.ugui` in Unity 6, so no extra package is needed.
 
+### 4.25 Run Lifecycle & State Layers
+The single most important model in this spec. State lives in exactly **three** layers, and every piece of mutable data must be assigned to one of them. When in doubt, ask: *what should happen to this when the player dies / when the player exits to overworld / when the player closes the game?*
+
+| Layer | Lifetime | Stored on | Examples |
+|---|---|---|---|
+| **Persistent** | survives game restart | `SaveData` (JSON file via `SaveManager`) | lives, score, total coin count, completed-level flags (normal + secret), saved dragon-coin bitmask per cleared level, switch palace states, current overworld node, audio volume |
+| **Session** | survives death + level reload, lost on app close or game-over-to-title | `GameSession` singleton on `GameServices` | current `LevelRunState` reference (only set while inside a level), pending overworld payloads |
+| **Per-attempt** | reset on every level entry AND every death-respawn | `LevelRunState` MonoBehaviour on `LevelRoot` | midway checkpoint id, in-attempt dragon coins collected, broken bricks, used `?` blocks, dead enemies, P-switch swap state, level timer, player power state, in-level coin pickups |
+
+#### Death & respawn
+On player death (`PlayerController.Die`):
+1. The level scene **unloads** and **reloads** (`SceneLoader.ReloadLevel()`), additively. This is the simplest way to reset every interactive block, dragon coin, dead enemy, and tilemap mutation in one shot — no per-system "reset" logic to maintain.
+2. `LevelContext.Begin(LevelData, entryPoint)` runs again with `entryPoint = LevelRunState.checkpointId ?? defaultEntry`. Note `LevelRunState` is rebuilt **except** for the `checkpointId` field, which is carried across the reload via `GameSession`.
+3. Lives counter on `SaveData` decrements. If lives < 0 → game over → return to title; `SaveData` is saved at title return.
+4. Power state respawns as Small (SMW behavior — even if you crossed the midway as Super, you respawn Small at the checkpoint).
+
+#### Level exit (success)
+On `GoalGate` / `KeyHole` trigger:
+1. `LevelRunState.dragonCoinsCollectedThisAttempt` is merged into `SaveData.dragonCoinsByLevel[levelId]` (bitwise OR — collecting any single coin "saves" it for next time).
+2. Completed-exit flag (normal/secret) is set on `SaveData`.
+3. Score, total coin count, lives all persist (they were already on `SaveData` and were updated live during the run).
+4. `GameSession.LevelRunState` is cleared.
+5. `SaveManager.Save()` is called.
+
+#### Voluntary exit to overworld (rare — pause menu)
+1. Same as level exit but no completed-exit flag. Dragon coins collected this attempt are **discarded**, not merged. (SMW behavior — you only "earn" dragon coins by completing the level.)
+2. Lives, score, total coins persist.
+3. `GameSession.LevelRunState` is cleared.
+
+#### Coin counters — clarification
+- The **total coin count** on `SaveData` increments live as Mario picks up coins, even before level exit. It is what drives the every-100-coins 1-up. This persists on death.
+- The **per-level dragon coin set** on `SaveData` is only updated on successful level exit. In-attempt dragon coin progress lives on `LevelRunState` and resets on death.
+- The HUD reads from both: total-coin counter from `SaveData`, dragon-coin row from `LevelRunState` (which initializes from the saved set on level entry).
+
+This is also the reason `SaveManager.Save()` only fires at level exit / overworld move / switch palace activation / file-select (§4.15) — there is never any persistent state that needs flushing mid-level, because mid-level state is per-attempt by definition.
+
 ## 5. Game Content (V1 scope)
 
-- **1 overworld** with ~5 connected nodes (`Yoshi's Island 1`-style learning curve).
+V1 is intentionally wider than a minimal slice — it ships every major system end-to-end so architecture issues surface during content authoring rather than after. If the project needs to ship sooner, Phase 6 is the natural cut line: at end of Phase 6 there is a single playable level → goal → overworld → next-level loop, with no Yoshi or branching.
+
+- **1 overworld** with ~5 connected nodes (`Yoshi's Island 1`-style learning curve), including one branching path that requires the secret exit from level 5.
 - **5 hand-authored test levels**, each focused on exercising one subsystem:
-  1. Movement & jumps only — no enemies.
-  2. Enemies (Goomba, Koopa) + shells + brick blocks.
-  3. Power-ups + fire flower combat + Piranha Plants.
-  4. Yoshi mount + tongue + colored Yoshi behavior.
-  5. Goal post + secret exit + sub-area pipe.
-- **1 boss room** (placeholder Bowser-shaped primitive that takes 3 stomps).
+  1. Movement & jumps only — no enemies. Validates §4.2 / §4.4 tuning.
+  2. Enemies (Goomba, Koopa) + shells + brick blocks. Validates §4.6 / §4.7 / `CombatResolver`.
+  3. Power-ups + fire flower combat + Piranha Plants + cape feather. Validates §4.3 / cape sweep / fireball.
+  4. Green Yoshi mount + tongue + swallow + dismount-on-damage. Validates §4.8. *(Colored-Yoshi variants are out of V1 scope per §4.8.)*
+  5. Goal post + secret exit (via carryable key) + sub-area pipe + midway checkpoint. Validates §4.5 / §4.11 / §4.25 reset behavior.
+- **1 boss room** (placeholder Bowser-shaped primitive that takes 3 stomps). Reached from the overworld via level 5's secret exit.
 
 Levels are stored as `.unity` scenes referenced by `LevelData` ScriptableObjects. Adding a level = creating the SO + scene, no code changes.
 
@@ -326,7 +379,7 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - `PrimitiveShapeRenderer` + procedural shape sprites in `Assets/_Project/Art/Procedural/`.
 - uGUI `HUDRoot` canvas in the `Systems` scene (empty `HudPanel` + `PauseMenuPanel` placeholders) + pause flow with `Time.timeScale` toggle. Uses `InputSystemUIInputModule` for gamepad navigation.
 - `SaveManager` round-trips an empty `SaveData` to `save_1.json`.
-- `ScoreService` and `FeedbackService` skeletons registered on `GameServices`.
+- `ScoreService`, `FeedbackService`, and `GameSession` skeletons registered on `GameServices` (§4.25).
 
 ### Phase 1 — Player & physics
 - `PlayerController` with dynamic Rigidbody2D (`gravityScale = 0`), `GroundProbe`, manual gravity.
@@ -347,8 +400,8 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - Mushroom, Fire Flower, Cape Feather, Star pickups (Star as `PlayerController` overlay timer, not a state).
 - Fireball projectile (pooled, bounces along ground, dies on enemy/wall).
 - Cape spin attack (sweep collider that knocks enemies / shells back).
-- Death (fall pit / hit while small / time over), respawn at last checkpoint, life counter, game over.
-- `PlayerCarry` wired up so future shells/P-switches/springs can be carried.
+- Death (fall pit / hit while small / time over) → level scene reload via `SceneLoader.ReloadLevel()` → respawn at last checkpoint per §4.25, with `LevelRunState.checkpointId` carried across via `GameSession`. Lives counter, game over → return to title.
+- `PlayerCarry` wired up so future shells/P-switches/springs can be carried (uses the `Action` button per §4.1).
 
 ### Phase 4 — Enemies & combat resolution
 - Base `Enemy` + `KinematicBody2D` shared helper + pooling.
