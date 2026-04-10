@@ -234,10 +234,12 @@ AudioBus  ──▶  SfxChannel    (one-shot 2D sounds)
 When real assets land, the only work is filling out `AudioCatalog` entries — no gameplay code changes.
 
 ### 4.17 UI / HUD
-- Single `HUD.uxml` (UI Toolkit) bound via a `UIDocument` component on a `HUDRoot` GameObject in the persistent `Systems` scene. The HUD is *not* a separate scene — UI Toolkit doesn't need one; a single `PanelSettings` asset handles screen scaling.
-- Shows: lives, coin count, score, timer (countdown), current power state indicator, dragon coin count, P-switch / star timers when active.
-- Pause menu, title screen, file select are additional `UIDocument` components on the same root, each with their own `.uxml` and a `visible` toggle.
-- HUD reads from a `HudViewModel` that subscribes to game events (`OnLivesChanged`, `OnCoinsChanged`, `OnPowerStateChanged`, `OnTimerTick`, etc.) — no `Update()` polling of player fields.
+- **uGUI** (Unity's `Canvas`-based UI). Package `com.unity.ugui` 2.0.0 is already in the manifest and ships TextMeshPro bundled in Unity 6, so TMP is available without an extra import.
+- A single persistent **`HUDRoot` GameObject** in the `Systems` scene holds a `Canvas` set to *Screen Space - Overlay* with a `CanvasScaler` configured for *Scale With Screen Size* (reference resolution `256x224` × an upscale factor, matching the SNES aspect). This canvas is `DontDestroyOnLoad`-equivalent because it lives in the persistent scene.
+- The canvas hosts child panels — `HudPanel`, `PauseMenuPanel`, `TitlePanel`, `FileSelectPanel`, `GameOverPanel` — each on its own GameObject with a `CanvasGroup` for fade/visibility and an interactivity toggle. Only the panel matching the current `GameStateMachine` state is interactive at any time.
+- The `HudPanel` shows: lives, coin count, score, timer (countdown), current power state indicator, dragon coin count, P-switch / star timers when active. Built from `Image` (background bars, icons drawn as procedural primitive sprites) and `TextMeshProUGUI` (numeric counters).
+- Each panel has a small `XxxView` MonoBehaviour that holds `[SerializeField]` references to its `TextMeshProUGUI` / `Image` children. The view subscribes to events from a `HudViewModel` (`OnLivesChanged`, `OnCoinsChanged`, `OnPowerStateChanged`, `OnTimerTick`, etc.) and writes to the UI components in the handler — no `Update()` polling of player fields.
+- Buttons in menu panels use `Button` + Input System's `InputSystemUIInputModule` (already part of the input system package) so gamepad navigation works. Selection state is driven by `EventSystem.SetSelectedGameObject` on panel show.
 - All HUD-driving events are also routed through the `AudioBus` for cue sounds (coin collect, 1-up jingle, low-time warning), so audio and UI stay in lockstep.
 
 ### 4.18 Object Pooling
@@ -293,7 +295,7 @@ A single `ScoreService` registered on `GameServices`. All point awards funnel th
 ### 4.24 Particles & Feedback
 - A `FeedbackService` on `GameServices` exposes `Spawn(FeedbackId id, Vector3 pos)` for one-shot visuals: brick shards, coin sparkle, stomp puff, score popup, dust kick, splash.
 - Each effect is a small pooled prefab using `ParticleSystem` with shape-only rendering (no textures — built-in default particle is fine, tinted by palette role).
-- Score popups (`+200`, `+1UP`) use UI Toolkit world-space rendering or a tiny TextMeshPro instance from a pool — but TMP is not in the manifest yet, so V1 uses a simple sprite-based digit row generated procedurally.
+- Score popups (`+200`, `+1UP`) use a pooled world-space `Canvas` (set to *World Space*, not Overlay) containing a `TextMeshProUGUI` that fades and rises via PrimeTween, then returns to the pool. TMP is bundled with `com.unity.ugui` in Unity 6, so no extra package is needed.
 
 ## 5. Game Content (V1 scope)
 
@@ -322,7 +324,7 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - `AudioBus` stub (logs only) + empty `AudioCatalog` SO + `AudioMixer` asset wired up.
 - `Palette` SO with placeholder colors for every `PaletteRole` we know we'll need.
 - `PrimitiveShapeRenderer` + procedural shape sprites in `Assets/_Project/Art/Procedural/`.
-- `UIDocument`-based HUD root (empty) + pause overlay + pause flow with `Time.timeScale` toggle.
+- uGUI `HUDRoot` canvas in the `Systems` scene (empty `HudPanel` + `PauseMenuPanel` placeholders) + pause flow with `Time.timeScale` toggle. Uses `InputSystemUIInputModule` for gamepad navigation.
 - `SaveManager` round-trips an empty `SaveData` to `save_1.json`.
 - `ScoreService` and `FeedbackService` skeletons registered on `GameServices`.
 
@@ -382,4 +384,4 @@ These need a decision before their phase begins; flag them when reached.
 - **Slopes:** match SMW's 22.5°/45° slope set exactly, or allow arbitrary angles? (Affects physics tuning.)
 - **Cape flight:** full SMW glide/dive physics, or simplified hover? (Cape physics are notoriously tricky.)
 - **Save format:** stick with `JsonUtility` or jump straight to Newtonsoft for cleaner polymorphism? (Newtonsoft is already in the project.)
-- **UI Toolkit vs uGUI:** uGUI is more familiar to most Unity devs but UI Toolkit is the modern path. Defaulting to UI Toolkit; revisit if it slows us down.
+- ~~**UI Toolkit vs uGUI:**~~ **Resolved:** uGUI. `com.unity.ugui` 2.0.0 is in the manifest with TMP bundled, gamepad nav via `InputSystemUIInputModule` works out of the box, and world-space canvases give us the score-popup pattern for free.
