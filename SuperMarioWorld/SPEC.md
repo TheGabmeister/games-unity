@@ -223,108 +223,113 @@ Required block behaviors:
 - **Used block** — inert sprite + collider; spawned as the "after" state of `?` blocks and `?`-with-coin bricks.
 
 ### 4.7 Enemy System
-- Follows the **thin-prefab / fat-SO** pattern in §4.25: base `Enemy` MonoBehaviour lives on shape-category prefabs (`GroundEnemy_Base`, `FlyingEnemy_Base`, `ShelledEnemy_Base`); per-enemy variance lives on `EnemyData` SOs.
-- `EnemyData` fields (HP, speed, stomp behavior, fire-vulnerable, spin-jump-vulnerable, can-be-eaten-by-yoshi, points awarded, color/palette role, drops, sprite reference, collider size). `Enemy.Awake` reads the SO and applies values to the components.
-- Enemies move via the same dynamic-zero-gravity Rigidbody2D approach as the player so they share slope/ground-probe code (factor that into a shared `KinematicBody2D` helper, not a base class).
-- Common stomp logic lives in `Enemy.OnStompedFromAbove(player)` and is overridden / parametrized by data. Resolution is centralized in a `CombatResolver` static so the Player ↔ Enemy contact logic isn't duplicated on both sides.
-- **Stomp combos**: a `StompCombo` component on the player tracks consecutive enemy kills without touching the ground. Each subsequent kill in a chain awards more points (200 → 400 → 800 → 1000 → ... → 1-up at 8). Resets on landing.
-- Enemies despawn when far off-camera. Off-camera spawners (e.g. `BulletBillLauncher`) re-emit when their position re-enters the camera frustum + a hysteresis margin. Dynamic spawns (projectiles, VFX, score popups) use plain `Instantiate` / `Destroy` — pooling is not worth the infrastructure for this game's scale.
+
+**Design model: capability interfaces + per-archetype enemy classes.** Enemies declare what can happen to them by implementing C# interfaces (`IStompable`, `IFireballHit`, `ICapeSweepHit`, etc.). Attackers (player, fireball, cape sweep, moving shell) resolve interactions via `TryGetComponent<ICapability>` on the hit GameObject and invoke the interface method if present. No central `CombatResolver`, no abstract `Enemy` base class, no virtual-method polymorphism. The combat matrix is *emergent* — each cell is simply whether an enemy implements a given capability.
+
+**This intentionally departs from the thin-prefab / fat-SO rule (§4.25) for enemies specifically.** Pickups and blocks still use thin-prefab / fat-SO because their variance is purely data (coin/mushroom/flower are the same `Pickup` + different SOs; `?`/brick/note-block are the same `InteractiveBlock` + different SOs). Enemies differ too much per-archetype for that to hold — a walker, a ballistic projectile, a ghost, and a teleporting Magikoopa have nothing in common at the code level. Each archetype gets its own MonoBehaviour class. Per-variant tuning (Koopa colors, Cheep-Cheep types) still uses `EnemyData` SOs against a single archetype class.
+
+**Per-enemy class shape:**
+- Each archetype is its own MonoBehaviour (`Galoomba`, `KoopaWalker`, `KoopaShell`, `PiranhaPlant`, `ChargingChuck`, `Boo`, `BulletBill`, etc.) implementing whichever capability interfaces apply.
+- Each class reads an `EnemyData` SO for per-variant tuning: HP, speed, points, sprite, collider size, color/palette role, drops.
+- Shared movement primitives live in a `KinematicBody2D` helper component (dynamic-zero-gravity Rigidbody2D + ground probe + slope handling), not a base class. Grounded enemies (Galoomba, KoopaWalker, Chuck, ...) attach it; Bullet Bill and Boo don't.
+- `EnemyDespawn` helper on every enemy that should despawn off-camera. Off-camera spawners (`BulletBillLauncher`) re-emit when their position re-enters the camera frustum + hysteresis margin.
+- Dynamic spawns (projectiles, VFX, score popups) use plain `Instantiate` / `Destroy` — no pooling.
+
+**`StompCombo`** lives on the player. Tracks consecutive enemy kills without touching the ground. Each successive kill in a chain awards more points (200 → 400 → 800 → 1000 → … → 1-up at 8). Resets on landing. Notched by the player collision dispatch on any successful `IStompable.OnStomped` call.
 
 #### Full SMW enemy roster (reference)
 
 Not all of these ship in V1 — see the V1 roster below. This list exists to ground architecture decisions (especially combat resolution) in the actual breadth of behavior, not just the V1 subset. Organized by **combat archetype**, because that's the axis the code has to handle. Variants within an archetype are usually expressible as `EnemyData` flags.
 
-Each enemy is mapped to the `EnemyBehavior` component(s) that would drive it. Format: `→ BehaviorName` (multiple behaviors separated by `+` means both sit on the prefab; behaviors in `[…]` are swapped in on state transitions, only one active at a time). Data flags referenced are fields on `EnemyData`.
+Each enemy is mapped to its MonoBehaviour class and the capability interfaces it implements. Format: `ClassName : IInterface, ...`. Variants that differ only in data share a class + different `EnemyData` SO; variants that differ in behavior get their own class. Sibling-component swaps (Koopa walk↔shell) are shown as `ClassA [swap] ClassB` both on the same prefab.
 
 **Walkers** (stompable from above, side contact hurts Mario):
-- Galoomba — flipped on stomp, can be picked up and thrown → `WalkerBehavior` (data: `pickableWhenStunned`)
-- Rex — 2 stomps, first flattens → `WalkerBehavior` (data: `stompStages = 2`, `flattenOnFirstStomp`)
-- Dino-Torch / Dino-Rhino — breathes fire; splits on damage → `WalkerBehavior` + `PeriodicEmitterBehavior` (fire spit). `Dino-Rhino` also has `splitOnDeath → 2× Dino-Torch` spawn flag.
-- Mega Mole — giant, rideable → `WalkerBehavior` (data: `rideable`)
-- Wiggler — 2 stomps, speeds up on first → `WalkerBehavior` (data: `stompStages = 2`, `aggroOnFirstStomp`)
+- Galoomba — flipped on stomp, can be picked up → `Galoomba : IStompable, IContactDamage, IFireballHit, IShellImpact, IThrowable`
+- Rex — 2 stomps; first flattens → `Rex : IStompable, IContactDamage, IFireballHit, IShellImpact` (internal HP = 2; first stomp swaps to flat sprite + smaller collider)
+- Dino-Torch / Dino-Rhino — breathes fire; Dino-Rhino splits into two Dino-Torches on damage → `DinoTorch : IStompable, IContactDamage, IFireballHit, IShellImpact` + `PeriodicEmitter` component. `DinoRhino` is its own class with `splitOnDeath` logic.
+- Mega Mole — giant, Mario can ride on top → `MegaMole : IStompable, IContactDamage, IFireballHit, IRideable`
+- Wiggler — 2 stomps, aggros on first → `Wiggler : IStompable, IContactDamage, IFireballHit, IShellImpact`
 
 **Shelled walkers** (stomp → shell that can be kicked, carried, ricocheted):
-- Koopa Troopa (4 colors) → `WalkerBehavior` [swap on stomp] `ShellBehavior`. Data varies per color: Green `ledgeTurn = false`, Red `ledgeTurn = true`, Yellow `kicksDust`, Blue `kicksShells`.
-- Paratroopa — stomp removes wings first → `WingedBounceBehavior` [swap on stomp] `WalkerBehavior` [swap on stomp] `ShellBehavior`. Three-stage.
-- Buzzy Beetle → same as Koopa (`WalkerBehavior` [swap] `ShellBehavior`) with data: `fireImmune`.
-- Spike Top — wall-crawling Buzzy → `WallCrawlerBehavior` [swap on stomp] `ShellBehavior`. Data: `spikeTop` (stomp hurts unless spin-jump).
+- Koopa Troopa (4 colors) → `KoopaWalker : IStompable, IContactDamage, IFireballHit, IShellImpact` [swap] `KoopaShell : IBumpable, IThrowable, IShellImpact, IContactDamage`. Color is `KoopaData` SO variance: Green `ledgeTurn = false`, Red `ledgeTurn = true`, Yellow `kicksDust`, Blue `kicksShells`.
+- Paratroopa → `ParatroopaFlier : IStompable, IContactDamage` [swap] `KoopaWalker` [swap] `KoopaShell` (three-stage).
+- Buzzy Beetle → same pattern as Koopa but Buzzy's walker class **does not implement `IFireballHit`** (so fireballs extinguish on it without damage). `BuzzyWalker : IStompable, IContactDamage, IShellImpact` [swap] `BuzzyShell` (shared class with `KoopaShell` if behavior allows, else own).
+- Spike Top → `SpikeTopWalker : IContactDamage, ISpinJumpSafe, IShellImpact` (wall-crawling; no `IStompable` — spin-jump is the only safe attack) [swap on spin-jump] `SpikeTopShell : IBumpable, IThrowable, IShellImpact, IContactDamage`.
 
-**Spiked** (normal stomp hurts Mario; spin-jump safe only if `spikeTop` not `spikeAllSides`):
-- Spiny → `WalkerBehavior` (data: `spikeTop`, `spinJumpSafe = true`)
-- Urchin → `StationaryBehavior` (data: `spikeAllSides`, `spinJumpSafe = false`)
-- Porcu-Puffer → `WaterSurfaceChaserBehavior` (bespoke; data: `spikeAllSides`)
-- Sumo Brother → `SumoBroBehavior` (bespoke; stationary fortress platform summoner, spits lightning)
+**Spiked**:
+- Spiny → `Spiny : IContactDamage, ISpinJumpSafe, IFireballHit, IShellImpact` (no `IStompable`; spin-jump bounces safely)
+- Urchin → `Urchin : IContactDamage, IFireballHit` (no `ISpinJumpSafe` — spikes all sides)
+- Porcu-Puffer → `PorcuPuffer : IContactDamage, IFireballHit`
+- Sumo Brother → `SumoBrother : IContactDamage, IFireballHit` (stationary; lightning spawn logic in class)
 
 **Un-stompable**:
-- Piranha Plant (standing / upside-down) → `PeriodicEmergeBehavior` (data: `emergePeriod`, `suppressWhenPlayerNear`)
-- Jumping Piranha → `PeriodicEmergeBehavior` (data: `emergeKind = Leap`, arc height)
-- Fire Piranha → `PeriodicEmergeBehavior` + `PeriodicEmitterBehavior` (spits fireballs during emerge window)
-- Fishin' Boo → `FishinBooBehavior` (bespoke — slow flight + dangling line hit-trigger)
+- Piranha Plant (standing / upside-down) → `PiranhaPlant : IContactDamage, IFireballHit, ICapeSweepHit`
+- Jumping Piranha → `JumpingPiranha : IContactDamage, IFireballHit, ICapeSweepHit` (different emerge pattern; own class)
+- Fire Piranha → `FirePiranha : IContactDamage, IFireballHit, ICapeSweepHit` + `PeriodicEmitter` (fireballs)
+- Fishin' Boo → `FishinBoo : IContactDamage, ICapeSweepHit` (fireball passes through — no `IFireballHit`)
 
 **Intangible-based**:
-- Boo → `LineOfSightBehavior`
-- Big Boo (mini-boss variant) → `LineOfSightBehavior` (data: larger collider, HP > 1, damages-by-cape-only)
-- Eerie → `WaypointPathBehavior` (sinusoidal flight)
-- Boo Buddies (circle) → `CircleFormationBehavior` (bespoke — group orbit, individually tangible per angle to Mario)
-- Boo Block → `BooBlockBehavior` (bespoke — disguised trigger; reveals → `LineOfSightBehavior` when approached)
+- Boo → `Boo : IConditionallyTangible, ICapeSweepHit, IContactDamage` (no `IFireballHit` — cape/star only)
+- Big Boo → `BigBoo : IConditionallyTangible, ICapeSweepHit, IContactDamage` (HP > 1, internal)
+- Eerie → `Eerie : IContactDamage, ICapeSweepHit` (flies a fixed path; cape/star kill only)
+- Boo Buddies (circle) → `BooBuddyMember : IConditionallyTangible, IContactDamage, ICapeSweepHit` on each member + `BooBuddyCircle` driving orbit on the parent
+- Boo Block → `BooBlock : IBumpable` initially; on trigger, reveals → spawns a `Boo`
 
 **Ballistic**:
-- Bullet Bill → `ProjectileBehavior`
-- Banzai Bill → `ProjectileBehavior` (data: larger collider/scale)
-- Torpedo Ted → `ProjectileBehavior` (data: `underwater` — ignores surface Y, different spawn layer)
+- Bullet Bill → `BulletBill : IStompable, IContactDamage, IFireballHit`
+- Banzai Bill → `BanzaiBill : IStompable, IContactDamage, IFireballHit` (larger, same interfaces)
+- Torpedo Ted → `TorpedoTed : IStompable, IContactDamage, IFireballHit` (underwater variant)
 
 **AI-heavy spawners / special attackers**:
-- Lakitu → `LakituBehavior` (bespoke — cloud flight + `PeriodicEmitterBehavior` for Spinies + cloud-steal on stomp)
-- Magikoopa → `MagikoopaBehavior` (bespoke — teleport, wand projectile, block→enemy conversion)
-- Amazing Flyin' Hammer Brother → `HammerBroPlatformBehavior` (bespoke — moving platform + arced hammer toss; platform itself stompable)
-- Monty Mole → `AmbushBehavior` (pops from ground when Mario approaches; enters `WalkerBehavior` after emerging) — so `AmbushBehavior` [swap on emerge] `WalkerBehavior`
+- Lakitu → `Lakitu : IStompable, IContactDamage, IFireballHit` + `PeriodicEmitter` (Spinies). Cloud-steal handled by `OnStomped` logic (parent the cloud to player).
+- Magikoopa → `Magikoopa : IStompable, IContactDamage, IFireballHit, ICapeSweepHit` (teleport + wand projectile logic in class)
+- Amazing Flyin' Hammer Brother → `HammerBroPlatform : IStompable, IContactDamage, IFireballHit` (platform is the target) + `HammerBroThrower` component on the Bro that spawns hammers
+- Monty Mole → `MontyMoleAmbush` (trigger-only, no damage interfaces while hidden) [swap on emerge] `MontyMoleWalker : IStompable, IContactDamage, IFireballHit, IShellImpact`
 - Fire Piranha → see Un-stompable above
 
 **Multi-stomp / stateful**:
-- Chargin' Chuck (basic) → `ChargerBehavior` (data: `hp = 3`, walk↔charge mini-FSM)
-- Clappin' Chuck → `ChargerBehavior` (data variant: clap telegraph)
-- Jumpin' Chuck → `ChargerBehavior` (variant with jump-in-place between charges)
-- Splittin' Chuck → `SplittinChuckBehavior` (bespoke — spawns smaller Chucks on stomp; couldn't cleanly share)
-- Diggin' Chuck → `DigginChuckBehavior` (bespoke — throws rocks from fixed hole)
-- Bouncin' Chuck → `ChargerBehavior` (variant with perpetual bounce)
-- Football / Puntin' / Whistlin' / Swimmin' Chucks → each likely a variant behavior; be honest, this probably adds 3-4 more bespoke behaviors or a heavily branching `ChuckVariantBehavior`
-- Bob-omb — stomp lights fuse → explodes → `BobOmbBehavior` (bespoke — walker + fuse state + explosion trigger; couldn't be clean `WalkerBehavior` + modifier)
+- Chargin' Chuck (basic) → `ChargingChuck : IStompable, IContactDamage, IFireballHit, ICapeSweepHit` (internal `hp = 3`, walk↔charge mini-FSM)
+- Clappin' / Jumpin' / Bouncin' Chucks → same interfaces, own classes for behavior variance (or a single `ChuckVariant` enum-switched class if behaviors are close enough — judgment call per variant)
+- Splittin' Chuck → own class; spawns smaller Chucks on stomp
+- Diggin' Chuck → own class; throws rocks from fixed hole (uses `PeriodicEmitter`)
+- Football / Puntin' / Whistlin' / Swimmin' Chucks → each its own class for distinct attacks
+- Bob-omb → `BobOmb : IStompable, IContactDamage, IFireballHit, IThrowable` (stomp lights fuse; throwable while lit; explosion on expiry)
 
 **Environmental hazards**:
-- Thwomp → `ThwompBehavior` (bespoke — idle → fall-on-proximity → recover)
-- Thwimp → `BouncingProjectileBehavior` (arc-tracking variant of `ProjectileBehavior`, or its own behavior)
-- Fuzzy → `TrackFollowerBehavior` (follows a `FuzzyTrack` path component)
-- Ninji → `JumperBehavior` (periodic in-place jumps)
-- Swoopin' Stu → `SwooperBehavior` (ceiling drop on proximity) — may share core with `AmbushBehavior`
-- Grinder → `WaypointPathBehavior` + visual spin (the path is the hazard; stompable flag off)
+- Thwomp → `Thwomp : IContactDamage` (invulnerable; idle → fall-on-proximity → recover FSM)
+- Thwimp → `Thwimp : IContactDamage, IFireballHit` (bouncing arc)
+- Fuzzy → `Fuzzy : IContactDamage, ICapeSweepHit` (track-following electric hazard)
+- Ninji → `Ninji : IStompable, IContactDamage, IFireballHit` (periodic in-place jumps)
+- Swoopin' Stu → `SwoopinStu : IStompable, IContactDamage, IFireballHit` (ceiling drop on proximity)
+- Grinder → `Grinder : IContactDamage` (invulnerable spinning hazard on a path)
 
 **Aquatic**:
-- Cheep-Cheep Green → `WaypointPathBehavior` (swim along a defined path)
-- Cheep-Cheep Red → `ChaseBehavior` (swim toward player with clamp)
-- Blurp → `WaypointPathBehavior` variant
-- Rip Van Fish → `SleeperChaseBehavior` (sleep trigger + wake + chase) — shares structure with Swoopin' Stu / Monty Mole, consider factoring
-- Dolphin → not an enemy; a `RideableDolphin` component on a water-path prefab
+- Cheep-Cheep (both colors) → `CheepCheep : IStompable, IContactDamage, IFireballHit` (Green = path, Red = chase; `CheepCheepData` SO selects)
+- Blurp → same class as Cheep-Cheep with data variance, or own class if motion differs enough
+- Rip Van Fish → `RipVanFish : IStompable, IContactDamage, IFireballHit` (internal sleep→wake→chase FSM)
+- Dolphin → not an enemy; `RideableDolphin : IRideable` on a water-path prefab
 
-**Bosses** — out of scope for shared behaviors. Each is its own MonoBehaviour script (`IggyFight`, `ReznorFight`, `BowserFight`, etc.) because they're scripted encounters with their own phases, arenas, and damage rules. They can still use `Enemy` as a base for HP + data but don't plug into the behavior system.
+**Bosses** — out of scope for shared interfaces. Each is its own scripted MonoBehaviour (`IggyFight`, `ReznorFight`, `BowserFight`, …) with its own phase machine. They may implement a subset of interfaces where relevant (e.g., `Reznor : IFireballHit` since it's fireball-only), but their fight logic lives entirely in their own class.
 
-**Distinct behavior components required (count check):**
+**Distinct enemy classes required (count check):**
 
-| Tier | Count | Behaviors |
+| Tier | Count | Classes |
 |---|---|---|
-| Reusable (3+ enemies each) | ~8 | `WalkerBehavior`, `ShellBehavior`, `ProjectileBehavior`, `PeriodicEmergeBehavior`, `LineOfSightBehavior`, `WaypointPathBehavior`, `StationaryBehavior`, `ChargerBehavior` |
-| Modifier / composable | 1 | `PeriodicEmitterBehavior` (sits alongside a movement behavior, emits projectiles on timer; used by Dino-Torch, Fire Piranha, Lakitu) |
-| Shared by 2 enemies | ~4 | `WingedBounceBehavior`, `WallCrawlerBehavior`, `ChaseBehavior`, `AmbushBehavior` |
-| Bespoke (one enemy each) | ~10–13 | `SumoBroBehavior`, `FishinBooBehavior`, `CircleFormationBehavior`, `BooBlockBehavior`, `LakituBehavior`, `MagikoopaBehavior`, `HammerBroPlatformBehavior`, `ThwompBehavior`, `BobOmbBehavior`, `WaterSurfaceChaserBehavior`, `SleeperChaseBehavior`, `JumperBehavior`, `SwooperBehavior`, `TrackFollowerBehavior`, plus 3–4 Chuck-variant behaviors |
-| Boss scripts | ~11 | 7 Koopalings, Big Boo, Reznor, Bowser, plus any miniboss |
+| Shared class, data-variant only (1 class, N SOs) | ~2 | `Koopa*` (walker + shell; 4 color SOs), `CheepCheep` (green/red SOs) |
+| Own class, reusing interface set | ~15 | `Galoomba`, `Rex`, `Wiggler`, `MegaMole`, `DinoTorch`, `Spiny`, `Urchin`, `PorcuPuffer`, `BulletBill`, `BanzaiBill`, `TorpedoTed`, `Thwimp`, `Ninji`, `SwoopinStu`, `Blurp`, `RipVanFish` |
+| Own class, bespoke logic | ~12–15 | `PiranhaPlant`, `JumpingPiranha`, `FirePiranha`, `FishinBoo`, `Boo`, `BigBoo`, `Eerie`, `BooBuddyMember`, `BooBlock`, `Lakitu`, `Magikoopa`, `HammerBroPlatform`, `MontyMole*`, `SumoBrother`, `Thwomp`, `Fuzzy`, `Grinder`, `BobOmb`, Chuck variants (~5) |
+| Shared helper components | ~3 | `KinematicBody2D`, `PeriodicEmitter`, `EnemyDespawn` |
+| Capability interfaces | ~10 | `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IContactDamage`, `ISpinJumpSafe`, `IRideable`, `IConditionallyTangible` |
+| Boss scripts | ~11 | 7 Koopalings + Big Boo + Reznor + Bowser + minibosses |
 
-**Total for full roster: ~25–30 `EnemyBehavior` subclasses + ~11 boss scripts.**
+**Total for full roster: ~30–35 enemy classes + ~11 boss scripts + 10 interfaces + 3 helpers.**
 
 **Observations** (facts, not conclusions):
-- My earlier "~7 behaviors cover the roster" was wrong. Reusable behaviors cover the bulk of enemies *by count* (Koopas, Cheep-Cheeps, standard walkers), but the long tail of weird enemies (Lakitu, Magikoopa, Thwomp, Bob-omb, Sumo Bro) each needs bespoke logic that doesn't share cleanly.
-- Most shelled/walking enemies share `WalkerBehavior` + `ShellBehavior` with data-only variance — that's the strongest case for the composition model.
-- The bespoke tail (~13 behaviors) is a genuine cost, but it's the same cost in any architecture — Lakitu's cloud-steal logic has to live *somewhere*. Spreading it across 13 files next to each enemy's movement is arguably more cohesive than 13 branches in a central resolver.
-- V1 ships 6 enemies. If V1 is a hard scope cap, only ~5 behaviors are needed (Walker, Shell, Projectile, PeriodicEmerge, LineOfSight, Charger). The full roster's shape only matters if post-V1 expansion is planned.
-- My confidence on some exotic variants (Chuck sub-variants, Grinder, some Dinos) is lower — these numbers should be treated as estimates, not commitments.
+- Most enemies have 3–5 interfaces. Reading the class declaration line tells you what it is and what can hurt it.
+- The bespoke long tail exists in any architecture — Lakitu's cloud-steal, Magikoopa's teleport, Thwomp's fall-FSM have to live somewhere. Each lives in its own class with clear boundaries.
+- The only shared-class-many-SOs case is Koopa/Paratroopa (color variants) and Cheep-Cheep (path/chase variants). Everything else is its own class because movement/AI differs enough that SO flags would become a branching god-class.
+- V1 ships 6 enemies → 6 classes + maybe 2 helper classes + ~8 interfaces. The full roster's shape informs architecture; V1's scope is much smaller.
+- My confidence on exotic variants (Chuck sub-variants, Grinder, some Dinos, Booster enemies) remains lower — treat those counts as estimates.
 
 V1 enemy roster (smallest set that exercises every behavior shape):
 - **Goomba/Galoomba** — walks, stomp kills.
@@ -336,41 +341,98 @@ V1 enemy roster (smallest set that exercises every behavior shape):
 
 These six cover: stomping, shells, projectile spawners, multi-hit enemies, line-of-sight AI, fireball interaction.
 
-#### Enemy behaviors (composition, not inheritance)
+#### Combat via capability interfaces
 
-The six V1 enemies don't share a movement/AI model — a walker, a ballistic projectile, a periodic emerger, a charger with states, and a line-of-sight ghost have nothing in common mechanically beyond "can be hurt and can despawn." Trying to express that in a single `Enemy.Update()` with a behavior enum ends in a god-class with a switch statement. Instead, mirror the `PickupEffect` strategy pattern (§4.9): `Enemy` stays thin and movement/AI is a **composed behavior component**.
+All combat goes through C# interfaces in `Assets/_Project/Scripts/Runtime/Combat/Capabilities/`:
 
-**Structure on every enemy GameObject:**
-- `Rigidbody2D` + collider(s)
-- `Enemy` — thin contract layer. Holds `EnemyData`, current HP, palette binding. Owns the combat callbacks (`OnStompedFromAbove`, `OnHitByFireball`, `OnHitByCape`, `OnShellImpact`) which route to `CombatResolver`. Owns off-screen despawn.
-- `KinematicBody2D` helper — *only for grounded enemies*. Bullet Bill and Boo don't get one.
-- **Exactly one `EnemyBehavior` MonoBehaviour** — the per-archetype movement/AI. `Enemy.Awake` calls `behavior.Init(this, data)` so the behavior reads `EnemyData` for tuning.
-- `PaletteBinding`, `SpriteRenderer`.
+```csharp
+public interface IStompable             { void OnStomped(PlayerController p, StompKind kind); }
+public interface IBumpable              { void OnBumpedFromBelow(PlayerController p); }
+public interface IFireballHit           { FireballReaction OnHitByFireball(Fireball f); }
+public interface ICapeSweepHit          { void OnHitByCapeSweep(Vector2 dir); }
+public interface IShellImpact           { void OnHitByShell(Shell s); }
+public interface IThrowable             { void OnPickedUp(PlayerController p); void OnThrown(Vector2 v); }
+public interface IContactDamage         { DamageInfo ContactDamage { get; } }           // side-touch hurts Mario
+public interface ISpinJumpSafe          { }                                              // marker: spin-jump bounces, no damage
+public interface IRideable              { Vector3 SaddleOffset { get; } }
+public interface IConditionallyTangible { bool IsTangibleTo(PlayerController p); }       // Boo-style gating
 
-**Concrete behaviors** (one MonoBehaviour each, all inherit from `abstract EnemyBehavior`):
+public enum StompKind         { Normal, Spin }
+public enum FireballReaction  { Absorbed, Passes, Reflects }   // only cross-component outcome type; fireball-scoped
+```
 
-| Behavior | Used by | Description |
-|---|---|---|
-| `WalkerBehavior` | Goomba, Koopa (walking phase) | Walks in facing direction, turns at walls and optionally at ledges (flag on `EnemyData`). |
-| `ShellBehavior` | Koopa (shell phase) | Sliding shell; kickable, carryable, ricochets off walls, damages other enemies on contact. |
-| `ProjectileBehavior` | Bullet Bill | Constant horizontal velocity, no ground contact, no wall turn. |
-| `PeriodicEmergeBehavior` | Piranha Plant | Stationary origin; tweens up/down on a timer. Suppresses emerge while player is within a proximity radius (SMW behavior). |
-| `ChargerBehavior` | Chargin' Chuck | Internal mini-FSM: `Walk → Spot → Charge → Stun → Recover`. Multi-HP handled by `Enemy`; state transitions owned here. |
-| `LineOfSightBehavior` | Boo | Moves toward player only when `player.facing` dot `(boo.pos - player.pos)` indicates player isn't looking. Intangible to fireballs (flag on `EnemyData`, checked by `CombatResolver`). |
+Every capability is **optional**. An enemy that can't be stomped doesn't implement `IStompable`. An enemy that can't be fireballed (Boo) doesn't implement `IFireballHit`. The matrix is the set of interfaces per enemy — readable on the class declaration line.
 
-**Koopa walk → shell transition:** same GameObject, swap active behavior. `Enemy.OnStompedFromAbove` for a Koopa disables `WalkerBehavior`, enables `ShellBehavior` (both sit on the prefab, one active at a time), swaps the collider, and updates the sprite via `EnemyData.shellSprite`. **Not** a prefab swap — carries clean state (Koopa color, id) across the transition.
+**Player collision dispatch** lives in a `PlayerCollisionRouter` component on the player prefab:
 
-**Shape-category prefabs** (§4.25) map to which behavior is pre-wired:
-- `GroundEnemy_Base.prefab` — `WalkerBehavior` attached, `KinematicBody2D` attached.
-- `FlyingEnemy_Base.prefab` — `ProjectileBehavior` attached, no `KinematicBody2D`.
-- `ShelledEnemy_Base.prefab` — both `WalkerBehavior` and `ShellBehavior` attached, walker active by default.
+```csharp
+void OnCollisionEnter2D(Collision2D col) {
+    var go = col.collider.gameObject;
+    if (go.TryGetComponent<IConditionallyTangible>(out var t) && !t.IsTangibleTo(player)) return;
 
-Unusual enemies (Piranha, Chuck, Boo) don't fit a shape category cleanly — they get their own prefab (`Enemy_Piranha.prefab`, etc.) composed from the same parts. That's fine; the thin-prefab / fat-SO rule is about *per-variant* proliferation (10 walker variants shouldn't need 10 prefabs), not about forcing every enemy into three buckets.
+    var n = col.GetContact(0).normal;
+    var fromAbove = n.y > 0.7f && rb.linearVelocity.y <= 0;
+    var spin = player.SpinJumpActive;
 
-**What NOT to do:**
-- No `KoopaEnemy : Enemy`, `GoombaEnemy : Enemy`. The only class called `Enemy` is the contract layer.
-- No `Enemy` god-class with a `MovementKind` enum and a switch.
-- No `BaseGroundEnemy : Enemy` / `BaseFlyingEnemy : Enemy` class hierarchy. The shape categories are *prefab templates*, not base classes. Chuck is grounded but state-heavy; Piranha is neither moving nor shelled — a three-way class split wouldn't hold.
+    if (fromAbove) {
+        var stomp = GetActiveComponent<IStompable>(go);
+        if (stomp != null) {
+            stomp.OnStomped(player, spin ? StompKind.Spin : StompKind.Normal);
+            player.ApplyStompRebound(spin);
+            player.StompCombo.Notch();
+            return;
+        }
+        if (spin && go.GetComponent<ISpinJumpSafe>() != null) {
+            player.ApplyStompRebound(spin: true);
+            return;
+        }
+    }
+    if (go.TryGetComponent<IContactDamage>(out var d)) player.TakeDamage(d.ContactDamage);
+}
+```
+
+`GetActiveComponent<T>` filters disabled components: `GetComponents<T>().FirstOrDefault(c => c is not Behaviour b || b.enabled)`. Needed because `GetComponent<T>` returns disabled Behaviours by default, and state transitions (Koopa walk↔shell) rely on toggling `.enabled`.
+
+**Attacker sides are equally thin:**
+- **Fireball** — `OnTriggerEnter2D` → `TryGetComponent<IFireballHit>`; branch on the returned `FireballReaction` (extinguish / pass through / reflect).
+- **Cape sweep** — arc trigger collider active ~0.25s; for each overlapping collider, `TryGetComponent<ICapeSweepHit>` and call.
+- **Moving shell** — `OnCollisionEnter2D` → `TryGetComponent<IShellImpact>` for enemies, `TryGetComponent<IBumpable>` for blocks.
+
+**State transitions (Koopa walk → shell, Paratroopa flier → walker → shell):** sibling components on the same GameObject, toggle `.enabled`:
+
+```csharp
+[RequireComponent(typeof(KoopaWalker), typeof(KoopaShell))]
+public class Koopa : MonoBehaviour { /* shared data, sprite, collider */ }
+
+public class KoopaWalker : MonoBehaviour, IStompable, IContactDamage, IFireballHit, IShellImpact {
+    public void OnStomped(PlayerController p, StompKind k) {
+        GetComponent<KoopaShell>().enabled = true;
+        enabled = false;   // swap
+    }
+    // ... walking logic
+}
+
+public class KoopaShell : MonoBehaviour, IBumpable, IThrowable, IShellImpact, IContactDamage {
+    // ... sliding-shell logic
+}
+```
+
+Paratroopa is the same pattern with three components (`ParatroopaFlier` → `KoopaWalker` → `KoopaShell`), each enabling the next on stomp.
+
+**Shared helpers (not base classes):**
+- `KinematicBody2D` — movement + ground/wall/slope probing. Reused by any grounded enemy.
+- `PeriodicEmitter` — composable component that spawns a projectile prefab on a timer. Used by Dino-Torch (fire spit), Fire Piranha (fireballs), Lakitu (Spinies). Decouples "emits projectiles" from each enemy's main behavior.
+- `EnemyDespawn` — off-camera culling with hysteresis.
+
+**What's NOT in this design** (for clarity, because earlier drafts of the spec had these):
+- No `CombatResolver` static class.
+- No abstract `Enemy` base class, no `EnemyBehavior` strategy base class, no virtual combat methods.
+- No `CombatOutcome` struct — `FireballReaction` is the only cross-component outcome type, and it's scoped to fireball only.
+- No enemy-class hierarchy (`KoopaEnemy : Enemy`, etc.). Each archetype is a standalone MonoBehaviour.
+
+**Adding a new attack type post-V1** (e.g., Ice Flower freezing enemies): add `IIceVulnerable`, implement on the enemies that should freeze, update the ice projectile to `TryGetComponent<IIceVulnerable>`. No existing enemy class is touched.
+
+**Adding a new enemy:** create a MonoBehaviour class, pick the interfaces it implements, create a prefab and an `EnemyData` SO. No generator machinery — enemy prefabs are hand-authored in the Unity editor (this is the thin-prefab-rule carve-out).
 
 ### 4.8 Yoshi
 - Yoshi is a `RideableMount` component. When active, the player rigidbody is parented to Yoshi's saddle transform and the `PlayerController`'s physics step is suspended; a `YoshiController` drives Yoshi's body, which forwards `Jump` input to a Yoshi-specific jump (with the well-known "extended jump" — Mario can jump again from Yoshi's apex). The player power-up state machine and HUD remain unchanged.
@@ -816,7 +878,7 @@ If a content level ever gets regenerated from a script, we're doing it wrong. If
 Examples of the kind of scene the generator produces:
 - **Phase 1 Movement Test** — flat ground + platforms at stepped heights + one of each slope variant. No enemies. Used to tune jump arcs, coyote/buffer timing, and slope physics.
 - **All Blocks** — one of each interactive block (`?`, brick, multi-coin brick, note, rotating, P-switch, switch-palace × 4, used) lined up left to right. Used to verify block behaviors after any §4.6 change.
-- **All Enemies** — every V1 enemy variant in a wide flat corridor. Used to verify §4.7 / `CombatResolver` matrix and regressions.
+- **All Enemies** — every V1 enemy variant in a wide flat corridor. Used to verify §4.7 capability interactions (stomp / fireball / cape / shell-impact) and regressions.
 - **Power-up Transitions** — a corridor with every power-up pickup in sequence, enemies between them. Validates §4.3 state machine.
 - **Yoshi Test** — a corridor with a Yoshi egg, a few enemies, berries, and a colored shell pickup. Validates §4.8.
 - **Slope Battery** — every combination of slope direction × power state × speed × landing-surface-type. Pure physics test.
@@ -856,7 +918,7 @@ V1 is intentionally wider than a minimal slice — it ships every major system e
 - **1 overworld** with ~5 connected nodes (`Yoshi's Island 1`-style learning curve), including one branching path that requires the secret exit from level 5.
 - **5 hand-authored content levels** (under `Assets/_Project/Scenes/Levels/`, built in the Unity editor using Tilemap Palette + prefab drag-and-drop per §4.26 — NOT generated), each focused on exercising one subsystem:
   1. Movement & jumps only — no enemies. Validates §4.2 / §4.4 tuning.
-  2. Enemies (Goomba, Koopa) + shells + brick blocks. Validates §4.6 / §4.7 / `CombatResolver`.
+  2. Enemies (Goomba, Koopa) + shells + brick blocks. Validates §4.6 / §4.7 capability interactions.
   3. Power-ups + fire flower combat + Piranha Plants + cape feather. Validates §4.3 / cape sweep / fireball.
   4. Green Yoshi mount + tongue + swallow + dismount-on-damage. Validates §4.8. *(Colored-Yoshi variants are out of V1 scope per §4.8.)*
   5. Goal post + secret exit (via carryable key) + sub-area pipe + midway checkpoint. Validates §4.5 / §4.11 / §4.24 reset behavior.
@@ -918,9 +980,10 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - `PlayerCarry` wired up so future shells/P-switches/springs can be carried (uses the `Action` button per §4.1).
 
 ### Phase 4 — Enemies & combat resolution
-- Base `Enemy` + `KinematicBody2D` shared helper.
-- Six V1 enemies (§4.7).
-- `CombatResolver` with stomp / fireball / cape / shell-collision matrix.
+- Capability interfaces (`IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IContactDamage`, `ISpinJumpSafe`, `IRideable`, `IConditionallyTangible`) + `KinematicBody2D` / `EnemyDespawn` / `PeriodicEmitter` shared helpers.
+- Six V1 enemy classes (§4.7), each implementing the relevant interfaces.
+- `PlayerCollisionRouter` on the player prefab — classifies contact direction (stomp vs. side), dispatches to interface methods, applies rebound + notches `StompCombo`.
+- `Fireball`, `CapeSweep`, `Shell` all dispatch via `TryGetComponent<I…>` — no central resolver.
 - `StompCombo` chain scoring.
 - Off-screen culling and re-spawn hysteresis.
 
