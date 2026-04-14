@@ -10,7 +10,7 @@ Unity 6 (`6000.3.12f1`) project recreating *Super Mario World* (SNES, 1990) game
 
 ## Current state
 
-Early / pre-Phase-0. Only the single editor utility at [FileExtensions.cs](Assets/_Project/Scripts/Editor/FileExtensions.cs) exists; everything else described in SPEC.md (Bootstrapper, GameServices, SceneLoader, audio stub, HUD, prefab generators, debug scene generator, physics layer matrix, etc.) still needs to be built. See [SPEC.md §6 Implementation Phases](SPEC.md) for the build order — Phase 0 foundation first, then Phase 1 player/physics, then tiles/blocks, etc.
+Early / pre-Phase-0. Only the single editor utility at [FileExtensions.cs](Assets/_Project/Scripts/Editor/FileExtensions.cs) exists; everything else described in SPEC.md (Bootstrapper, GameServices, SceneLoader, audio stub, HUD, prefab generators, debug scene generator, physics layer matrix, etc.) still needs to be built. See [TASKS.md](TASKS.md) for the phase-by-phase build order, automated tests, and manual verification checklist — Phase 0 foundation first, then Phase 1 player/physics, then tiles/blocks, etc.
 
 ## How to build / run
 
