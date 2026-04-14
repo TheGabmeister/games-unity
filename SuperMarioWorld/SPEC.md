@@ -234,78 +234,97 @@ Required block behaviors:
 
 Not all of these ship in V1 — see the V1 roster below. This list exists to ground architecture decisions (especially combat resolution) in the actual breadth of behavior, not just the V1 subset. Organized by **combat archetype**, because that's the axis the code has to handle. Variants within an archetype are usually expressible as `EnemyData` flags.
 
+Each enemy is mapped to the `EnemyBehavior` component(s) that would drive it. Format: `→ BehaviorName` (multiple behaviors separated by `+` means both sit on the prefab; behaviors in `[…]` are swapped in on state transitions, only one active at a time). Data flags referenced are fields on `EnemyData`.
+
 **Walkers** (stompable from above, side contact hurts Mario):
-- Galoomba (SMW Goomba — flipped on stomp, can be picked up and thrown)
-- Rex (2 stomps: first flattens, second kills)
-- Dino-Torch / Dino-Rhino (larger, breathes fire; splits on damage)
-- Mega Mole (giant, Mario can ride on top)
-- Wiggler (peaceful; 1 stomp angers → faster; 2 stomps kills)
+- Galoomba — flipped on stomp, can be picked up and thrown → `WalkerBehavior` (data: `pickableWhenStunned`)
+- Rex — 2 stomps, first flattens → `WalkerBehavior` (data: `stompStages = 2`, `flattenOnFirstStomp`)
+- Dino-Torch / Dino-Rhino — breathes fire; splits on damage → `WalkerBehavior` + `PeriodicEmitterBehavior` (fire spit). `Dino-Rhino` also has `splitOnDeath → 2× Dino-Torch` spawn flag.
+- Mega Mole — giant, rideable → `WalkerBehavior` (data: `rideable`)
+- Wiggler — 2 stomps, speeds up on first → `WalkerBehavior` (data: `stompStages = 2`, `aggroOnFirstStomp`)
 
 **Shelled walkers** (stomp → shell that can be kicked, carried, ricocheted):
-- Koopa Troopa — 4 colors: Green (walks off ledges), Red (turns at ledges), Yellow (clumsy, kicks dust), Blue (kicks other shells)
-- Paratroopa — flying variants of each Koopa color; stomp removes wings → walking Koopa
-- Buzzy Beetle (fire-immune Koopa variant)
-- Spike Top (wall-crawling Buzzy; spiked top)
+- Koopa Troopa (4 colors) → `WalkerBehavior` [swap on stomp] `ShellBehavior`. Data varies per color: Green `ledgeTurn = false`, Red `ledgeTurn = true`, Yellow `kicksDust`, Blue `kicksShells`.
+- Paratroopa — stomp removes wings first → `WingedBounceBehavior` [swap on stomp] `WalkerBehavior` [swap on stomp] `ShellBehavior`. Three-stage.
+- Buzzy Beetle → same as Koopa (`WalkerBehavior` [swap] `ShellBehavior`) with data: `fireImmune`.
+- Spike Top — wall-crawling Buzzy → `WallCrawlerBehavior` [swap on stomp] `ShellBehavior`. Data: `spikeTop` (stomp hurts unless spin-jump).
 
-**Spiked** (normal stomp hurts Mario; spin-jump is safe on some, still hurts on others):
-- Spiny (thrown by Lakitu, or grounded walker)
-- Urchin (stationary underwater spike ball)
-- Porcu-Puffer (chases Mario on water surface)
-- Sumo Brother (torso stompable, but fire on head)
+**Spiked** (normal stomp hurts Mario; spin-jump safe only if `spikeTop` not `spikeAllSides`):
+- Spiny → `WalkerBehavior` (data: `spikeTop`, `spinJumpSafe = true`)
+- Urchin → `StationaryBehavior` (data: `spikeAllSides`, `spinJumpSafe = false`)
+- Porcu-Puffer → `WaterSurfaceChaserBehavior` (bespoke; data: `spikeAllSides`)
+- Sumo Brother → `SumoBroBehavior` (bespoke; stationary fortress platform summoner, spits lightning)
 
-**Un-stompable** (only fireball / cape / star / thrown shell kills):
-- Piranha Plant — standing, Jumping, Fire, Upside-down variants
-- Fishin' Boo (rod-waving ghost hazard)
+**Un-stompable**:
+- Piranha Plant (standing / upside-down) → `PeriodicEmergeBehavior` (data: `emergePeriod`, `suppressWhenPlayerNear`)
+- Jumping Piranha → `PeriodicEmergeBehavior` (data: `emergeKind = Leap`, arc height)
+- Fire Piranha → `PeriodicEmergeBehavior` + `PeriodicEmitterBehavior` (spits fireballs during emerge window)
+- Fishin' Boo → `FishinBooBehavior` (bespoke — slow flight + dangling line hit-trigger)
 
-**Intangible-based** (only vulnerable in specific player states or angles):
-- Boo (tangible only when Mario isn't looking; killed only by cape / star)
-- Big Boo (Donut Ghost House boss — listed as boss below, same behavior)
-- Eerie (flying skulls)
-- Boo Buddies (circle and cluster variants)
-- Boo Block (disguised as a block)
+**Intangible-based**:
+- Boo → `LineOfSightBehavior`
+- Big Boo (mini-boss variant) → `LineOfSightBehavior` (data: larger collider, HP > 1, damages-by-cape-only)
+- Eerie → `WaypointPathBehavior` (sinusoidal flight)
+- Boo Buddies (circle) → `CircleFormationBehavior` (bespoke — group orbit, individually tangible per angle to Mario)
+- Boo Block → `BooBlockBehavior` (bespoke — disguised trigger; reveals → `LineOfSightBehavior` when approached)
 
-**Ballistic** (off-screen spawner, straight-line flight):
-- Bullet Bill (horizontal; stompable from above)
-- Banzai Bill (giant Bullet Bill)
-- Torpedo Ted (underwater variant)
+**Ballistic**:
+- Bullet Bill → `ProjectileBehavior`
+- Banzai Bill → `ProjectileBehavior` (data: larger collider/scale)
+- Torpedo Ted → `ProjectileBehavior` (data: `underwater` — ignores surface Y, different spawn layer)
 
 **AI-heavy spawners / special attackers**:
-- Lakitu (throws Spinies from a cloud; stomping gives Mario the cloud)
-- Magikoopa (teleports, casts wand spells — notably can turn `?` blocks into enemies)
-- Amazing Flyin' Hammer Brother (throws hammers from a flying platform; platform itself stompable)
-- Monty Mole (ambushes from ground holes)
-- Fire Piranha (spits fireballs)
+- Lakitu → `LakituBehavior` (bespoke — cloud flight + `PeriodicEmitterBehavior` for Spinies + cloud-steal on stomp)
+- Magikoopa → `MagikoopaBehavior` (bespoke — teleport, wand projectile, block→enemy conversion)
+- Amazing Flyin' Hammer Brother → `HammerBroPlatformBehavior` (bespoke — moving platform + arced hammer toss; platform itself stompable)
+- Monty Mole → `AmbushBehavior` (pops from ground when Mario approaches; enters `WalkerBehavior` after emerging) — so `AmbushBehavior` [swap on emerge] `WalkerBehavior`
+- Fire Piranha → see Un-stompable above
 
 **Multi-stomp / stateful**:
-- Chargin' Chuck — 3 HP, many variants (Chargin', Clappin', Jumpin', Splittin', Diggin', Bouncin', Football, Whistlin', Puntin', Swimmin') each with distinct attacks
-- Bob-omb (stomp lights fuse → explodes; pickable while lit)
+- Chargin' Chuck (basic) → `ChargerBehavior` (data: `hp = 3`, walk↔charge mini-FSM)
+- Clappin' Chuck → `ChargerBehavior` (data variant: clap telegraph)
+- Jumpin' Chuck → `ChargerBehavior` (variant with jump-in-place between charges)
+- Splittin' Chuck → `SplittinChuckBehavior` (bespoke — spawns smaller Chucks on stomp; couldn't cleanly share)
+- Diggin' Chuck → `DigginChuckBehavior` (bespoke — throws rocks from fixed hole)
+- Bouncin' Chuck → `ChargerBehavior` (variant with perpetual bounce)
+- Football / Puntin' / Whistlin' / Swimmin' Chucks → each likely a variant behavior; be honest, this probably adds 3-4 more bespoke behaviors or a heavily branching `ChuckVariantBehavior`
+- Bob-omb — stomp lights fuse → explodes → `BobOmbBehavior` (bespoke — walker + fuse state + explosion trigger; couldn't be clean `WalkerBehavior` + modifier)
 
-**Environmental hazards** (unkillable or only conditionally):
-- Thwomp (falls on Mario when below)
-- Thwimp (bouncing mini-Thwomp)
-- Fuzzy (patrols a track, electric contact damage)
-- Ninji (jumps up and down in place)
-- Swoopin' Stu (drops from ceiling)
-- Grinder (spinning saw blade — fortress levels; confidence lower)
+**Environmental hazards**:
+- Thwomp → `ThwompBehavior` (bespoke — idle → fall-on-proximity → recover)
+- Thwimp → `BouncingProjectileBehavior` (arc-tracking variant of `ProjectileBehavior`, or its own behavior)
+- Fuzzy → `TrackFollowerBehavior` (follows a `FuzzyTrack` path component)
+- Ninji → `JumperBehavior` (periodic in-place jumps)
+- Swoopin' Stu → `SwooperBehavior` (ceiling drop on proximity) — may share core with `AmbushBehavior`
+- Grinder → `WaypointPathBehavior` + visual spin (the path is the hazard; stompable flag off)
 
-**Aquatic** (water-only):
-- Cheep-Cheep — Green (static path) and Red (chase) variants
-- Blurp (variant)
-- Rip Van Fish (asleep until Mario passes close)
-- Dolphin (not an enemy — rideable helper)
+**Aquatic**:
+- Cheep-Cheep Green → `WaypointPathBehavior` (swim along a defined path)
+- Cheep-Cheep Red → `ChaseBehavior` (swim toward player with clamp)
+- Blurp → `WaypointPathBehavior` variant
+- Rip Van Fish → `SleeperChaseBehavior` (sleep trigger + wake + chase) — shares structure with Swoopin' Stu / Monty Mole, consider factoring
+- Dolphin → not an enemy; a `RideableDolphin` component on a water-path prefab
 
-**Bosses** (out of scope for the shared enemy matrix — each is its own scripted encounter):
-- 7 Koopalings — Iggy, Larry, Morton, Roy, Lemmy, Wendy, Ludwig (each with unique pattern)
-- Big Boo (Donut Ghost House)
-- Reznor (4 dinos on a spinning wheel, fortress boss — fireball-only)
-- Bowser (final, in Clown Car with mechakoopas)
+**Bosses** — out of scope for shared behaviors. Each is its own MonoBehaviour script (`IggyFight`, `ReznorFight`, `BowserFight`, etc.) because they're scripted encounters with their own phases, arenas, and damage rules. They can still use `Enemy` as a base for HP + data but don't plug into the behavior system.
 
-**Observations for architecture** (facts, not conclusions):
-- ~10 combat archetypes in the full roster, not 6.
-- Most variance within an archetype is data-flag expressible (`fireVulnerable`, `spinJumpSafe`, `stomp HP`, `fireImmune`, `intangibleUnlessNotLooking`, etc.).
-- The cells that are genuinely unusual — Boo's look-gated tangibility, Magikoopa's wand, Lakitu's cloud-steal, Chuck's mini-FSM, Reznor's fireball-only kill condition — are per-enemy behavior, not per-cell matrix entries.
-- Bosses don't share the regular enemy matrix; each is a scripted encounter.
-- My confidence on exotic variants (Grinder, Fishin' Boo, full Chuck variant list, some Dino specifics) is lower — verify against a canonical source before committing to any that V1 actually ships.
+**Distinct behavior components required (count check):**
+
+| Tier | Count | Behaviors |
+|---|---|---|
+| Reusable (3+ enemies each) | ~8 | `WalkerBehavior`, `ShellBehavior`, `ProjectileBehavior`, `PeriodicEmergeBehavior`, `LineOfSightBehavior`, `WaypointPathBehavior`, `StationaryBehavior`, `ChargerBehavior` |
+| Modifier / composable | 1 | `PeriodicEmitterBehavior` (sits alongside a movement behavior, emits projectiles on timer; used by Dino-Torch, Fire Piranha, Lakitu) |
+| Shared by 2 enemies | ~4 | `WingedBounceBehavior`, `WallCrawlerBehavior`, `ChaseBehavior`, `AmbushBehavior` |
+| Bespoke (one enemy each) | ~10–13 | `SumoBroBehavior`, `FishinBooBehavior`, `CircleFormationBehavior`, `BooBlockBehavior`, `LakituBehavior`, `MagikoopaBehavior`, `HammerBroPlatformBehavior`, `ThwompBehavior`, `BobOmbBehavior`, `WaterSurfaceChaserBehavior`, `SleeperChaseBehavior`, `JumperBehavior`, `SwooperBehavior`, `TrackFollowerBehavior`, plus 3–4 Chuck-variant behaviors |
+| Boss scripts | ~11 | 7 Koopalings, Big Boo, Reznor, Bowser, plus any miniboss |
+
+**Total for full roster: ~25–30 `EnemyBehavior` subclasses + ~11 boss scripts.**
+
+**Observations** (facts, not conclusions):
+- My earlier "~7 behaviors cover the roster" was wrong. Reusable behaviors cover the bulk of enemies *by count* (Koopas, Cheep-Cheeps, standard walkers), but the long tail of weird enemies (Lakitu, Magikoopa, Thwomp, Bob-omb, Sumo Bro) each needs bespoke logic that doesn't share cleanly.
+- Most shelled/walking enemies share `WalkerBehavior` + `ShellBehavior` with data-only variance — that's the strongest case for the composition model.
+- The bespoke tail (~13 behaviors) is a genuine cost, but it's the same cost in any architecture — Lakitu's cloud-steal logic has to live *somewhere*. Spreading it across 13 files next to each enemy's movement is arguably more cohesive than 13 branches in a central resolver.
+- V1 ships 6 enemies. If V1 is a hard scope cap, only ~5 behaviors are needed (Walker, Shell, Projectile, PeriodicEmerge, LineOfSight, Charger). The full roster's shape only matters if post-V1 expansion is planned.
+- My confidence on some exotic variants (Chuck sub-variants, Grinder, some Dinos) is lower — these numbers should be treated as estimates, not commitments.
 
 V1 enemy roster (smallest set that exercises every behavior shape):
 - **Goomba/Galoomba** — walks, stomp kills.
