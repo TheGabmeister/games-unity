@@ -27,11 +27,12 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 | Tweens | **PrimeTween** (`com.kyrylokuzyk.primetween`) — preferred over coroutines for animation |
 | Scene refs | **Eflatun.SceneReference** — type-safe scene fields |
 | Tilemaps | Unity `Tilemap` + `TilemapCollider2D` + `CompositeCollider2D` |
-| Vector art | **`com.unity.vectorgraphics` 3.0.0-preview.7** — SVG → Sprite / UI Image importer. Used for all placeholder visuals (see §4.19). |
+| Vector art | **`com.unity.vectorgraphics` 3.0.0-preview.7** — SVG → Sprite / UI Image importer. Used for all placeholder visuals (see §4.18). |
+| Target resolution | **1280×720** (16:9). Game view, default standalone build resolution, and all CanvasScaler reference resolutions use this. Configured in `ProjectSettings/ProjectSettings.asset` (Player → Resolution & Presentation). World-space units are still tile-based (1 world unit = 1 tile = 16 SVG units); resolution only affects rendering scale and HUD layout. |
 | Tests | Unity Test Framework (PlayMode + EditMode), once `.asmdef` files exist |
 
 ### Visual placeholder rules
-- All in-game visuals are **flat-fill SVG primitives** imported as Unity Sprites via the Vector Graphics package. One `.svg` per entity (Mario, Goomba, brick, coin, etc.) authored as solid white shapes; tinting comes from the palette ScriptableObject via `SpriteRenderer.color` / `Image.color`. See §4.19.
+- All in-game visuals are **flat-fill SVG primitives** imported as Unity Sprites via the Vector Graphics package. One `.svg` per entity (Mario, Goomba, brick, coin, etc.) authored as solid white shapes; tinting comes from the palette ScriptableObject via `SpriteRenderer.color` / `Image.color`. See §4.18.
 - A central `Palette` ScriptableObject in [Assets/_Project/Art/Procedural/](Assets/_Project/) defines the color per entity role so the look is consistent and re-skinnable.
 - SVGs live alongside the palette in the same folder. When real sprite assets land later, the swap is *just* changing the `Sprite` reference on prefabs — no code path changes.
 - No `.png` or `.aseprite` imports for placeholders. The Aseprite/PSD importers stay installed but unused until real art arrives.
@@ -84,6 +85,44 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
   - `Overworld`: `Move (Vector2)`, `Confirm (Button)`, `Cancel (Button)`.
   - `UI`: standard navigation set.
 - Switch maps via a single `InputRouter` component so subsystems never enable/disable maps directly.
+
+#### Bindings (locked — no rebinding UI in V1)
+
+Every action is bound to both keyboard and gamepad simultaneously, so the New Input System routes events from whichever device the player is currently using. These are authored into `InputSystem_Actions.inputactions` during Phase 0 and are considered final for V1 — we do not ship a rebinding UI. If a player wants different bindings, they edit the asset (or we revisit post-V1).
+
+**Player map**
+
+| Action | Keyboard | Gamepad (generic) | SMW equivalent |
+|---|---|---|---|
+| `Move` (Vector2) | WASD **and** Arrow keys (composite 2D) | Left Stick **and** D-Pad | D-Pad |
+| `Jump` | Space | South button (Xbox A / PS Cross) | B |
+| `SpinJump` | Left Shift | East button (Xbox B / PS Circle) | A |
+| `Action` | Z, and J as alternate | West button (Xbox X / PS Square), and Left Shoulder as alternate | Y / X |
+| `Crouch` | (derived from `Move.y < -0.5`) | (derived from `Move.y < -0.5`) | Down on D-Pad |
+| `Pause` | Escape | Start button (Xbox Menu / PS Options) | Start |
+
+Notes:
+- **`Crouch` is not a separate binding** — it's read as a `Move.y < -0.5` threshold inside `PlayerInputBinding`. This matches SMW where Down is the crouch "button" and avoids a duplicate keyboard binding on `S` / Down that would fight `Move`.
+- **Two bindings for `Action`** (West + Left Shoulder on gamepad; Z + J on keyboard). Intentional — SMW mapped the same function to both Y and X, and having the face button + a shoulder button lets the player pick a comfortable combo for running-while-jumping (hold shoulder → press face button for Jump).
+- **Diagonal inputs**: the composite `Move` Vector2 is fed to the controller as-is. Gamepad sticks give full analog range, but the controller treats `|Move.x| > 0.5` as "walking" and raw stick values as the magnitude for gradual acceleration. No explicit deadzone — the Input System's default stick deadzone (≈0.125) is enough.
+
+**Overworld map**
+
+| Action | Keyboard | Gamepad |
+|---|---|---|
+| `Move` (Vector2) | WASD **and** Arrow keys | Left Stick **and** D-Pad |
+| `Confirm` | Space, Enter | South button |
+| `Cancel` | Escape | East button |
+
+**UI map**
+
+Standard `InputSystemUIInputModule` bindings (auto-populated by the Input System sample UI asset): `Navigate` → stick/D-Pad/arrows, `Submit` → South button/Space/Enter, `Cancel` → East button/Escape, `Point` → mouse, `Click` → left mouse. No customization needed.
+
+#### Out of scope for V1
+
+- **Rebinding UI** — fixed bindings per the tables above. We won't ship `InputActionRebindingExtensions` flows, a controls screen, or rebinding persistence.
+- **Touch input / on-screen controls** — not targeted. If mobile is ever targeted, the New Input System supports `<Touchscreen>` paths that would bolt on without controller-code changes.
+- **Haptics / rumble** — no controller rumble in V1. `Gamepad.current.SetMotorSpeeds` exists for later if desired.
 - **The `Action` button is overloaded by design** — this matches SMW's Y button. `PlayerInputBinding` exposes both the **hold state** and **press/release events** of the same `Action` input:
   - **Hold** → run (gradual acceleration past walk cap, fills P-meter; see §4.2).
   - **Press** → context-sensitive single-shot: throw fireball (Fire Mario), cape sweep (Cape Mario, on ground), Yoshi tongue (mounted on Yoshi), pickup carryable (next to a stunned shell / P-switch / springboard), drop / throw held object.
@@ -149,7 +188,9 @@ Small ─Mushroom─▶ Super                      │
   - **Forward bias** (camera leads Mario when running).
   - **Vertical lock** unless Mario is on the ground above/below the lock window (SMW's "the camera doesn't follow you mid-air" rule).
   - **Hard bounds** from a `LevelBounds` component (BoxCollider2D used as a marker).
-- Pixel-perfect package is installed but only enable it later if/when sprite assets land.
+- **Orthographic size** is set so the camera shows **~14 tiles vertically**, matching SMW's vertical game-area feel. At 1 world unit = 1 tile, this is `Camera.orthographicSize = 7`. At 1280×720 this also gives ~24.9 tiles of horizontal visibility (14 × 16/9), which is wider than SMW's ~16-tile width — intentional and fine for 16:9.
+- At 1280×720 with `orthographicSize = 7`, each world tile renders as ~51×51 screen pixels. SVG-imported sprites (PPU=16, viewBox 16×16 per tile) scale cleanly to this size with no sub-pixel issues because they're tessellated meshes, not texture samples.
+- Pixel-perfect package is installed but only enable it later if/when *pixel-art* sprite assets land — SVG meshes don't benefit from it and it would actually interfere with smooth scaling.
 
 ### 4.5 Level / World System
 - A **`LevelData` ScriptableObject** is the canonical reference for a level. Fields: `levelId` (stable string), `displayName`, `sceneRef` (`SceneReference`), `timeLimitSeconds`, `musicId`, `themePalette` (`Palette` SO), `entryPoints` (named spawn markers for normal/secret/sub-area returns), `subAreas` (list of named offset regions within the scene), `unlocksOnNormalExit` / `unlocksOnSecretExit` (other `LevelData` references for overworld branching). Levels are added to the game by creating one of these — never by hardcoding a scene name anywhere else.
@@ -165,10 +206,12 @@ Small ─Mushroom─▶ Super                      │
   - Ceiling slopes (upside-down variants) are **not** in V1 — SMW uses them sparingly and they complicate the `GroundProbe` normal logic. Flag for post-V1 if a boss room needs them.
   - `SlopeTile` exposes its angle as a public float so `GroundProbe` can read it for movement adjustments (walking-down preserves grounded state, running-down accelerates per §4.2). The controller reads the angle from the surface normal returned by `BoxCast`, not by type-checking the tile — this is what keeps slope behavior consistent with the collider shape.
 - **Sub-areas** (pipe / door destinations): for V1, sub-areas live as **separate regions of the same Level scene** at a large coordinate offset (e.g. `+10000` units on Y). Pipe entry tweens Mario into the pipe, then snaps the camera + Mario to the destination region's `SpawnMarker` and tweens out. This avoids additive scene loads on every pipe and keeps level state in one place. Each sub-area has its own `LevelBounds` so the camera respects the right rectangle. Switch to additive scenes only if a level grows large enough to hurt scene-load time, which won't happen in V1.
-- **Checkpoints / midway**: a `MidwayGate` GameObject placed in the level. Crossing it stores its `CheckpointId` on the `LevelRunState` (§4.25), NOT on the player or the save file. On death, the level scene reloads and Mario respawns at the matching `SpawnMarker` for that checkpoint. Crossing a midway when Small also auto-grants a Mushroom (SMW behavior). Midway state is wiped when the player exits the level (whether by goal, voluntary back-to-overworld, or game over) — see §4.25.
+- **Checkpoints / midway**: a `MidwayGate` GameObject placed in the level. Crossing it stores its `CheckpointId` on the `LevelRunState` (§4.24), NOT on the player or the save file. On death, the level scene reloads and Mario respawns at the matching `SpawnMarker` for that checkpoint. Crossing a midway when Small also auto-grants a Mushroom (SMW behavior). Midway state is wiped when the player exits the level (whether by goal, voluntary back-to-overworld, or game over) — see §4.24.
 
 ### 4.6 Block & Object Interactions
 Blocks that need GameObject behavior (animated bumps, contained items, P-switches, switch-palace blocks) are spawned as **runtime GameObjects** by an `InteractiveBlockSpawner` that scans the `Interactive` tilemap layer on level load, instantiates the matching prefab at the tile's world position, and **clears the marker tile** so it doesn't double up. This keeps the tilemap as the source of truth for layout while letting blocks have their own scripts.
+
+Each block type gets its own generated prefab (`Block_Question.prefab`, `Block_Brick.prefab`, …) under the §4.25 thin-prefab / fat-SO rule. `?` block contents (coin / specific power-up / 1-up) are a `BlockContents` SO that the prefab references — a single `Block_Question.prefab` is reused for every `?` block in the game with only the `BlockContents` SO varying. P-switch duration, brick coin-count limits, and similar tunables all live on their respective SOs, not on the prefabs.
 
 Required block behaviors:
 - **`?` block** — releases coin / power-up / 1-up based on its `BlockContents` SO. Becomes a "used" block (inert sprite + collider) after triggering. Power-up contents are context-aware: if Mario is Small, give Mushroom; if Super or higher, give whatever the SO declares (Flower/Feather).
@@ -180,11 +223,12 @@ Required block behaviors:
 - **Used block** — inert sprite + collider; spawned as the "after" state of `?` blocks and `?`-with-coin bricks.
 
 ### 4.7 Enemy System
-- Base `Enemy` MonoBehaviour + `EnemyData` ScriptableObject (HP, speed, stomp behavior, fire-vulnerable, spin-jump-vulnerable, can-be-eaten-by-yoshi, points awarded, color, drops).
+- Follows the **thin-prefab / fat-SO** pattern in §4.25: base `Enemy` MonoBehaviour lives on shape-category prefabs (`GroundEnemy_Base`, `FlyingEnemy_Base`, `ShelledEnemy_Base`); per-enemy variance lives on `EnemyData` SOs.
+- `EnemyData` fields (HP, speed, stomp behavior, fire-vulnerable, spin-jump-vulnerable, can-be-eaten-by-yoshi, points awarded, color/palette role, drops, sprite reference, collider size). `Enemy.Awake` reads the SO and applies values to the components.
 - Enemies move via the same dynamic-zero-gravity Rigidbody2D approach as the player so they share slope/ground-probe code (factor that into a shared `KinematicBody2D` helper, not a base class).
 - Common stomp logic lives in `Enemy.OnStompedFromAbove(player)` and is overridden / parametrized by data. Resolution is centralized in a `CombatResolver` static so the Player ↔ Enemy contact logic isn't duplicated on both sides.
 - **Stomp combos**: a `StompCombo` component on the player tracks consecutive enemy kills without touching the ground. Each subsequent kill in a chain awards more points (200 → 400 → 800 → 1000 → ... → 1-up at 8). Resets on landing.
-- Enemies are **pooled** (§4.18) and despawn when far off-camera. Off-camera spawners (e.g. `BulletBillLauncher`) re-emit when their position re-enters the camera frustum + a hysteresis margin.
+- Enemies despawn when far off-camera. Off-camera spawners (e.g. `BulletBillLauncher`) re-emit when their position re-enters the camera frustum + a hysteresis margin. Dynamic spawns (projectiles, VFX, score popups) use plain `Instantiate` / `Destroy` — pooling is not worth the infrastructure for this game's scale.
 
 V1 enemy roster (smallest set that exercises every behavior shape):
 - **Goomba/Galoomba** — walks, stomp kills.
@@ -204,9 +248,10 @@ These six cover: stomping, shells, projectile spawners, multi-hit enemies, line-
 - **Dismount on damage**: Mario takes a hit while mounted → he is forcibly dismounted with no power-state loss; Yoshi enters a *panic* state, runs in the direction Mario was facing, flashes, and is **catchable for ~3 seconds**. If Mario touches Yoshi during the panic window, he remounts. If the panic timer expires or Yoshi crosses a `LevelBounds` edge, Yoshi is lost for the rest of the attempt.
 
 ### 4.9 Pickups / Collectibles
-- Single `Pickup` MonoBehaviour + `PickupData` SO (coin, dragon coin, 1-up mushroom, super mushroom, fire flower, cape feather, star).
-- On player overlap → applies effect via a small `PickupEffect` strategy object (avoid one giant switch statement).
-- Dragon coins increment a per-level counter; collecting all 5 awards a 1-up.
+- Follows the thin-prefab / fat-SO pattern (§4.25): a single `Pickup_Base.prefab` hosts the `Pickup` MonoBehaviour, collider, and sprite; every variant is just a different `PickupData` SO (coin, dragon coin, 1-up mushroom, super mushroom, fire flower, cape feather, star).
+- `Pickup.Awake` reads the SO to set sprite, collider size, and the `PickupEffect` strategy reference.
+- On player overlap → applies effect via a small `PickupEffect` strategy object (avoid one giant switch statement). `PickupEffect` is a polymorphic field on `PickupData` so each SO carries its own effect behavior without per-variant prefab wiring.
+- Dragon coins increment a per-level counter on `LevelRunState` (§4.24); collecting all 5 awards a 1-up.
 
 ### 4.10 Power-up Spawning
 - Power-ups emerging from `?` blocks need a small "rise out of block" animation, then act as walking pickups (mushrooms walk and bounce off walls; fire flower / feather are stationary).
@@ -228,10 +273,74 @@ A top-level FSM with states: `Boot`, `Title`, `Overworld`, `Level`, `Paused`, `G
 - `SceneLoader` service wraps `SceneManager.LoadSceneAsync` with: fade-out, additive load, swap, fade-in.
 - All scene references are `SceneReference` (Eflatun) — never raw strings.
 
+#### Scene entry points (Play from any scene)
+A strict "always enter through Boot" model breaks editor iteration — testing a level would require opening `Boot.unity` and navigating through Title → Overworld → Level every time. We solve this with a two-piece pattern that works identically in both builds and the editor:
+
+**Piece 1 — auto-bootstrap via `[RuntimeInitializeOnLoadMethod]`.** A static method in `Bootstrapper` runs **before any scene's `Awake`**, regardless of which scene is the active entry:
+
+```csharp
+public static class Bootstrapper
+{
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void EnsureSystemsLoaded()
+    {
+        if (!SceneManager.GetSceneByName("Systems").isLoaded)
+            SceneManager.LoadScene("Systems", LoadSceneMode.Additive);
+    }
+}
+```
+
+- **In builds**: `Boot.unity` is at build-index 0, so it's the entry. `Boot`'s own `Awake` normally loads `Systems` additively and transitions to `Title`. `EnsureSystemsLoaded` is effectively a no-op because Boot's own logic already loaded Systems. No behavior change.
+- **In the editor** with any other scene open and Play pressed: `EnsureSystemsLoaded` runs before that scene's `Awake`, so `Systems` is loaded and `GameServices` is populated by the time anything else wakes up.
+
+**Piece 2 — `LevelRoot` detects direct-entry and simulates the normal flow.** Each Level scene has a `LevelRoot` MonoBehaviour holding a `LevelData` reference. Its `Awake`:
+
+```csharp
+void Awake()
+{
+    if (GameServices.GameState.Current is LevelState)
+    {
+        // Normal flow: LevelState.OnEnter() already set up LevelContext.
+        return;
+    }
+    #if UNITY_EDITOR
+        // Direct editor entry — fabricate the flow.
+        GameServices.GameState.EnterDirectLevel(levelData, defaultEntryPoint);
+    #else
+        Debug.LogError($"Level {levelData.levelId} loaded without GameStateMachine entry. Build config bug.");
+    #endif
+}
+```
+
+- `GameStateMachine.EnterDirectLevel(LevelData, string entryPoint)` is an editor-only helper that:
+  1. Loads test `SaveData` — either a fresh `SaveData` (5 lives, 0 score, no level completions) or save slot 1, controlled by an `EditorTestSettings` ScriptableObject at `Assets/_Project/Settings/EditorTestSettings.asset`. Default: fresh.
+  2. Pushes `LevelState` directly onto the `GameStateMachine`, skipping Title and Overworld.
+  3. Calls `LevelContext.Begin(levelData, entryPoint)` identically to how `LevelState.OnEnter` would.
+  4. Resolves `entryPoint` to `LevelData.entryPoints["default"]` (the level's main spawn marker) when the caller doesn't specify.
+
+**Equivalent behavior for Title and Overworld scenes**: both have a scene-root MonoBehaviour (`TitleRoot` / `OverworldRoot`) with the same direct-entry detection pattern — if the `GameStateMachine` isn't already in the matching state, transition to it. This makes every scene in the project hit-Play-runnable.
+
+#### Play-from-scene matrix
+
+| Editor entry scene | What happens |
+|---|---|
+| `Boot.unity` | Normal flow. Same as a build. |
+| `Systems.unity` alone | `EnsureSystemsLoaded` logs a helpful error ("don't Play from Systems — use Boot or a Level"). No gameplay is possible from this scene alone. |
+| `Title.unity` | Systems loads additively → `TitleRoot` detects no `TitleState` active → transitions to Title. |
+| `Overworld.unity` | Systems loads additively → `OverworldRoot` transitions to Overworld, with fresh or slot-1 `SaveData` per `EditorTestSettings`. |
+| `Level01.unity` … `LevelNN.unity` | Systems loads additively → `LevelRoot` calls `EnterDirectLevel` → Mario spawns at default marker, HUD works, pause works, audio stub works. |
+
+#### Build Settings hygiene
+
+- `Boot.unity` MUST be at build-index 0 (entry scene in builds).
+- `Systems.unity`, `Title.unity`, `Overworld.unity`, and every `LevelXX.unity` MUST be present in Build Settings, or the `SceneManager.LoadScene` calls above fail silently.
+- `LevelData.OnValidate()` emits an editor warning if its `sceneRef` points at a scene that isn't in Build Settings. Don't rely on humans to remember.
+- Missing Build Settings registration is the #1 reason "Play on my level scene doesn't work" — flag it loudly.
+
 ### 4.15 Save System
 - `SaveManager` writes one JSON file per slot at `Application.persistentDataPath/save_{slot}.json` (slots 1–3).
 - A small `SaveIndex.json` tracks which slot is "current" + last-played metadata for the file select screen.
-- Persisted in `SaveData`: lives, score, total coin count (the rolling counter that triggers 1-ups every 100), current overworld node id, completed-level map (normal/secret exit flags per level id), switch palace states (4 bools), collected-dragon-coins bitmask per cleared level, audio volume preferences. **Midway checkpoints are NOT in save data** — they're per-attempt state (§4.25).
+- Persisted in `SaveData`: lives, score, total coin count (the rolling counter that triggers 1-ups every 100), current overworld node id, completed-level map (normal/secret exit flags per level id), switch palace states (4 bools), collected-dragon-coins bitmask per cleared level, audio volume preferences. **Midway checkpoints are NOT in save data** — they're per-attempt state (§4.24).
 - Serialization uses **`Newtonsoft.Json`** (`com.unity.nuget.newtonsoft-json`, pulled in transitively via Eflatun.SceneReference — no manifest change needed). This gives us:
   - Native `Dictionary<TKey, TValue>` round-trip, which matches the natural shape of `SaveData` (e.g. `Dictionary<string, LevelCompletionFlags>` keyed by `levelId`, `Dictionary<string, ulong>` for dragon-coin bitmasks).
   - Polymorphic type handling via `TypeNameHandling.Auto` when we need it (e.g. if `PickupData`-style hierarchies ever need to persist — not expected in V1, but the door's open).
@@ -255,7 +364,7 @@ AudioBus  ──▶  SfxChannel    (one-shot 2D sounds)
 - `SfxId`, `MusicId`, `JingleId` are enums. An `AudioCatalog` ScriptableObject maps each id → `AudioClip` reference. While the catalog is empty, calls log at `Debug.Log` level (gated by a `verbose` flag) and return early.
 - `MusicChannel` supports stack-based push/pop with crossfade. Star power and P-switch push; level boss music replaces (clears the stack). On pop, the previous track resumes from where it left off (track current playback position before pushing).
 - `JingleChannel` is separate: one-shot non-loopable cues like 1-up jingle, course clear fanfare, game-over. Jingles pause the music stack temporarily and resume it when the jingle ends — they do NOT push onto the stack.
-- **Pause behavior** (canonical — see also §4.23): when `AudioListener.pause = true` is set by the pause flow, *all* channels (`SfxChannel`, `MusicChannel`, `JingleChannel`, `AmbientChannel`) pause. The `MusicChannel` stack is preserved as-is — Unity's per-`AudioSource` playback head freezes — so on unpause everything resumes from where it stopped. There is no ducking, no fade-out, no music-stack manipulation on pause. Music simply stops and resumes.
+- **Pause behavior** (canonical — see also §4.22): when `AudioListener.pause = true` is set by the pause flow, *all* channels (`SfxChannel`, `MusicChannel`, `JingleChannel`, `AmbientChannel`) pause. The `MusicChannel` stack is preserved as-is — Unity's per-`AudioSource` playback head freezes — so on unpause everything resumes from where it stopped. There is no ducking, no fade-out, no music-stack manipulation on pause. Music simply stops and resumes.
 - The only exception is a single dedicated **`UiSfxChannel`** `AudioSource` with `ignoreListenerPause = true`, used for the pause-toggle SFX itself, menu navigation cues, and any other UI sound that must play *while* `AudioListener.pause` is true. Gameplay code never touches this channel directly — it's reached via `AudioBus.PlayUiSfx(...)`.
 - Crossfades on `MusicChannel` / `JingleChannel` use unscaled time (`Time.unscaledDeltaTime`) so a crossfade kicked off just before pause doesn't get stuck mid-blend, and so menu transitions in non-Level scenes (where there's no `Time.timeScale = 0`) work uniformly.
 - Master/SFX/Music volume sliders feed an `AudioMixer` asset that already has the routing wired up. Volume settings persist via the save system.
@@ -265,20 +374,17 @@ When real assets land, the only work is filling out `AudioCatalog` entries — n
 ### 4.17 UI / HUD
 - **uGUI** (Unity's `Canvas`-based UI). Package `com.unity.ugui` 2.0.0 is already in the manifest and ships TextMeshPro bundled in Unity 6, so TMP is available without an extra import.
 - UI is split across three canvases by ownership (matching the scene model in §3):
-  - **`HUDRoot`** — a persistent `Canvas` in the `Systems` scene. *Screen Space - Overlay*, `CanvasScaler` set to *Scale With Screen Size* (reference resolution `256x224` × an upscale factor). Hosts only the in-level UI: `HudPanel`, `PauseMenuPanel`, `GameOverPanel`. These panels live here because they need to appear over whichever Level scene is currently loaded without re-instantiating per level.
+  - **`HUDRoot`** — a persistent `Canvas` in the `Systems` scene. *Screen Space - Overlay*, `CanvasScaler` set to *Scale With Screen Size*, reference resolution **1280×720**, *Screen Match Mode* = `MatchWidthOrHeight` with `Match = 0.5` (balanced between width and height, so non-16:9 windows letterbox/pillarbox gracefully instead of clipping or stretching the HUD). Hosts only the in-level UI: `HudPanel`, `PauseMenuPanel`, `GameOverPanel`. These panels live here because they need to appear over whichever Level scene is currently loaded without re-instantiating per level.
   - **`TitleCanvas`** — lives in `Title.unity`. Hosts `TitlePanel` and `FileSelectPanel`. Disappears when the Title scene unloads.
   - **`OverworldCanvas`** — lives in `Overworld.unity`. Hosts `OverworldHudPanel` (lives, score, level name) and the level-entry confirmation popup.
+  - All three canvases use the **same `CanvasScaler` settings** (1280×720, `MatchWidthOrHeight`, `Match = 0.5`) so UI layout stays consistent across scene transitions. This is enforced by a shared `CanvasScalerPresetApplier` helper component at `Awake` rather than duplicating the settings in the inspector, so the reference resolution lives in exactly one place.
 - Panels are GameObjects with a `CanvasGroup` for fade/visibility. Only the panel matching the current `GameStateMachine` state is interactive at any time.
 - The `HudPanel` shows: lives, coin count, score, timer (countdown), current power state indicator, dragon coin count, P-switch / star timers when active. Built from `Image` (background bars, icons drawn as procedural primitive sprites) and `TextMeshProUGUI` (numeric counters).
 - Each panel has a small `XxxView` MonoBehaviour that holds `[SerializeField]` references to its `TextMeshProUGUI` / `Image` children. The view subscribes to events from a `HudViewModel` (`OnLivesChanged`, `OnCoinsChanged`, `OnPowerStateChanged`, `OnTimerTick`, etc.) and writes to the UI components in the handler — no `Update()` polling of player fields.
 - Buttons in menu panels use `Button` + Input System's `InputSystemUIInputModule` (already part of the input system package) so gamepad navigation works. Selection state is driven by `EventSystem.SetSelectedGameObject` on panel show.
 - All HUD-driving events are also routed through the `AudioBus` for cue sounds (coin collect, 1-up jingle, low-time warning), so audio and UI stay in lockstep.
 
-### 4.18 Object Pooling
-- Use Unity's built-in `ObjectPool<T>` for: enemies, projectiles (fireballs, shells when thrown), pickups, particle bursts.
-- Prefab spawning that does *not* go through a pool is a code smell — flag in review.
-
-### 4.19 Procedural Visuals (SVG-backed placeholders)
+### 4.18 Procedural Visuals (SVG-backed placeholders)
 - All placeholder visuals are **SVG sprites** authored by hand, stored in [Assets/_Project/Art/Procedural/](Assets/_Project/), and imported via `com.unity.vectorgraphics` 3.0.0-preview.7. The importer tessellates each SVG into a triangle mesh at edit time; runtime cost is identical to any sprite mesh.
 - **One SVG per entity / shape**, named by role (`mario_small.svg`, `mario_super.svg`, `goomba.svg`, `coin.svg`, `brick.svg`, `tile_solid.svg`, `slope_steep_r.svg`, etc.). Each SVG uses a single solid `fill="white"` so palette tinting via `SpriteRenderer.color` / `Image.color` produces the final color.
 - **`viewBox` matches the tile grid**: `0 0 16 16` for a 1×1-tile entity, `0 0 16 32` for tall Mario, `0 0 32 16` for wide entities like Banzai Bill. The SVG importer's *Pixels Per Unit* setting is configured to match (16) so 1 SVG unit = 1 world unit / 16th-of-a-tile, and tiles align cleanly.
@@ -291,7 +397,7 @@ When real assets land, the only work is filling out `AudioCatalog` entries — n
 #### Real-asset migration path
 When real sprite assets eventually arrive, the swap is purely additive: drop the new `.png` / `.aseprite` next to (or replacing) the SVG, repoint the `Sprite` field on the prefab, and decide per-entity whether `PaletteBinding` should keep tinting or be removed. **No gameplay or controller code changes.** This is the central reason for the SVG approach — it preserves the same `Sprite` data shape as the eventual real assets, so prefabs never need restructuring.
 
-### 4.20 Layers & Physics Matrix
+### 4.19 Layers & Physics Matrix
 A 2D physics matrix is non-optional for a platformer of this complexity. Set up before Phase 1.
 
 | Layer | Used by |
@@ -311,35 +417,35 @@ A 2D physics matrix is non-optional for a platformer of this complexity. Set up 
 
 The matrix disables: `Player ↔ PlayerProjectile`, `Enemy ↔ Enemy` (enemies pass through each other except via shells), `Pickup ↔ Pickup`, `Pickup ↔ Solid` collisions for floating pickups, `LevelBounds ↔ everything`, `PlayerInvulnerable ↔ Enemy`. The full table lives in `ProjectSettings/DynamicsManager.asset` and must be checked into git.
 
-### 4.21 Score & Combo
+### 4.20 Score & Combo
 A single `ScoreService` registered on `GameServices`. All point awards funnel through `ScoreService.Award(ScoreReason reason, int basePoints, Vector3 worldPos)` so we can:
-- show floating-point popups at the world position via the particle system (§4.24),
+- show floating-point popups at the world position via the particle system (§4.23),
 - apply combo multipliers (stomp combo, see §4.7),
 - centralize 1-up triggers (every 100 coins, every 8-stomp combo, every 5 dragon coins, scored 1-up pickups),
 - log to a debug overlay during development.
 
 `ScoreReason` is an enum so we never pass magic numbers around.
 
-### 4.22 Level Timer
+### 4.21 Level Timer
 - `LevelTimer` component on the level scene root, configured by `LevelData.timeLimitSeconds` (default 300 in-game seconds).
 - In-game seconds tick faster than real seconds (~0.4s real per tick, matching SMW). Use `Time.deltaTime` accumulation, not real time.
 - Fires `OnLowTime` (~100s remaining) which pushes a "hurry up" jingle and pitches the music up via the `AudioBus`.
 - At zero: kill the player via the same path as enemy contact while Small (no special "time over" state needed).
 - Pauses with `Time.timeScale = 0` automatically.
 
-### 4.23 Pause & Time
+### 4.22 Pause & Time
 - Pause sets `Time.timeScale = 0` AND `AudioListener.pause = true`. All gameplay simulation, particle systems, and audio (music + SFX + jingles) freeze together. The pause-toggle SFX and menu navigation cues are played via `AudioBus.PlayUiSfx(...)` which routes to a `ignoreListenerPause = true` source — see §4.16 for the canonical rules.
 - Pause-menu UI animations (slide-in, button highlights) use PrimeTween with `useUnscaledTime: true` so they keep running while `Time.timeScale = 0`.
 - Unpausing reverts both flags. Music resumes from the exact playback head it was paused at; the music stack is unchanged.
 - The pause flow lives on `GameStateMachine.Push(PausedState)`. Pause is only allowed while in the `Level` state.
 - Avoid coroutines in gameplay code that need to keep running while paused — use PrimeTween with unscaled time instead.
 
-### 4.24 Particles & Feedback
+### 4.23 Particles & Feedback
 - A `FeedbackService` on `GameServices` exposes `Spawn(FeedbackId id, Vector3 pos)` for one-shot visuals: brick shards, coin sparkle, stomp puff, score popup, dust kick, splash.
-- Each effect is a small pooled prefab using `ParticleSystem` with shape-only rendering (no textures — built-in default particle is fine, tinted by palette role).
-- Score popups (`+200`, `+1UP`) use a pooled world-space `Canvas` (set to *World Space*, not Overlay) containing a `TextMeshProUGUI` that fades and rises via PrimeTween, then returns to the pool. TMP is bundled with `com.unity.ugui` in Unity 6, so no extra package is needed.
+- Each effect is a small prefab using `ParticleSystem` with shape-only rendering (no textures — built-in default particle is fine, tinted by palette role). The prefab self-destructs on `Stop` via `ParticleSystem.MainModule.stopAction = Destroy`.
+- Score popups (`+200`, `+1UP`) are a world-space `Canvas` prefab (set to *World Space*, not Overlay) containing a `TextMeshProUGUI` that fades and rises via PrimeTween, then destroys itself. TMP is bundled with `com.unity.ugui` in Unity 6, so no extra package is needed.
 
-### 4.25 Run Lifecycle & State Layers
+### 4.24 Run Lifecycle & State Layers
 The single most important model in this spec. State lives in exactly **three** layers, and every piece of mutable data must be assigned to one of them. When in doubt, ask: *what should happen to this when the player dies / when the player exits to overworld / when the player closes the game?*
 
 | Layer | Lifetime | Stored on | Examples |
@@ -375,17 +481,186 @@ On `GoalGate` / `KeyHole` trigger:
 
 This is also the reason `SaveManager.Save()` only fires at level exit / overworld move / switch palace activation / file-select (§4.15) — there is never any persistent state that needs flushing mid-level, because mid-level state is per-attempt by definition.
 
+### 4.25 Content Authoring (Prefabs & Data)
+
+**Core rule: thin prefab, fat SO.** Any value that varies between variants of the same entity family lives on a ScriptableObject. The prefab is a structural shell that reads values from its assigned SO at `Awake` / `OnValidate` and applies them to components. This rule is load-bearing for two reasons: it keeps prefab regeneration safe (see below), and it pushes all tuning into `.asset` files that are stable YAML and version-control friendly.
+
+#### Where does this value live?
+
+| Value kind | Lives on | Examples |
+|---|---|---|
+| Which components are attached | Prefab | `Rigidbody2D`, `BoxCollider2D`, `SpriteRenderer`, the behavior script |
+| Layer / tag | Prefab | `Enemy` layer, `Pickup` layer |
+| Component settings shared across all variants | Prefab | `Rigidbody2D.gravityScale = 0`, `CollisionDetectionMode2D.Continuous` |
+| Component settings that vary per variant | SO | speed, HP, collider size, sprite reference, color, drops, damage, sounds |
+| Genuinely structural differences between variants | Prefab Variant | e.g. Chargin' Chuck has an extra child GameObject Goomba doesn't |
+| Per-instance placement values | Scene | position, rotation, spawn direction, spawn-area marker |
+
+If you catch yourself wanting to edit a prefab directly to tune a variant, that value belongs on the SO. Move it there, expose it in the SO's inspector, have the behavior script read it in `Awake`. Regeneration becomes safe and the prefab becomes reusable.
+
+Example — `Enemy.cs` (sketch):
+```csharp
+[SerializeField] EnemyData data;
+[SerializeField] BoxCollider2D col;
+[SerializeField] SpriteRenderer sr;
+[SerializeField] Rigidbody2D rb;
+
+void Awake()
+{
+    col.size = data.colliderSize;
+    sr.sprite = data.sprite;
+    gameObject.layer = LayerMask.NameToLayer(data.layerName);
+    rb.mass = data.mass;
+    // Stats (HP, speed, stompable, fire-vulnerable, ...) stay on `data` and are
+    // read by behavior methods on demand — not copied out to fields.
+}
+```
+
+#### Prefab Variants — escape hatch for structural differences only
+
+Prefer adding an SO field and branching in code (`if (data.hasChargeAttack) { … }`) over reaching for Prefab Variants. Variants are only for when the GameObject hierarchy itself must genuinely differ between variants — extra child GameObjects, different component sets, different collider arrangements.
+
+When you do need one:
+1. The base prefab (e.g. `GroundEnemy_Base.prefab`) is owned by the generator.
+2. Right-click the base → **Create → Prefab Variant** → name descriptively (e.g. `ChargingChuck.prefab`).
+3. Open the variant, add the structural bits.
+4. **Scene placement uses the variant, never the base.** Convention: base prefabs carry the `_Base` suffix; variants don't. If you see a `_Base` name in a scene, it's a bug.
+5. When the generator regenerates the base, the variant inherits the updated base and preserves its overrides.
+
+#### Generators
+
+One editor script per entity family: `EnemyPrefabGenerator.cs`, `PickupPrefabGenerator.cs`, `BlockPrefabGenerator.cs`, `ProjectilePrefabGenerator.cs`, etc. Each lives in `Assets/_Project/Scripts/Editor/Generators/` and exposes **two menu items**:
+
+- `Tools → Generate → <Family> → Create Missing Only` *(safe default)*  
+  Iterates the expected prefab list, skips any that already exist, creates only the missing ones. Use after a fresh clone, after adding a new entry to the generator, or after you deleted a prefab intentionally and want it back.
+
+- `Tools → Generate → <Family> → Regenerate All (Overwrite)`  
+  Shows a confirmation dialog listing every prefab that will be overwritten. Use when the generator definition itself changed (e.g. added a required component) and you want bases refreshed. Prefab Variants inherit the new base state automatically.
+
+Both modes log a one-line summary to the console: *"Created 2, overwrote 0, skipped 6."*
+
+**Generator contract**: declarative. The generator describes the desired prefab structure in C# (`AddComponent`, configure shared fields, assign `Sprite` / SO references via `AssetDatabase.LoadAssetAtPath`), then calls `PrefabUtility.SaveAsPrefabAsset`. Unity handles all YAML, fileIDs, GUIDs, and `.meta` files. **No hand-authored prefab YAML anywhere in this project.**
+
+#### Folder layout
+
+Generator-produced base prefabs and hand-created variants share the family folder:
+
+```
+Assets/_Project/Prefabs/
+├── Player/
+│   └── Player.prefab                 (generator-owned; single instance, not a base)
+├── Enemies/
+│   ├── GroundEnemy_Base.prefab       (generator-owned)
+│   ├── FlyingEnemy_Base.prefab       (generator-owned)
+│   ├── ShelledEnemy_Base.prefab      (generator-owned)
+│   └── ChargingChuck.prefab          (Prefab Variant, hand-owned)
+├── Pickups/
+│   └── Pickup_Base.prefab            (generator-owned)
+├── Blocks/
+│   ├── Block_Question.prefab         (generator-owned)
+│   ├── Block_Brick.prefab            (generator-owned)
+│   └── …
+├── Projectiles/
+│   └── Fireball.prefab               (generator-owned)
+└── VFX/
+    └── …                             (feedback prefabs, see §4.23)
+```
+
+ScriptableObjects live in a parallel tree under `Assets/_Project/Data/`, authored directly (no generator — `.asset` files are stable YAML):
+
+```
+Assets/_Project/Data/
+├── Enemies/
+│   ├── EnemyData_Goomba.asset
+│   ├── EnemyData_Koopa.asset
+│   └── …
+├── Pickups/
+│   ├── PickupData_Coin.asset
+│   └── …
+├── Blocks/
+│   └── BlockContents_QuestionDefault.asset
+├── PowerStates/
+│   ├── PowerStateData_Small.asset
+│   ├── PowerStateData_Super.asset
+│   ├── PowerStateData_Fire.asset
+│   └── PowerStateData_Cape.asset
+├── Levels/
+│   ├── LevelData_01.asset
+│   └── …
+└── Palette.asset
+```
+
+#### Invariants
+
+- Behavior scripts must be drivable entirely from their assigned SO. If a test needs a Goomba with half speed, it should be a new `EnemyData` variant, not a prefab edit.
+- The generator output directory (`Assets/_Project/Prefabs/…`) can be deleted and `Create Missing Only` will rebuild it. That's the correctness test for this pipeline.
+- Prefab `.meta` GUIDs are committed to git. Deleting and regenerating a prefab gives it a new GUID, which breaks references — use `Regenerate All (Overwrite)` instead, which preserves the existing `.meta` file and thus the GUID.
+
+### 4.26 Debug & Test Scenes
+
+Unity's scene authoring tools (Tilemap Palette, prefab drag-and-drop, the hierarchy panel) are the right tools for creative level design. **Content levels are hand-authored in Unity, not generated.** Generators would fight against Unity's strengths.
+
+The exception is **debug/test scenes** — diagnostic environments used throughout development (Phase 1 through Phase 8) to validate specific systems in isolation. These are not gameplay content; they're tooling. They're generator-owned for the same reasons prefabs are: consistency, regeneratability, and the ability to re-verify behavior after tuning changes.
+
+#### Scope boundary
+
+| Scene kind | Source of truth | Where it lives | Authored by |
+|---|---|---|---|
+| **Content levels** (V1 levels 1–5, boss room, overworld, title, etc.) | The `.unity` file itself | `Assets/_Project/Scenes/Levels/`, `Assets/_Project/Scenes/Title.unity`, … | Hand, in Unity editor |
+| **Debug/test scenes** | The generator script | `Assets/_Project/Scenes/Debug/` | Editor tool (`DebugSceneGenerator`) |
+| **PlayMode test fixtures** (Phase 8) | The test setup code | In-memory only, no `.unity` file | `TestSceneBuilder` helper |
+
+If a content level ever gets regenerated from a script, we're doing it wrong. If a debug scene ever gets hand-edited in Unity, we're also doing it wrong (those changes are lost on next regeneration). If a PlayMode test fixture ever gets saved to disk, we're again doing it wrong (fixtures are ephemeral by design).
+
+#### What debug scenes are for
+
+Examples of the kind of scene the generator produces:
+- **Phase 1 Movement Test** — flat ground + platforms at stepped heights + one of each slope variant. No enemies. Used to tune jump arcs, coyote/buffer timing, and slope physics.
+- **All Blocks** — one of each interactive block (`?`, brick, multi-coin brick, note, rotating, P-switch, switch-palace × 4, used) lined up left to right. Used to verify block behaviors after any §4.6 change.
+- **All Enemies** — every V1 enemy variant in a wide flat corridor. Used to verify §4.7 / `CombatResolver` matrix and regressions.
+- **Power-up Transitions** — a corridor with every power-up pickup in sequence, enemies between them. Validates §4.3 state machine.
+- **Yoshi Test** — a corridor with a Yoshi egg, a few enemies, berries, and a colored shell pickup. Validates §4.8.
+- **Slope Battery** — every combination of slope direction × power state × speed × landing-surface-type. Pure physics test.
+
+None of these are fun. They're diagnostic. They stay in the repo throughout development.
+
+#### Generator structure
+
+`DebugSceneGenerator.cs` in `Assets/_Project/Scripts/Editor/Generators/`. Exposes menu items per scene:
+
+- `Tools → Generate → Debug Scenes → Phase 1 Movement Test`
+- `Tools → Generate → Debug Scenes → All Blocks`
+- `Tools → Generate → Debug Scenes → All Enemies`
+- `Tools → Generate → Debug Scenes → Power-up Transitions`
+- `Tools → Generate → Debug Scenes → Yoshi Test`
+- `Tools → Generate → Debug Scenes → Slope Battery`
+- `Tools → Generate → Debug Scenes → Regenerate All`
+
+Each method creates a new scene, adds the standard level infrastructure (`LevelRoot`, tilemaps, `LevelBounds`, `LevelCamera`, spawn marker), paints the diagnostic layout via `Tilemap.SetTile` / `PrefabUtility.InstantiatePrefab`, points `LevelRoot.levelData` at a shared `LevelData_Debug.asset`, and saves to `Assets/_Project/Scenes/Debug/<Name>.unity`. The scene is also added to Build Settings under a "debug" tier (higher indices than content scenes).
+
+Debug scenes use the same direct-entry machinery as content levels (§4.14) — press Play from any debug scene and it works, with fresh `SaveData` defaults from `EditorTestSettings`.
+
+#### Build Settings + production stripping
+
+Debug scenes ARE registered in Build Settings during development (required for `SceneManager.LoadScene` to find them, and for direct-Play from each to work). An `IPreprocessBuildWithReport` hook called `StripDebugScenesOnBuild` runs automatically before production builds and removes scenes under `Assets/_Project/Scenes/Debug/` from the Build Settings list so they don't ship to players. The hook is purely additive — it doesn't modify the `ProjectSettings/EditorBuildSettings.asset` file, it just filters the in-memory build list for that build.
+
+#### Invariants
+
+- Debug scenes are regeneratable at any time. There is no "I made a useful manual tweak to the All Enemies scene" case — tweaks go into the generator code or into the referenced prefabs/SOs.
+- `Assets/_Project/Scenes/Debug/` is listed in the project's scene hygiene rules: any commit that adds a `.unity` file there must also update the generator that produced it.
+- PlayMode test fixtures are a *strict subset* of debug scenes — built programmatically at test setup, torn down at teardown, never saved. They reuse the same infrastructure code as `DebugSceneGenerator` (tilemap placement helpers, spawn utilities) through a shared `SceneBuildHelpers` static class.
+
 ## 5. Game Content (V1 scope)
 
 V1 is intentionally wider than a minimal slice — it ships every major system end-to-end so architecture issues surface during content authoring rather than after. If the project needs to ship sooner, Phase 6 is the natural cut line: at end of Phase 6 there is a single playable level → goal → overworld → next-level loop, with no Yoshi or branching.
 
 - **1 overworld** with ~5 connected nodes (`Yoshi's Island 1`-style learning curve), including one branching path that requires the secret exit from level 5.
-- **5 hand-authored test levels**, each focused on exercising one subsystem:
+- **5 hand-authored content levels** (under `Assets/_Project/Scenes/Levels/`, built in the Unity editor using Tilemap Palette + prefab drag-and-drop per §4.26 — NOT generated), each focused on exercising one subsystem:
   1. Movement & jumps only — no enemies. Validates §4.2 / §4.4 tuning.
   2. Enemies (Goomba, Koopa) + shells + brick blocks. Validates §4.6 / §4.7 / `CombatResolver`.
   3. Power-ups + fire flower combat + Piranha Plants + cape feather. Validates §4.3 / cape sweep / fireball.
   4. Green Yoshi mount + tongue + swallow + dismount-on-damage. Validates §4.8. *(Colored-Yoshi variants are out of V1 scope per §4.8.)*
-  5. Goal post + secret exit (via carryable key) + sub-area pipe + midway checkpoint. Validates §4.5 / §4.11 / §4.25 reset behavior.
+  5. Goal post + secret exit (via carryable key) + sub-area pipe + midway checkpoint. Validates §4.5 / §4.11 / §4.24 reset behavior.
 - **1 boss room** (placeholder Bowser-shaped primitive that takes 3 stomps). Reached from the overworld via level 5's secret exit.
 
 Levels are stored as `.unity` scenes referenced by `LevelData` ScriptableObjects. Adding a level = creating the SO + scene, no code changes.
@@ -396,24 +671,37 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 
 ### Phase 0 — Project foundation
 - Create assembly definitions: `SMW.Runtime`, `SMW.Editor`, `SMW.Tests` (the Tests asmdef references `UnityEngine.TestRunner` + `UnityEditor.TestRunner`).
-- Define the **physics layers + 2D collision matrix** (§4.20). Commit `ProjectSettings/DynamicsManager.asset`.
+- Define the **physics layers + 2D collision matrix** (§4.19). Commit `ProjectSettings/DynamicsManager.asset`.
 - Define the **input action maps** in the existing `InputSystem_Actions.inputactions` (§4.1) and write `InputRouter`.
 - Bootstrap scene + persistent `Systems` scene + `GameServices` locator.
-- `GameStateMachine` skeleton with empty Title/Overworld/Level/Paused states.
+- `Bootstrapper.EnsureSystemsLoaded` static method with `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` per §4.14 — additively loads `Systems.unity` before any other scene's `Awake` runs, in both builds and editor.
+- `GameStateMachine` skeleton with empty Title/Overworld/Level/Paused states, including the editor-only `EnterDirectLevel(LevelData, entryPoint)` helper (§4.14) so pressing Play on any Level scene works end-to-end.
+- `TitleRoot`, `OverworldRoot`, and `LevelRoot` MonoBehaviours with direct-entry detection in `Awake` (§4.14). Hit-Play-from-any-scene is a Phase 0 requirement, not a later polish pass — every subsequent phase depends on being able to iterate on a single scene without navigating the full flow.
+- `EditorTestSettings` ScriptableObject at `Assets/_Project/Settings/EditorTestSettings.asset` with a `DirectEntrySaveMode` enum field (`FreshDefaults` | `Slot1`) defaulting to `FreshDefaults`.
+- Add `Boot`, `Systems`, `Title`, `Overworld` scenes to Build Settings with `Boot` at index 0. Add a `LevelData.OnValidate()` check that warns when a referenced scene isn't in Build Settings.
 - `SceneLoader` with fade transition (using `SceneReference`).
 - `AudioBus` stub (logs only) + empty `AudioCatalog` SO + `AudioMixer` asset wired up.
 - `Palette` SO with placeholder colors for every `PaletteRole` we know we'll need.
 - Add `com.unity.vectorgraphics` 3.0.0-preview.7 to the manifest (already done). `PaletteBinding` MonoBehaviour wired up. SVG asset folder created at `Assets/_Project/Art/Procedural/` (initial SVG batch authored later — Phase 0 just sets up the import pipeline + verifies one test SVG round-trips through the importer correctly).
-- uGUI `HUDRoot` canvas in the `Systems` scene (empty `HudPanel` + `PauseMenuPanel` placeholders) + pause flow with `Time.timeScale` toggle. Uses `InputSystemUIInputModule` for gamepad navigation.
+- Set the target resolution to **1280×720** in Player Settings (default resolution + fullscreen mode) and the Game view aspect to *16:9*. Commit `ProjectSettings/ProjectSettings.asset`.
+- uGUI `HUDRoot` canvas in the `Systems` scene with `CanvasScalerPresetApplier` (reference 1280×720, `MatchWidthOrHeight`, `Match = 0.5`) and empty `HudPanel` + `PauseMenuPanel` placeholders. Pause flow with `Time.timeScale` toggle. Uses `InputSystemUIInputModule` for gamepad navigation.
+- `LevelCamera` prefab with `orthographicSize = 7` so the camera shows ~14 tiles vertically at 16:9 (§4.4).
 - `SaveManager` round-trips an empty `SaveData` to `save_1.json`.
-- `ScoreService`, `FeedbackService`, and `GameSession` skeletons registered on `GameServices` (§4.25).
+- `ScoreService`, `FeedbackService`, and `GameSession` skeletons registered on `GameServices` (§4.24).
+- **Content authoring pipeline scaffolding** (§4.25):
+  - Folder structure created: `Assets/_Project/Prefabs/{Player,Enemies,Pickups,Blocks,Projectiles,VFX}/`, `Assets/_Project/Data/{Enemies,Pickups,Blocks,PowerStates,Levels}/`, and `Assets/_Project/Scenes/{Levels,Debug}/`.
+  - Empty ScriptableObject base classes declared: `EnemyData`, `PickupData`, `BlockContents`, `PowerStateData`, `LevelData`, `YoshiData` (fields added in their respective phases; just the `[CreateAssetMenu]`-annotated class shells at this point).
+  - `PrefabGeneratorBase` abstract class with the two-menu-item plumbing (Create Missing Only + Regenerate All with confirmation dialog + console summary line). Subclasses override `GenerateOne(name, …)` and declare the list of expected prefabs. No actual entity generators exist yet in Phase 0 — they come online in the phase that needs them (enemies in Phase 4, pickups and blocks in Phase 2, etc.). Phase 0 just ships the abstract base and one trivial concrete generator (e.g. a `VFXPrefabGenerator` producing an empty placeholder prefab) as a smoke test.
+- **Debug scene infrastructure** (§4.26):
+  - `DebugSceneGenerator.cs` skeleton with menu-item plumbing (individual scene commands + `Regenerate All`). No actual debug scenes in Phase 0 — they're added by later phases (Phase 1 gets the Movement Test, Phase 2 gets All Blocks, etc.). Phase 0 ships the skeleton + a shared `LevelData_Debug.asset` + a `SceneBuildHelpers` static with tilemap-painting and level-root-creation utilities.
+  - `StripDebugScenesOnBuild` implementing `IPreprocessBuildWithReport` — filters scenes under `Assets/_Project/Scenes/Debug/` out of production build lists while leaving `EditorBuildSettings.asset` untouched.
 
 ### Phase 1 — Player & physics
 - `PlayerController` with dynamic Rigidbody2D (`gravityScale = 0`), `GroundProbe`, manual gravity.
 - Walk, run, jump (variable height + coyote + buffer), spin jump, skid, crouch, ceiling cancel.
 - `PlayerCarry` placeholder (no actual carryables yet).
 - `LevelCamera` with forward bias, vertical lock, and `LevelBounds` clamping.
-- One test level: a flat tilemap with a few platforms and a slope. **Tune until it feels right** before moving on. This is the most important tuning gate in the project — do not advance until jump arcs / coyote / buffering are dialed in.
+- **Phase 1 Movement Test** debug scene, produced by `DebugSceneGenerator` (§4.26): flat tilemap with a few stepped platforms and one of each slope variant. No enemies. **Tune until it feels right** before moving on. This is the most important tuning gate in the project — do not advance until jump arcs / coyote / buffering are dialed in. The scene is regeneratable; if a physics tuning change requires a different diagnostic layout, edit the generator method, click the menu item, re-verify.
 
 ### Phase 2 — Tiles, blocks, pickups, timer
 - Custom `TileBase` types (`SolidTile`, `OneWayTile`, `SlopeTile`, `PipeTile`) with proper sprite-collider physics shapes for slopes.
@@ -425,13 +713,13 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 ### Phase 3 — Power-ups & combat
 - `PlayerStateMachine` (Small/Super/Fire/Cape) with full damage flow per §4.3.
 - Mushroom, Fire Flower, Cape Feather, Star pickups (Star as `PlayerController` overlay timer, not a state).
-- Fireball projectile (pooled, bounces along ground, dies on enemy/wall).
+- Fireball projectile (bounces along ground, dies on enemy/wall).
 - Cape abilities per the simplified spec in §4.2: ground sweep (arc collider with cooldown) and airborne slow-fall (jump-held = 25% gravity while descending). No flight take-off, no dive, no P-meter.
-- Death (fall pit / hit while small / time over) → level scene reload via `SceneLoader.ReloadLevel()` → respawn at last checkpoint per §4.25, with `LevelRunState.checkpointId` carried across via `GameSession`. Lives counter, game over → return to title.
+- Death (fall pit / hit while small / time over) → level scene reload via `SceneLoader.ReloadLevel()` → respawn at last checkpoint per §4.24, with `LevelRunState.checkpointId` carried across via `GameSession`. Lives counter, game over → return to title.
 - `PlayerCarry` wired up so future shells/P-switches/springs can be carried (uses the `Action` button per §4.1).
 
 ### Phase 4 — Enemies & combat resolution
-- Base `Enemy` + `KinematicBody2D` shared helper + pooling.
+- Base `Enemy` + `KinematicBody2D` shared helper.
 - Six V1 enemies (§4.7).
 - `CombatResolver` with stomp / fireball / cape / shell-collision matrix.
 - `StompCombo` chain scoring.
@@ -448,14 +736,14 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - `Overworld.unity` scene with `MapNode` graph, BFS path traversal, level entry/exit, save persistence (slot system + file select UI).
 
 ### Phase 7 — Content & polish
-- Author the 5 test levels + 1 boss room.
+- Author the 5 content levels + 1 boss room by hand in the Unity editor (§4.26 content-level side — generators are not used here). Each level starts from an empty scene with the standard level hierarchy (`LevelRoot`, tilemaps, `LevelBounds`, `LevelCamera`, `SpawnMarker_Default`, `GoalGate`) manually assembled or duplicated from an existing content level, with a fresh `LevelData_XX.asset` created via `Create → SMW → LevelData` and wired into the scene's `LevelRoot`.
 - Title screen, file select, pause menu UI passes.
 - Tune palettes, camera curves, jump constants, audio mixer routing with playtesting.
 
 ### Phase 8 — Hardening
 - PlayMode tests for: jump arc reproducibility, power-up transition matrix, damage flow, stomp resolution, save/load round-trip, level state restoration after midway respawn, P-switch swap correctness.
 - EditMode tests for SO data validation (every `EnemyData`, `PowerStateData`, `LevelData`, `PaletteRole` reference is checked at editor time via an asset postprocessor or one-shot validator).
-- Profile with the Unity Profiler; pool any remaining `Instantiate`/`Destroy` hot spots; verify no per-frame allocations in `FixedUpdate`.
+- Profile with the Unity Profiler; verify no per-frame allocations in `FixedUpdate`. If a specific `Instantiate`/`Destroy` call site actually shows up as a hot spot, address it locally — don't introduce a general pooling layer.
 
 ## 7. Open Questions
 
