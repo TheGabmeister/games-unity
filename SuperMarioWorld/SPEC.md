@@ -14,7 +14,7 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 - Pixel-perfect visuals or 1:1 SNES-accurate frame counts. We approximate physics constants and tune for feel.
 - Full level content. We ship a small, hand-authored set of test levels that exercise every system; we are not recreating all 96 SMW levels.
 - Multiplayer / Luigi co-op.
-- Save battery / SRAM accuracy. We use Unity's `JsonUtility` save files.
+- Save battery / SRAM accuracy. We use JSON save files via `Newtonsoft.Json`.
 
 ## 2. Tech Stack & Constraints
 
@@ -27,12 +27,14 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 | Tweens | **PrimeTween** (`com.kyrylokuzyk.primetween`) — preferred over coroutines for animation |
 | Scene refs | **Eflatun.SceneReference** — type-safe scene fields |
 | Tilemaps | Unity `Tilemap` + `TilemapCollider2D` + `CompositeCollider2D` |
+| Vector art | **`com.unity.vectorgraphics` 3.0.0-preview.7** — SVG → Sprite / UI Image importer. Used for all placeholder visuals (see §4.19). |
 | Tests | Unity Test Framework (PlayMode + EditMode), once `.asmdef` files exist |
 
 ### Visual placeholder rules
-- All in-game visuals are **primitive shapes** drawn either as `SpriteRenderer`s with Unity's built-in `Square`/`Circle`/`Triangle` sprites, or as `Shapes`-style procedural meshes / `LineRenderer`s.
-- A central [Assets/_Project/Art/Procedural/](Assets/_Project/) palette ScriptableObject defines colors per entity type (Mario, Goomba, brick, coin, etc.) so the look is consistent and re-skinnable.
-- No texture imports, no `.png`, no `.aseprite`. The Aseprite/PSD importers stay installed but unused for now.
+- All in-game visuals are **flat-fill SVG primitives** imported as Unity Sprites via the Vector Graphics package. One `.svg` per entity (Mario, Goomba, brick, coin, etc.) authored as solid white shapes; tinting comes from the palette ScriptableObject via `SpriteRenderer.color` / `Image.color`. See §4.19.
+- A central `Palette` ScriptableObject in [Assets/_Project/Art/Procedural/](Assets/_Project/) defines the color per entity role so the look is consistent and re-skinnable.
+- SVGs live alongside the palette in the same folder. When real sprite assets land later, the swap is *just* changing the `Sprite` reference on prefabs — no code path changes.
+- No `.png` or `.aseprite` imports for placeholders. The Aseprite/PSD importers stay installed but unused until real art arrives.
 - No audio clips. The audio system (§4.16) is a fully-wired stub that plays nothing.
 
 ### Coding conventions
@@ -97,20 +99,24 @@ Components on the `Player` prefab:
 - `PlayerInputBinding` — translates `InputAction` callbacks into intent fields the controller reads each `FixedUpdate`.
 - `GroundProbe` — separate component that does `Physics2D.BoxCast` / `RaycastNonAlloc` to detect ground, ceiling, walls, and slope angle. Uses a dedicated `Solid` layer mask, never `Physics2D.OverlapCircleAll` against everything.
 - `PlayerCarry` — manages a held object (shell, P-switch, springboard) and its release/throw vector.
-- `PlayerVisuals` — owns the procedural shape renderer; subscribes to state changes via events.
+- `PlayerVisuals` — owns the `SpriteRenderer` and the per-state SVG sprite + palette role; subscribes to `PlayerStateChanged` events to swap sprite / collider size / tint.
 
 Required mechanics (these are the things that *make it feel like SMW*; do not skip any):
 - **Variable jump height** based on jump button hold duration (≈ 0–18 frames @ 60Hz cuts gravity). Hold-time is measured in `FixedUpdate` ticks, not real seconds, so behavior stays stable across frame rates.
 - **Coyote time** (~6 frames after walking off a ledge) and **jump buffering** (~6 frames before landing).
-- **Run speed gate**: holding `Action` (§4.1) gradually accelerates Mario past the walk cap; only at full sprint can he perform a *long jump* (extra horizontal velocity). Sprint also fills the "P-meter" used for cape flight.
+- **Run speed gate**: holding `Action` (§4.1) gradually accelerates Mario past the walk cap; only at full sprint can he perform a *long jump* (extra horizontal velocity). The long-jump trigger is a velocity threshold read directly from the rigidbody — there is no separate P-meter resource in V1 (see cape notes below).
 - **Spin jump** (separate input): slightly lower jump arc, can break rotating/used blocks from above, **kills most enemies on contact like a stomp** (with no rebound height), and lets Mario safely land on spiked enemies (Buzzy Beetle, spike-shelled Koopa) that would otherwise damage him.
 - **Slope handling**: walking down slopes preserves grounded state (no airborne flicker); running down slopes accelerates.
 - **Skidding**: turning while at high velocity produces a deceleration state with its own visual.
 - **Crouch / duck slide** (Super+ only): Small Mario cannot crouch. Ducking while sliding on a slope produces a damaging slide.
 - **Ceiling hit cancels upward velocity** without rebounding.
-- **Pickup & throw**: pressing `Action` (§4.1) while next to a stunned shell, P-switch, or springboard picks it up. While carrying, releasing `Action` drops it gently; tapping `Action` while moving throws it horizontally. Held objects move with the carry transform and disable their own collisions until release. Holding `Action` continues to fill the P-meter while carrying.
+- **Pickup & throw**: pressing `Action` (§4.1) while next to a stunned shell, P-switch, or springboard picks it up. While carrying, releasing `Action` drops it gently; tapping `Action` while moving throws it horizontally. Held objects move with the carry transform and disable their own collisions until release.
 - **Pipe entry** (down/right pipes): triggered by holding the directional input over a flagged pipe segment; smoothly tweens position into the pipe via PrimeTween, then triggers a sub-area transition (§4.5).
 - **Star invincibility** (overlay state): timer-based, kills any enemy on touch including normally-invulnerable ones (except Boo and bosses), grants no flight or block-break privileges, and replaces music via a music stack push (§4.16). Implemented as a *modifier* on top of the power-up FSM, not a state in it.
+- **Cape Mario abilities** (simplified from SMW — cape flight is explicitly scoped down; see resolution in §7):
+  - **Ground sweep**: `Action` press while Cape Mario and grounded emits a brief arc collider for ~0.25s that knocks enemies back, breaks bricks below/next to Mario, and reflects enemy projectiles (fireballs from Hammer Bros, etc. — not in V1 enemy roster, but the matrix entry is wired up). Has a short cooldown so `Action` can't be spammed.
+  - **Slow-fall glide**: while Cape Mario is airborne AND descending (velocity.y < 0), holding `Jump` reduces descent to ~25% of normal gravity. Releasing `Jump` restores normal gravity. There is no forward propulsion, no diving, no upward boost, no takeoff from the ground, and no P-meter. This preserves "cape feels floaty" without the SMW flight state machine.
+  - What is **not** implemented in V1: running take-off into flight, diving (down + Jump burst), dive-rebound, cape flutter during mid-air spin, holding-a-shell-while-gliding edge cases. If full flight is ever needed post-V1, it bolts on as a separate `CapeFlightState` component without affecting the simplified path.
 
 ### 4.3 Player Power-Up State
 A finite state machine over the **size/power** axis. Star invincibility is *not* a state here — it's a separate overlay timer (see §4.2) that any of these states can have active.
@@ -134,7 +140,7 @@ Small ─Mushroom─▶ Super                      │
 - All "grow" pickups (mushroom while Small) move you up exactly one level.
 - All "ability" pickups (flower / feather) take you to that ability's state regardless of which ability you currently hold — picking up a feather as Fire Mario becomes Cape Mario, with no intermediate Super stage.
 - Damage flow is always Fire/Cape → Super → Small → Death. There is no path from Fire/Cape directly to Small.
-- States are ScriptableObject configs (`PowerStateData`) holding: collider size, base color, can-shoot-fireball, can-fly, hit-from-above-breaks-bricks, max-fireballs-on-screen, etc.
+- States are ScriptableObject configs (`PowerStateData`) holding: collider size, base color, can-shoot-fireball, can-cape-sweep, can-slow-fall, hit-from-above-breaks-bricks, max-fireballs-on-screen, etc. (Note: `can-fly` is replaced by the more specific `can-slow-fall` — we no longer have a generic flight flag, consistent with the simplified cape in §4.2.)
 - Transitions emit a `PlayerStateChanged(prev, next)` event so visuals/audio/UI/collider-resize all react without polling.
 - After damage, brief invulnerability (~2s) implemented as a flashing tween via PrimeTween *and* a temporary layer swap to `PlayerInvulnerable` so enemy contact is ignored.
 
@@ -152,6 +158,12 @@ Small ─Mushroom─▶ Super                      │
 - **Tile types** are custom `TileBase` subclasses for purely-static layout: `SolidTile`, `OneWayTile`, `SlopeTile`, `PipeTile` (visual only — actual pipe interaction is a GameObject trigger, see below).
 - **Interactive tiles** (brick, `?`, note block, used, rotating, P-switch) are *not* TileBase types. They're marker tiles painted on the `Interactive` tilemap layer that the `InteractiveBlockSpawner` (§4.6) replaces with prefab GameObjects on level load. Per-tile mutable state belongs to those GameObjects, not the tilemap.
 - **Slopes**: Unity's `TilemapCollider2D` does not natively produce slope shapes — every tile becomes a box. To get real slope physics, `SlopeTile.GetTileData` must set `colliderType = Tile.ColliderType.Sprite` and supply a sprite whose **Custom Physics Shape** is a triangle. The `CompositeCollider2D` will then merge adjacent slope sprites into a continuous polygon edge. Document this in the slope tile's tooltip — it's the most likely thing to forget when authoring new slope variants.
+- **Slope angle set is locked to SMW's two angles — no arbitrary slopes.** This keeps physics tuning tractable and prevents level authors from introducing angles the controller hasn't been tuned against:
+  - **Steep (45°)** — 1 tile rise per 1 tile run. One sprite, one triangular physics shape.
+  - **Shallow (~26.57°, commonly mislabeled "22.5°")** — 1 tile rise per 2 tiles run, so the slope spans two adjacent tiles. This requires **two** sprite variants: a lower-half tile (rises from floor to mid) and an upper-half tile (rises from mid to ceiling). Both have their own triangular Custom Physics Shape; `CompositeCollider2D` merges them into one continuous edge when painted side-by-side.
+  - Each of the two angles exists in **both directions** (floor rising to the right, floor rising to the left). Implemented as separate sprite/tile assets rather than relying on `TileData.transform` flip, because `ColliderType.Sprite` physics shapes do not always mirror reliably with tile transforms. Four sprites total: steep-L, steep-R, shallow-L (×2 halves), shallow-R (×2 halves) — six sprite variants, four logical slope types.
+  - Ceiling slopes (upside-down variants) are **not** in V1 — SMW uses them sparingly and they complicate the `GroundProbe` normal logic. Flag for post-V1 if a boss room needs them.
+  - `SlopeTile` exposes its angle as a public float so `GroundProbe` can read it for movement adjustments (walking-down preserves grounded state, running-down accelerates per §4.2). The controller reads the angle from the surface normal returned by `BoxCast`, not by type-checking the tile — this is what keeps slope behavior consistent with the collider shape.
 - **Sub-areas** (pipe / door destinations): for V1, sub-areas live as **separate regions of the same Level scene** at a large coordinate offset (e.g. `+10000` units on Y). Pipe entry tweens Mario into the pipe, then snaps the camera + Mario to the destination region's `SpawnMarker` and tweens out. This avoids additive scene loads on every pipe and keeps level state in one place. Each sub-area has its own `LevelBounds` so the camera respects the right rectangle. Switch to additive scenes only if a level grows large enough to hurt scene-load time, which won't happen in V1.
 - **Checkpoints / midway**: a `MidwayGate` GameObject placed in the level. Crossing it stores its `CheckpointId` on the `LevelRunState` (§4.25), NOT on the player or the save file. On death, the level scene reloads and Mario respawns at the matching `SpawnMarker` for that checkpoint. Crossing a midway when Small also auto-grants a Mushroom (SMW behavior). Midway state is wiped when the player exits the level (whether by goal, voluntary back-to-overworld, or game over) — see §4.25.
 
@@ -220,7 +232,14 @@ A top-level FSM with states: `Boot`, `Title`, `Overworld`, `Level`, `Paused`, `G
 - `SaveManager` writes one JSON file per slot at `Application.persistentDataPath/save_{slot}.json` (slots 1–3).
 - A small `SaveIndex.json` tracks which slot is "current" + last-played metadata for the file select screen.
 - Persisted in `SaveData`: lives, score, total coin count (the rolling counter that triggers 1-ups every 100), current overworld node id, completed-level map (normal/secret exit flags per level id), switch palace states (4 bools), collected-dragon-coins bitmask per cleared level, audio volume preferences. **Midway checkpoints are NOT in save data** — they're per-attempt state (§4.25).
-- Serialization uses `JsonUtility` for V1. It can't round-trip polymorphic class hierarchies or `Dictionary<,>`, so all persisted collections are `List<T>` of plain structs with explicit id fields. If that becomes painful, swap to `Newtonsoft.Json` (already pulled in transitively via Eflatun.SceneReference).
+- Serialization uses **`Newtonsoft.Json`** (`com.unity.nuget.newtonsoft-json`, pulled in transitively via Eflatun.SceneReference — no manifest change needed). This gives us:
+  - Native `Dictionary<TKey, TValue>` round-trip, which matches the natural shape of `SaveData` (e.g. `Dictionary<string, LevelCompletionFlags>` keyed by `levelId`, `Dictionary<string, ulong>` for dragon-coin bitmasks).
+  - Polymorphic type handling via `TypeNameHandling.Auto` when we need it (e.g. if `PickupData`-style hierarchies ever need to persist — not expected in V1, but the door's open).
+  - Enum-as-string conversion via `StringEnumConverter` so save files stay human-readable and diff-able. Treat save JSON as text we'd be willing to open in a text editor for debugging.
+- All numeric-keyed maps use `string` keys in the persisted form (e.g. `levelId` is already a string). No attempt to preserve `int` / `enum` keys in JSON — round-trip via strings.
+- A single `SaveSerializer` static wraps `JsonConvert.SerializeObject` / `DeserializeObject` with our standard `JsonSerializerSettings` (pretty-printed, `StringEnumConverter`, `NullValueHandling.Ignore`, `MissingMemberHandling.Ignore` so old saves survive adding new fields).
+- **Save versioning**: `SaveData` has a top-level `int saveVersion` field. On load, if the stored version is less than the current, run registered `ISaveMigration` steps in order before deserializing into the current types. V1 ships at `saveVersion = 1` with the migration chain empty.
+- File format: UTF-8, pretty-printed JSON. No compression or encryption in V1 — not worth the complexity for a single-player offline game, and readable saves help debugging.
 - Saves happen at: level clear, overworld node move, switch palace activation, file-select. Never mid-level.
 
 ### 4.16 Audio System (stub)
@@ -259,10 +278,18 @@ When real assets land, the only work is filling out `AudioCatalog` entries — n
 - Use Unity's built-in `ObjectPool<T>` for: enemies, projectiles (fireballs, shells when thrown), pickups, particle bursts.
 - Prefab spawning that does *not* go through a pool is a code smell — flag in review.
 
-### 4.19 Procedural Visuals
-- `PrimitiveShapeRenderer` component: holds a `ShapeKind` enum (`Square`, `Circle`, `Triangle`, `Capsule`) and a color, draws via a `SpriteRenderer` referencing one of a few generated-at-edit-time primitive sprites in [Assets/_Project/Art/Procedural/](Assets/_Project/). For shapes that need crisp outlines (UI cues, debug visualizations) use `LineRenderer` or a procedural mesh.
-- Animated states (walking, jumping, hurt) are conveyed by **color flashes**, **squash/stretch tweens** (PrimeTween), and **rotation** — never by sprite swapping.
+### 4.19 Procedural Visuals (SVG-backed placeholders)
+- All placeholder visuals are **SVG sprites** authored by hand, stored in [Assets/_Project/Art/Procedural/](Assets/_Project/), and imported via `com.unity.vectorgraphics` 3.0.0-preview.7. The importer tessellates each SVG into a triangle mesh at edit time; runtime cost is identical to any sprite mesh.
+- **One SVG per entity / shape**, named by role (`mario_small.svg`, `mario_super.svg`, `goomba.svg`, `coin.svg`, `brick.svg`, `tile_solid.svg`, `slope_steep_r.svg`, etc.). Each SVG uses a single solid `fill="white"` so palette tinting via `SpriteRenderer.color` / `Image.color` produces the final color.
+- **`viewBox` matches the tile grid**: `0 0 16 16` for a 1×1-tile entity, `0 0 16 32` for tall Mario, `0 0 32 16` for wide entities like Banzai Bill. The SVG importer's *Pixels Per Unit* setting is configured to match (16) so 1 SVG unit = 1 world unit / 16th-of-a-tile, and tiles align cleanly.
+- **No `PrimitiveShapeRenderer` component.** Just `SpriteRenderer` (or uGUI `Image`) with a `Sprite` reference + a `PaletteBinding` MonoBehaviour that writes the palette color to the renderer on `Awake` and on palette change.
+- **Slope tile sprites** (§4.5) are SVGs too — the triangular `<polygon>` doubles as both the rendered shape and the source for Unity's auto-generated *Custom Physics Shape*. Verify after import: the importer should produce a triangular physics shape; if not, set it manually in the Sprite Editor.
+- **SVG → uGUI Image** also works (the Vector Graphics package supports both `SpriteRenderer` and uGUI `Image` import targets), so HUD icons (life icon, coin icon, dragon-coin slots) use the same SVG assets as world sprites. One source of truth per shape.
+- Animated states (walking, jumping, hurt) are conveyed by **color flashes**, **squash/stretch tweens** (PrimeTween), and **rotation** of the sprite transform — not by swapping to different SVGs every frame. Sprite swapping is reserved for *state* transitions (Small ↔ Super, walking ↔ skidding pose, etc.), not per-frame animation.
 - A `Palette` ScriptableObject holds all entity colors keyed by an enum (`PaletteRole.PlayerSmall`, `PaletteRole.Goomba`, `PaletteRole.Brick`, ...). Prefabs reference the palette + a role, never a hardcoded `Color`. Re-theming = swapping the palette asset.
+
+#### Real-asset migration path
+When real sprite assets eventually arrive, the swap is purely additive: drop the new `.png` / `.aseprite` next to (or replacing) the SVG, repoint the `Sprite` field on the prefab, and decide per-entity whether `PaletteBinding` should keep tinting or be removed. **No gameplay or controller code changes.** This is the central reason for the SVG approach — it preserves the same `Sprite` data shape as the eventual real assets, so prefabs never need restructuring.
 
 ### 4.20 Layers & Physics Matrix
 A 2D physics matrix is non-optional for a platformer of this complexity. Set up before Phase 1.
@@ -376,7 +403,7 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - `SceneLoader` with fade transition (using `SceneReference`).
 - `AudioBus` stub (logs only) + empty `AudioCatalog` SO + `AudioMixer` asset wired up.
 - `Palette` SO with placeholder colors for every `PaletteRole` we know we'll need.
-- `PrimitiveShapeRenderer` + procedural shape sprites in `Assets/_Project/Art/Procedural/`.
+- Add `com.unity.vectorgraphics` 3.0.0-preview.7 to the manifest (already done). `PaletteBinding` MonoBehaviour wired up. SVG asset folder created at `Assets/_Project/Art/Procedural/` (initial SVG batch authored later — Phase 0 just sets up the import pipeline + verifies one test SVG round-trips through the importer correctly).
 - uGUI `HUDRoot` canvas in the `Systems` scene (empty `HudPanel` + `PauseMenuPanel` placeholders) + pause flow with `Time.timeScale` toggle. Uses `InputSystemUIInputModule` for gamepad navigation.
 - `SaveManager` round-trips an empty `SaveData` to `save_1.json`.
 - `ScoreService`, `FeedbackService`, and `GameSession` skeletons registered on `GameServices` (§4.25).
@@ -399,7 +426,7 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - `PlayerStateMachine` (Small/Super/Fire/Cape) with full damage flow per §4.3.
 - Mushroom, Fire Flower, Cape Feather, Star pickups (Star as `PlayerController` overlay timer, not a state).
 - Fireball projectile (pooled, bounces along ground, dies on enemy/wall).
-- Cape spin attack (sweep collider that knocks enemies / shells back).
+- Cape abilities per the simplified spec in §4.2: ground sweep (arc collider with cooldown) and airborne slow-fall (jump-held = 25% gravity while descending). No flight take-off, no dive, no P-meter.
 - Death (fall pit / hit while small / time over) → level scene reload via `SceneLoader.ReloadLevel()` → respawn at last checkpoint per §4.25, with `LevelRunState.checkpointId` carried across via `GameSession`. Lives counter, game over → return to title.
 - `PlayerCarry` wired up so future shells/P-switches/springs can be carried (uses the `Action` button per §4.1).
 
@@ -434,7 +461,7 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 
 These need a decision before their phase begins; flag them when reached.
 
-- **Slopes:** match SMW's 22.5°/45° slope set exactly, or allow arbitrary angles? (Affects physics tuning.)
-- **Cape flight:** full SMW glide/dive physics, or simplified hover? (Cape physics are notoriously tricky.)
-- **Save format:** stick with `JsonUtility` or jump straight to Newtonsoft for cleaner polymorphism? (Newtonsoft is already in the project.)
+- ~~**Slopes:**~~ **Resolved:** locked to SMW's two-angle set — steep (45°) and shallow (~26.57°, the "1:2" two-tile slope). No arbitrary angles. No ceiling slopes in V1. Full sprite/tile breakdown and physics-shape details in §4.5.
+- ~~**Cape flight:**~~ **Resolved:** simplified. V1 Cape Mario has a ground sweep attack and a jump-held slow-fall (25% gravity while descending). No flight take-off, no dive, no dive-rebound, no P-meter. Full SMW cape flight is explicitly out of scope and can bolt on later as a separate component if ever needed. See §4.2 for the full cape ability list.
+- ~~**Save format:**~~ **Resolved:** Newtonsoft.Json. Already pulled in transitively via Eflatun.SceneReference, handles `Dictionary<,>` and enums cleanly, saves stay human-readable for debugging. See §4.15 for the full serialization rules and `saveVersion` migration chain.
 - ~~**UI Toolkit vs uGUI:**~~ **Resolved:** uGUI. `com.unity.ugui` 2.0.0 is in the manifest with TMP bundled, gamepad nav via `InputSystemUIInputModule` works out of the box, and world-space canvases give us the score-popup pattern for free.
