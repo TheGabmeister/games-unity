@@ -230,6 +230,83 @@ Required block behaviors:
 - **Stomp combos**: a `StompCombo` component on the player tracks consecutive enemy kills without touching the ground. Each subsequent kill in a chain awards more points (200 → 400 → 800 → 1000 → ... → 1-up at 8). Resets on landing.
 - Enemies despawn when far off-camera. Off-camera spawners (e.g. `BulletBillLauncher`) re-emit when their position re-enters the camera frustum + a hysteresis margin. Dynamic spawns (projectiles, VFX, score popups) use plain `Instantiate` / `Destroy` — pooling is not worth the infrastructure for this game's scale.
 
+#### Full SMW enemy roster (reference)
+
+Not all of these ship in V1 — see the V1 roster below. This list exists to ground architecture decisions (especially combat resolution) in the actual breadth of behavior, not just the V1 subset. Organized by **combat archetype**, because that's the axis the code has to handle. Variants within an archetype are usually expressible as `EnemyData` flags.
+
+**Walkers** (stompable from above, side contact hurts Mario):
+- Galoomba (SMW Goomba — flipped on stomp, can be picked up and thrown)
+- Rex (2 stomps: first flattens, second kills)
+- Dino-Torch / Dino-Rhino (larger, breathes fire; splits on damage)
+- Mega Mole (giant, Mario can ride on top)
+- Wiggler (peaceful; 1 stomp angers → faster; 2 stomps kills)
+
+**Shelled walkers** (stomp → shell that can be kicked, carried, ricocheted):
+- Koopa Troopa — 4 colors: Green (walks off ledges), Red (turns at ledges), Yellow (clumsy, kicks dust), Blue (kicks other shells)
+- Paratroopa — flying variants of each Koopa color; stomp removes wings → walking Koopa
+- Buzzy Beetle (fire-immune Koopa variant)
+- Spike Top (wall-crawling Buzzy; spiked top)
+
+**Spiked** (normal stomp hurts Mario; spin-jump is safe on some, still hurts on others):
+- Spiny (thrown by Lakitu, or grounded walker)
+- Urchin (stationary underwater spike ball)
+- Porcu-Puffer (chases Mario on water surface)
+- Sumo Brother (torso stompable, but fire on head)
+
+**Un-stompable** (only fireball / cape / star / thrown shell kills):
+- Piranha Plant — standing, Jumping, Fire, Upside-down variants
+- Fishin' Boo (rod-waving ghost hazard)
+
+**Intangible-based** (only vulnerable in specific player states or angles):
+- Boo (tangible only when Mario isn't looking; killed only by cape / star)
+- Big Boo (Donut Ghost House boss — listed as boss below, same behavior)
+- Eerie (flying skulls)
+- Boo Buddies (circle and cluster variants)
+- Boo Block (disguised as a block)
+
+**Ballistic** (off-screen spawner, straight-line flight):
+- Bullet Bill (horizontal; stompable from above)
+- Banzai Bill (giant Bullet Bill)
+- Torpedo Ted (underwater variant)
+
+**AI-heavy spawners / special attackers**:
+- Lakitu (throws Spinies from a cloud; stomping gives Mario the cloud)
+- Magikoopa (teleports, casts wand spells — notably can turn `?` blocks into enemies)
+- Amazing Flyin' Hammer Brother (throws hammers from a flying platform; platform itself stompable)
+- Monty Mole (ambushes from ground holes)
+- Fire Piranha (spits fireballs)
+
+**Multi-stomp / stateful**:
+- Chargin' Chuck — 3 HP, many variants (Chargin', Clappin', Jumpin', Splittin', Diggin', Bouncin', Football, Whistlin', Puntin', Swimmin') each with distinct attacks
+- Bob-omb (stomp lights fuse → explodes; pickable while lit)
+
+**Environmental hazards** (unkillable or only conditionally):
+- Thwomp (falls on Mario when below)
+- Thwimp (bouncing mini-Thwomp)
+- Fuzzy (patrols a track, electric contact damage)
+- Ninji (jumps up and down in place)
+- Swoopin' Stu (drops from ceiling)
+- Grinder (spinning saw blade — fortress levels; confidence lower)
+
+**Aquatic** (water-only):
+- Cheep-Cheep — Green (static path) and Red (chase) variants
+- Blurp (variant)
+- Rip Van Fish (asleep until Mario passes close)
+- Dolphin (not an enemy — rideable helper)
+
+**Bosses** (out of scope for the shared enemy matrix — each is its own scripted encounter):
+- 7 Koopalings — Iggy, Larry, Morton, Roy, Lemmy, Wendy, Ludwig (each with unique pattern)
+- Big Boo (Donut Ghost House)
+- Reznor (4 dinos on a spinning wheel, fortress boss — fireball-only)
+- Bowser (final, in Clown Car with mechakoopas)
+
+**Observations for architecture** (facts, not conclusions):
+- ~10 combat archetypes in the full roster, not 6.
+- Most variance within an archetype is data-flag expressible (`fireVulnerable`, `spinJumpSafe`, `stomp HP`, `fireImmune`, `intangibleUnlessNotLooking`, etc.).
+- The cells that are genuinely unusual — Boo's look-gated tangibility, Magikoopa's wand, Lakitu's cloud-steal, Chuck's mini-FSM, Reznor's fireball-only kill condition — are per-enemy behavior, not per-cell matrix entries.
+- Bosses don't share the regular enemy matrix; each is a scripted encounter.
+- My confidence on exotic variants (Grinder, Fishin' Boo, full Chuck variant list, some Dino specifics) is lower — verify against a canonical source before committing to any that V1 actually ships.
+
 V1 enemy roster (smallest set that exercises every behavior shape):
 - **Goomba/Galoomba** — walks, stomp kills.
 - **Koopa Troopa** — walks, stomp turns into a sliding shell that can hit other enemies and ricochet off walls.
@@ -239,6 +316,42 @@ V1 enemy roster (smallest set that exercises every behavior shape):
 - **Boo** — moves toward player only when player isn't looking; intangible to fireballs.
 
 These six cover: stomping, shells, projectile spawners, multi-hit enemies, line-of-sight AI, fireball interaction.
+
+#### Enemy behaviors (composition, not inheritance)
+
+The six V1 enemies don't share a movement/AI model — a walker, a ballistic projectile, a periodic emerger, a charger with states, and a line-of-sight ghost have nothing in common mechanically beyond "can be hurt and can despawn." Trying to express that in a single `Enemy.Update()` with a behavior enum ends in a god-class with a switch statement. Instead, mirror the `PickupEffect` strategy pattern (§4.9): `Enemy` stays thin and movement/AI is a **composed behavior component**.
+
+**Structure on every enemy GameObject:**
+- `Rigidbody2D` + collider(s)
+- `Enemy` — thin contract layer. Holds `EnemyData`, current HP, palette binding. Owns the combat callbacks (`OnStompedFromAbove`, `OnHitByFireball`, `OnHitByCape`, `OnShellImpact`) which route to `CombatResolver`. Owns off-screen despawn.
+- `KinematicBody2D` helper — *only for grounded enemies*. Bullet Bill and Boo don't get one.
+- **Exactly one `EnemyBehavior` MonoBehaviour** — the per-archetype movement/AI. `Enemy.Awake` calls `behavior.Init(this, data)` so the behavior reads `EnemyData` for tuning.
+- `PaletteBinding`, `SpriteRenderer`.
+
+**Concrete behaviors** (one MonoBehaviour each, all inherit from `abstract EnemyBehavior`):
+
+| Behavior | Used by | Description |
+|---|---|---|
+| `WalkerBehavior` | Goomba, Koopa (walking phase) | Walks in facing direction, turns at walls and optionally at ledges (flag on `EnemyData`). |
+| `ShellBehavior` | Koopa (shell phase) | Sliding shell; kickable, carryable, ricochets off walls, damages other enemies on contact. |
+| `ProjectileBehavior` | Bullet Bill | Constant horizontal velocity, no ground contact, no wall turn. |
+| `PeriodicEmergeBehavior` | Piranha Plant | Stationary origin; tweens up/down on a timer. Suppresses emerge while player is within a proximity radius (SMW behavior). |
+| `ChargerBehavior` | Chargin' Chuck | Internal mini-FSM: `Walk → Spot → Charge → Stun → Recover`. Multi-HP handled by `Enemy`; state transitions owned here. |
+| `LineOfSightBehavior` | Boo | Moves toward player only when `player.facing` dot `(boo.pos - player.pos)` indicates player isn't looking. Intangible to fireballs (flag on `EnemyData`, checked by `CombatResolver`). |
+
+**Koopa walk → shell transition:** same GameObject, swap active behavior. `Enemy.OnStompedFromAbove` for a Koopa disables `WalkerBehavior`, enables `ShellBehavior` (both sit on the prefab, one active at a time), swaps the collider, and updates the sprite via `EnemyData.shellSprite`. **Not** a prefab swap — carries clean state (Koopa color, id) across the transition.
+
+**Shape-category prefabs** (§4.25) map to which behavior is pre-wired:
+- `GroundEnemy_Base.prefab` — `WalkerBehavior` attached, `KinematicBody2D` attached.
+- `FlyingEnemy_Base.prefab` — `ProjectileBehavior` attached, no `KinematicBody2D`.
+- `ShelledEnemy_Base.prefab` — both `WalkerBehavior` and `ShellBehavior` attached, walker active by default.
+
+Unusual enemies (Piranha, Chuck, Boo) don't fit a shape category cleanly — they get their own prefab (`Enemy_Piranha.prefab`, etc.) composed from the same parts. That's fine; the thin-prefab / fat-SO rule is about *per-variant* proliferation (10 walker variants shouldn't need 10 prefabs), not about forcing every enemy into three buckets.
+
+**What NOT to do:**
+- No `KoopaEnemy : Enemy`, `GoombaEnemy : Enemy`. The only class called `Enemy` is the contract layer.
+- No `Enemy` god-class with a `MovementKind` enum and a switch.
+- No `BaseGroundEnemy : Enemy` / `BaseFlyingEnemy : Enemy` class hierarchy. The shape categories are *prefab templates*, not base classes. Chuck is grounded but state-heavy; Piranha is neither moving nor shelled — a three-way class split wouldn't hold.
 
 ### 4.8 Yoshi
 - Yoshi is a `RideableMount` component. When active, the player rigidbody is parented to Yoshi's saddle transform and the `PlayerController`'s physics step is suspended; a `YoshiController` drives Yoshi's body, which forwards `Jump` input to a Yoshi-specific jump (with the well-known "extended jump" — Mario can jump again from Yoshi's apex). The player power-up state machine and HUD remain unchanged.
@@ -270,7 +383,7 @@ These six cover: stomping, shells, projectile spawners, multi-hit enemies, line-
 A top-level FSM with states: `Boot`, `Title`, `Overworld`, `Level`, `Paused`, `GameOver`. Each state knows what scene(s) should be loaded and which input map is active. Transitions go through a single `GameStateMachine.Transition(IGameState next)` method so save/load and analytics hooks are centralized.
 
 ### 4.14 Scene Management
-- `SceneLoader` service wraps `SceneManager.LoadSceneAsync` with: fade-out, additive load, swap, fade-in.
+- `SceneLoader` service wraps `SceneManager.LoadSceneAsync` with: fade-out, additive load, swap, fade-in. Fade is delegated to a separate `ScreenFader` MonoBehaviour — see the scene loader mechanics subsection below.
 - All scene references are `SceneReference` (Eflatun) — never raw strings.
 
 #### Scene entry points (Play from any scene)
@@ -336,6 +449,73 @@ void Awake()
 - `Systems.unity`, `Title.unity`, `Overworld.unity`, and every `LevelXX.unity` MUST be present in Build Settings, or the `SceneManager.LoadScene` calls above fail silently.
 - `LevelData.OnValidate()` emits an editor warning if its `sceneRef` points at a scene that isn't in Build Settings. Don't rely on humans to remember.
 - Missing Build Settings registration is the #1 reason "Play on my level scene doesn't work" — flag it loudly.
+
+#### Creating `Boot.unity` and `Systems.unity` (Phase 0, one-time)
+
+Hand-authored in the Unity editor, not generator-owned. These are infrastructure scenes — they don't hold SO-driven content, they rarely change, and nothing else in the project regenerates them. The prefab/debug-scene generators (§4.25 / §4.26) exist because those artifacts need to stay in sync with data — Boot and Systems don't. Create once, commit, move on.
+
+Step-by-step:
+
+1. **`Boot.unity`** — File → New Scene → Empty. Delete the default `Main Camera` and `Directional Light`. Add one GameObject named `Bootstrapper` with the `Bootstrapper` MonoBehaviour. Save to `Assets/_Project/Scenes/Boot.unity`. File → Build Profiles → add to Scenes list at **index 0**.
+2. **`Systems.unity`** — File → New Scene → Empty. Delete default camera/light. Add, at the scene root:
+   - `GameServices` GameObject with the `GameServices` locator component (and child components for each service registered at boot: `SaveManager`, `SceneLoader`, `GameStateMachine`, `ScoreService`, `FeedbackService`, audio bus — see §3).
+   - `HUDRoot` Canvas (Screen Space - Overlay) with `CanvasScaler` + `CanvasScalerPresetApplier` (§4.17), child `HudPanel` / `PauseMenuPanel` / `GameOverPanel` placeholders.
+   - `TransitionCanvas` Canvas (Screen Space - Overlay, `sortingOrder` above `HUDRoot`) with a full-screen black `Image` child and the `ScreenFader` MonoBehaviour on the canvas root. Used by `SceneLoader` for fade transitions — see the scene loader mechanics subsection below.
+   - `AudioBus` GameObject with child `AudioSource`s for each channel per §4.16 (`MusicChannel`, `SfxChannel`, `JingleChannel`, `AmbientChannel`, `UiSfxChannel` with `ignoreListenerPause = true`).
+   - `EventSystem` with `InputSystemUIInputModule` (Input System UI module, not the legacy Standalone Input Module).
+   Save to `Assets/_Project/Scenes/Systems.unity` and add to Build Settings (any index > 0).
+3. **`Title.unity` / `Overworld.unity`** — empty shells in Phase 0 containing only a `TitleRoot` / `OverworldRoot` MonoBehaviour (per §4.14 direct-entry pattern) + a Canvas. Content lands in Phases 6/7.
+4. **Verify from Play-from-scene matrix**: pressing Play from `Boot.unity` loads Systems additively and transitions to Title; pressing Play from `Title.unity` alone also works (Bootstrapper's `[RuntimeInitializeOnLoadMethod]` loads Systems, `TitleRoot` detects direct entry).
+
+After Phase 0 these scenes are effectively frozen. Subsequent phases add components to `GameServices` or panels under `HUDRoot`, but the scene structure itself doesn't churn.
+
+#### Scene loader + fade transition
+
+Split into two components with separate concerns, both registered on `GameServices`:
+
+- **`SceneLoader`** — pure service, no scene dependencies. Wraps `SceneManager.LoadSceneAsync` / `UnloadSceneAsync` / `SetActiveScene` and orchestrates the transition sequence. Accepts `SceneReference` (Eflatun, already in manifest) so inspector fields are type-safe and validated against Build Settings at edit time.
+- **`ScreenFader`** — MonoBehaviour on a dedicated `TransitionCanvas` GameObject in `Systems.unity`. Owns a full-screen black `Image` (`raycastTarget = true` to block input during transitions), Screen Space - Overlay, `sortingOrder` above every other canvas so it covers HUD, pause menu, and game-over overlay. Exposes `Task FadeInAsync(float duration)` / `Task FadeOutAsync(float duration)`, driven by PrimeTween with `useUnscaledTime: true` so it works regardless of `Time.timeScale`.
+
+`SceneLoader.LoadAsync` composes the two:
+
+```csharp
+public async Task LoadAsync(SceneReference target, SceneLoadOptions opts = default) {
+    if (_isTransitioning) { Debug.LogWarning("SceneLoader re-entered during transition"); return; }
+    _isTransitioning = true;
+
+    await _fader.FadeOutAsync(opts.FadeOutDuration);           // 1. fade to black
+    await SceneManager.LoadSceneAsync(target.Name, LoadSceneMode.Additive);  // 2. load target additively
+    OnTransitionPeak?.Invoke(target, opts.Payload);            // 3. mid-transition hook (LevelContext.Begin, HUD rebind, camera snap)
+    if (opts.UnloadPrevious) await SceneManager.UnloadSceneAsync(_previous);  // 4. unload old
+    SceneManager.SetActiveScene(SceneManager.GetSceneByName(target.Name));    // 5. set active for lighting / default instantiation
+    await _fader.FadeInAsync(opts.FadeInDuration);             // 6. fade back up
+
+    _isTransitioning = false;
+}
+```
+
+**API surface:**
+
+```csharp
+public sealed class SceneLoader {
+    public Task LoadAsync(SceneReference target, SceneLoadOptions opts = default);
+    public Task ReloadLevelAsync();   // death / midway-respawn flow per §4.24
+    public event Action<SceneReference, object> OnTransitionPeak;  // fires while screen is black
+}
+```
+
+**Why split** (instead of one combined `SceneTransitionController`):
+- `SceneLoader` is pure logic — making it a MonoBehaviour just to host the fader would pull it into the scene hierarchy for no reason. As a pure service, it's unit-testable with a stub fader.
+- `ScreenFader` is reusable for non-load scenarios (boss intro flash, debug teleport hide) that don't want to touch scene loading.
+- Different shapes (service vs. scene-content MonoBehaviour) belong in different classes.
+
+**Why not split further** (no `IScreenFader` interface, no loader/swapper/event-bus breakdown): YAGNI — introduce abstraction when the second use case actually arrives.
+
+**Edge cases:**
+- **Re-entry is rejected**, not stacked. A second `LoadAsync` during a transition logs a warning and returns.
+- **Death reload** ([§4.24](SPEC.md)) uses `ReloadLevelAsync` — same machinery, target = current scene, payload carries `LevelRunState.checkpointId` so the peak hook respawns at the midway marker.
+- **Audio during transition** — `AudioListener.pause` is NOT used (reserved for pause menu per §4.22). Music plays through unless a caller explicitly runs `AudioBus.FadeMusicOut` in parallel.
+- **Transition durations** are caller-controlled via `SceneLoadOptions` (defaults: 0.3s each way). Faster for death reload (~0.15s), slower for title → overworld establishing shot.
 
 ### 4.15 Save System
 - `SaveManager` writes one JSON file per slot at `Application.persistentDataPath/save_{slot}.json` (slots 1–3).
@@ -679,7 +859,7 @@ Each phase ends with a runnable build that demos the new system. **Do not skip p
 - `TitleRoot`, `OverworldRoot`, and `LevelRoot` MonoBehaviours with direct-entry detection in `Awake` (§4.14). Hit-Play-from-any-scene is a Phase 0 requirement, not a later polish pass — every subsequent phase depends on being able to iterate on a single scene without navigating the full flow.
 - `EditorTestSettings` ScriptableObject at `Assets/_Project/Settings/EditorTestSettings.asset` with a `DirectEntrySaveMode` enum field (`FreshDefaults` | `Slot1`) defaulting to `FreshDefaults`.
 - Add `Boot`, `Systems`, `Title`, `Overworld` scenes to Build Settings with `Boot` at index 0. Add a `LevelData.OnValidate()` check that warns when a referenced scene isn't in Build Settings.
-- `SceneLoader` with fade transition (using `SceneReference`).
+- `SceneLoader` service + `ScreenFader` MonoBehaviour (on `TransitionCanvas` in `Systems.unity`) per the split in §4.14. Uses `SceneReference` for type-safe scene fields; `ScreenFader` uses PrimeTween with unscaled time.
 - `AudioBus` stub (logs only) + empty `AudioCatalog` SO + `AudioMixer` asset wired up.
 - `Palette` SO with placeholder colors for every `PaletteRole` we know we'll need.
 - Add `com.unity.vectorgraphics` 3.0.0-preview.7 to the manifest (already done). `PaletteBinding` MonoBehaviour wired up. SVG asset folder created at `Assets/_Project/Art/Procedural/` (initial SVG batch authored later — Phase 0 just sets up the import pipeline + verifies one test SVG round-trips through the importer correctly).
