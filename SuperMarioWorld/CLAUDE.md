@@ -10,7 +10,7 @@ Unity 6 (`6000.3.12f1`) project recreating *Super Mario World* (SNES, 1990) game
 
 ## Current state
 
-**Phase 0 complete.** Assembly definitions, the Boot / Systems / Title / Overworld scene foundation, `GameServices` + all service skeletons (`SaveManager`, `SceneLoader` + `ScreenFader`, `GameStateMachine` + states, `ScoreService`, `FeedbackService`, `GameSession`, `AudioBus` stub), `PlayerInputManager`, physics layer matrix, build settings, and 31 automated tests (26 EditMode + 5 PlayMode, all green) are in place. Next up: Phase 1 player controller + camera. See [TASKS.md](TASKS.md) for the phase-by-phase checklist.
+**Phase 0 complete.** Assembly definitions, the Boot / Systems / Title / Overworld scene foundation, `GameServices` + all service skeletons (`SaveManager`, `SceneLoader` + `ScreenFader`, `GameStateMachine` + states, `FeedbackService`, `GameSession`, `AudioBus` stub), `PlayerInputManager`, physics layer matrix, build settings, and 31 automated tests (26 EditMode + 5 PlayMode, all green) are in place. Next up: Phase 1 player controller + camera. See [TASKS.md](TASKS.md) for the phase-by-phase checklist.
 
 ## How to build / run
 
@@ -95,6 +95,7 @@ These codify decisions in SPEC.md that conflict with Unity defaults or common tu
 - **Rebinding UI is out of V1 scope** (§4.1). Don't build it, don't plan for it.
 - **HUD canvases** (`HUDRoot`, `TitleCanvas`, `OverworldCanvas`) all share `CanvasScalerPresetApplier` targeting 1280×720 with `MatchWidthOrHeight` / `Match = 0.5` (§4.17). One place to change resolution assumptions.
 - **Physics layers and the 2D collision matrix** (§4.19) are committed via `ProjectSettings/TagManager.asset` (layer names) and `ProjectSettings/Physics2DSettings.asset` (the `m_LayerCollisionMatrix` hex field). **`DynamicsManager.asset` is the 3D physics file and is not authoritative for this 2D project** — SPEC.md §4.19 currently mis-names it; trust `Physics2DSettings.asset`.
+- **No central scoring service** (§4.20). Score lives on `SaveData.score` and is mutated inline at each awarding site (coin pickup, stomp, goal, time bonus, shell kill, 1-up pickup). Each 1-up rule lives on its natural owner: stomp combo on `PlayerController`, 100-coin rollover next to the `SaveData.totalCoins` increment, 5-dragon-coin check on `LevelRunState`. **Do not reintroduce** a `ScoreService`, a `ScoreReason` enum, a `Scoring` static, or a central `Awarded` event — there are ~5 callsites in the whole game and each has an obvious local owner for the state it reads.
 - **Enemy combat uses capability interfaces** (§4.7): `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IConditionallyTangible`. Attackers dispatch via `TryGetComponent<I…>`. Two concerns are modeled as MonoBehaviour components instead of interfaces: `ContactDamage` (attached to enemies/projectiles/hazards that hurt Mario on side-contact) and `SpinJumpSafe` (empty marker on Spiny/Spike Top). **Do not introduce** a `CombatResolver` static, virtual methods on an abstract `Enemy` base class, a `CombatOutcome` struct, or a `MovementKind` enum with switch statements.
 - **No object pooling.** Dynamic spawns (projectiles, VFX, score popups, enemies) use plain `Instantiate` / `Destroy`. If profiling turns up a genuine hot spot, address it locally.
 
@@ -103,7 +104,7 @@ These codify decisions in SPEC.md that conflict with Unity defaults or common tu
 Game-specific assets live under [Assets/_Project/](Assets/_Project/) (leading underscore for sort order). The full planned structure is in SPEC.md §4.25 / §4.26. Current:
 
 - [Assets/_Project/Scripts/](Assets/_Project/Scripts/)
-  - `Runtime/` — Core, State, Scene, Save, Audio, Score, Feedback, Session, UI, Data. All under `SMW.Runtime` asmdef.
+  - `Runtime/` — Core, State, Scene, Save, Audio, Feedback, Session, UI, Data. All under `SMW.Runtime` asmdef.
   - `Editor/` — `FileExtensions.cs` plus `Setup/` (bootstrap tools) + `Generators/` (prefab/debug-scene generator scaffolds) + `Build/` (`StripDebugScenesOnBuild` preprocessor). All under `SMW.Editor` asmdef.
   - `Tests/EditMode/` and `Tests/PlayMode/` — split test asmdefs.
 - [Assets/_Project/Scenes/](Assets/_Project/Scenes/) — `Boot.unity`, `Systems.unity`, `Title.unity`, `Overworld.unity`. `Scenes/Debug/` lands with Phase 1's Movement Test. `Scenes/Levels/` lands in Phase 7.

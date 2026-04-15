@@ -569,7 +569,7 @@ Step-by-step:
 
 1. **`Boot.unity`** — File → New Scene → Empty. Delete the default `Main Camera` and `Directional Light`. Add one GameObject named `Bootstrapper` with the `Bootstrapper` MonoBehaviour. Save to `Assets/_Project/Scenes/Boot.unity`. File → Build Profiles → add to Scenes list at **index 0**.
 2. **`Systems.unity`** — File → New Scene → Empty. Delete default camera/light. Add, at the scene root:
-   - `GameServices` GameObject with the `GameServices` locator component (and child components for each service registered at boot: `SaveManager`, `SceneLoader`, `GameStateMachine`, `ScoreService`, `FeedbackService`, audio bus — see §3).
+   - `GameServices` GameObject with the `GameServices` locator component (and child components for each service registered at boot: `SaveManager`, `SceneLoader`, `GameStateMachine`, `FeedbackService`, audio bus — see §3).
    - `Input` GameObject with a `PlayerInputManager` (`joinBehavior = JoinPlayersManually`, `notificationBehavior = InvokeCSharpEvents`). `GameServices.InputManager` points here. No `PlayerInput` on this GameObject — those live on the Player prefab (Phase 1) and are spawned via `InputManager.JoinPlayer(...)` at level entry (see §4.1).
    - `HUDRoot` Canvas (Screen Space - Overlay) with `CanvasScaler` + `CanvasScalerPresetApplier` (§4.17), child `HudPanel` / `PauseMenuPanel` / `GameOverPanel` placeholders.
    - `TransitionCanvas` Canvas (Screen Space - Overlay, `sortingOrder` above `HUDRoot`) with a full-screen black `Image` child and the `ScreenFader` MonoBehaviour on the canvas root. Used by `SceneLoader` for fade transitions — see the scene loader mechanics subsection below.
@@ -710,13 +710,20 @@ A 2D physics matrix is non-optional for a platformer of this complexity. Set up 
 The matrix disables: `Player ↔ PlayerProjectile`, `Enemy ↔ Enemy` (enemies pass through each other except via shells), `Pickup ↔ Pickup`, `Pickup ↔ Solid` collisions for floating pickups, `LevelBounds ↔ everything`, `PlayerInvulnerable ↔ Enemy`. The full table lives in `ProjectSettings/Physics2DSettings.asset` (`m_LayerCollisionMatrix`) and must be checked into git. Layer names live alongside it in `ProjectSettings/TagManager.asset`. Note: `DynamicsManager.asset` is the 3D physics file — not used by this project.
 
 ### 4.20 Score & Combo
-A single `ScoreService` registered on `GameServices`. All point awards funnel through `ScoreService.Award(ScoreReason reason, int basePoints, Vector3 worldPos)` so we can:
-- show floating-point popups at the world position via the particle system (§4.23),
-- apply combo multipliers (stomp combo, see §4.7),
-- centralize 1-up triggers (every 100 coins, every 8-stomp combo, every 5 dragon coins, scored 1-up pickups),
-- log to a debug overlay during development.
+**There is no central scoring service.** Score lives directly on `SaveData.score` (already a persistent field per §4.24) and is mutated live at each awarding site. Each scoring and 1-up rule lives on the component that already owns the state it reads.
 
-`ScoreReason` is an enum so we never pass magic numbers around.
+**Callsite pattern** — coin pickup, stomp landing, shell kill, goal-tape, time bonus, etc. each do the same three things inline:
+1. `SaveData.score += basePoints * comboMultiplier;`
+2. `GameServices.Feedback.Spawn(FeedbackId.ScorePopup, worldPos);` for the floating `+200` visual (§4.23).
+3. Push the new total to the HUD via `HudViewModel.SetScore(...)` (Phase 8 wires this).
+
+**Where each rule lives:**
+- **Stomp combo** — `PlayerController` holds `int _stompCombo` that increments on each airborne stomp and resets on ground contact. The SMW combo ramp (200 / 400 / 800 / 1000 / 2000 / 4000 / 8000 / 1UP) lives next to it. When the ramp reaches the 1-up step, `SaveData.lives++` and the `+1UP` popup fire directly.
+- **100-coin 1-up** — the coin pickup code increments `SaveData.totalCoins` and checks the rollover inline: if `totalCoins % 100 == 0`, `SaveData.lives++` + `+1UP` popup.
+- **5-dragon-coin 1-up** — the dragon coin pickup writes its bit into `LevelRunState.dragonCoinsCollectedThisAttempt` and checks popcount == 5 in the same method.
+- **1-Up pickup** — `OneUp` pickup directly increments `SaveData.lives` and spawns the `+1UP` popup.
+
+No `ScoreService`, no `ScoreReason` enum, no `Awarded` event. There are only ~5 scoring callsites across the whole game, each rule has an obvious natural owner for the state it reads, and centralization would save almost no code while adding a hop.
 
 ### 4.21 Level Timer
 - `LevelTimer` component on the level scene root, configured by `LevelData.timeLimitSeconds` (default 300 in-game seconds).

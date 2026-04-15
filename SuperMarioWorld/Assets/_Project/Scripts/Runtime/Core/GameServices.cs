@@ -11,7 +11,6 @@ namespace SMW
         [SerializeField] private SceneLoader sceneLoader;
         [SerializeField] private ScreenFader screenFader;
         [SerializeField] private GameStateMachine gameState;
-        [SerializeField] private ScoreService scoreService;
         [SerializeField] private FeedbackService feedbackService;
         [SerializeField] private GameSession gameSession;
         [SerializeField] private AudioBus audioBus;
@@ -21,7 +20,6 @@ namespace SMW
         public static SceneLoader SceneLoader => Instance != null ? Instance.sceneLoader : null;
         public static ScreenFader Fader => Instance != null ? Instance.screenFader : null;
         public static GameStateMachine GameState => Instance != null ? Instance.gameState : null;
-        public static ScoreService Score => Instance != null ? Instance.scoreService : null;
         public static FeedbackService Feedback => Instance != null ? Instance.feedbackService : null;
         public static GameSession Session => Instance != null ? Instance.gameSession : null;
         public static AudioBus Audio => Instance != null ? Instance.audioBus : null;

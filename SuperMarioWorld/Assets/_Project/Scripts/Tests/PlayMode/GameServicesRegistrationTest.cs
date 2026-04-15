@@ -17,7 +17,6 @@ namespace SMW
             Assert.IsNotNull(GameServices.SceneLoader);
             Assert.IsNotNull(GameServices.Fader);
             Assert.IsNotNull(GameServices.GameState);
-            Assert.IsNotNull(GameServices.Score);
             Assert.IsNotNull(GameServices.Feedback);
             Assert.IsNotNull(GameServices.Session);
             Assert.IsNotNull(GameServices.Audio);

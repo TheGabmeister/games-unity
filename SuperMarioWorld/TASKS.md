@@ -15,7 +15,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 - Physics 2D collision matrix ([SPEC.md §4.19](SPEC.md)). Commit `DynamicsManager.asset`.
 - Input action maps + `PlayerInputManager` on an `Input` GameObject in Systems.unity (no `PlayerInput` yet — that lives on the Player prefab in Phase 1). Map switching driven by `GameStateMachine` states iterating `PlayerInput.all` ([SPEC.md §4.1](SPEC.md)).
 - `Boot.unity`, `Systems.unity`, `Title.unity`, `Overworld.unity` per the step-by-step in [SPEC.md §4.14](SPEC.md) (Creating Boot and Systems scenes + direct-entry support).
-- `GameServices` locator with skeletons for every service: `SaveManager` ([§4.15](SPEC.md)), `SceneLoader` + `ScreenFader` ([§4.14](SPEC.md)), `GameStateMachine` ([§4.13](SPEC.md)), `ScoreService`, `FeedbackService`, `GameSession` ([§4.24](SPEC.md)), `AudioBus` stub ([§4.16](SPEC.md)).
+- `GameServices` locator with skeletons for every service: `SaveManager` ([§4.15](SPEC.md)), `SceneLoader` + `ScreenFader` ([§4.14](SPEC.md)), `GameStateMachine` ([§4.13](SPEC.md)), `FeedbackService`, `GameSession` ([§4.24](SPEC.md)), `AudioBus` stub ([§4.16](SPEC.md)).
 - `HUDRoot` + `TransitionCanvas` canvases in `Systems.unity` ([§4.17](SPEC.md)).
 - `EditorTestSettings` SO for direct-entry save mode ([§4.14](SPEC.md)).
 - Build Settings: `Boot` at index 0, all non-level scenes registered ([§4.14](SPEC.md)).
@@ -355,7 +355,7 @@ Phase 8 consolidates per-phase tests into a regression suite and adds cross-cutt
 - `AssetValidationPostprocessorTest` (EM) — missing references on any SO (`EnemyData.sprite`, `PowerStateData.collider`, `LevelData.sceneRef`) fail asset import with a clear error.
 - `FixedUpdateAllocationFreeTest` (PM) — 60 FixedUpdate ticks on Phase 1 scene allocate 0 managed bytes (or below tight tolerance).
 - `LongSoakTest` (PM) — 10-minute fast-forward on a content level: no frame budget overruns, no leaking audio sources or enemy instances.
-- `SceneUnloadEventCleanupTest` (PM) — level load → unload → load; subscriber counts on `HudViewModel` / `ScoreService` don't grow.
+- `SceneUnloadEventCleanupTest` (PM) — level load → unload → load; subscriber counts on `HudViewModel` don't grow.
 
 ### Manual verification
 - Profiler: 60s per debug scene + content level 1 — no GC spikes, no per-frame allocations.

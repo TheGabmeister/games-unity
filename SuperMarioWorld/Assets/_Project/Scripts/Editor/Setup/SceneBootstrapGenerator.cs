@@ -85,7 +85,6 @@ namespace SMW
             var saveManager = servicesGo.AddComponent<SaveManager>();
             var sceneLoader = servicesGo.AddComponent<SceneLoader>();
             var gameState = servicesGo.AddComponent<GameStateMachine>();
-            var scoreSvc = servicesGo.AddComponent<ScoreService>();
             var feedbackSvc = servicesGo.AddComponent<FeedbackService>();
             var session = servicesGo.AddComponent<GameSession>();
 
@@ -158,7 +157,6 @@ namespace SMW
             SetObjRef(svcSo, "sceneLoader", sceneLoader);
             SetObjRef(svcSo, "screenFader", fader);
             SetObjRef(svcSo, "gameState", gameState);
-            SetObjRef(svcSo, "scoreService", scoreSvc);
             SetObjRef(svcSo, "feedbackService", feedbackSvc);
             SetObjRef(svcSo, "gameSession", session);
             SetObjRef(svcSo, "audioBus", bus);
