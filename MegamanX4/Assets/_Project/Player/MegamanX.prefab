@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1721440816723545090}
   - component: {fileID: 1840346111615040339}
   - component: {fileID: 3099517297308019227}
+  - component: {fileID: 2515517915452380801}
   m_Layer: 3
   m_Name: MegamanX
   m_TagString: Untagged
@@ -196,6 +197,19 @@ MonoBehaviour:
   spawnInterval: 0.04
   silhouetteLifetime: 0.18
   sortingOrderOffset: -1
+--- !u!114 &2515517915452380801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827737925019994148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a21c21cfb144a8c8b793adff6f2f790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::Health
+  maxHealth: 20
 --- !u!1 &4554798857488393429
 GameObject:
   m_ObjectHideFlags: 0
