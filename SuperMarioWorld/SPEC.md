@@ -707,7 +707,7 @@ A 2D physics matrix is non-optional for a platformer of this complexity. Set up 
 | `LevelBounds` | camera bound markers (no collision) |
 | `MapNode` | overworld map nodes |
 
-The matrix disables: `Player ↔ PlayerProjectile`, `Enemy ↔ Enemy` (enemies pass through each other except via shells), `Pickup ↔ Pickup`, `Pickup ↔ Solid` collisions for floating pickups, `LevelBounds ↔ everything`, `PlayerInvulnerable ↔ Enemy`. The full table lives in `ProjectSettings/DynamicsManager.asset` and must be checked into git.
+The matrix disables: `Player ↔ PlayerProjectile`, `Enemy ↔ Enemy` (enemies pass through each other except via shells), `Pickup ↔ Pickup`, `Pickup ↔ Solid` collisions for floating pickups, `LevelBounds ↔ everything`, `PlayerInvulnerable ↔ Enemy`. The full table lives in `ProjectSettings/Physics2DSettings.asset` (`m_LayerCollisionMatrix`) and must be checked into git. Layer names live alongside it in `ProjectSettings/TagManager.asset`. Note: `DynamicsManager.asset` is the 3D physics file — not used by this project.
 
 ### 4.20 Score & Combo
 A single `ScoreService` registered on `GameServices`. All point awards funnel through `ScoreService.Award(ScoreReason reason, int basePoints, Vector3 worldPos)` so we can:
