@@ -492,6 +492,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   visual: {fileID: 2044748995}
+  idleSprite: {fileID: 3286163911610860551, guid: 43513281d30819d48b5f8febd1a1d790, type: 3}
+  jumpSprite: {fileID: 3286163911610860551, guid: e43fbbc97cad3ae45b93be5a8de5c022, type: 3}
+  fallSprite: {fileID: 3286163911610860551, guid: 43513281d30819d48b5f8febd1a1d790, type: 3}
+  dashSprite: {fileID: 3286163911610860551, guid: b38a4aa3180162842a616e2244eec0da, type: 3}
   moveSpeed: 6
   groundAcceleration: 60
   airAcceleration: 30

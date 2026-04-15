@@ -8,6 +8,12 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Visuals")]
     [SerializeField] Transform visual;
+    [SerializeField] Sprite idleSprite;
+    [SerializeField] Sprite jumpSprite;
+    [SerializeField] Sprite fallSprite;
+    [SerializeField] Sprite dashSprite;
+
+    SpriteRenderer spriteRenderer;
 
     [Header("Movement")]
     [SerializeField] float moveSpeed = 6f;
@@ -79,6 +85,18 @@ public class PlayerController : MonoBehaviour
 
         contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
         contactFilter.SetLayerMask(environmentLayers);
+
+        if (visual) spriteRenderer = visual.GetComponent<SpriteRenderer>();
+    }
+
+    void UpdateSprite()
+    {
+        if (!spriteRenderer) return;
+        Sprite s = IsDashing ? dashSprite
+                 : !isGrounded && velocity.y > 0.01f ? jumpSprite
+                 : !isGrounded ? fallSprite
+                 : idleSprite;
+        if (s) spriteRenderer.sprite = s;
     }
 
     void OnEnable()
@@ -124,6 +142,8 @@ public class PlayerController : MonoBehaviour
             s.x = Mathf.Abs(s.x) * facing;
             visual.localScale = s;
         }
+
+        UpdateSprite();
     }
 
     void FixedUpdate()
