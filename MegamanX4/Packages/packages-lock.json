@@ -7,13 +7,6 @@
       "dependencies": {},
       "url": "https://registry.npmjs.org"
     },
-    "com.marijnzwemmer.unity-toolbar-extender": {
-      "version": "https://github.com/marijnz/unity-toolbar-extender.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "dbd76ed996483d219c39d240f785b1790aa039ed"
-    },
     "com.unity.2d.animation": {
       "version": "13.0.4",
       "depth": 1,
@@ -167,17 +160,8 @@
         "com.unity.2d.tooling": "1.0.2"
       }
     },
-    "com.unity.ide.rider": {
-      "version": "3.0.39",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.ext.nunit": "1.0.6"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.26",
+      "version": "2.0.27",
       "depth": 0,
       "source": "registry",
       "dependencies": {
