@@ -13,18 +13,18 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - PlayerInvulnerable
+  - PlayerProjectile
+  - Enemy
+  - EnemyProjectile
+  - Solid
+  - OneWay
+  - Hazard
+  - Pickup
+  - Interactive
+  - LevelBounds
+  - MapNode
   - 
   - 
   - 

@@ -1,0 +1,28 @@
+{
+    "name": "SMW.Tests.EditMode",
+    "rootNamespace": "SMW.Tests.EditMode",
+    "references": [
+        "SMW.Runtime",
+        "SMW.Editor",
+        "Unity.InputSystem",
+        "Eflatun.SceneReference",
+        "PrimeTween.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "Newtonsoft.Json.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

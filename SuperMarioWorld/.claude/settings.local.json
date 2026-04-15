@@ -7,7 +7,14 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:docs.unity3d.com)",
-      "WebFetch(domain:packages.unity.com)"
+      "WebFetch(domain:packages.unity.com)",
+      "Bash(ls c:/dev/games-unity/SuperMarioWorld/Library/PackageCache/com.unity.nuget.newtonsoft-json*)",
+      "Bash(find c:/dev/games-unity/SuperMarioWorld/Library/PackageCache/com.eflatun.scenereference* -name \"SceneReference.cs\")",
+      "Bash(find c:/dev/games-unity/SuperMarioWorld/Library/PackageCache/com.kyrylokuzyk.primetween*/Runtime -type f -name \"*.cs\")",
+      "Bash(xargs grep:*)",
+      "Bash(awk 'NR==41' c:/dev/games-unity/SuperMarioWorld/ProjectSettings/TagManager.asset)",
+      "Bash(awk 'NR>=38 && NR<=43' c:/dev/games-unity/SuperMarioWorld/ProjectSettings/TagManager.asset)",
+      "Bash(awk 'NR>=38 && NR<=41' c:/dev/games-unity/SuperMarioWorld/ProjectSettings/TagManager.asset)"
     ]
   }
 }

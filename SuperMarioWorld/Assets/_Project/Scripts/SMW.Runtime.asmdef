@@ -1,0 +1,23 @@
+{
+    "name": "SMW.Runtime",
+    "rootNamespace": "SMW",
+    "references": [
+        "Unity.InputSystem",
+        "Unity.VectorGraphics",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI",
+        "Eflatun.SceneReference",
+        "PrimeTween.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
