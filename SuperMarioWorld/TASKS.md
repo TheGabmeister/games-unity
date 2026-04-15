@@ -83,26 +83,26 @@ Do not skip phases — each validates the architecture against real gameplay.
 **Bugs to look for:**
 - Coyote or buffer stacking into double-jumps.
 - `IsGrounded` flicker on slope seams.
-- Getting stuck in slope/flat tile junction corners.
+- Getting stuck in slope/flat platform junction corners.
 - Jump feels "floaty" or "heavy" — gravity or hold-time tuning off.
 - Subpixel camera stutter at 1280×720.
 - Ceiling cancel firing on wall contact.
 
 ---
 
-## Phase 2 — Tiles, blocks, pickups, timer
+## Phase 2 — Environment prefabs, blocks, pickups, timer
 
 ### Tasks
-- Custom tile types `SolidTile`, `OneWayTile`, `SlopeTile`, `PipeTile` with physics shapes ([§4.5](SPEC.md)).
-- `InteractiveBlockSpawner` + full block roster ([§4.6](SPEC.md)).
+- Environment prefab family: `Ground_Platform`, `OneWay_Platform`, `Slope_Steep_L/R`, `Slope_Shallow_L/R`, `Pipe`, `Hazard_Spikes`, `Hazard_Lava`, `Hazard_Pit` — all with variable-length inspector fields and length-update editor hooks that resize collider + visual together ([§4.5](SPEC.md)).
+- Full block roster as standalone prefabs (`Block_Question`, `Block_Brick`, `Block_MultiCoin`, `Block_Note`, `Block_Rotating`, `Block_PSwitch`, `Block_SwitchPalace_Y/G/R/B`, `Block_Used`) authored directly into levels — no spawner ([§4.6](SPEC.md)).
 - Coin, dragon coin, 1-up pickups + HUD counters via `HudViewModel` ([§4.9](SPEC.md), [§4.17](SPEC.md)).
 - `LevelTimer` with low-time warning ([§4.21](SPEC.md)).
 - `MidwayGate` checkpoints ([§4.5](SPEC.md), [§4.24](SPEC.md)).
 - All Blocks debug scene ([§4.26](SPEC.md)).
 
 ### Automated tests
-- `SlopeTilePhysicsShapeTest` (EM) — every `SlopeTile` sprite has a triangular Custom Physics Shape.
-- `InteractiveTileMarkerTest` (EM) — spawner replaces marker tiles with the correct prefabs at correct positions.
+- `SlopePolygonColliderTest` (EM) — every slope prefab's `PolygonCollider2D` regenerates correctly for multiple `length` values (vertex positions match the angle formula).
+- `EnvironmentPrefabLengthSyncTest` (EM) — changing the `length` field on a `Ground_Platform` / `Slope_*` instance resizes collider and visual in lockstep.
 - `BrickBumpVsBreakTest` (PM) — Small bumps, Super breaks.
 - `SpinJumpBreakRotatingBlockTest` (PM) — only spin-jump from above destroys.
 - `QuestionBlockContentsTest` (PM) — `BlockContents` SO drives output; Small → mushroom even when SO says flower.
@@ -171,7 +171,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 **Bugs to look for:**
 - Fire → Small directly (damage flow broken).
 - Fireball spam past cap.
-- Fireball falls through slope tiles.
+- Fireball falls through slope prefabs.
 - Cape sweep cooldown bypass via alternating inputs.
 - Slow-fall active while rising, or as non-Cape Mario.
 - Death reload loses session state (coin counter resets).
@@ -195,7 +195,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 - `EnemyCapabilityDeclarationTest` (EM) — each V1 enemy implements the exact interface set per §4.7.
 - `GetActiveComponentFilterTest` (EM) — filters disabled sibling components correctly (Koopa walk↔shell).
 - `StompFromAboveTest` (PM) — valid stomp kills + rebounds.
-- `SideContactDamagesTest` (PM) — side contact calls `IContactDamage`.
+- `SideContactDamagesTest` (PM) — side contact reads the enemy's `ContactDamage` component and calls `player.TakeDamage`.
 - `SpinJumpSafeBounceTest` (PM) — `ISpinJumpSafe` marker bounces safely.
 - `FireballReactionPathsTest` (PM) — `Absorbed` / `Passes` / wall-extinguish branches.
 - `KoopaWalkToShellSwapTest` (PM) — sibling-component enable toggle dispatches correct interface.

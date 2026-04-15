@@ -22,11 +22,11 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 |---|---|
 | Engine | Unity `6000.3.12f1` |
 | Render pipeline | URP 17.3 with the **2D Renderer** |
-| Physics | Built-in **Physics2D**. Player and enemies use dynamic Rigidbody2D with `gravityScale = 0` and a manual velocity controller (see §4.2). Tilemap solids use `CompositeCollider2D`. |
+| Physics | Built-in **Physics2D**. Player and enemies use dynamic Rigidbody2D with `gravityScale = 0` and a manual velocity controller (see §4.2). Static environment uses `BoxCollider2D` (ground/one-way platforms, pipes) and `PolygonCollider2D` (slopes) on individual GameObject prefabs — no tilemaps (see §4.5). |
 | Input | `com.unity.inputsystem` 1.19 (no legacy `Input.*`) |
 | Tweens | **PrimeTween** (`com.kyrylokuzyk.primetween`) — preferred over coroutines for animation |
 | Scene refs | **Eflatun.SceneReference** — type-safe scene fields |
-| Tilemaps | Unity `Tilemap` + `TilemapCollider2D` + `CompositeCollider2D` |
+| Level authoring | GameObject prefabs (ground, slopes, pipes, blocks, decoration) placed directly in the scene. No tilemaps — see §4.5 for rationale. |
 | Vector art | **`com.unity.vectorgraphics` 3.0.0-preview.7** — SVG → Sprite / UI Image importer. Used for all placeholder visuals (see §4.18). |
 | Target resolution | **1280×720** (16:9). Game view, default standalone build resolution, and all CanvasScaler reference resolutions use this. Configured in `ProjectSettings/ProjectSettings.asset` (Player → Resolution & Presentation). World-space units are still tile-based (1 world unit = 1 tile = 16 SVG units); resolution only affects rendering scale and HUD layout. |
 | Tests | Unity Test Framework (PlayMode + EditMode), once `.asmdef` files exist |
@@ -66,9 +66,9 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
               │      LevelContext      │  (per-level DI container)
               └─┬──────┬────────┬──────┘
                 │      │        │
-          ┌─────▼┐ ┌───▼───┐ ┌──▼─────┐
-          │Player│ │Enemies│ │Tilemap │
-          └──────┘ └───────┘ └────────┘
+          ┌─────▼┐ ┌───▼───┐ ┌─────▼─────┐
+          │Player│ │Enemies│ │Environment│
+          └──────┘ └───────┘ └───────────┘
 ```
 
 - **Scene per top-level state**: `Boot`, `Systems` (persistent), `Title`, `Overworld`, `Level`. Levels are loaded **additively** on top of `Systems`. `Title` and `Overworld` are also loaded additively on top of `Systems` and unloaded on transition.
@@ -194,31 +194,36 @@ Small ─Mushroom─▶ Super                      │
 
 ### 4.5 Level / World System
 - A **`LevelData` ScriptableObject** is the canonical reference for a level. Fields: `levelId` (stable string), `displayName`, `sceneRef` (`SceneReference`), `timeLimitSeconds`, `musicId`, `themePalette` (`Palette` SO), `entryPoints` (named spawn markers for normal/secret/sub-area returns), `subAreas` (list of named offset regions within the scene), `unlocksOnNormalExit` / `unlocksOnSecretExit` (other `LevelData` references for overworld branching). Levels are added to the game by creating one of these — never by hardcoding a scene name anywhere else.
-- One `Level.unity` scene template containing: `Grid` + tilemaps (`Background`, `Solid`, `OneWay`, `Hazard`, `Decoration`, `Interactive`), `LevelBounds`, `LevelRoot` (holds a `LevelData` reference), spawn markers, `MidwayGate`s, `GoalGate`.
-- Solid geometry uses `TilemapCollider2D` + `CompositeCollider2D` (set to *Polygons*) for performance.
-- **Tile types** are custom `TileBase` subclasses for purely-static layout: `SolidTile`, `OneWayTile`, `SlopeTile`, `PipeTile` (visual only — actual pipe interaction is a GameObject trigger, see below).
-- **Interactive tiles** (brick, `?`, note block, used, rotating, P-switch) are *not* TileBase types. They're marker tiles painted on the `Interactive` tilemap layer that the `InteractiveBlockSpawner` (§4.6) replaces with prefab GameObjects on level load. Per-tile mutable state belongs to those GameObjects, not the tilemap.
-- **Slopes**: Unity's `TilemapCollider2D` does not natively produce slope shapes — every tile becomes a box. To get real slope physics, `SlopeTile.GetTileData` must set `colliderType = Tile.ColliderType.Sprite` and supply a sprite whose **Custom Physics Shape** is a triangle. The `CompositeCollider2D` will then merge adjacent slope sprites into a continuous polygon edge. Document this in the slope tile's tooltip — it's the most likely thing to forget when authoring new slope variants.
+- One `Level.unity` scene template containing: `LevelRoot` (holds a `LevelData` reference), an `Environment` group with ground / slope / pipe / decoration prefab instances, `LevelBounds`, spawn markers, `MidwayGate`s, `GoalGate`. **Tilemaps are not used** — every piece of environment is a GameObject prefab placed directly in the scene. Rationale: the project is primitives + SVG placeholders, not a pixel-dense 16×16 tileset, so the tilemap pipeline's benefits (palette painting, compressed storage, `CompositeCollider2D` merging) don't earn their complexity. GameObject prefabs give cleaner collider topology, direct inspector access to per-instance state, and no `InteractiveBlockSpawner` middle-layer.
+- **Environment prefabs** (authored once, placed many times):
+  - `Ground_Platform` — `BoxCollider2D` on the `Solid` layer. `length` is a serialized field driving both the collider size and the `SpriteRenderer`'s 9-slice SVG width, so a single prefab covers every straight ground run of any length.
+  - `OneWay_Platform` — same pattern as `Ground_Platform` but with `PlatformEffector2D` (used-by-effector enabled) and the `OneWay` layer.
+  - `Slope_Steep_L`, `Slope_Steep_R`, `Slope_Shallow_L`, `Slope_Shallow_R` — `PolygonCollider2D` prefabs. `length` serialized; a small editor script regenerates the polygon points whenever `length` changes so visual + collider stay in sync. Steep length N → triangle `(0,0), (N,0), (N,N)`; shallow length N → triangle `(0,0), (N,0), (N, N/2)` (direction flipped for `_L` variants). One prefab per angle-direction combination, parametric on length — no "lower-half / upper-half" variants, no tile-seam merging.
+  - `Pipe` — GameObject with a `BoxCollider2D` body + a trigger zone at the mouth for entry/exit. Pipe warping is purely behavioral; the visual uses a 9-slice SVG on the vertical axis so pipe height is a serialized field.
+  - `Hazard_Spikes`, `Hazard_Lava`, `Hazard_Pit` — variable-length prefabs on the `Hazard` layer with a trigger collider and a `ContactDamage` component (instant-kill variant of `DamageInfo` for lava/pit).
+  - Decorative background / foreground detail — plain `SpriteRenderer` GameObjects, no collider. Use the same SVG placeholder assets as the rest of the game (§4.18).
+- **Slope collider topology.** Adjacent slope + ground prefabs butt up against each other on integer grid positions. Each collider is a single convex polygon (or box), so there's no tile-seam issue to merge — the controller's `BoxCast` sees a clean edge. Slope prefabs use `PolygonCollider2D` (not `EdgeCollider2D`) so the collider is solid from above and below, matching SMW's behavior where you can stand on and hit the underside of slope blocks.
 - **Slope angle set is locked to SMW's two angles — no arbitrary slopes.** This keeps physics tuning tractable and prevents level authors from introducing angles the controller hasn't been tuned against:
-  - **Steep (45°)** — 1 tile rise per 1 tile run. One sprite, one triangular physics shape.
-  - **Shallow (~26.57°, commonly mislabeled "22.5°")** — 1 tile rise per 2 tiles run, so the slope spans two adjacent tiles. This requires **two** sprite variants: a lower-half tile (rises from floor to mid) and an upper-half tile (rises from mid to ceiling). Both have their own triangular Custom Physics Shape; `CompositeCollider2D` merges them into one continuous edge when painted side-by-side.
-  - Each of the two angles exists in **both directions** (floor rising to the right, floor rising to the left). Implemented as separate sprite/tile assets rather than relying on `TileData.transform` flip, because `ColliderType.Sprite` physics shapes do not always mirror reliably with tile transforms. Four sprites total: steep-L, steep-R, shallow-L (×2 halves), shallow-R (×2 halves) — six sprite variants, four logical slope types.
+  - **Steep (45°)** — 1 unit rise per 1 unit run.
+  - **Shallow (~26.57°, commonly mislabeled "22.5°")** — 1 unit rise per 2 units run.
+  - Each angle exists in both directions (floor rising right, floor rising left). Four slope prefabs total.
   - Ceiling slopes (upside-down variants) are **not** in V1 — SMW uses them sparingly and they complicate the `GroundProbe` normal logic. Flag for post-V1 if a boss room needs them.
-  - `SlopeTile` exposes its angle as a public float so `GroundProbe` can read it for movement adjustments (walking-down preserves grounded state, running-down accelerates per §4.2). The controller reads the angle from the surface normal returned by `BoxCast`, not by type-checking the tile — this is what keeps slope behavior consistent with the collider shape.
+  - Each slope prefab exposes its angle as a public float so `GroundProbe` can read it for movement adjustments (walking-down preserves grounded state, running-down accelerates per §4.2). The controller reads the angle from the surface normal returned by `BoxCast`, not by type-checking the component — this keeps slope behavior consistent with the collider shape.
+- **1 world unit = 1 logical tile.** The tile grid concept survives as an authoring convention: snap-to-grid placement in the Scene view (grid size = 1), sprite sizing in multiples of 16 SVG units / 1 world unit, platform and slope lengths as integers. There's no `Grid` / `Tilemap` component enforcing it — it's just the grid that SVG assets and collider dimensions are aligned to. Keeping everything on integer grid positions is what lets the `GroundProbe` and slope physics assume clean 1-unit-aligned surfaces.
 - **Sub-areas** (pipe / door destinations): for V1, sub-areas live as **separate regions of the same Level scene** at a large coordinate offset (e.g. `+10000` units on Y). Pipe entry tweens Mario into the pipe, then snaps the camera + Mario to the destination region's `SpawnMarker` and tweens out. This avoids additive scene loads on every pipe and keeps level state in one place. Each sub-area has its own `LevelBounds` so the camera respects the right rectangle. Switch to additive scenes only if a level grows large enough to hurt scene-load time, which won't happen in V1.
 - **Checkpoints / midway**: a `MidwayGate` GameObject placed in the level. Crossing it stores its `CheckpointId` on the `LevelRunState` (§4.24), NOT on the player or the save file. On death, the level scene reloads and Mario respawns at the matching `SpawnMarker` for that checkpoint. Crossing a midway when Small also auto-grants a Mushroom (SMW behavior). Midway state is wiped when the player exits the level (whether by goal, voluntary back-to-overworld, or game over) — see §4.24.
 
 ### 4.6 Block & Object Interactions
-Blocks that need GameObject behavior (animated bumps, contained items, P-switches, switch-palace blocks) are spawned as **runtime GameObjects** by an `InteractiveBlockSpawner` that scans the `Interactive` tilemap layer on level load, instantiates the matching prefab at the tile's world position, and **clears the marker tile** so it doesn't double up. This keeps the tilemap as the source of truth for layout while letting blocks have their own scripts.
+Blocks are **authored directly as GameObject prefab instances** in the `Level.unity` scene under the `Environment` group. No `InteractiveBlockSpawner`, no marker-tile layer, no level-load conversion step — what you see in the scene is what exists at runtime. Each block type is a prefab (`Block_Question.prefab`, `Block_Brick.prefab`, …) under the §4.25 thin-prefab / fat-SO rule.
 
-Each block type gets its own generated prefab (`Block_Question.prefab`, `Block_Brick.prefab`, …) under the §4.25 thin-prefab / fat-SO rule. `?` block contents (coin / specific power-up / 1-up) are a `BlockContents` SO that the prefab references — a single `Block_Question.prefab` is reused for every `?` block in the game with only the `BlockContents` SO varying. P-switch duration, brick coin-count limits, and similar tunables all live on their respective SOs, not on the prefabs.
+`?` block contents (coin / specific power-up / 1-up) are a `BlockContents` SO that the prefab references — a single `Block_Question.prefab` is reused for every `?` block in the game with only the `BlockContents` SO varying per instance. P-switch duration, brick coin-count limits, and similar tunables all live on their respective SOs, not on the prefabs.
 
 Required block behaviors:
 - **`?` block** — releases coin / power-up / 1-up based on its `BlockContents` SO. Becomes a "used" block (inert sprite + collider) after triggering. Power-up contents are context-aware: if Mario is Small, give Mushroom; if Super or higher, give whatever the SO declares (Flower/Feather).
 - **Brick** — breaks into shards if hit by Super+ Mario from below or stomped by spin jump; bumps (small upward tween) if hit by Small Mario; can also contain coins (`MultiCoinBrick` releases up to 10 coins on a timer).
 - **Note block / springboard** — bounces Mario upward; Note variant gives extra height if jump is held on contact.
 - **Rotating block** — spins on hit; breakable by spin-jump from above only.
-- **P-switch** — when stomped, starts a global timer (~10s) that swaps every coin tile/object → brick and every brick → coin in the active region. Music pitches up as a stack-pushed track. State reverts when the timer expires.
+- **P-switch** — when stomped, starts a global timer (~10s) that swaps every coin → brick and every brick → coin GameObject in the active region. Implementation: both `Coin` and `Brick` prefabs listen for a `PSwitchActive` event from a `PSwitchController` on `LevelRoot` and toggle their own state (enable the "other" sprite + collider, disable their own). Music pitches up as a stack-pushed track. State reverts when the timer expires.
 - **Switch Palace blocks** — colored "dotted" outline blocks (Yellow/Green/Red/Blue). Pass-through until the corresponding switch palace has been completed; then become solid blocks globally. State lives in the save file (§4.15) and is read by every block on `Awake`. No per-block listener — the global flag is queried once.
 - **Used block** — inert sprite + collider; spawned as the "after" state of `?` blocks and `?`-with-coin bricks.
 
@@ -243,70 +248,72 @@ Not all of these ship in V1 — see the V1 roster below. This list exists to gro
 
 Each enemy is mapped to its MonoBehaviour class and the capability interfaces it implements. Format: `ClassName : IInterface, ...`. Variants that differ only in data share a class + different `EnemyData` SO; variants that differ in behavior get their own class. Sibling-component swaps (Koopa walk↔shell) are shown as `ClassA [swap] ClassB` both on the same prefab.
 
+**Implicit:** every enemy prefab listed below that can hurt Mario on side-contact also has a `ContactDamage` component attached (see the component definition a few paragraphs down in this section). The component is not repeated in each declaration line to keep the list scannable. The only listed enemies that *don't* have a `ContactDamage` component are Mega Mole (safe to touch — standable) and swap-away states like `MontyMoleAmbush` while hidden.
+
 **Walkers** (stompable from above, side contact hurts Mario):
-- Galoomba — flipped on stomp, can be picked up → `Galoomba : IStompable, IContactDamage, IFireballHit, IShellImpact, IThrowable`
-- Rex — 2 stomps; first flattens → `Rex : IStompable, IContactDamage, IFireballHit, IShellImpact` (internal HP = 2; first stomp swaps to flat sprite + smaller collider)
-- Dino-Torch / Dino-Rhino — breathes fire; Dino-Rhino splits into two Dino-Torches on damage → `DinoTorch : IStompable, IContactDamage, IFireballHit, IShellImpact` + `PeriodicEmitter` component. `DinoRhino` is its own class with `splitOnDeath` logic.
-- Mega Mole — giant, Mario can stand on top → `MegaMole : IStompable, IFireballHit` (no `IContactDamage` — safe to touch from any side, matches SMW behavior; standing on top is just a regular box collider, no special "ride" plumbing)
-- Wiggler — 2 stomps, aggros on first → `Wiggler : IStompable, IContactDamage, IFireballHit, IShellImpact`
+- Galoomba — flipped on stomp, can be picked up → `Galoomba : IStompable, IFireballHit, IShellImpact, IThrowable`
+- Rex — 2 stomps; first flattens → `Rex : IStompable, IFireballHit, IShellImpact` (internal HP = 2; first stomp swaps to flat sprite + smaller collider)
+- Dino-Torch / Dino-Rhino — breathes fire; Dino-Rhino splits into two Dino-Torches on damage → `DinoTorch : IStompable, IFireballHit, IShellImpact` + `PeriodicEmitter` component. `DinoRhino` is its own class with `splitOnDeath` logic.
+- Mega Mole — giant, Mario can stand on top → `MegaMole : IStompable, IFireballHit` (no `ContactDamage` component — safe to touch from any side, matches SMW behavior; standing on top is just a regular box collider, no special "ride" plumbing)
+- Wiggler — 2 stomps, aggros on first → `Wiggler : IStompable, IFireballHit, IShellImpact`
 
 **Shelled walkers** (stomp → shell that can be kicked, carried, ricocheted):
-- Koopa Troopa (4 colors) → `KoopaWalker : IStompable, IContactDamage, IFireballHit, IShellImpact` [swap] `KoopaShell : IBumpable, IThrowable, IShellImpact, IContactDamage`. Color is `KoopaData` SO variance: Green `ledgeTurn = false`, Red `ledgeTurn = true`, Yellow `kicksDust`, Blue `kicksShells`.
-- Paratroopa → `ParatroopaFlier : IStompable, IContactDamage` [swap] `KoopaWalker` [swap] `KoopaShell` (three-stage).
-- Buzzy Beetle → same pattern as Koopa but Buzzy's walker class **does not implement `IFireballHit`** (so fireballs extinguish on it without damage). `BuzzyWalker : IStompable, IContactDamage, IShellImpact` [swap] `BuzzyShell` (shared class with `KoopaShell` if behavior allows, else own).
-- Spike Top → `SpikeTopWalker : IContactDamage, ISpinJumpSafe, IShellImpact` (wall-crawling; no `IStompable` — spin-jump is the only safe attack) [swap on spin-jump] `SpikeTopShell : IBumpable, IThrowable, IShellImpact, IContactDamage`.
+- Koopa Troopa (4 colors) → `KoopaWalker : IStompable, IFireballHit, IShellImpact` [swap] `KoopaShell : IBumpable, IThrowable, IShellImpact`. Color is `KoopaData` SO variance: Green `ledgeTurn = false`, Red `ledgeTurn = true`, Yellow `kicksDust`, Blue `kicksShells`.
+- Paratroopa → `ParatroopaFlier : IStompable` [swap] `KoopaWalker` [swap] `KoopaShell` (three-stage).
+- Buzzy Beetle → same pattern as Koopa but Buzzy's walker class **does not implement `IFireballHit`** (so fireballs extinguish on it without damage). `BuzzyWalker : IStompable, IShellImpact` [swap] `BuzzyShell` (shared class with `KoopaShell` if behavior allows, else own).
+- Spike Top → `SpikeTopWalker : ISpinJumpSafe, IShellImpact` (wall-crawling; no `IStompable` — spin-jump is the only safe attack) [swap on spin-jump] `SpikeTopShell : IBumpable, IThrowable, IShellImpact`.
 
 **Spiked**:
-- Spiny → `Spiny : IContactDamage, ISpinJumpSafe, IFireballHit, IShellImpact` (no `IStompable`; spin-jump bounces safely)
-- Urchin → `Urchin : IContactDamage, IFireballHit` (no `ISpinJumpSafe` — spikes all sides)
-- Porcu-Puffer → `PorcuPuffer : IContactDamage, IFireballHit`
-- Sumo Brother → `SumoBrother : IContactDamage, IFireballHit` (stationary; lightning spawn logic in class)
+- Spiny → `Spiny : ISpinJumpSafe, IFireballHit, IShellImpact` (no `IStompable`; spin-jump bounces safely)
+- Urchin → `Urchin : IFireballHit` (no `ISpinJumpSafe` — spikes all sides)
+- Porcu-Puffer → `PorcuPuffer : IFireballHit`
+- Sumo Brother → `SumoBrother : IFireballHit` (stationary; lightning spawn logic in class)
 
 **Un-stompable**:
-- Piranha Plant (standing / upside-down) → `PiranhaPlant : IContactDamage, IFireballHit, ICapeSweepHit`
-- Jumping Piranha → `JumpingPiranha : IContactDamage, IFireballHit, ICapeSweepHit` (different emerge pattern; own class)
-- Fire Piranha → `FirePiranha : IContactDamage, IFireballHit, ICapeSweepHit` + `PeriodicEmitter` (fireballs)
-- Fishin' Boo → `FishinBoo : IContactDamage, ICapeSweepHit` (fireball passes through — no `IFireballHit`)
+- Piranha Plant (standing / upside-down) → `PiranhaPlant : IFireballHit, ICapeSweepHit`
+- Jumping Piranha → `JumpingPiranha : IFireballHit, ICapeSweepHit` (different emerge pattern; own class)
+- Fire Piranha → `FirePiranha : IFireballHit, ICapeSweepHit` + `PeriodicEmitter` (fireballs)
+- Fishin' Boo → `FishinBoo : ICapeSweepHit` (fireball passes through — no `IFireballHit`)
 
 **Intangible-based**:
-- Boo → `Boo : IConditionallyTangible, ICapeSweepHit, IContactDamage` (no `IFireballHit` — cape/star only)
-- Big Boo → `BigBoo : IConditionallyTangible, ICapeSweepHit, IContactDamage` (HP > 1, internal)
-- Eerie → `Eerie : IContactDamage, ICapeSweepHit` (flies a fixed path; cape/star kill only)
-- Boo Buddies (circle) → `BooBuddyMember : IConditionallyTangible, IContactDamage, ICapeSweepHit` on each member + `BooBuddyCircle` driving orbit on the parent
+- Boo → `Boo : IConditionallyTangible, ICapeSweepHit` (no `IFireballHit` — cape/star only)
+- Big Boo → `BigBoo : IConditionallyTangible, ICapeSweepHit` (HP > 1, internal)
+- Eerie → `Eerie : ICapeSweepHit` (flies a fixed path; cape/star kill only)
+- Boo Buddies (circle) → `BooBuddyMember : IConditionallyTangible, ICapeSweepHit` on each member + `BooBuddyCircle` driving orbit on the parent
 - Boo Block → `BooBlock : IBumpable` initially; on trigger, reveals → spawns a `Boo`
 
 **Ballistic**:
-- Bullet Bill → `BulletBill : IStompable, IContactDamage, IFireballHit`
-- Banzai Bill → `BanzaiBill : IStompable, IContactDamage, IFireballHit` (larger, same interfaces)
-- Torpedo Ted → `TorpedoTed : IStompable, IContactDamage, IFireballHit` (underwater variant)
+- Bullet Bill → `BulletBill : IStompable, IFireballHit`
+- Banzai Bill → `BanzaiBill : IStompable, IFireballHit` (larger, same interfaces)
+- Torpedo Ted → `TorpedoTed : IStompable, IFireballHit` (underwater variant)
 
 **AI-heavy spawners / special attackers**:
-- Lakitu → `Lakitu : IStompable, IContactDamage, IFireballHit` + `PeriodicEmitter` (Spinies). Cloud-steal handled by `OnStomped` logic (parent the cloud to player).
-- Magikoopa → `Magikoopa : IStompable, IContactDamage, IFireballHit, ICapeSweepHit` (teleport + wand projectile logic in class)
-- Amazing Flyin' Hammer Brother → `HammerBroPlatform : IStompable, IContactDamage, IFireballHit` (platform is the target) + `HammerBroThrower` component on the Bro that spawns hammers
-- Monty Mole → `MontyMoleAmbush` (trigger-only, no damage interfaces while hidden) [swap on emerge] `MontyMoleWalker : IStompable, IContactDamage, IFireballHit, IShellImpact`
+- Lakitu → `Lakitu : IStompable, IFireballHit` + `PeriodicEmitter` (Spinies). Cloud-steal handled by `OnStomped` logic (parent the cloud to player).
+- Magikoopa → `Magikoopa : IStompable, IFireballHit, ICapeSweepHit` (teleport + wand projectile logic in class)
+- Amazing Flyin' Hammer Brother → `HammerBroPlatform : IStompable, IFireballHit` (platform is the target) + `HammerBroThrower` component on the Bro that spawns hammers
+- Monty Mole → `MontyMoleAmbush` (trigger-only, no damage interfaces while hidden) [swap on emerge] `MontyMoleWalker : IStompable, IFireballHit, IShellImpact`
 - Fire Piranha → see Un-stompable above
 
 **Multi-stomp / stateful**:
-- Chargin' Chuck (basic) → `ChargingChuck : IStompable, IContactDamage, IFireballHit, ICapeSweepHit` (internal `hp = 3`, walk↔charge mini-FSM)
+- Chargin' Chuck (basic) → `ChargingChuck : IStompable, IFireballHit, ICapeSweepHit` (internal `hp = 3`, walk↔charge mini-FSM)
 - Clappin' / Jumpin' / Bouncin' Chucks → same interfaces, own classes for behavior variance (or a single `ChuckVariant` enum-switched class if behaviors are close enough — judgment call per variant)
 - Splittin' Chuck → own class; spawns smaller Chucks on stomp
 - Diggin' Chuck → own class; throws rocks from fixed hole (uses `PeriodicEmitter`)
 - Football / Puntin' / Whistlin' / Swimmin' Chucks → each its own class for distinct attacks
-- Bob-omb → `BobOmb : IStompable, IContactDamage, IFireballHit, IThrowable` (stomp lights fuse; throwable while lit; explosion on expiry)
+- Bob-omb → `BobOmb : IStompable, IFireballHit, IThrowable` (stomp lights fuse; throwable while lit; explosion on expiry)
 
 **Environmental hazards**:
-- Thwomp → `Thwomp : IContactDamage` (invulnerable; idle → fall-on-proximity → recover FSM)
-- Thwimp → `Thwimp : IContactDamage, IFireballHit` (bouncing arc)
-- Fuzzy → `Fuzzy : IContactDamage, ICapeSweepHit` (track-following electric hazard)
-- Ninji → `Ninji : IStompable, IContactDamage, IFireballHit` (periodic in-place jumps)
-- Swoopin' Stu → `SwoopinStu : IStompable, IContactDamage, IFireballHit` (ceiling drop on proximity)
-- Grinder → `Grinder : IContactDamage` (invulnerable spinning hazard on a path)
+- Thwomp → `Thwomp` (invulnerable; idle → fall-on-proximity → recover FSM) + `ContactDamage` component
+- Thwimp → `Thwimp : IFireballHit` (bouncing arc)
+- Fuzzy → `Fuzzy : ICapeSweepHit` (track-following electric hazard)
+- Ninji → `Ninji : IStompable, IFireballHit` (periodic in-place jumps)
+- Swoopin' Stu → `SwoopinStu : IStompable, IFireballHit` (ceiling drop on proximity)
+- Grinder → `Grinder` (invulnerable spinning hazard on a path) + `ContactDamage` component
 
 **Aquatic**:
-- Cheep-Cheep (both colors) → `CheepCheep : IStompable, IContactDamage, IFireballHit` (Green = path, Red = chase; `CheepCheepData` SO selects)
+- Cheep-Cheep (both colors) → `CheepCheep : IStompable, IFireballHit` (Green = path, Red = chase; `CheepCheepData` SO selects)
 - Blurp → same class as Cheep-Cheep with data variance, or own class if motion differs enough
-- Rip Van Fish → `RipVanFish : IStompable, IContactDamage, IFireballHit` (internal sleep→wake→chase FSM)
+- Rip Van Fish → `RipVanFish : IStompable, IFireballHit` (internal sleep→wake→chase FSM)
 
 **Non-enemy entities that Mario stands on** — not enemies (no damage, no stomp, no defeat state). Just a regular box collider plus whatever motion driver they need. Live under `Prefabs/Rideables/`, not under `Enemies/`:
 - Dolphin → `Dolphin` on a water-path prefab (hops along a spline; Mario stands on the collider like any solid surface — no parenting, no saddle plumbing)
@@ -321,7 +328,8 @@ Each enemy is mapped to its MonoBehaviour class and the capability interfaces it
 | Own class, reusing interface set | ~15 | `Galoomba`, `Rex`, `Wiggler`, `MegaMole`, `DinoTorch`, `Spiny`, `Urchin`, `PorcuPuffer`, `BulletBill`, `BanzaiBill`, `TorpedoTed`, `Thwimp`, `Ninji`, `SwoopinStu`, `Blurp`, `RipVanFish` |
 | Own class, bespoke logic | ~12–15 | `PiranhaPlant`, `JumpingPiranha`, `FirePiranha`, `FishinBoo`, `Boo`, `BigBoo`, `Eerie`, `BooBuddyMember`, `BooBlock`, `Lakitu`, `Magikoopa`, `HammerBroPlatform`, `MontyMole*`, `SumoBrother`, `Thwomp`, `Fuzzy`, `Grinder`, `BobOmb`, Chuck variants (~5) |
 | Shared helper components | ~3 | `KinematicBody2D`, `PeriodicEmitter`, `EnemyDespawn` |
-| Capability interfaces | ~9 | `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IContactDamage`, `ISpinJumpSafe`, `IConditionallyTangible` |
+| Capability interfaces | ~8 | `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `ISpinJumpSafe`, `IConditionallyTangible` |
+| Data-only damage component | 1 | `ContactDamage` (MonoBehaviour — attached to enemies, projectiles, and hazards that hurt on side-contact) |
 | Boss scripts | ~11 | 7 Koopalings + Big Boo + Reznor + Bowser + minibosses |
 
 **Total for full roster: ~30–35 enemy classes + ~11 boss scripts + 10 interfaces + 3 helpers.**
@@ -354,7 +362,6 @@ public interface IFireballHit           { FireballReaction OnHitByFireball(Fireb
 public interface ICapeSweepHit          { void OnHitByCapeSweep(Vector2 dir); }
 public interface IShellImpact           { void OnHitByShell(Shell s); }
 public interface IThrowable             { void OnPickedUp(PlayerController p); void OnThrown(Vector2 v); }
-public interface IContactDamage         { DamageInfo ContactDamage { get; } }           // side-touch hurts Mario
 public interface ISpinJumpSafe          { }                                              // marker: spin-jump bounces, no damage
 public interface IConditionallyTangible { bool IsTangibleTo(PlayerController p); }       // Boo-style gating
 
@@ -388,9 +395,20 @@ void OnCollisionEnter2D(Collision2D col) {
             return;
         }
     }
-    if (go.TryGetComponent<IContactDamage>(out var d)) player.TakeDamage(d.ContactDamage);
+    if (go.TryGetComponent<ContactDamage>(out var d)) player.TakeDamage(d.Damage);
 }
 ```
+
+**`ContactDamage` is a helper MonoBehaviour, not an interface** — contact damage is pure data, not polymorphic behavior. Any GameObject that should hurt Mario on side-contact (enemies, enemy projectiles, boss attacks) attaches a `ContactDamage` component. GameObjects without one are safe to touch. Same dispatch semantics as the former `IContactDamage`, but the damage source is composition, not inheritance.
+
+```csharp
+public class ContactDamage : MonoBehaviour {
+    [SerializeField] DamageInfo damage;
+    public DamageInfo Damage => damage;
+}
+```
+
+Enemies that source damage from their `EnemyData` SO set the field in `Awake`; static hazards just inspector-configure it.
 
 `GetActiveComponent<T>` filters disabled components: `GetComponents<T>().FirstOrDefault(c => c is not Behaviour b || b.enabled)`. Needed because `GetComponent<T>` returns disabled Behaviours by default, and state transitions (Koopa walk↔shell) rely on toggling `.enabled`.
 
@@ -405,7 +423,7 @@ void OnCollisionEnter2D(Collision2D col) {
 [RequireComponent(typeof(KoopaWalker), typeof(KoopaShell))]
 public class Koopa : MonoBehaviour { /* shared data, sprite, collider */ }
 
-public class KoopaWalker : MonoBehaviour, IStompable, IContactDamage, IFireballHit, IShellImpact {
+public class KoopaWalker : MonoBehaviour, IStompable, IFireballHit, IShellImpact {
     public void OnStomped(PlayerController p, StompKind k) {
         GetComponent<KoopaShell>().enabled = true;
         enabled = false;   // swap
@@ -413,7 +431,7 @@ public class KoopaWalker : MonoBehaviour, IStompable, IContactDamage, IFireballH
     // ... walking logic
 }
 
-public class KoopaShell : MonoBehaviour, IBumpable, IThrowable, IShellImpact, IContactDamage {
+public class KoopaShell : MonoBehaviour, IBumpable, IThrowable, IShellImpact {
     // ... sliding-shell logic
 }
 ```
@@ -457,7 +475,7 @@ Paratroopa is the same pattern with three components (`ParatroopaFlier` → `Koo
 - The level scene receives the payload from `LevelContext.Begin(LevelData, entryPoint)` and sends the clear payload back via `GameStateMachine.Transition(OverworldState, payload)`.
 
 ### 4.12 Overworld Map
-- Tilemap-based map with `MapNode` GameObjects for each level. Mario walks node-to-node along `MapPath` connections (BFS over allowed directions per node).
+- `MapNode` GameObjects for each level, placed directly in the `Overworld.unity` scene (no tilemap — the overworld map is a composition of node prefabs + decorative `SpriteRenderer` GameObjects for the terrain). Mario walks node-to-node along `MapPath` connections (BFS over allowed directions per node).
 - Selecting a node and pressing Confirm loads the level scene. On clear, the map updates: completed nodes mark with a flag, branching paths unlock.
 - Map state persists in the save file (§4.15).
 
@@ -648,10 +666,10 @@ When real assets land, the only work is filling out `AudioCatalog` entries — n
 
 ### 4.18 Procedural Visuals (SVG-backed placeholders)
 - All placeholder visuals are **SVG sprites** authored by hand, stored in [Assets/_Project/Art/Procedural/](Assets/_Project/), and imported via `com.unity.vectorgraphics` 3.0.0-preview.7. The importer tessellates each SVG into a triangle mesh at edit time; runtime cost is identical to any sprite mesh.
-- **One SVG per entity / shape**, named by role (`mario_small.svg`, `mario_super.svg`, `goomba.svg`, `coin.svg`, `brick.svg`, `tile_solid.svg`, `slope_steep_r.svg`, etc.). Each SVG uses a single solid `fill="white"` so palette tinting via `SpriteRenderer.color` / `Image.color` produces the final color.
+- **One SVG per entity / shape**, named by role (`mario_small.svg`, `mario_super.svg`, `goomba.svg`, `coin.svg`, `brick.svg`, `ground_solid.svg`, `slope_steep_r.svg`, etc.). Each SVG uses a single solid `fill="white"` so palette tinting via `SpriteRenderer.color` / `Image.color` produces the final color.
 - **`viewBox` matches the tile grid**: `0 0 16 16` for a 1×1-tile entity, `0 0 16 32` for tall Mario, `0 0 32 16` for wide entities like Banzai Bill. The SVG importer's *Pixels Per Unit* setting is configured to match (16) so 1 SVG unit = 1 world unit / 16th-of-a-tile, and tiles align cleanly.
 - **No `PrimitiveShapeRenderer` component.** Just `SpriteRenderer` (or uGUI `Image`) with a `Sprite` reference + a `PaletteBinding` MonoBehaviour that writes the palette color to the renderer on `Awake` and on palette change.
-- **Slope tile sprites** (§4.5) are SVGs too — the triangular `<polygon>` doubles as both the rendered shape and the source for Unity's auto-generated *Custom Physics Shape*. Verify after import: the importer should produce a triangular physics shape; if not, set it manually in the Sprite Editor.
+- **Slope visuals** (§4.5) are SVGs rendered on each slope prefab's `SpriteRenderer`. Because slopes are variable-length prefabs with `PolygonCollider2D` generated from the `length` field (not from the sprite's imported physics shape), the SVG only carries the visual triangle — the collider is authoritative for physics. Adjust the `SpriteRenderer`'s draw mode / scale in the slope prefab's length-update editor hook so visual and collider stay in sync.
 - **SVG → uGUI Image** also works (the Vector Graphics package supports both `SpriteRenderer` and uGUI `Image` import targets), so HUD icons (life icon, coin icon, dragon-coin slots) use the same SVG assets as world sprites. One source of truth per shape.
 - Animated states (walking, jumping, hurt) are conveyed by **color flashes**, **squash/stretch tweens** (PrimeTween), and **rotation** of the sprite transform — not by swapping to different SVGs every frame. Sprite swapping is reserved for *state* transitions (Small ↔ Super, walking ↔ skidding pose, etc.), not per-frame animation.
 - A `Palette` ScriptableObject holds all entity colors keyed by an enum (`PaletteRole.PlayerSmall`, `PaletteRole.Goomba`, `PaletteRole.Brick`, ...). Prefabs reference the palette + a role, never a hardcoded `Color`. Re-theming = swapping the palette asset.
@@ -669,7 +687,7 @@ A 2D physics matrix is non-optional for a platformer of this complexity. Set up 
 | `PlayerProjectile` | fireballs, thrown shells while owned by player |
 | `Enemy` | enemies |
 | `EnemyProjectile` | bullet bills, hammer-bro hammers |
-| `Solid` | tilemap solids, ground |
+| `Solid` | ground platforms, slope prefabs, pipes |
 | `OneWay` | jump-through platforms |
 | `Hazard` | spikes, lava, falling-zone trigger |
 | `Pickup` | coins, power-ups |
@@ -718,7 +736,7 @@ The single most important model in this spec. State lives in exactly **three** l
 
 #### Death & respawn
 On player death (`PlayerController.Die`):
-1. The level scene **unloads** and **reloads** (`SceneLoader.ReloadLevel()`), additively. This is the simplest way to reset every interactive block, dragon coin, dead enemy, and tilemap mutation in one shot — no per-system "reset" logic to maintain.
+1. The level scene **unloads** and **reloads** (`SceneLoader.ReloadLevel()`), additively. This is the simplest way to reset every interactive block, dragon coin, dead enemy, and P-switch swap state in one shot — no per-system "reset" logic to maintain.
 2. `LevelContext.Begin(LevelData, entryPoint)` runs again with `entryPoint = LevelRunState.checkpointId ?? defaultEntry`. Note `LevelRunState` is rebuilt **except** for the `checkpointId` field, which is carried across the reload via `GameSession`.
 3. Lives counter on `SaveData` decrements. If lives < 0 → game over → return to title; `SaveData` is saved at title return.
 4. Power state respawns as Small (SMW behavior — even if you crossed the midway as Super, you respawn Small at the checkpoint).
@@ -822,6 +840,23 @@ Assets/_Project/Prefabs/
 │   ├── Block_Question.prefab         (generator-owned)
 │   ├── Block_Brick.prefab            (generator-owned)
 │   └── …
+├── Environment/                      (§4.5 — no tilemaps; ground/slopes/decoration as prefabs)
+│   ├── Ground_Platform.prefab        (variable-length, 9-slice SVG + BoxCollider2D)
+│   ├── OneWay_Platform.prefab        (variable-length + PlatformEffector2D)
+│   ├── Slope_Steep_L.prefab          (variable-length + PolygonCollider2D)
+│   ├── Slope_Steep_R.prefab
+│   ├── Slope_Shallow_L.prefab
+│   ├── Slope_Shallow_R.prefab
+│   ├── Pipe.prefab                   (variable-height, trigger mouth for warps)
+│   ├── Hazard_Spikes.prefab
+│   ├── Hazard_Lava.prefab
+│   ├── Hazard_Pit.prefab             (invisible trigger volume, instant-kill)
+│   └── Decoration/                   (plain SpriteRenderer GOs, no collider)
+│       ├── Bush.prefab
+│       ├── Cloud.prefab
+│       └── …
+├── Rideables/
+│   └── Dolphin.prefab                (§4.7)
 ├── Projectiles/
 │   └── Fireball.prefab               (generator-owned)
 └── VFX/
@@ -860,7 +895,7 @@ Assets/_Project/Data/
 
 ### 4.26 Debug & Test Scenes
 
-Unity's scene authoring tools (Tilemap Palette, prefab drag-and-drop, the hierarchy panel) are the right tools for creative level design. **Content levels are hand-authored in Unity, not generated.** Generators would fight against Unity's strengths.
+Unity's scene authoring tools (prefab drag-and-drop, grid snapping, the hierarchy panel) are the right tools for creative level design. **Content levels are hand-authored in Unity, not generated.** Generators would fight against Unity's strengths. Ground/slope/decoration prefabs are dragged in from the `Prefabs/Environment/` folder, positioned on the integer grid (Scene-view grid snap = 1), and lengths are set in the inspector.
 
 The exception is **debug/test scenes** — diagnostic environments used throughout development (Phase 1 through Phase 8) to validate specific systems in isolation. These are not gameplay content; they're tooling. They're generator-owned for the same reasons prefabs are: consistency, regeneratability, and the ability to re-verify behavior after tuning changes.
 
@@ -898,7 +933,7 @@ None of these are fun. They're diagnostic. They stay in the repo throughout deve
 - `Tools → Generate → Debug Scenes → Slope Battery`
 - `Tools → Generate → Debug Scenes → Regenerate All`
 
-Each method creates a new scene, adds the standard level infrastructure (`LevelRoot`, tilemaps, `LevelBounds`, `LevelCamera`, spawn marker), paints the diagnostic layout via `Tilemap.SetTile` / `PrefabUtility.InstantiatePrefab`, points `LevelRoot.levelData` at a shared `LevelData_Debug.asset`, and saves to `Assets/_Project/Scenes/Debug/<Name>.unity`. The scene is also added to Build Settings under a "debug" tier (higher indices than content scenes).
+Each method creates a new scene, adds the standard level infrastructure (`LevelRoot`, `Environment` group, `LevelBounds`, `LevelCamera`, spawn marker), composes the diagnostic layout via `PrefabUtility.InstantiatePrefab` for every ground/slope/block/enemy instance, points `LevelRoot.levelData` at a shared `LevelData_Debug.asset`, and saves to `Assets/_Project/Scenes/Debug/<Name>.unity`. The scene is also added to Build Settings under a "debug" tier (higher indices than content scenes).
 
 Debug scenes use the same direct-entry machinery as content levels (§4.14) — press Play from any debug scene and it works, with fresh `SaveData` defaults from `EditorTestSettings`.
 
@@ -910,14 +945,14 @@ Debug scenes ARE registered in Build Settings during development (required for `
 
 - Debug scenes are regeneratable at any time. There is no "I made a useful manual tweak to the All Enemies scene" case — tweaks go into the generator code or into the referenced prefabs/SOs.
 - `Assets/_Project/Scenes/Debug/` is listed in the project's scene hygiene rules: any commit that adds a `.unity` file there must also update the generator that produced it.
-- PlayMode test fixtures are a *strict subset* of debug scenes — built programmatically at test setup, torn down at teardown, never saved. They reuse the same infrastructure code as `DebugSceneGenerator` (tilemap placement helpers, spawn utilities) through a shared `SceneBuildHelpers` static class.
+- PlayMode test fixtures are a *strict subset* of debug scenes — built programmatically at test setup, torn down at teardown, never saved. They reuse the same infrastructure code as `DebugSceneGenerator` (prefab placement helpers, spawn utilities) through a shared `SceneBuildHelpers` static class.
 
 ## 5. Game Content (V1 scope)
 
 V1 is intentionally wider than a minimal slice — it ships every major system end-to-end so architecture issues surface during content authoring rather than after. If the project needs to ship sooner, Phase 6 is the natural cut line: at end of Phase 6 there is a single playable level → goal → overworld → next-level loop, with no Yoshi or branching.
 
 - **1 overworld** with ~5 connected nodes (`Yoshi's Island 1`-style learning curve), including one branching path that requires the secret exit from level 5.
-- **5 hand-authored content levels** (under `Assets/_Project/Scenes/Levels/`, built in the Unity editor using Tilemap Palette + prefab drag-and-drop per §4.26 — NOT generated), each focused on exercising one subsystem:
+- **5 hand-authored content levels** (under `Assets/_Project/Scenes/Levels/`, built in the Unity editor using prefab drag-and-drop per §4.26 — NOT generated), each focused on exercising one subsystem:
   1. Movement & jumps only — no enemies. Validates §4.2 / §4.4 tuning.
   2. Enemies (Goomba, Koopa) + shells + brick blocks. Validates §4.6 / §4.7 capability interactions.
   3. Power-ups + fire flower combat + Piranha Plants + cape feather. Validates §4.3 / cape sweep / fireball.
@@ -935,7 +970,7 @@ Build order, per-phase tasks, automated tests, and manual verification lists liv
 
 These need a decision before their phase begins; flag them when reached.
 
-- ~~**Slopes:**~~ **Resolved:** locked to SMW's two-angle set — steep (45°) and shallow (~26.57°, the "1:2" two-tile slope). No arbitrary angles. No ceiling slopes in V1. Full sprite/tile breakdown and physics-shape details in §4.5.
+- ~~**Slopes:**~~ **Resolved:** locked to SMW's two-angle set — steep (45°) and shallow (~26.57°, the "1:2" two-unit slope). No arbitrary angles. No ceiling slopes in V1. Variable-length `PolygonCollider2D` prefabs per angle-direction combination — details in §4.5.
 - ~~**Cape flight:**~~ **Resolved:** simplified. V1 Cape Mario has a ground sweep attack and a jump-held slow-fall (25% gravity while descending). No flight take-off, no dive, no dive-rebound, no P-meter. Full SMW cape flight is explicitly out of scope and can bolt on later as a separate component if ever needed. See §4.2 for the full cape ability list.
 - ~~**Save format:**~~ **Resolved:** Newtonsoft.Json. Already pulled in transitively via Eflatun.SceneReference, handles `Dictionary<,>` and enums cleanly, saves stay human-readable for debugging. See §4.15 for the full serialization rules and `saveVersion` migration chain.
 - ~~**UI Toolkit vs uGUI:**~~ **Resolved:** uGUI. `com.unity.ugui` 2.0.0 is in the manifest with TMP bundled, gamepad nav via `InputSystemUIInputModule` works out of the box, and world-space canvases give us the score-popup pattern for free.
