@@ -352,6 +352,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MegamanX
       objectReference: {fileID: 0}
+    - target: {fileID: -3888481672020999207, guid: 099f5745563beae4a8630245cc67fb5b, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8742538545776668643, guid: 099f5745563beae4a8630245cc67fb5b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.03
@@ -404,7 +408,7 @@ PrefabInstance:
       addedObject: {fileID: 1385815139}
     - targetCorrespondingSourceObject: {fileID: -3888481672020999207, guid: 099f5745563beae4a8630245cc67fb5b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1385815138}
+      addedObject: {fileID: 1385815143}
     - targetCorrespondingSourceObject: {fileID: -3888481672020999207, guid: 099f5745563beae4a8630245cc67fb5b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1385815140}
@@ -427,7 +431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
   m_Actions: {fileID: -944628639613478452, guid: d8ccf722d1d75924b86e4ce6910b56c5, type: 3}
-  m_NotificationBehavior: 0
+  m_NotificationBehavior: 3
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -441,55 +445,9 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: 
+  m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!61 &1385815138
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385815136}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.7968399, y: 1.506}
-    newSize: {x: 0.7968399, y: 1.506}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.7968399, y: 1.506}
-  m_EdgeRadius: 0
 --- !u!50 &1385815139
 Rigidbody2D:
   serializedVersion: 5
@@ -537,19 +495,56 @@ MonoBehaviour:
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   fallGravityMultiplier: 1.8
+  gravity: 40
+  maxFallSpeed: 20
   dashSpeed: 14
   dashDuration: 0.35
   dashCooldown: 0.15
   wallSlideSpeed: 2
   wallJumpVelocity: {x: 8, y: 11}
   wallJumpLockTime: 0.18
-  groundCheck: {fileID: 0}
-  wallCheck: {fileID: 0}
-  groundCheckRadius: 0.15
-  wallCheckRadius: 0.12
   environmentLayers:
     serializedVersion: 2
+    m_Bits: 64
+  skinWidth: 0.02
+  probeDistance: 0.05
+--- !u!70 &1385815143
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385815136}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
     m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.7968399, y: 1.506}
+  m_Direction: 0
 --- !u!1 &2147046355
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,7 +557,7 @@ GameObject:
   - component: {fileID: 2147046358}
   - component: {fileID: 2147046357}
   - component: {fileID: 2147046356}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
