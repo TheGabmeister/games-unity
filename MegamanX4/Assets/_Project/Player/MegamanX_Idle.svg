@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 80" width="64" height="80">
+  <g transform="translate(64 0) scale(-1 1)">
   <!--
-    Mega Man X - front-facing standing pose with X-Buster on right arm.
+    Mega Man X - front-facing standing pose. Default orientation: facing right (+X).
+    Artwork is authored facing left and mirrored by the wrapping <g>.
     Palette:
       armor-light  #4FC3F7   armor-mid    #29B6F6   armor-dark  #0D47A1
       accent       #B3E5FC   outline      #0A2472
@@ -93,4 +95,5 @@
   <rect x="35.2" y="19.4" width="0.9" height="1.2" fill="#FFFFFF"/>
   <!-- Mouth -->
   <path d="M 30 26 Q 32 27 34 26" fill="none" stroke="#0A2472" stroke-width="0.8" stroke-linecap="round"/>
+  </g>
 </svg>

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 80" width="64" height="80">
+  <g transform="translate(64 0) scale(-1 1)">
   <!--
-    Mega Man X - falling pose. Legs stretched down and slightly apart,
+    Mega Man X - falling pose. Default orientation: facing right (+X).
+    Artwork is authored facing left and mirrored by the wrapping <g>.
+    Legs stretched down and slightly apart,
     arms out for balance, buster trailing slightly behind.
     Same palette as MegamanX_Idle.svg.
   -->
@@ -80,4 +83,5 @@
   <rect x="26.4" y="22" width="0.9" height="1.2" fill="#FFFFFF"/>
   <rect x="35.2" y="22" width="0.9" height="1.2" fill="#FFFFFF"/>
   <path d="M 30 26 Q 32 26.5 34 26" fill="none" stroke="#0A2472" stroke-width="0.8" stroke-linecap="round"/>
+  </g>
 </svg>

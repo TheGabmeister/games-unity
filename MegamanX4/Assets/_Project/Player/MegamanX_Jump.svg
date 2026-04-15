@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 80" width="64" height="80">
+  <g transform="translate(64 0) scale(-1 1)">
   <!--
-    Mega Man X - rising / jumping pose. Legs tucked up with knees forward,
+    Mega Man X - rising / jumping pose. Default orientation: facing right (+X).
+    Artwork is authored facing left and mirrored by the wrapping <g>.
+    Legs tucked up with knees forward,
     buster arm raised up-forward, other arm pulled back for counterbalance.
     Same palette as MegamanX_Idle.svg.
   -->
@@ -81,4 +84,5 @@
   <rect x="26.4" y="15.4" width="0.9" height="1.2" fill="#FFFFFF"/>
   <rect x="35.2" y="15.4" width="0.9" height="1.2" fill="#FFFFFF"/>
   <path d="M 30 22 Q 32 22.8 34 22" fill="none" stroke="#0A2472" stroke-width="0.8" stroke-linecap="round"/>
+  </g>
 </svg>
