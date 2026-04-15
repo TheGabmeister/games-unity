@@ -221,9 +221,9 @@ Blocks are **authored directly as GameObject prefab instances** in the `Level.un
 Required block behaviors:
 - **`?` block** — releases coin / power-up / 1-up based on its `BlockContents` SO. Becomes a "used" block (inert sprite + collider) after triggering. Power-up contents are context-aware: if Mario is Small, give Mushroom; if Super or higher, give whatever the SO declares (Flower/Feather).
 - **Brick** — breaks into shards if hit by Super+ Mario from below or stomped by spin jump; bumps (small upward tween) if hit by Small Mario; can also contain coins (`MultiCoinBrick` releases up to 10 coins on a timer).
-- **Note block / springboard** — bounces Mario upward; Note variant gives extra height if jump is held on contact.
+- **Note block / springboard** — bounces Mario upward; Note variant gives extra height if jump is held on contact. `Springboard : IThrowable` (pickable and throwable via `PlayerCarry` §4.2 — a thrown springboard keeps bouncing enemies on landing). `NoteBlock` is static, not carryable.
 - **Rotating block** — spins on hit; breakable by spin-jump from above only.
-- **P-switch** — when stomped, starts a global timer (~10s) that swaps every coin → brick and every brick → coin GameObject in the active region. Implementation: both `Coin` and `Brick` prefabs listen for a `PSwitchActive` event from a `PSwitchController` on `LevelRoot` and toggle their own state (enable the "other" sprite + collider, disable their own). Music pitches up as a stack-pushed track. State reverts when the timer expires.
+- **P-switch** (`PSwitch : IThrowable`) — pickable and throwable via `PlayerCarry` §4.2. When stomped (or when a thrown P-switch lands), starts a global timer (~10s) that swaps every coin → brick and every brick → coin GameObject in the active region. Implementation: both `Coin` and `Brick` prefabs listen for a `PSwitchActive` event from a `PSwitchController` on `LevelRoot` and toggle their own state (enable the "other" sprite + collider, disable their own). Music pitches up as a stack-pushed track. State reverts when the timer expires.
 - **Switch Palace blocks** — colored "dotted" outline blocks (Yellow/Green/Red/Blue). Pass-through until the corresponding switch palace has been completed; then become solid blocks globally. State lives in the save file (§4.15) and is read by every block on `Awake`. No per-block listener — the global flag is queried once.
 - **Used block** — inert sprite + collider; spawned as the "after" state of `?` blocks and `?`-with-coin bricks.
 
@@ -261,11 +261,11 @@ Each enemy is mapped to its MonoBehaviour class and the capability interfaces it
 - Koopa Troopa (4 colors) → `KoopaWalker : IStompable, IFireballHit, IShellImpact` [swap] `KoopaShell : IBumpable, IThrowable, IShellImpact`. Color is `KoopaData` SO variance: Green `ledgeTurn = false`, Red `ledgeTurn = true`, Yellow `kicksDust`, Blue `kicksShells`.
 - Paratroopa → `ParatroopaFlier : IStompable` [swap] `KoopaWalker` [swap] `KoopaShell` (three-stage).
 - Buzzy Beetle → same pattern as Koopa but Buzzy's walker class **does not implement `IFireballHit`** (so fireballs extinguish on it without damage). `BuzzyWalker : IStompable, IShellImpact` [swap] `BuzzyShell` (shared class with `KoopaShell` if behavior allows, else own).
-- Spike Top → `SpikeTopWalker : ISpinJumpSafe, IShellImpact` (wall-crawling; no `IStompable` — spin-jump is the only safe attack) [swap on spin-jump] `SpikeTopShell : IBumpable, IThrowable, IShellImpact`.
+- Spike Top → `SpikeTopWalker : IShellImpact` + `SpinJumpSafe` component (wall-crawling; no `IStompable` — spin-jump is the only safe attack) [swap on spin-jump] `SpikeTopShell : IBumpable, IThrowable, IShellImpact`.
 
 **Spiked**:
-- Spiny → `Spiny : ISpinJumpSafe, IFireballHit, IShellImpact` (no `IStompable`; spin-jump bounces safely)
-- Urchin → `Urchin : IFireballHit` (no `ISpinJumpSafe` — spikes all sides)
+- Spiny → `Spiny : IFireballHit, IShellImpact` + `SpinJumpSafe` component (no `IStompable`; spin-jump bounces safely)
+- Urchin → `Urchin : IFireballHit` (no `SpinJumpSafe` component — spikes all sides)
 - Porcu-Puffer → `PorcuPuffer : IFireballHit`
 - Sumo Brother → `SumoBrother : IFireballHit` (stationary; lightning spawn logic in class)
 
@@ -328,8 +328,8 @@ Each enemy is mapped to its MonoBehaviour class and the capability interfaces it
 | Own class, reusing interface set | ~15 | `Galoomba`, `Rex`, `Wiggler`, `MegaMole`, `DinoTorch`, `Spiny`, `Urchin`, `PorcuPuffer`, `BulletBill`, `BanzaiBill`, `TorpedoTed`, `Thwimp`, `Ninji`, `SwoopinStu`, `Blurp`, `RipVanFish` |
 | Own class, bespoke logic | ~12–15 | `PiranhaPlant`, `JumpingPiranha`, `FirePiranha`, `FishinBoo`, `Boo`, `BigBoo`, `Eerie`, `BooBuddyMember`, `BooBlock`, `Lakitu`, `Magikoopa`, `HammerBroPlatform`, `MontyMole*`, `SumoBrother`, `Thwomp`, `Fuzzy`, `Grinder`, `BobOmb`, Chuck variants (~5) |
 | Shared helper components | ~3 | `KinematicBody2D`, `PeriodicEmitter`, `EnemyDespawn` |
-| Capability interfaces | ~8 | `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `ISpinJumpSafe`, `IConditionallyTangible` |
-| Data-only damage component | 1 | `ContactDamage` (MonoBehaviour — attached to enemies, projectiles, and hazards that hurt on side-contact) |
+| Capability interfaces | ~7 | `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IConditionallyTangible` |
+| Data/marker components | 2 | `ContactDamage` (hurts Mario on side-contact; holds a `DamageInfo`), `SpinJumpSafe` (marker — spin-jump bounces safely; attached to `Spiny` and `SpikeTopWalker` only) |
 | Boss scripts | ~11 | 7 Koopalings + Big Boo + Reznor + Bowser + minibosses |
 
 **Total for full roster: ~30–35 enemy classes + ~11 boss scripts + 10 interfaces + 3 helpers.**
@@ -362,7 +362,6 @@ public interface IFireballHit           { FireballReaction OnHitByFireball(Fireb
 public interface ICapeSweepHit          { void OnHitByCapeSweep(Vector2 dir); }
 public interface IShellImpact           { void OnHitByShell(Shell s); }
 public interface IThrowable             { void OnPickedUp(PlayerController p); void OnThrown(Vector2 v); }
-public interface ISpinJumpSafe          { }                                              // marker: spin-jump bounces, no damage
 public interface IConditionallyTangible { bool IsTangibleTo(PlayerController p); }       // Boo-style gating
 
 public enum StompKind         { Normal, Spin }
@@ -390,7 +389,7 @@ void OnCollisionEnter2D(Collision2D col) {
             player.StompCombo.Notch();
             return;
         }
-        if (spin && go.GetComponent<ISpinJumpSafe>() != null) {
+        if (spin && go.GetComponent<SpinJumpSafe>() != null) {
             player.ApplyStompRebound(spin: true);
             return;
         }
@@ -399,16 +398,18 @@ void OnCollisionEnter2D(Collision2D col) {
 }
 ```
 
-**`ContactDamage` is a helper MonoBehaviour, not an interface** — contact damage is pure data, not polymorphic behavior. Any GameObject that should hurt Mario on side-contact (enemies, enemy projectiles, boss attacks) attaches a `ContactDamage` component. GameObjects without one are safe to touch. Same dispatch semantics as the former `IContactDamage`, but the damage source is composition, not inheritance.
+**`ContactDamage` and `SpinJumpSafe` are helper MonoBehaviours, not interfaces** — both are pure data / markers, not polymorphic behavior, so they don't earn a place in the interface set. Enemies attach them as regular components; the router checks for presence via `TryGetComponent` / `GetComponent`. Same dispatch semantics as if they were interfaces, but the composition-over-inheritance boundary is cleaner.
 
 ```csharp
 public class ContactDamage : MonoBehaviour {
     [SerializeField] DamageInfo damage;
     public DamageInfo Damage => damage;
 }
+
+public class SpinJumpSafe : MonoBehaviour { }  // marker: spin-jump bounces, no damage
 ```
 
-Enemies that source damage from their `EnemyData` SO set the field in `Awake`; static hazards just inspector-configure it.
+`ContactDamage` attaches to every enemy that hurts on side-contact, plus enemy projectiles and static hazards (`Hazard_Spikes`, `Hazard_Lava`, `Hazard_Pit`). Enemies that source damage from their `EnemyData` SO set the field in `Awake`; static hazards inspector-configure it. `SpinJumpSafe` only attaches to `Spiny` and `SpikeTopWalker` — in SMW nothing else (not even Munchers or Fuzzies) is spin-jump-safe.
 
 `GetActiveComponent<T>` filters disabled components: `GetComponents<T>().FirstOrDefault(c => c is not Behaviour b || b.enabled)`. Needed because `GetComponent<T>` returns disabled Behaviours by default, and state transitions (Koopa walk↔shell) rely on toggling `.enabled`.
 
@@ -471,7 +472,7 @@ Paratroopa is the same pattern with three components (`ParatroopaFlier` → `Koo
 
 ### 4.11 Goal / Level Completion
 - `GoalGate` component at the end of a level with a rotating bar collider on a fixed-period rotation. Touching the bar freezes player input, scores points based on the bar's height at contact (high → 8000, mid → 4000, low → 2000, plus the remaining-timer bonus × 50), then transitions back to the overworld with a `LevelClearPayload { levelId, secretExit: false, dragonCoinsCollected, scoreEarned }`.
-- Optional secret-exit `KeyHole` component triggered by carrying a `Key` pickup into it (uses `PlayerCarry` from §4.2) — emits the same payload with `secretExit: true` for branching map paths.
+- Optional secret-exit `KeyHole` component triggered by carrying a `Key` into it — emits the same payload with `secretExit: true` for branching map paths. The `Key` is a standalone prefab (`Key : IThrowable`, lives in `Prefabs/Environment/`), not a `PickupData` variant — it's carried, not collected. `PlayerCarry` (§4.2) dispatches to it uniformly with other throwables; the `KeyHole` checks `PlayerCarry.HeldObject is Key` on trigger enter.
 - The level scene receives the payload from `LevelContext.Begin(LevelData, entryPoint)` and sends the clear payload back via `GameStateMachine.Transition(OverworldState, payload)`.
 
 ### 4.12 Overworld Map

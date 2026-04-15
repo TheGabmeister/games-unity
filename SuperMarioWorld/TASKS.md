@@ -196,7 +196,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 - `GetActiveComponentFilterTest` (EM) — filters disabled sibling components correctly (Koopa walk↔shell).
 - `StompFromAboveTest` (PM) — valid stomp kills + rebounds.
 - `SideContactDamagesTest` (PM) — side contact reads the enemy's `ContactDamage` component and calls `player.TakeDamage`.
-- `SpinJumpSafeBounceTest` (PM) — `ISpinJumpSafe` marker bounces safely.
+- `SpinJumpSafeBounceTest` (PM) — enemies with a `SpinJumpSafe` component bounce safely on spin-jump.
 - `FireballReactionPathsTest` (PM) — `Absorbed` / `Passes` / wall-extinguish branches.
 - `KoopaWalkToShellSwapTest` (PM) — sibling-component enable toggle dispatches correct interface.
 - `ShellKickOnSideContactTest` (PM) — walk into stunned shell kicks it in facing direction.
