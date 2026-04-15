@@ -639,7 +639,7 @@ public sealed class SceneLoader {
   - Enum-as-string conversion via `StringEnumConverter` so save files stay human-readable and diff-able. Treat save JSON as text we'd be willing to open in a text editor for debugging.
 - All numeric-keyed maps use `string` keys in the persisted form (e.g. `levelId` is already a string). No attempt to preserve `int` / `enum` keys in JSON — round-trip via strings.
 - A single `SaveSerializer` static wraps `JsonConvert.SerializeObject` / `DeserializeObject` with our standard `JsonSerializerSettings` (pretty-printed, `StringEnumConverter`, `NullValueHandling.Ignore`, `MissingMemberHandling.Ignore` so old saves survive adding new fields).
-- **Save versioning**: `SaveData` has a top-level `int saveVersion` field. On load, if the stored version is less than the current, run registered `ISaveMigration` steps in order before deserializing into the current types. V1 ships at `saveVersion = 1` with the migration chain empty.
+- **No save versioning.** `MissingMemberHandling.Ignore` plus default-initialized fields on `SaveData` are enough to absorb schema additions; V1 is a single-player offline game with no shipped saves to migrate.
 - File format: UTF-8, pretty-printed JSON. No compression or encryption in V1 — not worth the complexity for a single-player offline game, and readable saves help debugging.
 - Saves happen at: level clear, overworld node move, switch palace activation, file-select. Never mid-level.
 
@@ -983,5 +983,5 @@ These need a decision before their phase begins; flag them when reached.
 
 - ~~**Slopes:**~~ **Resolved:** locked to SMW's two-angle set — steep (45°) and shallow (~26.57°, the "1:2" two-unit slope). No arbitrary angles. No ceiling slopes in V1. Variable-length `PolygonCollider2D` prefabs per angle-direction combination — details in §4.5.
 - ~~**Cape flight:**~~ **Resolved:** simplified. V1 Cape Mario has a ground sweep attack and a jump-held slow-fall (25% gravity while descending). No flight take-off, no dive, no dive-rebound, no P-meter. Full SMW cape flight is explicitly out of scope and can bolt on later as a separate component if ever needed. See §4.2 for the full cape ability list.
-- ~~**Save format:**~~ **Resolved:** Newtonsoft.Json. Already pulled in transitively via Eflatun.SceneReference, handles `Dictionary<,>` and enums cleanly, saves stay human-readable for debugging. See §4.15 for the full serialization rules and `saveVersion` migration chain.
+- ~~**Save format:**~~ **Resolved:** Newtonsoft.Json. Already pulled in transitively via Eflatun.SceneReference, handles `Dictionary<,>` and enums cleanly, saves stay human-readable for debugging. See §4.15 for the full serialization rules.
 - ~~**UI Toolkit vs uGUI:**~~ **Resolved:** uGUI. `com.unity.ugui` 2.0.0 is in the manifest with TMP bundled, gamepad nav via `InputSystemUIInputModule` works out of the box, and world-space canvases give us the score-popup pattern for free.

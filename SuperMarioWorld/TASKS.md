@@ -350,11 +350,9 @@ Phase 8 consolidates per-phase tests into a regression suite and adds cross-cutt
 - Consolidated test suite — all earlier-phase tests pass together.
 - Asset validation postprocessor ([§4.26](SPEC.md) test fixtures note; also see CLAUDE.md coding conventions for SO discipline).
 - Unity Profiler pass — verify no per-frame allocations in `FixedUpdate`.
-- Save versioning migration chain ([§4.15](SPEC.md)) exercised.
 
 ### Automated tests
 - `AssetValidationPostprocessorTest` (EM) — missing references on any SO (`EnemyData.sprite`, `PowerStateData.collider`, `LevelData.sceneRef`) fail asset import with a clear error.
-- `SaveVersionMigrationTest` (EM) — `saveVersion = 0` file loads via registered migrations.
 - `FixedUpdateAllocationFreeTest` (PM) — 60 FixedUpdate ticks on Phase 1 scene allocate 0 managed bytes (or below tight tolerance).
 - `LongSoakTest` (PM) — 10-minute fast-forward on a content level: no frame budget overruns, no leaking audio sources or enemy instances.
 - `SceneUnloadEventCleanupTest` (PM) — level load → unload → load; subscriber counts on `HudViewModel` / `ScoreService` don't grow.

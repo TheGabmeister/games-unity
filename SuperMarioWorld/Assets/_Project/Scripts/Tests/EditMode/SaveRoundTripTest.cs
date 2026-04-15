@@ -26,7 +26,6 @@ namespace SMW
             Assert.IsTrue(copy.levelCompletions.ContainsKey("level_01"));
             Assert.IsTrue(copy.levelCompletions["level_01"].normalExit);
             Assert.AreEqual(0b10101UL, copy.dragonCoinsByLevel["level_01"]);
-            Assert.AreEqual(SaveData.CurrentSaveVersion, copy.saveVersion);
         }
     }
 }

@@ -6,9 +6,6 @@ namespace SMW
     [Serializable]
     public sealed class SaveData
     {
-        public const int CurrentSaveVersion = 1;
-
-        public int saveVersion = CurrentSaveVersion;
         public int lives = 5;
         public int score;
         public int totalCoins;
