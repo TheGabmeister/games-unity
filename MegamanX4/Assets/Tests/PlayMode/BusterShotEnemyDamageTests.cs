@@ -103,8 +103,22 @@ public class BusterShotEnemyDamageTests
 
     static void SetPrivateField<T>(object target, string fieldName, T value)
     {
-        var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        var field = FindField(target.GetType(), fieldName);
         Assert.That(field, Is.Not.Null, $"Missing field '{fieldName}' on {target.GetType().Name}.");
         field.SetValue(target, value);
+    }
+
+    static FieldInfo FindField(System.Type type, string fieldName)
+    {
+        while (type != null)
+        {
+            var field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (field != null)
+                return field;
+
+            type = type.BaseType;
+        }
+
+        return null;
     }
 }
