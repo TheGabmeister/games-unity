@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour
     bool isGrounded;
     bool isTouchingWall;
     bool WallSliding => isTouchingWall && !isGrounded && velocity.y < 0f;
-    bool IsDashing => dashTimer > 0f;
+    public bool IsDashing => dashTimer > 0f;
 
     float coyoteTimer;
     float jumpBufferTimer;

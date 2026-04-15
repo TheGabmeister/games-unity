@@ -82,3 +82,5 @@ crashlytics-build.properties
 
 # Third-party assets
 Assets/TextMesh*Pro
+
+.dotnet

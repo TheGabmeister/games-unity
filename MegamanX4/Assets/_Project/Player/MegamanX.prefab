@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3093305848789512586}
   - component: {fileID: 1721440816723545090}
   - component: {fileID: 1840346111615040339}
+  - component: {fileID: 3099517297308019227}
   m_Layer: 3
   m_Name: MegamanX
   m_TagString: Untagged
@@ -168,9 +169,9 @@ MonoBehaviour:
     m_Bits: 64
   skinWidth: 0.02
   probeDistance: 0.05
-  smallShotPrefab: {fileID: -3888481672020999207, guid: 3f87d72c4bbb1ce4b8d035e11b81f3c1, type: 3}
-  semiShotPrefab: {fileID: -3888481672020999207, guid: 3c3c967f34cf565469b0b9ee6dc13d88, type: 3}
-  fullShotPrefab: {fileID: -3888481672020999207, guid: 779f540e0b2d8c443b52bf10d7915c5f, type: 3}
+  smallShotPrefab: {fileID: 7717567935848934344, guid: 4f9be617af552b74da19a7b02056bd45, type: 3}
+  semiShotPrefab: {fileID: 1220017866557005652, guid: 58b7a795bc7be564eae5490c4833eda1, type: 3}
+  fullShotPrefab: {fileID: 6249736849717060126, guid: d49d348e804ffa5438f612592f1aea8c, type: 3}
   muzzleAnchor: {fileID: 3947491078196069659}
   semiChargeTime: 0.4
   fullChargeTime: 1.2
@@ -178,6 +179,23 @@ MonoBehaviour:
   semiFlashColor: {r: 1, g: 1, b: 1, a: 1}
   fullFlashColor: {r: 0.4, g: 1, b: 1, a: 1}
   flashPeriod: 0.08
+--- !u!114 &3099517297308019227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827737925019994148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2f7b9e4d344d4b9a99d2f68b3f8a71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DashSilhouetteTrail
+  sourceRenderer: {fileID: 8224132748615150196}
+  silhouetteColor: {r: 0.3, g: 0.7, b: 1, a: 0.75}
+  spawnInterval: 0.04
+  silhouetteLifetime: 0.18
+  sortingOrderOffset: -1
 --- !u!1 &4554798857488393429
 GameObject:
   m_ObjectHideFlags: 0
