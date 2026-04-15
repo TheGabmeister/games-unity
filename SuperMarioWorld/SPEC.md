@@ -247,7 +247,7 @@ Each enemy is mapped to its MonoBehaviour class and the capability interfaces it
 - Galoomba — flipped on stomp, can be picked up → `Galoomba : IStompable, IContactDamage, IFireballHit, IShellImpact, IThrowable`
 - Rex — 2 stomps; first flattens → `Rex : IStompable, IContactDamage, IFireballHit, IShellImpact` (internal HP = 2; first stomp swaps to flat sprite + smaller collider)
 - Dino-Torch / Dino-Rhino — breathes fire; Dino-Rhino splits into two Dino-Torches on damage → `DinoTorch : IStompable, IContactDamage, IFireballHit, IShellImpact` + `PeriodicEmitter` component. `DinoRhino` is its own class with `splitOnDeath` logic.
-- Mega Mole — giant, Mario can ride on top → `MegaMole : IStompable, IContactDamage, IFireballHit, IRideable`
+- Mega Mole — giant, Mario can stand on top → `MegaMole : IStompable, IFireballHit` (no `IContactDamage` — safe to touch from any side, matches SMW behavior; standing on top is just a regular box collider, no special "ride" plumbing)
 - Wiggler — 2 stomps, aggros on first → `Wiggler : IStompable, IContactDamage, IFireballHit, IShellImpact`
 
 **Shelled walkers** (stomp → shell that can be kicked, carried, ricocheted):
@@ -307,7 +307,9 @@ Each enemy is mapped to its MonoBehaviour class and the capability interfaces it
 - Cheep-Cheep (both colors) → `CheepCheep : IStompable, IContactDamage, IFireballHit` (Green = path, Red = chase; `CheepCheepData` SO selects)
 - Blurp → same class as Cheep-Cheep with data variance, or own class if motion differs enough
 - Rip Van Fish → `RipVanFish : IStompable, IContactDamage, IFireballHit` (internal sleep→wake→chase FSM)
-- Dolphin → not an enemy; `RideableDolphin : IRideable` on a water-path prefab
+
+**Non-enemy entities that Mario stands on** — not enemies (no damage, no stomp, no defeat state). Just a regular box collider plus whatever motion driver they need. Live under `Prefabs/Rideables/`, not under `Enemies/`:
+- Dolphin → `Dolphin` on a water-path prefab (hops along a spline; Mario stands on the collider like any solid surface — no parenting, no saddle plumbing)
 
 **Bosses** — out of scope for shared interfaces. Each is its own scripted MonoBehaviour (`IggyFight`, `ReznorFight`, `BowserFight`, …) with its own phase machine. They may implement a subset of interfaces where relevant (e.g., `Reznor : IFireballHit` since it's fireball-only), but their fight logic lives entirely in their own class.
 
@@ -319,7 +321,7 @@ Each enemy is mapped to its MonoBehaviour class and the capability interfaces it
 | Own class, reusing interface set | ~15 | `Galoomba`, `Rex`, `Wiggler`, `MegaMole`, `DinoTorch`, `Spiny`, `Urchin`, `PorcuPuffer`, `BulletBill`, `BanzaiBill`, `TorpedoTed`, `Thwimp`, `Ninji`, `SwoopinStu`, `Blurp`, `RipVanFish` |
 | Own class, bespoke logic | ~12–15 | `PiranhaPlant`, `JumpingPiranha`, `FirePiranha`, `FishinBoo`, `Boo`, `BigBoo`, `Eerie`, `BooBuddyMember`, `BooBlock`, `Lakitu`, `Magikoopa`, `HammerBroPlatform`, `MontyMole*`, `SumoBrother`, `Thwomp`, `Fuzzy`, `Grinder`, `BobOmb`, Chuck variants (~5) |
 | Shared helper components | ~3 | `KinematicBody2D`, `PeriodicEmitter`, `EnemyDespawn` |
-| Capability interfaces | ~10 | `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IContactDamage`, `ISpinJumpSafe`, `IRideable`, `IConditionallyTangible` |
+| Capability interfaces | ~9 | `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IContactDamage`, `ISpinJumpSafe`, `IConditionallyTangible` |
 | Boss scripts | ~11 | 7 Koopalings + Big Boo + Reznor + Bowser + minibosses |
 
 **Total for full roster: ~30–35 enemy classes + ~11 boss scripts + 10 interfaces + 3 helpers.**
@@ -354,7 +356,6 @@ public interface IShellImpact           { void OnHitByShell(Shell s); }
 public interface IThrowable             { void OnPickedUp(PlayerController p); void OnThrown(Vector2 v); }
 public interface IContactDamage         { DamageInfo ContactDamage { get; } }           // side-touch hurts Mario
 public interface ISpinJumpSafe          { }                                              // marker: spin-jump bounces, no damage
-public interface IRideable              { Vector3 SaddleOffset { get; } }
 public interface IConditionallyTangible { bool IsTangibleTo(PlayerController p); }       // Boo-style gating
 
 public enum StompKind         { Normal, Spin }

@@ -18,7 +18,7 @@ No command-line build. Open in Unity Hub (`6000.3.12f1` exact) and run from the 
 
 - Target resolution is **1280×720 (16:9)**. Configure in Player Settings as part of Phase 0.
 - Scenes do not yet exist beyond `Main.unity`. Phase 0 introduces `Boot`, `Systems` (persistent, additively loaded), `Title`, `Overworld`, plus generated debug scenes under `Scenes/Debug/`. Content levels land in Phase 7.
-- No test runner is set up yet. `com.unity.test-framework` is in the manifest but assembly definitions do not exist. Tests land in Phase 8; creating `SMW.Runtime`, `SMW.Editor`, `SMW.Tests` `.asmdef` files is a Phase 0 prerequisite.
+- No test runner is set up yet. `com.unity.test-framework` is in the manifest but assembly definitions do not exist. Creating `SMW.Runtime`, `SMW.Editor`, `SMW.Tests` `.asmdef` files is a Phase 0 prerequisite. Tests are then added incrementally phase-by-phase per [TASKS.md](TASKS.md) (each phase has EditMode/PlayMode tests and a manual verification checklist); Phase 8 consolidates them into a regression suite.
 - Press Play from any scene should work once Phase 0 ships — a `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` in `Bootstrapper` loads `Systems` additively before any `Awake` runs, and scene roots (`LevelRoot`, `TitleRoot`, `OverworldRoot`) detect direct editor entry. Don't add early-return code that assumes `Boot` was the entry scene. See SPEC.md §4.14.
 
 ## Packages (current manifest)
@@ -55,6 +55,8 @@ These codify decisions in SPEC.md that conflict with Unity defaults or common tu
 - **Rebinding UI is out of V1 scope** (§4.1). Don't build it, don't plan for it.
 - **HUD canvases** (`HUDRoot`, `TitleCanvas`, `OverworldCanvas`) all share a `CanvasScalerPresetApplier` targeting 1280×720 with `MatchWidthOrHeight` / `Match = 0.5` (§4.17). One place to change resolution assumptions.
 - **Physics layers and the 2D collision matrix** (§4.19) must be set up before Phase 1 — the player controller and ground probe depend on it. Commit `ProjectSettings/DynamicsManager.asset`.
+- **Enemy combat uses capability interfaces** (§4.7): `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IContactDamage`, `ISpinJumpSafe`, `IConditionallyTangible`. Attackers (`PlayerCollisionRouter`, `Fireball`, `CapeSweep`, `Shell`) dispatch via `TryGetComponent<I…>`. **Do not introduce** a `CombatResolver` static, virtual methods on an abstract `Enemy` base class, a `CombatOutcome` struct, or a `MovementKind` enum with switch statements. The combat "matrix" is emergent — each cell is which interfaces an enemy implements.
+- **No object pooling.** Dynamic spawns (projectiles, VFX, score popups, enemies) use plain `Instantiate` / `Destroy`. The explicit rationale is at the bottom of §4.7 and in Phase 8 notes — pooling isn't worth the infrastructure for a game at this scale. If profiling turns up a genuine hot spot, address it locally, don't add a general pooling layer.
 
 ## Repository layout
 
@@ -72,7 +74,7 @@ Phase 0 also creates `Assets/_Project/Prefabs/{Player,Enemies,Pickups,Blocks,Pro
 - Namespaces rooted at `SMW.<Subsystem>` (`SMW.Player`, `SMW.Enemies`, `SMW.Audio`, ...).
 - Inspector-driven fields: `[SerializeField] private` + property accessor. No bare `public` fields on MonoBehaviours.
 - One `MonoBehaviour` per file. Data classes live as ScriptableObjects.
-- Prefer composition over inheritance. Enemy variants are `EnemyData` SOs for the same `Enemy` MonoBehaviour; share `KinematicBody2D`-style helpers rather than introducing a Player/Enemy base class.
+- Prefer composition over inheritance. Share behavior via helper components (`KinematicBody2D`, `PeriodicEmitter`, etc.), not base classes. For enemies specifically, each archetype is its own MonoBehaviour class implementing capability interfaces (see the load-bearing rule above); per-variant tuning (Koopa colors, Cheep-Cheep paths) uses `EnemyData` SOs against the same class.
 
 ## Existing code
 
