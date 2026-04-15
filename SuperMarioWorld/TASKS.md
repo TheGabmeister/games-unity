@@ -58,6 +58,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 - Full required mechanics: variable jump + coyote + buffer, run gate, spin jump, skid, crouch, ceiling cancel, slope handling ([§4.2](SPEC.md)).
 - `PlayerCarry` placeholder ([§4.2](SPEC.md)).
 - `LevelCamera` with forward bias, vertical lock, `LevelBounds` clamp ([§4.4](SPEC.md)).
+- Core Environment prefabs needed by the Movement Test: `Ground_Platform`, `Slope_Steep_L/R`, `Slope_Shallow_L/R` — with variable-`length` fields and the collider/visual regen editor hook ([§4.5](SPEC.md)). Remaining Environment prefabs (`OneWay_Platform`, `Pipe`, hazards) come in Phase 2.
 - Phase 1 Movement Test debug scene ([§4.26](SPEC.md)).
 
 ### Automated tests
@@ -93,7 +94,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 ## Phase 2 — Environment prefabs, blocks, pickups, timer
 
 ### Tasks
-- Environment prefab family: `Ground_Platform`, `OneWay_Platform`, `Slope_Steep_L/R`, `Slope_Shallow_L/R`, `Pipe`, `Hazard_Spikes`, `Hazard_Lava`, `Hazard_Pit` — all with variable-length inspector fields and length-update editor hooks that resize collider + visual together ([§4.5](SPEC.md)).
+- Remaining Environment prefabs (Phase 1 covered ground + slopes): `OneWay_Platform`, `Pipe`, `Hazard_Spikes`, `Hazard_Lava`, `Hazard_Pit` — same variable-length pattern as §4.5.
 - Full block roster as standalone prefabs (`Block_Question`, `Block_Brick`, `Block_MultiCoin`, `Block_Note`, `Block_Rotating`, `Block_PSwitch`, `Block_SwitchPalace_Y/G/R/B`, `Block_Used`) authored directly into levels — no spawner ([§4.6](SPEC.md)).
 - Coin, dragon coin, 1-up pickups + HUD counters via `HudViewModel` ([§4.9](SPEC.md), [§4.17](SPEC.md)).
 - `LevelTimer` with low-time warning ([§4.21](SPEC.md)).
@@ -192,7 +193,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 - All Enemies debug scene ([§4.26](SPEC.md)).
 
 ### Automated tests
-- `EnemyCapabilityDeclarationTest` (EM) — each V1 enemy implements the exact interface set per §4.7.
+- `EnemyCapabilityDeclarationTest` (EM) — each V1 enemy implements the exact interface set per §4.7 and carries the `ContactDamage` / `SpinJumpSafe` components it's supposed to have.
 - `GetActiveComponentFilterTest` (EM) — filters disabled sibling components correctly (Koopa walk↔shell).
 - `StompFromAboveTest` (PM) — valid stomp kills + rebounds.
 - `SideContactDamagesTest` (PM) — side contact reads the enemy's `ContactDamage` component and calls `player.TakeDamage`.
@@ -274,7 +275,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 ## Phase 6 — Goal, sub-areas, overworld
 
 ### Tasks
-- `GoalGate` + `KeyHole` + carryable `Key` pickup ([§4.11](SPEC.md)).
+- `GoalGate` + `KeyHole` + carryable `Key` prefab (standalone `IThrowable`, under `Prefabs/Environment/`) ([§4.11](SPEC.md)).
 - Pipe entry → offset-region sub-area ([§4.5](SPEC.md)).
 - `Overworld.unity` with `MapNode` graph, BFS, file select ([§4.12](SPEC.md), [§4.15](SPEC.md)).
 - Save at milestones only ([§4.15](SPEC.md), [§4.24](SPEC.md)).

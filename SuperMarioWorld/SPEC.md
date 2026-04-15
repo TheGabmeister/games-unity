@@ -137,7 +137,7 @@ Components on the `Player` prefab:
 - `PlayerStateMachine` — see §4.3.
 - `PlayerInputBinding` — translates `InputAction` callbacks into intent fields the controller reads each `FixedUpdate`.
 - `GroundProbe` — separate component that does `Physics2D.BoxCast` / `RaycastNonAlloc` to detect ground, ceiling, walls, and slope angle. Uses a dedicated `Solid` layer mask, never `Physics2D.OverlapCircleAll` against everything.
-- `PlayerCarry` — manages a held object (shell, P-switch, springboard) and its release/throw vector.
+- `PlayerCarry` — manages a held `IThrowable` (stunned shell, stunned Galoomba, lit Bob-omb, P-switch, springboard, key) and its release/throw vector.
 - `PlayerVisuals` — owns the `SpriteRenderer` and the per-state SVG sprite + palette role; subscribes to `PlayerStateChanged` events to swap sprite / collider size / tint.
 
 Required mechanics (these are the things that *make it feel like SMW*; do not skip any):
@@ -149,7 +149,7 @@ Required mechanics (these are the things that *make it feel like SMW*; do not sk
 - **Skidding**: turning while at high velocity produces a deceleration state with its own visual.
 - **Crouch / duck slide** (Super+ only): Small Mario cannot crouch. Ducking while sliding on a slope produces a damaging slide.
 - **Ceiling hit cancels upward velocity** without rebounding.
-- **Pickup & throw**: pressing `Action` (§4.1) while next to a stunned shell, P-switch, or springboard picks it up. While carrying, releasing `Action` drops it gently; tapping `Action` while moving throws it horizontally. Held objects move with the carry transform and disable their own collisions until release.
+- **Pickup & throw**: pressing `Action` (§4.1) while next to an `IThrowable` target picks it up (stunned shells, stunned Galoombas, lit Bob-ombs, P-switches, springboards, keys). While carrying, releasing `Action` drops it gently; tapping `Action` while moving throws it horizontally. Held objects move with the carry transform and disable their own collisions until release.
 - **Pipe entry** (down/right pipes): triggered by holding the directional input over a flagged pipe segment; smoothly tweens position into the pipe via PrimeTween, then triggers a sub-area transition (§4.5).
 - **Star invincibility** (overlay state): timer-based, kills any enemy on touch including normally-invulnerable ones (except Boo and bosses), grants no flight or block-break privileges, and replaces music via a music stack push (§4.16). Implemented as a *modifier* on top of the power-up FSM, not a state in it.
 - **Cape Mario abilities** (simplified from SMW — cape flight is explicitly scoped down; see resolution in §7):
@@ -332,17 +332,17 @@ Each enemy is mapped to its MonoBehaviour class and the capability interfaces it
 | Data/marker components | 2 | `ContactDamage` (hurts Mario on side-contact; holds a `DamageInfo`), `SpinJumpSafe` (marker — spin-jump bounces safely; attached to `Spiny` and `SpikeTopWalker` only) |
 | Boss scripts | ~11 | 7 Koopalings + Big Boo + Reznor + Bowser + minibosses |
 
-**Total for full roster: ~30–35 enemy classes + ~11 boss scripts + 10 interfaces + 3 helpers.**
+**Total for full roster: ~30–35 enemy classes + ~11 boss scripts + 7 capability interfaces + 2 data/marker components + 3 helpers.**
 
 **Observations** (facts, not conclusions):
 - Most enemies have 3–5 interfaces. Reading the class declaration line tells you what it is and what can hurt it.
 - The bespoke long tail exists in any architecture — Lakitu's cloud-steal, Magikoopa's teleport, Thwomp's fall-FSM have to live somewhere. Each lives in its own class with clear boundaries.
 - The only shared-class-many-SOs case is Koopa/Paratroopa (color variants) and Cheep-Cheep (path/chase variants). Everything else is its own class because movement/AI differs enough that SO flags would become a branching god-class.
-- V1 ships 6 enemies → 6 classes + maybe 2 helper classes + ~8 interfaces. The full roster's shape informs architecture; V1's scope is much smaller.
+- V1 ships 6 enemies → 6 classes + maybe 2 helper classes + 7 capability interfaces + 2 data/marker components. The full roster's shape informs architecture; V1's scope is much smaller.
 - My confidence on exotic variants (Chuck sub-variants, Grinder, some Dinos, Booster enemies) remains lower — treat those counts as estimates.
 
 V1 enemy roster (smallest set that exercises every behavior shape):
-- **Goomba/Galoomba** — walks, stomp kills.
+- **Galoomba** — walks, stomp flips it (stunned), carryable and throwable.
 - **Koopa Troopa** — walks, stomp turns into a sliding shell that can hit other enemies and ricochet off walls.
 - **Piranha Plant** — emerges from pipe on a timer; cannot be stomped, killed by fireballs.
 - **Bullet Bill** — spawned by an off-screen `BulletBillLauncher`; flies in a straight line.
