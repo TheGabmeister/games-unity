@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,10 @@ namespace SMW
     public sealed class ScreenFader : MonoBehaviour
     {
         [SerializeField] private Image fadeImage;
+
+        // Fires at the start of each fade. Exposed for test observability; no production caller uses these.
+        public event Action OnFadeOutStarted;
+        public event Action OnFadeInStarted;
 
         private void Awake()
         {
@@ -25,12 +30,14 @@ namespace SMW
         {
             if (fadeImage == null) return;
             fadeImage.raycastTarget = true;
+            OnFadeOutStarted?.Invoke();
             await Tween.Alpha(fadeImage, endValue: 1f, duration: duration, useUnscaledTime: true);
         }
 
         public async Task FadeInAsync(float duration)
         {
             if (fadeImage == null) return;
+            OnFadeInStarted?.Invoke();
             await Tween.Alpha(fadeImage, endValue: 0f, duration: duration, useUnscaledTime: true);
             fadeImage.raycastTarget = false;
         }

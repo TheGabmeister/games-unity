@@ -54,26 +54,31 @@ namespace SMW
         }
 
 #if UNITY_EDITOR
+        // Returns a warning message if sceneRef points at a scene not in Build Settings.
+        // Returns null when sceneRef is empty or already registered. Does not depend on Eflatun's
+        // runtime guid-to-path map — resolves via UnityEditor.AssetDatabase so tests are deterministic.
+        public string GetSceneRefValidationWarning()
+        {
+            if (sceneRef == null) return null;
+            string guid;
+            try { guid = sceneRef.Guid; }
+            catch { return null; }
+            if (string.IsNullOrEmpty(guid)) return null;
+
+            var path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+            if (string.IsNullOrEmpty(path)) return null;
+
+            foreach (var s in UnityEditor.EditorBuildSettings.scenes)
+                if (s.enabled && s.path == path) return null;
+
+            var sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+            return $"[LevelData] {levelId}: sceneRef '{sceneName}' is not registered in Build Settings. Add it or Play-from-level will fail silently.";
+        }
+
         private void OnValidate()
         {
-            if (sceneRef == null) return;
-            string sceneName;
-            try { sceneName = sceneRef.Name; }
-            catch { return; }
-            if (string.IsNullOrEmpty(sceneName)) return;
-
-            var editorScenes = UnityEditor.EditorBuildSettings.scenes;
-            bool registered = false;
-            foreach (var s in editorScenes)
-            {
-                if (s.enabled && s.path.EndsWith($"{sceneName}.unity"))
-                {
-                    registered = true;
-                    break;
-                }
-            }
-            if (!registered)
-                Debug.LogWarning($"[LevelData] {levelId}: sceneRef '{sceneName}' is not registered in Build Settings. Add it or Play-from-level will fail silently.", this);
+            var warning = GetSceneRefValidationWarning();
+            if (warning != null) Debug.LogWarning(warning, this);
         }
 #endif
     }
