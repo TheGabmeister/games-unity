@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24" width="32" height="24">
+  <!--
+    Small buster "lemon" - yellow ovoid pellet with highlight.
+    Authored facing right (head on +X side).
+  -->
+  <!-- Outer glow -->
+  <ellipse cx="18" cy="12" rx="11" ry="7" fill="#FFF176" opacity="0.5"/>
+  <!-- Body -->
+  <ellipse cx="19" cy="12" rx="8" ry="5" fill="#FFEB3B" stroke="#F57F17" stroke-width="1"/>
+  <!-- Highlight -->
+  <ellipse cx="17" cy="10" rx="2.6" ry="1.6" fill="#FFFFFF" opacity="0.85"/>
+  <!-- Tail wisp -->
+  <ellipse cx="8" cy="12" rx="4" ry="1.6" fill="#FFF59D" opacity="0.6"/>
+</svg>

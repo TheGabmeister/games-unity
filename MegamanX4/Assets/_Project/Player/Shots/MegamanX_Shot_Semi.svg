@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 48" width="64" height="48">
+  <!--
+    Semi-charged buster - elongated green-cyan energy bolt.
+    Authored facing right (head on +X side).
+  -->
+  <!-- Outer glow -->
+  <ellipse cx="36" cy="24" rx="26" ry="14" fill="#69F0AE" opacity="0.35"/>
+  <!-- Body -->
+  <ellipse cx="38" cy="24" rx="20" ry="10" fill="#00E676" stroke="#00796B" stroke-width="1.2"/>
+  <!-- Inner core -->
+  <ellipse cx="40" cy="24" rx="12" ry="6" fill="#B9F6CA"/>
+  <!-- Highlight -->
+  <ellipse cx="42" cy="21" rx="4.5" ry="2.2" fill="#FFFFFF" opacity="0.85"/>
+  <!-- Tail streaks -->
+  <ellipse cx="16" cy="24" rx="8" ry="3" fill="#69F0AE" opacity="0.55"/>
+  <ellipse cx="6" cy="24" rx="5" ry="1.6" fill="#B9F6CA" opacity="0.35"/>
+</svg>

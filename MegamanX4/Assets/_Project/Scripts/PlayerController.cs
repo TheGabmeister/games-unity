@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -46,11 +47,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float skinWidth = 0.02f;
     [SerializeField] float probeDistance = 0.05f;
 
+    [Header("Shooting")]
+    [SerializeField] GameObject smallShotPrefab;
+    [SerializeField] GameObject semiShotPrefab;
+    [SerializeField] GameObject fullShotPrefab;
+    [SerializeField] Transform muzzleAnchor;
+    [SerializeField] float semiChargeTime = 0.4f;
+    [SerializeField] float fullChargeTime = 1.2f;
+    [SerializeField] int maxSmallShots = 3;
+    [SerializeField] Color semiFlashColor = Color.white;
+    [SerializeField] Color fullFlashColor = new(0.4f, 1f, 1f);
+    [SerializeField] float flashPeriod = 0.08f;
+
     Rigidbody2D rb;
     PlayerInput playerInput;
     InputAction moveAction;
     InputAction jumpAction;
     InputAction sprintAction;
+    InputAction attackAction;
+
+    bool isCharging;
+    float chargeTimer;
+    Color baseSpriteColor = Color.white;
+    readonly List<BusterShot> activeSmallShots = new();
 
     ContactFilter2D contactFilter;
     readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
@@ -82,11 +101,13 @@ public class PlayerController : MonoBehaviour
         moveAction = playerInput.actions["Move"];
         jumpAction = playerInput.actions["Jump"];
         sprintAction = playerInput.actions["Sprint"];
+        attackAction = playerInput.actions["Attack"];
 
         contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
         contactFilter.SetLayerMask(environmentLayers);
 
         if (visual) spriteRenderer = visual.GetComponent<SpriteRenderer>();
+        if (spriteRenderer) baseSpriteColor = spriteRenderer.color;
     }
 
     void UpdateSprite()
@@ -104,6 +125,8 @@ public class PlayerController : MonoBehaviour
         jumpAction.started += OnJumpStarted;
         jumpAction.canceled += OnJumpCanceled;
         sprintAction.started += OnSprintStarted;
+        attackAction.started += OnAttackStarted;
+        attackAction.canceled += OnAttackCanceled;
     }
 
     void OnDisable()
@@ -111,6 +134,8 @@ public class PlayerController : MonoBehaviour
         jumpAction.started -= OnJumpStarted;
         jumpAction.canceled -= OnJumpCanceled;
         sprintAction.started -= OnSprintStarted;
+        attackAction.started -= OnAttackStarted;
+        attackAction.canceled -= OnAttackCanceled;
     }
 
     void OnJumpStarted(InputAction.CallbackContext _)
@@ -122,6 +147,67 @@ public class PlayerController : MonoBehaviour
     void OnJumpCanceled(InputAction.CallbackContext _) => jumpHeld = false;
 
     void OnSprintStarted(InputAction.CallbackContext _) => TryStartDash();
+
+    void OnAttackStarted(InputAction.CallbackContext _)
+    {
+        isCharging = true;
+        chargeTimer = 0f;
+    }
+
+    void OnAttackCanceled(InputAction.CallbackContext _)
+    {
+        if (!isCharging) return;
+        isCharging = false;
+
+        if (chargeTimer >= fullChargeTime)
+            Spawn(fullShotPrefab, isSmall: false);
+        else if (chargeTimer >= semiChargeTime)
+            Spawn(semiShotPrefab, isSmall: false);
+        else if (activeSmallShots.Count < maxSmallShots)
+            Spawn(smallShotPrefab, isSmall: true);
+
+        chargeTimer = 0f;
+        if (spriteRenderer) spriteRenderer.color = baseSpriteColor;
+    }
+
+    void Spawn(GameObject prefab, bool isSmall)
+    {
+        if (!prefab) return;
+        Vector2 pos = muzzleAnchor ? (Vector2)muzzleAnchor.position : (Vector2)transform.position;
+        var go = Instantiate(prefab, pos, Quaternion.identity);
+        if (!go.TryGetComponent<BusterShot>(out var shot)) return;
+        shot.Fire(facing);
+        if (isSmall)
+        {
+            activeSmallShots.Add(shot);
+            shot.Destroyed += () => activeSmallShots.Remove(shot);
+        }
+    }
+
+    void UpdateChargeFlash()
+    {
+        if (!spriteRenderer) return;
+        if (!isCharging)
+        {
+            spriteRenderer.color = baseSpriteColor;
+            return;
+        }
+
+        if (chargeTimer >= fullChargeTime)
+        {
+            bool phase = Mathf.FloorToInt(chargeTimer / flashPeriod) % 2 == 0;
+            spriteRenderer.color = phase ? fullFlashColor : Color.white;
+        }
+        else if (chargeTimer >= semiChargeTime)
+        {
+            bool phase = Mathf.FloorToInt(chargeTimer / flashPeriod) % 2 == 0;
+            spriteRenderer.color = phase ? semiFlashColor : baseSpriteColor;
+        }
+        else
+        {
+            spriteRenderer.color = baseSpriteColor;
+        }
+    }
 
     void Update()
     {
@@ -143,6 +229,8 @@ public class PlayerController : MonoBehaviour
             visual.localScale = s;
         }
 
+        if (isCharging) chargeTimer += Time.deltaTime;
+        UpdateChargeFlash();
         UpdateSprite();
     }
 
