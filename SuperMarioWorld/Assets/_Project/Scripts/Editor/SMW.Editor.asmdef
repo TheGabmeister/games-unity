@@ -5,6 +5,7 @@
         "SMW.Runtime",
         "Unity.InputSystem",
         "Unity.VectorGraphics",
+        "Unity.VectorGraphics.Editor",
         "UnityEngine.UI",
         "Eflatun.SceneReference",
         "Eflatun.SceneReference.Editor",

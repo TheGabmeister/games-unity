@@ -10,7 +10,7 @@ Unity 6 (`6000.3.12f1`) project recreating *Super Mario World* (SNES, 1990) game
 
 ## Current state
 
-**Phase 0 complete.** Assembly definitions, the Boot / Systems / Title / Overworld scene foundation, `GameServices` + all service skeletons (`SaveManager`, `SceneLoader` + `ScreenFader`, `GameStateMachine` + states, `FeedbackService`, `GameSession`, `AudioBus` stub), `PlayerInputManager`, physics layer matrix, build settings, and 31 automated tests (26 EditMode + 5 PlayMode, all green) are in place. Next up: Phase 1 player controller + camera. See [TASKS.md](TASKS.md) for the phase-by-phase checklist.
+**Phase 1 implementation landed; tuning gate open.** Phase 0 scaffolding (`GameServices` + service skeletons, physics layer matrix, Boot/Systems/Title/Overworld scenes, PlayerInputManager) plus Phase 1's player stack (`PlayerController` + `GroundProbe` + `PlayerInputBinding` + `PlayerCarry` placeholder), camera + level scaffolding (`LevelCamera`, `LevelBounds`, `SpawnMarker`, `LevelContext`), environment prefabs (`Ground_Platform`, four `Slope_*`), SVG placeholders, prefab + debug-scene generators, and the Phase 1 Movement Test debug scene are all in place. Phase 1's subjective tuning gate ("run + jump feels responsive") is the current open item — expect iteration on `PlayerController` constants. See [TASKS.md](TASKS.md).
 
 ## How to build / run
 
@@ -104,7 +104,7 @@ These codify decisions in SPEC.md that conflict with Unity defaults or common tu
 Game-specific assets live under [Assets/_Project/](Assets/_Project/) (leading underscore for sort order). The full planned structure is in SPEC.md §4.25 / §4.26. Current:
 
 - [Assets/_Project/Scripts/](Assets/_Project/Scripts/)
-  - `Runtime/` — Core, State, Scene, Save, Audio, Feedback, Session, UI, Data. All under `SMW.Runtime` asmdef.
+  - `Runtime/` — Core, State, Scene, Save, Audio, Feedback, Session, Player, Environment, UI, Data. All under `SMW.Runtime` asmdef.
   - `Editor/` — `FileExtensions.cs` plus `Setup/` (bootstrap tools) + `Generators/` (prefab/debug-scene generator scaffolds) + `Build/` (`StripDebugScenesOnBuild` preprocessor). All under `SMW.Editor` asmdef.
   - `Tests/EditMode/` and `Tests/PlayMode/` — split test asmdefs.
 - [Assets/_Project/Scenes/](Assets/_Project/Scenes/) — `Boot.unity`, `Systems.unity`, `Title.unity`, `Overworld.unity`. `Scenes/Debug/` lands with Phase 1's Movement Test. `Scenes/Levels/` lands in Phase 7.

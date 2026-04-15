@@ -95,7 +95,9 @@ namespace SMW
             var inputManager = inputGo.AddComponent<UnityEngine.InputSystem.PlayerInputManager>();
             inputManager.joinBehavior = UnityEngine.InputSystem.PlayerJoinBehavior.JoinPlayersManually;
             inputManager.notificationBehavior = UnityEngine.InputSystem.PlayerNotifications.InvokeCSharpEvents;
-            // inputManager.playerPrefab is wired by Phase 1 once the Player prefab exists.
+            var playerPrefab = PlayerPrefabGenerator.LoadPrefab();
+            if (playerPrefab != null) inputManager.playerPrefab = playerPrefab;
+            else Debug.LogWarning("[SceneBootstrapGenerator] Player prefab missing — run 'Tools → SMW → Generate → Prefabs → Player' before entering a level scene.");
 
             // HUDRoot canvas.
             var hudRootGo = new GameObject("HUDRoot", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasScalerPresetApplier));
