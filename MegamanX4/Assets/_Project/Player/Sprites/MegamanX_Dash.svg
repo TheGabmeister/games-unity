@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 80" width="64" height="80">
-  <g transform="translate(64 0) scale(-1 1)">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160" width="128" height="160">
+  <g transform="translate(128 0) scale(-2 2)">
   <!--
     Mega Man X - horizontal dash pose. Default orientation: facing right (+X).
     Artwork is authored facing left and mirrored by the wrapping <g>.

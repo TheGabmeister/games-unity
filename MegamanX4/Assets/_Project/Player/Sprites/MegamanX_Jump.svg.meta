@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 43513281d30819d48b5f8febd1a1d790
+guid: e43fbbc97cad3ae45b93be5a8de5c022
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -10,7 +10,7 @@ ScriptedImporter:
   script: {fileID: 12408, guid: 0000000000000000e000000000000000, type: 0}
   svgType: 0
   texturedSpriteMeshType: 0
-  svgPixelsPerUnit: 50
+  svgPixelsPerUnit: 100
   gradientResolution: 64
   alignment: 0
   customPivot: {x: 0, y: 0}
@@ -39,7 +39,7 @@ ScriptedImporter:
   useSVGPixelsPerUnit: 0
   spriteData:
     TessellationDetail: 0
-    SpriteName: MegamanX_FallSprite
+    SpriteName: MegamanX_JumpSprite
     SpritePivot: {x: 0.5, y: 0.5}
     SpriteAlignment: 0
     SpriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -47,7 +47,7 @@ ScriptedImporter:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 54.7196
-      height: 76.3
-    SpriteID: 7542ddc335e914c46bc5b4b73d433153
+      width: 77.600006
+      height: 153.6
+    SpriteID: 58cf999db1c5f984ba5f8362d6944825
     PhysicsOutlines: []
