@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
@@ -35,6 +36,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask environmentLayers = ~0;
 
     Rigidbody2D rb;
+    PlayerInput playerInput;
+    InputAction moveAction;
+    InputAction jumpAction;
+    InputAction sprintAction;
+
     Vector2 moveInput;
     bool jumpHeld;
     int facing = 1;
@@ -56,24 +62,41 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerInput = GetComponent<PlayerInput>();
+        moveAction = playerInput.actions["Move"];
+        jumpAction = playerInput.actions["Jump"];
+        sprintAction = playerInput.actions["Sprint"];
         baseGravityScale = rb.gravityScale;
     }
 
-    void OnMove(InputValue value) => moveInput = value.Get<Vector2>();
-
-    void OnJump(InputValue value)
+    void OnEnable()
     {
-        jumpHeld = value.isPressed;
-        if (value.isPressed) jumpBufferTimer = jumpBufferTime;
+        jumpAction.started += OnJumpStarted;
+        jumpAction.canceled += OnJumpCanceled;
+        sprintAction.started += OnSprintStarted;
     }
 
-    void OnSprint(InputValue value)
+    void OnDisable()
     {
-        if (value.isPressed) TryStartDash();
+        jumpAction.started -= OnJumpStarted;
+        jumpAction.canceled -= OnJumpCanceled;
+        sprintAction.started -= OnSprintStarted;
     }
+
+    void OnJumpStarted(InputAction.CallbackContext _)
+    {
+        jumpHeld = true;
+        jumpBufferTimer = jumpBufferTime;
+    }
+
+    void OnJumpCanceled(InputAction.CallbackContext _) => jumpHeld = false;
+
+    void OnSprintStarted(InputAction.CallbackContext _) => TryStartDash();
 
     void Update()
     {
+        moveInput = moveAction.ReadValue<Vector2>();
+
         coyoteTimer -= Time.deltaTime;
         jumpBufferTimer -= Time.deltaTime;
         dashTimer -= Time.deltaTime;
