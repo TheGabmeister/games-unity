@@ -1,4 +1,4 @@
-namespace SMW.Audio
+namespace SMW
 {
     public enum SfxId
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace SMW.InputRouting
+namespace SMW
 {
     public enum InputMapName { None, Player, Overworld, UI }
 

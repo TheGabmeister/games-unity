@@ -1,6 +1,6 @@
 {
     "name": "SMW.Tests.PlayMode",
-    "rootNamespace": "SMW.Tests.PlayMode",
+    "rootNamespace": "SMW",
     "references": [
         "SMW.Runtime",
         "Unity.InputSystem",

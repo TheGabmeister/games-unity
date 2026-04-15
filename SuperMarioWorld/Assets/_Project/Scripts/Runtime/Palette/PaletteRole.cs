@@ -1,4 +1,4 @@
-namespace SMW.Palette
+namespace SMW
 {
     public enum PaletteRole
     {

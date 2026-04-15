@@ -3,9 +3,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 using System.Text.RegularExpressions;
-using SMW.Data;
 
-namespace SMW.Tests.EditMode
+namespace SMW
 {
     public sealed class LevelDataValidatorTest
     {

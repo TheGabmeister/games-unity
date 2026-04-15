@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace SMW.Editor.Setup
+namespace SMW
 {
     public static class PhysicsLayerMatrixSetup
     {

@@ -4,7 +4,7 @@ using Eflatun.SceneReference;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace SMW.Scene
+namespace SMW
 {
     public sealed class SceneLoader : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SMW.UI
+namespace SMW
 {
     [RequireComponent(typeof(CanvasScaler))]
     [DefaultExecutionOrder(-100)]

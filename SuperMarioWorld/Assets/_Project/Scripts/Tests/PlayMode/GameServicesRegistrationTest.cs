@@ -1,9 +1,8 @@
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine.TestTools;
-using SMW.Core;
 
-namespace SMW.Tests.PlayMode
+namespace SMW
 {
     public sealed class GameServicesRegistrationTest
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-namespace SMW.Tests.PlayMode
+namespace SMW
 {
     public sealed class BootstrapperLoadsSystemsTest
     {

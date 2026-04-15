@@ -1,6 +1,6 @@
 using System;
 
-namespace SMW.UI
+namespace SMW
 {
     public sealed class HudViewModel
     {

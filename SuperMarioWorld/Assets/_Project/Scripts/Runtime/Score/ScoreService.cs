@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SMW.Score
+namespace SMW
 {
     public enum ScoreReason
     {

@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEditor;
 
-namespace SMW.Tests.EditMode
+namespace SMW
 {
     public sealed class BuildSettingsIndexTest
     {

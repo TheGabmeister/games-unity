@@ -1,13 +1,6 @@
 using UnityEngine;
-using SMW.Audio;
-using SMW.Feedback;
-using SMW.Save;
-using SMW.Scene;
-using SMW.Score;
-using SMW.Session;
-using SMW.State;
 
-namespace SMW.Core
+namespace SMW
 {
     public sealed class GameServices : MonoBehaviour
     {

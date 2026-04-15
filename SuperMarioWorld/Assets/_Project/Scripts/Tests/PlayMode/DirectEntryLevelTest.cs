@@ -2,11 +2,8 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using SMW.Core;
-using SMW.Data;
-using SMW.State;
 
-namespace SMW.Tests.PlayMode
+namespace SMW
 {
     public sealed class DirectEntryLevelTest
     {

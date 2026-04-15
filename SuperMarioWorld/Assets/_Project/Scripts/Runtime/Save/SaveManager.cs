@@ -3,7 +3,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace SMW.Save
+namespace SMW
 {
     public sealed class SaveManager : MonoBehaviour
     {

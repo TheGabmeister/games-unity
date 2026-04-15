@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace SMW.Core
+namespace SMW
 {
     public sealed class Bootstrapper : MonoBehaviour
     {

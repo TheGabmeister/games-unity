@@ -40,7 +40,7 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 
 ### Coding conventions
 - C# 9+ features OK (Unity 6 supports them). Nullable reference types **off** (Unity default).
-- Namespaces rooted at `SMW.<Subsystem>` (e.g. `SMW.Player`, `SMW.Enemies`, `SMW.Audio`).
+- Single flat `SMW` namespace for all runtime, editor, and test code. Subsystem separation is by assembly (`SMW.Runtime` / `SMW.Editor` / `SMW.Tests.*`) and by folder (`Runtime/Audio/`, `Runtime/Player/`, …), not by nested namespaces. Rationale: solo-dev project scale doesn't justify the `using`-list overhead, and assembly-level boundaries already prevent editor code leaking into runtime. Type names must be unique within `SMW` — prefix by subsystem when a collision would otherwise happen (e.g. `LevelState` vs `LevelRunState` vs `LevelRoot`).
 - One `MonoBehaviour` per file. Data-only classes (`GoombaData`, `LevelData`) live as **ScriptableObjects**, not hardcoded.
 - Prefer composition over inheritance. Enemy variants are different ScriptableObject configs of the same `Enemy` MonoBehaviour where possible.
 - Public fields in inspector-driven components use `[SerializeField] private` + property accessor — no bare `public` fields.

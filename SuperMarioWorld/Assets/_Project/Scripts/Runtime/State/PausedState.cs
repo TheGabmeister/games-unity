@@ -1,7 +1,6 @@
 using UnityEngine;
-using SMW.Core;
 
-namespace SMW.State
+namespace SMW
 {
     public sealed class PausedState : IGameState
     {
@@ -9,14 +8,14 @@ namespace SMW.State
         {
             Time.timeScale = 0f;
             AudioListener.pause = true;
-            GameServices.Audio?.PlayUiSfx(Audio.UiSfxId.Pause);
+            GameServices.Audio?.PlayUiSfx(UiSfxId.Pause);
         }
 
         public void OnExit()
         {
             Time.timeScale = 1f;
             AudioListener.pause = false;
-            GameServices.Audio?.PlayUiSfx(Audio.UiSfxId.Unpause);
+            GameServices.Audio?.PlayUiSfx(UiSfxId.Unpause);
         }
     }
 }

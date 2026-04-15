@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SMW.Audio
+namespace SMW
 {
     public sealed class AudioBus : MonoBehaviour
     {

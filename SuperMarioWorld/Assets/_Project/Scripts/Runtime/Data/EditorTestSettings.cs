@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SMW.Data
+namespace SMW
 {
     [CreateAssetMenu(fileName = "EditorTestSettings", menuName = "SMW/Settings/Editor Test Settings")]
     public sealed class EditorTestSettings : ScriptableObject

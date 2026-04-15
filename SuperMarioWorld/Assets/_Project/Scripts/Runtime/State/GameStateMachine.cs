@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using SMW.Core;
-using SMW.Data;
 
-namespace SMW.State
+namespace SMW
 {
     public sealed class GameStateMachine : MonoBehaviour
     {

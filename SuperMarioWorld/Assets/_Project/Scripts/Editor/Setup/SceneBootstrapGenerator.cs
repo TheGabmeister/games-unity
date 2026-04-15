@@ -7,18 +7,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem.UI;
-using SMW.Audio;
-using SMW.Core;
-using SMW.Feedback;
-using SMW.Save;
-using SMW.Scene;
-using SMW.Score;
-using SMW.Session;
-using SMW.State;
-using SMW.UI;
-using SMW.InputRouting;
 
-namespace SMW.Editor.Setup
+namespace SMW
 {
     public static class SceneBootstrapGenerator
     {
@@ -32,8 +22,8 @@ namespace SMW.Editor.Setup
         {
             EnsureFolders();
 
-            var editorTestSettings = EnsureAsset<SMW.Data.EditorTestSettings>($"{SettingsFolder}/EditorTestSettings.asset");
-            var palette = EnsureAsset<SMW.Palette.Palette>($"{DataFolder}/Palette.asset");
+            var editorTestSettings = EnsureAsset<EditorTestSettings>($"{SettingsFolder}/EditorTestSettings.asset");
+            var palette = EnsureAsset<Palette>($"{DataFolder}/Palette.asset");
             var audioCatalog = EnsureAsset<AudioCatalog>($"{DataFolder}/AudioCatalog.asset");
             _ = editorTestSettings; _ = palette; _ = audioCatalog;
 

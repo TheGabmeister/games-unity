@@ -1,8 +1,6 @@
 using UnityEngine;
-using SMW.Core;
-using SMW.State;
 
-namespace SMW.Scene
+namespace SMW
 {
     public sealed class TitleRoot : MonoBehaviour
     {

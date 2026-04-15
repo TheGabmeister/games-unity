@@ -1,4 +1,4 @@
-namespace SMW.Scene
+namespace SMW
 {
     public struct SceneLoadOptions
     {

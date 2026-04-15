@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace SMW.Tests.EditMode
+namespace SMW
 {
     public sealed class AsmdefIsolationTest
     {

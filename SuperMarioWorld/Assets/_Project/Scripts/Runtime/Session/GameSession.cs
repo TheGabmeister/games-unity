@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SMW.Session
+namespace SMW
 {
     public sealed class GameSession : MonoBehaviour
     {

@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using Eflatun.SceneReference;
 using UnityEngine;
-using SMW.Audio;
-using SMW.Palette;
 
-namespace SMW.Data
+namespace SMW
 {
     [CreateAssetMenu(fileName = "LevelData", menuName = "SMW/Level/Level Data")]
     public sealed class LevelData : ScriptableObject
@@ -31,7 +29,7 @@ namespace SMW.Data
         [SerializeField] private SceneReference sceneRef;
         [SerializeField] private int timeLimitSeconds = 300;
         [SerializeField] private MusicId musicId = MusicId.Overworld;
-        [SerializeField] private Palette.Palette themePalette;
+        [SerializeField] private Palette themePalette;
         [SerializeField] private List<EntryPoint> entryPoints = new();
         [SerializeField] private List<SubArea> subAreas = new();
         [SerializeField] private List<LevelData> unlocksOnNormalExit = new();
@@ -42,7 +40,7 @@ namespace SMW.Data
         public SceneReference SceneRef => sceneRef;
         public int TimeLimitSeconds => timeLimitSeconds;
         public MusicId MusicId => musicId;
-        public Palette.Palette ThemePalette => themePalette;
+        public Palette ThemePalette => themePalette;
         public IReadOnlyList<EntryPoint> EntryPoints => entryPoints;
         public IReadOnlyList<SubArea> SubAreas => subAreas;
         public IReadOnlyList<LevelData> UnlocksOnNormalExit => unlocksOnNormalExit;

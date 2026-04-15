@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SMW.Session
+namespace SMW
 {
     public sealed class LevelRunState : MonoBehaviour
     {

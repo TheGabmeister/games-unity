@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using PrimeTween;
 
-namespace SMW.Scene
+namespace SMW
 {
     [RequireComponent(typeof(Canvas))]
     public sealed class ScreenFader : MonoBehaviour

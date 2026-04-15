@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace SMW.Editor.Generators
+namespace SMW
 {
     public abstract class PrefabGeneratorBase
     {

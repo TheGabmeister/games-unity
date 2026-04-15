@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace SMW.Editor.Generators
+namespace SMW
 {
     /// Phase 0 scaffold. Each Phase adds its own generator method and menu item.
     public static class DebugSceneGenerator

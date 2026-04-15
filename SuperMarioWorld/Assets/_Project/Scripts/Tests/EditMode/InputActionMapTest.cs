@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.InputSystem;
 
-namespace SMW.Tests.EditMode
+namespace SMW
 {
     public sealed class InputActionMapTest
     {

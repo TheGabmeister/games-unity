@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SMW.Palette
+namespace SMW
 {
     [ExecuteAlways]
     public sealed class PaletteBinding : MonoBehaviour

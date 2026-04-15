@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SMW.Palette
+namespace SMW
 {
     [CreateAssetMenu(fileName = "Palette", menuName = "SMW/Art/Palette")]
     public sealed class Palette : ScriptableObject

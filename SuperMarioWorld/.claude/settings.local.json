@@ -14,7 +14,9 @@
       "Bash(xargs grep:*)",
       "Bash(awk 'NR==41' c:/dev/games-unity/SuperMarioWorld/ProjectSettings/TagManager.asset)",
       "Bash(awk 'NR>=38 && NR<=43' c:/dev/games-unity/SuperMarioWorld/ProjectSettings/TagManager.asset)",
-      "Bash(awk 'NR>=38 && NR<=41' c:/dev/games-unity/SuperMarioWorld/ProjectSettings/TagManager.asset)"
+      "Bash(awk 'NR>=38 && NR<=41' c:/dev/games-unity/SuperMarioWorld/ProjectSettings/TagManager.asset)",
+      "Bash(xargs -0 sed -i -E 's/^namespace SMW\\\\.[A-Za-z.]+$/namespace SMW/')",
+      "Bash(xargs -0 sed -i -E '/^using SMW\\\\.[A-Za-z.]+;$/d')"
     ]
   }
 }

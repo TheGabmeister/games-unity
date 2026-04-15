@@ -1,7 +1,6 @@
 using NUnit.Framework;
-using SMW.Save;
 
-namespace SMW.Tests.EditMode
+namespace SMW
 {
     public sealed class SaveRoundTripTest
     {

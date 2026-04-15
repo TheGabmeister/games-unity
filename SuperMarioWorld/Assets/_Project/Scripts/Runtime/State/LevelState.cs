@@ -1,6 +1,5 @@
-using SMW.Data;
 
-namespace SMW.State
+namespace SMW
 {
     public sealed class LevelState : IGameState
     {

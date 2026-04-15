@@ -1,6 +1,6 @@
 {
     "name": "SMW.Editor",
-    "rootNamespace": "SMW.Editor",
+    "rootNamespace": "SMW",
     "references": [
         "SMW.Runtime",
         "Unity.InputSystem",

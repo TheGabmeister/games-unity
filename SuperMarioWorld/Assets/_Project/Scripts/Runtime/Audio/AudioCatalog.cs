@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SMW.Audio
+namespace SMW
 {
     [CreateAssetMenu(fileName = "AudioCatalog", menuName = "SMW/Audio/Audio Catalog")]
     public sealed class AudioCatalog : ScriptableObject

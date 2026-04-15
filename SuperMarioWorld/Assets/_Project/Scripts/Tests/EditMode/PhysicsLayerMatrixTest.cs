@@ -1,8 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
-using SMW.Editor.Setup;
 
-namespace SMW.Tests.EditMode
+namespace SMW
 {
     public sealed class PhysicsLayerMatrixTest
     {

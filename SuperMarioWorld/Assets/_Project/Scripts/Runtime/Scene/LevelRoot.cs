@@ -1,9 +1,6 @@
 using UnityEngine;
-using SMW.Core;
-using SMW.Data;
-using SMW.State;
 
-namespace SMW.Scene
+namespace SMW
 {
     public sealed class LevelRoot : MonoBehaviour
     {

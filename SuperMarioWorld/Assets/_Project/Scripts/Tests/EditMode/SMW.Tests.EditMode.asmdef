@@ -1,6 +1,6 @@
 {
     "name": "SMW.Tests.EditMode",
-    "rootNamespace": "SMW.Tests.EditMode",
+    "rootNamespace": "SMW",
     "references": [
         "SMW.Runtime",
         "SMW.Editor",

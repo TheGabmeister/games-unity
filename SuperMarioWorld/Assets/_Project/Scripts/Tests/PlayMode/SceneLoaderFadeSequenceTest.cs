@@ -4,10 +4,8 @@ using Eflatun.SceneReference;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using SMW.Core;
-using SMW.Scene;
 
-namespace SMW.Tests.PlayMode
+namespace SMW
 {
     public sealed class SceneLoaderFadeSequenceTest
     {

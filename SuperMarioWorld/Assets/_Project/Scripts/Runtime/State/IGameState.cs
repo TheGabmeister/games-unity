@@ -1,4 +1,4 @@
-namespace SMW.State
+namespace SMW
 {
     public interface IGameState
     {

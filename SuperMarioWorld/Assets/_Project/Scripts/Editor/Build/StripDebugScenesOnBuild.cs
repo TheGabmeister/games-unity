@@ -4,7 +4,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace SMW.Editor.Build
+namespace SMW
 {
     public sealed class StripDebugScenesOnBuild : IPreprocessBuildWithReport
     {

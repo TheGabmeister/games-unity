@@ -1,4 +1,4 @@
-namespace SMW.Save
+namespace SMW
 {
     public interface ISaveMigration
     {

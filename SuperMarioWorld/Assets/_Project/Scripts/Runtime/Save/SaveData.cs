@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SMW.Save
+namespace SMW
 {
     [Serializable]
     public sealed class SaveData

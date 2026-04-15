@@ -71,7 +71,7 @@ Phase 0 also creates `Assets/_Project/Prefabs/{Player,Enemies,Pickups,Blocks,Env
 
 ## Coding conventions (from SPEC.md §2)
 
-- Namespaces rooted at `SMW.<Subsystem>` (`SMW.Player`, `SMW.Enemies`, `SMW.Audio`, ...).
+- Single flat `SMW` namespace for every script — no subsystem sub-namespaces. Assembly boundaries (`SMW.Runtime` / `SMW.Editor` / `SMW.Tests.*`) and folder layout (`Runtime/Audio/`, `Runtime/Player/`, …) carry the separation. If a new type collides, prefix it (`LevelState` / `LevelRunState` / `LevelRoot`) rather than reintroducing nested namespaces.
 - Inspector-driven fields: `[SerializeField] private` + property accessor. No bare `public` fields on MonoBehaviours.
 - One `MonoBehaviour` per file. Data classes live as ScriptableObjects.
 - Prefer composition over inheritance. Share behavior via helper components (`KinematicBody2D`, `PeriodicEmitter`, etc.), not base classes. For enemies specifically, each archetype is its own MonoBehaviour class implementing capability interfaces (see the load-bearing rule above); per-variant tuning (Koopa colors, Cheep-Cheep paths) uses `EnemyData` SOs against the same class.
