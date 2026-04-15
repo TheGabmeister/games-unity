@@ -34,9 +34,9 @@ public class BusterShot : MonoBehaviour
     {
         if ((hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
 
-        var enemyHealth = other.GetComponentInParent<EnemyHealth>();
-        if (enemyHealth)
-            enemyHealth.ApplyDamage(damage);
+        var targetHealth = other.GetComponentInParent<Health>();
+        if (targetHealth)
+            targetHealth.ApplyDamage(damage);
 
         Destroy(gameObject);
     }
