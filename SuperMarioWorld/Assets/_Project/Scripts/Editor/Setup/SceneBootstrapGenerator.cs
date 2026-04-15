@@ -23,9 +23,8 @@ namespace SMW
             EnsureFolders();
 
             var editorTestSettings = EnsureAsset<EditorTestSettings>($"{SettingsFolder}/EditorTestSettings.asset");
-            var palette = EnsureAsset<Palette>($"{DataFolder}/Palette.asset");
             var audioCatalog = EnsureAsset<AudioCatalog>($"{DataFolder}/AudioCatalog.asset");
-            _ = editorTestSettings; _ = palette; _ = audioCatalog;
+            _ = editorTestSettings; _ = audioCatalog;
 
             var bootPath = CreateBootScene();
             var systemsPath = CreateSystemsScene(audioCatalog);
@@ -89,17 +88,15 @@ namespace SMW
             var scoreSvc = servicesGo.AddComponent<ScoreService>();
             var feedbackSvc = servicesGo.AddComponent<FeedbackService>();
             var session = servicesGo.AddComponent<GameSession>();
-            var inputRouter = servicesGo.AddComponent<InputRouter>();
-            _ = inputRouter;
 
-            // Input asset reference.
-            var inputAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(InputAssetPath);
-            if (inputAsset != null)
-            {
-                var so = new SerializedObject(inputRouter);
-                var prop = so.FindProperty("actions");
-                if (prop != null) { prop.objectReferenceValue = inputAsset; so.ApplyModifiedPropertiesWithoutUndo(); }
-            }
+            // PlayerInputManager on its own GameObject. V1 joins exactly one player at level start;
+            // local co-op later = same component, raise the player count. PlayerInput instances live
+            // on the Player prefab (Phase 1), not here — this GameObject only owns the manager.
+            var inputGo = new GameObject("Input");
+            var inputManager = inputGo.AddComponent<UnityEngine.InputSystem.PlayerInputManager>();
+            inputManager.joinBehavior = UnityEngine.InputSystem.PlayerJoinBehavior.JoinPlayersManually;
+            inputManager.notificationBehavior = UnityEngine.InputSystem.PlayerNotifications.InvokeCSharpEvents;
+            // inputManager.playerPrefab is wired by Phase 1 once the Player prefab exists.
 
             // HUDRoot canvas.
             var hudRootGo = new GameObject("HUDRoot", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasScalerPresetApplier));
@@ -165,14 +162,16 @@ namespace SMW
             SetObjRef(svcSo, "feedbackService", feedbackSvc);
             SetObjRef(svcSo, "gameSession", session);
             SetObjRef(svcSo, "audioBus", bus);
+            SetObjRef(svcSo, "playerInputManager", inputManager);
             svcSo.ApplyModifiedPropertiesWithoutUndo();
 
             // Reorder roots for cleanliness.
             servicesGo.transform.SetSiblingIndex(0);
-            hudRootGo.transform.SetSiblingIndex(1);
-            transitionGo.transform.SetSiblingIndex(2);
-            audioGo.transform.SetSiblingIndex(3);
-            esGo.transform.SetSiblingIndex(4);
+            inputGo.transform.SetSiblingIndex(1);
+            hudRootGo.transform.SetSiblingIndex(2);
+            transitionGo.transform.SetSiblingIndex(3);
+            audioGo.transform.SetSiblingIndex(4);
+            esGo.transform.SetSiblingIndex(5);
 
             var path = $"{ScenesFolder}/Systems.unity";
             EditorSceneManager.SaveScene(scene, path);

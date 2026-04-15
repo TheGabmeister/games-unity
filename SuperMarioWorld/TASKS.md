@@ -13,14 +13,13 @@ Do not skip phases — each validates the architecture against real gameplay.
 ### Tasks
 - Assembly definitions `SMW.Runtime` / `SMW.Editor` / `SMW.Tests` ([SPEC.md §2](SPEC.md), CLAUDE.md).
 - Physics 2D collision matrix ([SPEC.md §4.19](SPEC.md)). Commit `DynamicsManager.asset`.
-- Input action maps and `InputRouter` ([SPEC.md §4.1](SPEC.md)).
+- Input action maps + `PlayerInputManager` on an `Input` GameObject in Systems.unity (no `PlayerInput` yet — that lives on the Player prefab in Phase 1). Map switching driven by `GameStateMachine` states iterating `PlayerInput.all` ([SPEC.md §4.1](SPEC.md)).
 - `Boot.unity`, `Systems.unity`, `Title.unity`, `Overworld.unity` per the step-by-step in [SPEC.md §4.14](SPEC.md) (Creating Boot and Systems scenes + direct-entry support).
 - `GameServices` locator with skeletons for every service: `SaveManager` ([§4.15](SPEC.md)), `SceneLoader` + `ScreenFader` ([§4.14](SPEC.md)), `GameStateMachine` ([§4.13](SPEC.md)), `ScoreService`, `FeedbackService`, `GameSession` ([§4.24](SPEC.md)), `AudioBus` stub ([§4.16](SPEC.md)).
 - `HUDRoot` + `TransitionCanvas` canvases in `Systems.unity` ([§4.17](SPEC.md)).
 - `EditorTestSettings` SO for direct-entry save mode ([§4.14](SPEC.md)).
 - Build Settings: `Boot` at index 0, all non-level scenes registered ([§4.14](SPEC.md)).
 - Target resolution 1280×720, Game view 16:9 ([§2](SPEC.md), [§4.17](SPEC.md)).
-- `Palette` SO + `PaletteBinding` ([§4.18](SPEC.md)).
 - Prefab + debug scene generator scaffolds ([§4.25](SPEC.md), [§4.26](SPEC.md)) — skeletons only; entity generators land in the phases that need them.
 
 ### Automated tests
@@ -316,12 +315,11 @@ Do not skip phases — each validates the architecture against real gameplay.
 ### Tasks
 - 5 hand-authored content levels + 1 boss room ([§5](SPEC.md), [§4.26](SPEC.md) content-level side).
 - Title screen, file select, pause menu UI passes ([§4.17](SPEC.md)).
-- Playtest tuning: palettes, camera curves, jump constants, audio mixer ([§4.2](SPEC.md), [§4.4](SPEC.md), [§4.16](SPEC.md), [§4.18](SPEC.md)).
+- Playtest tuning: SVG colors, camera curves, jump constants, audio mixer ([§4.2](SPEC.md), [§4.4](SPEC.md), [§4.16](SPEC.md), [§4.18](SPEC.md)).
 
 ### Automated tests
 - `ContentLevelsInBuildSettingsTest` (EM) — every `LevelData.sceneRef` is registered.
-- `LevelDataCompletenessTest` (EM) — time limit, music, palette, default entry, unlocks all populated.
-- `PaletteRoleCoverageTest` (EM) — every used `PaletteRole` exists in the master `Palette`.
+- `LevelDataCompletenessTest` (EM) — time limit, music, default entry, unlocks all populated.
 - `PrefabReferenceIntegrityTest` (EM) — no broken prefab/script references in level scenes.
 - `DragonCoinCountTest` (EM) — each non-boss level has exactly 5 dragon coins placed.
 - `BossRoomStompKillTest` (PM) — placeholder Bowser takes 3 stomps to defeat.
@@ -332,7 +330,6 @@ Do not skip phases — each validates the architecture against real gameplay.
 - Level 5 secret exit unlocks boss room branch.
 - Title / file select / pause render correctly at 16:9 and letterboxed aspect ratios.
 - Audio mixer balanced; pause SFX plays while paused (`UiSfxChannel`).
-- Palettes consistent within a level across sprites + UI.
 
 **Bugs to look for:**
 - Unreachable dragon coin.
@@ -342,7 +339,6 @@ Do not skip phases — each validates the architecture against real gameplay.
 - Music crossfades overlap between levels (missed pop).
 - `LevelData.unlocksOnNormalExit` targets nonexistent level.
 - Boss stomp count off-by-one.
-- Palette tint desync between `SpriteRenderer` and uGUI `Image`.
 
 ---
 
@@ -357,7 +353,7 @@ Phase 8 consolidates per-phase tests into a regression suite and adds cross-cutt
 - Save versioning migration chain ([§4.15](SPEC.md)) exercised.
 
 ### Automated tests
-- `AssetValidationPostprocessorTest` (EM) — missing references on any SO (`EnemyData.sprite`, `PowerStateData.collider`, `LevelData.sceneRef`, palette refs) fail asset import with a clear error.
+- `AssetValidationPostprocessorTest` (EM) — missing references on any SO (`EnemyData.sprite`, `PowerStateData.collider`, `LevelData.sceneRef`) fail asset import with a clear error.
 - `SaveVersionMigrationTest` (EM) — `saveVersion = 0` file loads via registered migrations.
 - `FixedUpdateAllocationFreeTest` (PM) — 60 FixedUpdate ticks on Phase 1 scene allocate 0 managed bytes (or below tight tolerance).
 - `LongSoakTest` (PM) — 10-minute fast-forward on a content level: no frame budget overruns, no leaking audio sources or enemy instances.

@@ -25,7 +25,8 @@
       "Bash(\"C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe\" -batchmode -nographics -projectPath \"c:/dev/games-unity/SuperMarioWorld\" -runTests -testPlatform EditMode -testResults \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/editmode.xml\" -logFile \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/editmode.log\")",
       "Bash(echo \"EM_EXIT=$?\")",
       "Bash(\"C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe\" -batchmode -nographics -projectPath \"c:/dev/games-unity/SuperMarioWorld\" -runTests -testPlatform PlayMode -testResults \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/playmode.xml\" -logFile \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/playmode.log\")",
-      "Bash(echo \"PM_EXIT=$?\")"
+      "Bash(echo \"PM_EXIT=$?\")",
+      "Read(//c/Users/Admin/.claude/projects/c--dev-games-unity/memory/**)"
     ]
   }
 }

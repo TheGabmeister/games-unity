@@ -29,7 +29,6 @@ namespace SMW
         [SerializeField] private SceneReference sceneRef;
         [SerializeField] private int timeLimitSeconds = 300;
         [SerializeField] private MusicId musicId = MusicId.Overworld;
-        [SerializeField] private Palette themePalette;
         [SerializeField] private List<EntryPoint> entryPoints = new();
         [SerializeField] private List<SubArea> subAreas = new();
         [SerializeField] private List<LevelData> unlocksOnNormalExit = new();
@@ -40,7 +39,6 @@ namespace SMW
         public SceneReference SceneRef => sceneRef;
         public int TimeLimitSeconds => timeLimitSeconds;
         public MusicId MusicId => musicId;
-        public Palette ThemePalette => themePalette;
         public IReadOnlyList<EntryPoint> EntryPoints => entryPoints;
         public IReadOnlyList<SubArea> SubAreas => subAreas;
         public IReadOnlyList<LevelData> UnlocksOnNormalExit => unlocksOnNormalExit;

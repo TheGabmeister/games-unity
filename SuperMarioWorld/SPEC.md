@@ -32,9 +32,9 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
 | Tests | Unity Test Framework (PlayMode + EditMode), once `.asmdef` files exist |
 
 ### Visual placeholder rules
-- All in-game visuals are **flat-fill SVG primitives** imported as Unity Sprites via the Vector Graphics package. One `.svg` per entity (Mario, Goomba, brick, coin, etc.) authored as solid white shapes; tinting comes from the palette ScriptableObject via `SpriteRenderer.color` / `Image.color`. See §4.18.
-- A central `Palette` ScriptableObject in [Assets/_Project/Art/Procedural/](Assets/_Project/) defines the color per entity role so the look is consistent and re-skinnable.
-- SVGs live alongside the palette in the same folder. When real sprite assets land later, the swap is *just* changing the `Sprite` reference on prefabs — no code path changes.
+- All in-game visuals are **SVG primitives** imported as Unity Sprites via the Vector Graphics package. One `.svg` per entity (Mario, Goomba, brick, coin, etc.). **Colors are baked into the SVG** (`fill="#C87137"` on a Goomba, etc.) — no runtime tinting layer. Placeholders are throwaway; when real sprite assets land the SVGs get replaced outright.
+- No palette ScriptableObject, no `PaletteBinding`, no role enum. If two entities should share a color, the SVG authors just type the same hex. Over-engineering the color flow for disposable art isn't worth it — `SpriteRenderer.color` / `Image.color` stay at white, untouched.
+- SVGs live in [Assets/_Project/Art/Procedural/](Assets/_Project/). When real sprite assets land later, the swap is *just* changing the `Sprite` reference on prefabs — no code path changes.
 - No `.png` or `.aseprite` imports for placeholders. The Aseprite/PSD importers stay installed but unused until real art arrives.
 - No audio clips. The audio system (§4.16) is a fully-wired stub that plays nothing.
 
@@ -84,7 +84,17 @@ Recreate the **gameplay** of *Super Mario World* (SNES, 1990) in Unity 6 (URP 2D
   - `Player`: `Move (Vector2)`, `Jump (Button)`, `SpinJump (Button)`, `Action (Button)`, `Crouch (Button)`, `Pause (Button)`.
   - `Overworld`: `Move (Vector2)`, `Confirm (Button)`, `Cancel (Button)`.
   - `UI`: standard navigation set.
-- Switch maps via a single `InputRouter` component so subsystems never enable/disable maps directly.
+- **`PlayerInputManager` is the persistent owner.** Lives on its own `Input` GameObject in `Systems.unity`, exposed via `GameServices.InputManager`. `joinBehavior = JoinPlayersManually` (we join explicitly, not on any-button-press), `notificationBehavior = InvokeCSharpEvents`. **V1 joins exactly one player**; local co-op later is the same component with higher `maxPlayerCount` and a second `JoinPlayer()` call. See §1 Non-Goals.
+- **`PlayerInput` components live on the Player prefab** (Phase 1 work), not on anything in `Systems.unity`. Each joined player gets its own `PlayerInput` with its own device pairing and its own (cloned) `InputActionAsset`. In V1 there's one PlayerInput at a time; in co-op there'd be two.
+- **Joining P1 happens on level entry.** `LevelContext.Begin` (Phase 1) calls `GameServices.InputManager.JoinPlayer(playerIndex: 0, pairWithDevice: …)` which instantiates the Player prefab + wires its `PlayerInput`. The Player prefab's `defaultActionMap = "Player"` so gameplay input works immediately. The player is despawned on level exit.
+- **UI input is independent.** `InputSystemUIInputModule` on the `EventSystem` (in `Systems.unity`) references the UI-map actions directly and enables them whenever the module is active. It works without any `PlayerInput`, which is why Title and Overworld navigation work before P1 is joined.
+- **Map switching iterates `PlayerInput.all`, not a singleton reference.** `GameStateMachine` state transitions call `GameServices.SwitchMapOnAllPlayers(mapName)`. For V1 with one joined player (or zero, during Title/Overworld), it's a one-element or empty loop. For co-op, the same call switches P1 and P2 together.
+  - `TitleState` → `"UI"` (no-op when no player is joined)
+  - `OverworldState` → `"Overworld"` (same; overworld nav uses `InputSystemUIInputModule`)
+  - `LevelState` → `"Player"` (switches the joined players to gameplay input)
+  - `PausedState` snapshots each player's current map in a `Dictionary<playerIndex, mapName>`, switches everyone to `"UI"`, and restores per-player on exit.
+  - `GameOverState` leaves whatever is active.
+- **Why this shape even for single-player V1.** The alternative — one persistent `PlayerInput` on `Systems.unity` — works fine today but makes local co-op a ground-up restructuring later. The `PlayerInputManager` + per-player-prefab pattern scales from 1 → N players by changing the join count, not by rewriting ownership.
 
 #### Bindings (locked — no rebinding UI in V1)
 
@@ -138,7 +148,7 @@ Components on the `Player` prefab:
 - `PlayerInputBinding` — translates `InputAction` callbacks into intent fields the controller reads each `FixedUpdate`.
 - `GroundProbe` — separate component that does `Physics2D.BoxCast` / `RaycastNonAlloc` to detect ground, ceiling, walls, and slope angle. Uses a dedicated `Solid` layer mask, never `Physics2D.OverlapCircleAll` against everything.
 - `PlayerCarry` — manages a held `IThrowable` (stunned shell, stunned Galoomba, lit Bob-omb, P-switch, springboard, key) and its release/throw vector.
-- `PlayerVisuals` — owns the `SpriteRenderer` and the per-state SVG sprite + palette role; subscribes to `PlayerStateChanged` events to swap sprite / collider size / tint.
+- `PlayerVisuals` — owns the `SpriteRenderer` and the per-state SVG sprite; subscribes to `PlayerStateChanged` events to swap sprite / collider size. Transient color overrides (hurt-flash, star rainbow) are applied here as short-lived `SpriteRenderer.color` tweens that reset to white.
 
 Required mechanics (these are the things that *make it feel like SMW*; do not skip any):
 - **Variable jump height** based on jump button hold duration (≈ 0–18 frames @ 60Hz cuts gravity). Hold-time is measured in `FixedUpdate` ticks, not real seconds, so behavior stays stable across frame rates.
@@ -193,8 +203,8 @@ Small ─Mushroom─▶ Super                      │
 - Pixel-perfect package is installed but only enable it later if/when *pixel-art* sprite assets land — SVG meshes don't benefit from it and it would actually interfere with smooth scaling.
 
 ### 4.5 Level / World System
-- A **`LevelData` ScriptableObject** is the canonical reference for a level. Fields: `levelId` (stable string), `displayName`, `sceneRef` (`SceneReference`), `timeLimitSeconds`, `musicId`, `themePalette` (`Palette` SO), `entryPoints` (named spawn markers for normal/secret/sub-area returns), `subAreas` (list of named offset regions within the scene), `unlocksOnNormalExit` / `unlocksOnSecretExit` (other `LevelData` references for overworld branching). Levels are added to the game by creating one of these — never by hardcoding a scene name anywhere else.
-- One `Level.unity` scene template containing: `LevelRoot` (holds a `LevelData` reference), an `Environment` group with ground / slope / pipe / decoration prefab instances, `LevelBounds`, spawn markers, `MidwayGate`s, `GoalGate`. **Tilemaps are not used** — every piece of environment is a GameObject prefab placed directly in the scene. Rationale: the project is primitives + SVG placeholders, not a pixel-dense 16×16 tileset, so the tilemap pipeline's benefits (palette painting, compressed storage, `CompositeCollider2D` merging) don't earn their complexity. GameObject prefabs give cleaner collider topology, direct inspector access to per-instance state, and no `InteractiveBlockSpawner` middle-layer.
+- A **`LevelData` ScriptableObject** is the canonical reference for a level. Fields: `levelId` (stable string), `displayName`, `sceneRef` (`SceneReference`), `timeLimitSeconds`, `musicId`, `entryPoints` (named spawn markers for normal/secret/sub-area returns), `subAreas` (list of named offset regions within the scene), `unlocksOnNormalExit` / `unlocksOnSecretExit` (other `LevelData` references for overworld branching). Levels are added to the game by creating one of these — never by hardcoding a scene name anywhere else.
+- One `Level.unity` scene template containing: `LevelRoot` (holds a `LevelData` reference), an `Environment` group with ground / slope / pipe / decoration prefab instances, `LevelBounds`, spawn markers, `MidwayGate`s, `GoalGate`. **Tilemaps are not used** — every piece of environment is a GameObject prefab placed directly in the scene. Rationale: the project is primitives + SVG placeholders, not a pixel-dense 16×16 tileset, so the tilemap pipeline's benefits (tile-palette painting, compressed storage, `CompositeCollider2D` merging) don't earn their complexity. GameObject prefabs give cleaner collider topology, direct inspector access to per-instance state, and no `InteractiveBlockSpawner` middle-layer.
 - **Environment prefabs** (authored once, placed many times):
   - `Ground_Platform` — `BoxCollider2D` on the `Solid` layer. `length` is a serialized field driving both the collider size and the `SpriteRenderer`'s 9-slice SVG width, so a single prefab covers every straight ground run of any length.
   - `OneWay_Platform` — same pattern as `Ground_Platform` but with `PlatformEffector2D` (used-by-effector enabled) and the `OneWay` layer.
@@ -235,7 +245,7 @@ Required block behaviors:
 
 **Per-enemy class shape:**
 - Each archetype is its own MonoBehaviour (`Galoomba`, `KoopaWalker`, `KoopaShell`, `PiranhaPlant`, `ChargingChuck`, `Boo`, `BulletBill`, etc.) implementing whichever capability interfaces apply.
-- Each class reads an `EnemyData` SO for per-variant tuning: HP, speed, points, sprite, collider size, color/palette role, drops.
+- Each class reads an `EnemyData` SO for per-variant tuning: HP, speed, points, sprite, collider size, drops.
 - Shared movement primitives live in a `KinematicBody2D` helper component (dynamic-zero-gravity Rigidbody2D + ground probe + slope handling), not a base class. Grounded enemies (Galoomba, KoopaWalker, Chuck, ...) attach it; Bullet Bill and Boo don't.
 - `EnemyDespawn` helper on every enemy that should despawn off-camera. Off-camera spawners (`BulletBillLauncher`) re-emit when their position re-enters the camera frustum + hysteresis margin.
 - Dynamic spawns (projectiles, VFX, score popups) use plain `Instantiate` / `Destroy` — no pooling.
@@ -560,6 +570,7 @@ Step-by-step:
 1. **`Boot.unity`** — File → New Scene → Empty. Delete the default `Main Camera` and `Directional Light`. Add one GameObject named `Bootstrapper` with the `Bootstrapper` MonoBehaviour. Save to `Assets/_Project/Scenes/Boot.unity`. File → Build Profiles → add to Scenes list at **index 0**.
 2. **`Systems.unity`** — File → New Scene → Empty. Delete default camera/light. Add, at the scene root:
    - `GameServices` GameObject with the `GameServices` locator component (and child components for each service registered at boot: `SaveManager`, `SceneLoader`, `GameStateMachine`, `ScoreService`, `FeedbackService`, audio bus — see §3).
+   - `Input` GameObject with a `PlayerInputManager` (`joinBehavior = JoinPlayersManually`, `notificationBehavior = InvokeCSharpEvents`). `GameServices.InputManager` points here. No `PlayerInput` on this GameObject — those live on the Player prefab (Phase 1) and are spawned via `InputManager.JoinPlayer(...)` at level entry (see §4.1).
    - `HUDRoot` Canvas (Screen Space - Overlay) with `CanvasScaler` + `CanvasScalerPresetApplier` (§4.17), child `HudPanel` / `PauseMenuPanel` / `GameOverPanel` placeholders.
    - `TransitionCanvas` Canvas (Screen Space - Overlay, `sortingOrder` above `HUDRoot`) with a full-screen black `Image` child and the `ScreenFader` MonoBehaviour on the canvas root. Used by `SceneLoader` for fade transitions — see the scene loader mechanics subsection below.
    - `AudioBus` GameObject with child `AudioSource`s for each channel per §4.16 (`MusicChannel`, `SfxChannel`, `JingleChannel`, `AmbientChannel`, `UiSfxChannel` with `ignoreListenerPause = true`).
@@ -667,16 +678,16 @@ When real assets land, the only work is filling out `AudioCatalog` entries — n
 
 ### 4.18 Procedural Visuals (SVG-backed placeholders)
 - All placeholder visuals are **SVG sprites** authored by hand, stored in [Assets/_Project/Art/Procedural/](Assets/_Project/), and imported via `com.unity.vectorgraphics` 3.0.0-preview.7. The importer tessellates each SVG into a triangle mesh at edit time; runtime cost is identical to any sprite mesh.
-- **One SVG per entity / shape**, named by role (`mario_small.svg`, `mario_super.svg`, `goomba.svg`, `coin.svg`, `brick.svg`, `ground_solid.svg`, `slope_steep_r.svg`, etc.). Each SVG uses a single solid `fill="white"` so palette tinting via `SpriteRenderer.color` / `Image.color` produces the final color.
+- **One SVG per entity / shape**, named by role (`mario_small.svg`, `mario_super.svg`, `goomba.svg`, `coin.svg`, `brick.svg`, `ground_solid.svg`, `slope_steep_r.svg`, etc.). **Colors are baked directly into the SVG** (`fill="#C87137"` on Goomba, `#FFD000` on Coin, etc.). No palette ScriptableObject, no `PaletteBinding`, no runtime tinting layer. `SpriteRenderer.color` and `Image.color` stay white — the SVG already carries the final color. If two entities should visually share a color, the SVG authors just type the same hex.
+- **Rationale.** These are disposable placeholder assets that get thrown away when real art lands. An indirection layer (role enum → palette SO → tint multiplier) earns its keep on permanent content, not placeholders. Skip the abstraction; put the colors where they're visible — in the `.svg` file.
 - **`viewBox` matches the tile grid**: `0 0 16 16` for a 1×1-tile entity, `0 0 16 32` for tall Mario, `0 0 32 16` for wide entities like Banzai Bill. The SVG importer's *Pixels Per Unit* setting is configured to match (16) so 1 SVG unit = 1 world unit / 16th-of-a-tile, and tiles align cleanly.
-- **No `PrimitiveShapeRenderer` component.** Just `SpriteRenderer` (or uGUI `Image`) with a `Sprite` reference + a `PaletteBinding` MonoBehaviour that writes the palette color to the renderer on `Awake` and on palette change.
+- **No `PrimitiveShapeRenderer` component.** Just `SpriteRenderer` (or uGUI `Image`) with a `Sprite` reference.
 - **Slope visuals** (§4.5) are SVGs rendered on each slope prefab's `SpriteRenderer`. Because slopes are variable-length prefabs with `PolygonCollider2D` generated from the `length` field (not from the sprite's imported physics shape), the SVG only carries the visual triangle — the collider is authoritative for physics. Adjust the `SpriteRenderer`'s draw mode / scale in the slope prefab's length-update editor hook so visual and collider stay in sync.
 - **SVG → uGUI Image** also works (the Vector Graphics package supports both `SpriteRenderer` and uGUI `Image` import targets), so HUD icons (life icon, coin icon, dragon-coin slots) use the same SVG assets as world sprites. One source of truth per shape.
-- Animated states (walking, jumping, hurt) are conveyed by **color flashes**, **squash/stretch tweens** (PrimeTween), and **rotation** of the sprite transform — not by swapping to different SVGs every frame. Sprite swapping is reserved for *state* transitions (Small ↔ Super, walking ↔ skidding pose, etc.), not per-frame animation.
-- A `Palette` ScriptableObject holds all entity colors keyed by an enum (`PaletteRole.PlayerSmall`, `PaletteRole.Goomba`, `PaletteRole.Brick`, ...). Prefabs reference the palette + a role, never a hardcoded `Color`. Re-theming = swapping the palette asset.
+- Animated states (walking, jumping, hurt) are conveyed by **short-lived `SpriteRenderer.color` overrides** (hurt-flash white, star-power rainbow via PrimeTween over the color channel), **squash/stretch tweens** (PrimeTween) and **rotation** of the sprite transform — not by swapping to different SVGs every frame. These transient tints *override* the baked color for the duration of the effect, then reset back to white (identity) so the SVG's own color shows through. Sprite swapping is reserved for *state* transitions (Small ↔ Super, walking ↔ skidding pose, etc.), not per-frame animation.
 
 #### Real-asset migration path
-When real sprite assets eventually arrive, the swap is purely additive: drop the new `.png` / `.aseprite` next to (or replacing) the SVG, repoint the `Sprite` field on the prefab, and decide per-entity whether `PaletteBinding` should keep tinting or be removed. **No gameplay or controller code changes.** This is the central reason for the SVG approach — it preserves the same `Sprite` data shape as the eventual real assets, so prefabs never need restructuring.
+When real sprite assets eventually arrive, the swap is purely additive: drop the new `.png` / `.aseprite` next to (or replacing) the SVG and repoint the `Sprite` field on the prefab. **No gameplay or controller code changes.** The placeholder SVGs under [Assets/_Project/Art/Procedural/](Assets/_Project/) get deleted outright; nothing else depends on them. This is the central reason for the SVG approach — it preserves the same `Sprite` data shape as the eventual real assets, so prefabs never need restructuring.
 
 ### 4.19 Layers & Physics Matrix
 A 2D physics matrix is non-optional for a platformer of this complexity. Set up before Phase 1.
@@ -723,7 +734,7 @@ A single `ScoreService` registered on `GameServices`. All point awards funnel th
 
 ### 4.23 Particles & Feedback
 - A `FeedbackService` on `GameServices` exposes `Spawn(FeedbackId id, Vector3 pos)` for one-shot visuals: brick shards, coin sparkle, stomp puff, score popup, dust kick, splash.
-- Each effect is a small prefab using `ParticleSystem` with shape-only rendering (no textures — built-in default particle is fine, tinted by palette role). The prefab self-destructs on `Stop` via `ParticleSystem.MainModule.stopAction = Destroy`.
+- Each effect is a small prefab using `ParticleSystem` with shape-only rendering (no textures — built-in default particle is fine, colored directly on the `ParticleSystem.MainModule.startColor`). The prefab self-destructs on `Stop` via `ParticleSystem.MainModule.stopAction = Destroy`.
 - Score popups (`+200`, `+1UP`) are a world-space `Canvas` prefab (set to *World Space*, not Overlay) containing a `TextMeshProUGUI` that fades and rises via PrimeTween, then destroys itself. TMP is bundled with `com.unity.ugui` in Unity 6, so no extra package is needed.
 
 ### 4.24 Run Lifecycle & State Layers
@@ -885,7 +896,6 @@ Assets/_Project/Data/
 ├── Levels/
 │   ├── LevelData_01.asset
 │   └── …
-└── Palette.asset
 ```
 
 #### Invariants

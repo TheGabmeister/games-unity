@@ -29,7 +29,7 @@ Beyond built-in Unity modules:
 - `com.unity.render-pipelines.universal` 17.3.0 with **2D Renderer**.
 - `com.unity.feature.2d` 2.0.2 — Sprite Shape, 2D Animation, Aseprite Importer, Pixel Perfect. Tilemap is included in the bundle but **is not used** (see SPEC.md §4.5 — level geometry is GameObject prefabs).
 - `com.unity.ugui` 2.0.0 — uGUI with TextMeshPro bundled. **uGUI, not UI Toolkit** (decision in SPEC.md §4.17).
-- `com.unity.vectorgraphics` 3.0.0-preview.7 — SVG importer. All placeholder visuals are SVG sprites with flat white fills tinted via the palette (SPEC.md §4.18).
+- `com.unity.vectorgraphics` 3.0.0-preview.7 — SVG importer. All placeholder visuals are SVG sprites with colors baked directly into the SVG (no palette layer, no runtime tinting). See SPEC.md §4.18.
 - `com.kyrylokuzyk.primetween` 1.3.8 — tween library. Prefer over coroutines for animation and UI transitions.
 - `com.eflatun.scenereference` (git) — type-safe scene fields. Use `SceneReference`, never raw scene-name strings. Also pulls in `com.unity.nuget.newtonsoft-json` transitively, which is the serializer for the save system (SPEC.md §4.15).
 - `com.unity.test-framework` 1.6.0 — available but no `.asmdef` files yet.

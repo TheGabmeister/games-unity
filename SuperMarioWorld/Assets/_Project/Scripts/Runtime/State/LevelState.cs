@@ -1,4 +1,3 @@
-
 namespace SMW
 {
     public sealed class LevelState : IGameState
@@ -12,7 +11,10 @@ namespace SMW
             EntryPoint = entryPoint;
         }
 
-        public void OnEnter() { }
+        public void OnEnter()
+        {
+            GameServices.SwitchMapOnAllPlayers(InputMapNames.Player);
+        }
         public void OnExit() { }
     }
 }
