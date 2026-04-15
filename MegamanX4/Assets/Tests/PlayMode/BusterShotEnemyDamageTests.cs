@@ -21,7 +21,7 @@ public class BusterShotEnemyDamageTests
         try
         {
             enemy = CreateEnemy(enemyLayer, maxHealth: 2);
-            var enemyHealth = enemy.GetComponent<EnemyHealth>();
+            var enemyHealth = enemy.GetComponent<Health>();
 
             firstShot = CreateShot(damage: 1);
             yield return WaitForShotToResolve(firstShot);
@@ -59,8 +59,9 @@ public class BusterShotEnemyDamageTests
         collider.isTrigger = true;
         collider.size = new Vector2(0.8f, 1f);
 
-        var health = enemy.AddComponent<EnemyHealth>();
+        var health = enemy.AddComponent<Health>();
         SetPrivateField(health, "maxHealth", maxHealth);
+        enemy.AddComponent<Enemy>();
 
         enemy.SetActive(true);
         return enemy;
