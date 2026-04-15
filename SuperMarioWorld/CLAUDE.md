@@ -10,7 +10,7 @@ Unity 6 (`6000.3.12f1`) project recreating *Super Mario World* (SNES, 1990) game
 
 ## Current state
 
-**Phase 1 implementation landed; tuning gate open.** Phase 0 scaffolding (`GameServices` + service skeletons, physics layer matrix, Boot/Systems/Title/Overworld scenes, PlayerInputManager) plus Phase 1's player stack (`PlayerController` + `GroundProbe` + `PlayerInputBinding` + `PlayerCarry` placeholder), camera + level scaffolding (`LevelCamera`, `LevelBounds`, `SpawnMarker`, `LevelContext`), environment prefabs (`Ground_Platform`, four `Slope_*`), SVG placeholders, prefab + debug-scene generators, and the Phase 1 Movement Test debug scene are all in place. Phase 1's subjective tuning gate ("run + jump feels responsive") is the current open item — expect iteration on `PlayerController` constants. See [TASKS.md](TASKS.md).
+**Phase 1 implementation landed; tuning gate open.** Phase 0 scaffolding (`GameServices` + service skeletons, physics layer matrix, Boot/Systems/Title/Overworld scenes, PlayerInputManager) plus Phase 1's player stack (`PlayerController` + `GroundProbe` + `PlayerInputBinding` + `PlayerCarry` placeholder), camera + level scaffolding (`LevelCamera`, `LevelBounds`, `SpawnMarker`, `LevelContext`), environment + player prefab generators, SVG placeholders with PPU=16 import defaults, and a hand-authored Movement Test scene are all in place. Phase 1's subjective tuning gate ("run + jump feels responsive") is the current open item — expect iteration on `PlayerController` constants. See [TASKS.md](TASKS.md).
 
 ## How to build / run
 
@@ -19,13 +19,15 @@ No command-line build for the game itself. Open in Unity Hub (`6000.3.12f1` exac
 - **Target resolution: 1280×720 (16:9)**, already configured in `ProjectSettings/ProjectSettings.asset`.
 - **Press Play from any scene** — `Bootstrapper.EnsureSystemsLoaded` (a `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]`) loads `Systems` additively before any `Awake` runs, and `TitleRoot` / `OverworldRoot` / `LevelRoot` detect direct editor entry. Don't add early-return code that assumes `Boot` was the entry scene. See SPEC.md §4.14.
 
-### Re-running Phase 0 setup
+### Setup composites
 
-Scenes/assets can be regenerated from code. If Systems.unity breaks or you need to reset the foundation:
+Prefab + SO + Phase-0-scene regeneration is safe and idempotent — use these when a fresh clone or a broken project state needs rebuilding. (Debug and content scenes are hand-authored, not regenerated — see the scene rule in "Load-bearing rules.")
 
 - `Tools → SMW → Setup → Run Full Phase 0 Setup` — regenerates Boot / Systems / Title / Overworld scenes, applies the 2D physics layer matrix per SPEC §4.19, and creates the `EditorTestSettings` + `AudioCatalog` default SOs.
+- `Tools → SMW → Setup → Run Full Phase 1 Setup` — force-reimports art SVGs (so PPU=16 applies), regenerates environment + Player prefabs, re-runs the Phase 0 scene bootstrap so `PlayerInputManager.playerPrefab` picks up the fresh Player prefab. Idempotent; safe to rerun after adding a new SVG or tweaking a prefab generator.
 - `Tools → SMW → Setup → Bootstrap Phase 0 Scenes` — scenes only.
 - `Tools → SMW → Setup → Apply Physics2D Layer Matrix` — matrix only.
+- `Tools → SMW → Generate → Prefabs → Environment — Create Missing Only` / `Regenerate All (Overwrite)` — individual prefab-family regen. Same two-mode pattern for Player.
 
 ### Running tests
 
@@ -41,6 +43,7 @@ Two paths:
     -logFile "<repo>/Temp/TestReports/editmode.log"
   ```
   Replace `EditMode` with `PlayMode` for the other suite. Exit code 0 = all passed, 2 = at least one failure. XML is NUnit-compatible. Unity holds an exclusive project lock — close the editor first.
+- **Batchmode gotcha:** PlayMode tests in batchmode have been observed to hang after first-import scenarios (newly-added SVGs, orphaned script refs in scenes, cold Library cache). EditMode batchmode is reliable. If PlayMode hangs past ~3 minutes with no log growth, kill the process, open the editor interactively once to let assets settle, then retry. For development, prefer the Test Runner UI.
 
 ## Packages (current manifest)
 
@@ -60,7 +63,7 @@ Beyond built-in Unity modules:
 Four `.asmdef`s, reached via folder placement (no GUID references):
 
 - `SMW.Runtime` at `Assets/_Project/Scripts/SMW.Runtime.asmdef` — all gameplay code. Does **not** reference `UnityEditor`.
-- `SMW.Editor` at `Assets/_Project/Scripts/Editor/SMW.Editor.asmdef` — editor tools (bootstrap generator, prefab generators, physics matrix setup, build preprocessor). `includePlatforms: ["Editor"]`.
+- `SMW.Editor` at `Assets/_Project/Scripts/Editor/SMW.Editor.asmdef` — editor tools (bootstrap generator, prefab generators, physics matrix setup, build preprocessor, SVG import postprocessor). `includePlatforms: ["Editor"]`. References `Unity.VectorGraphics.Editor` for the `SVGImporter` type used by [SvgImportDefaults.cs](Assets/_Project/Scripts/Editor/Setup/SvgImportDefaults.cs).
 - `SMW.Tests.EditMode` at `Assets/_Project/Scripts/Tests/EditMode/…asmdef` — `includePlatforms: ["Editor"]`, references `SMW.Editor`.
 - `SMW.Tests.PlayMode` at `Assets/_Project/Scripts/Tests/PlayMode/…asmdef` — all platforms, references `SMW.Runtime` only.
 
@@ -72,10 +75,11 @@ These codify decisions in SPEC.md that conflict with Unity defaults or common tu
 
 - **Single flat `SMW` namespace for every script** (§2) — no subsystem sub-namespaces. Assembly + folder layout carry the separation. Prefix clashing types (`LevelState` / `LevelRunState` / `LevelRoot`) rather than reintroducing `SMW.Level.*`.
 - **Thin prefab, fat SO** (§4.25). Prefabs are structural shells; per-variant tuning lives on ScriptableObjects. Applies to **pickups and question-block contents** — one `Pickup` class + different `PickupData` SOs per variant; one `Block_Question` prefab + different `BlockContents` SOs per instance. Each block *type* (brick, note, rotating, P-switch, …) is its own class + prefab. **Carve-out: enemies** (§4.7) — each archetype is its own MonoBehaviour class implementing capability interfaces. Per-variant color/stat differences still use `EnemyData` SOs.
-- **Never hand-author `.unity` or `.prefab` YAML.** Use the prefab generators (§4.25) and the debug scene generator (§4.26). Phase 0's Boot/Systems/Title/Overworld scenes are also generator-produced (via `SceneBootstrapGenerator`). Hand-written YAML silently desyncs with Unity's fileID/GUID coordination.
-- **Prefab generators have two modes**: "Create Missing Only" (safe default) and "Regenerate All (Overwrite)" (explicit confirmation dialog). Debug scenes are always regeneratable — hand-edits to a debug scene are lost on next regeneration by design.
-- **Content levels are hand-authored in Unity; debug scenes are generator-owned** (§4.26). Don't blur the line. V1 content levels under `Scenes/Levels/` are built by dragging environment / block / enemy prefabs into the scene and positioning them on the integer grid.
+- **Never hand-author `.prefab` YAML.** Use the prefab generators (§4.25). Hand-written prefab YAML silently desyncs with Unity's fileID/GUID coordination.
+- **Scenes ARE hand-authored in the editor — all of them.** Content levels, debug/test scenes, and Phase 0's Boot/Systems/Title/Overworld scenes are composed by dragging prefabs into the hierarchy and wiring refs in the inspector. **Do not write scripts that compose scene content.** `SceneBootstrapGenerator` (§4.14) remains because Phase 0 infrastructure is stable and the existing scaffold works — do not expand its scope. Programmatic scene composition is only acceptable for ephemeral PlayMode test fixtures built via `SceneBuildHelpers` (never saved to disk). Scripted scene composition layers C# → scene YAML on top of AssetDatabase GUID timing and produces fragile timing bugs (SPEC §4.26 post-mortem).
+- **Prefab generators have two modes**: "Create Missing Only" (safe default) and "Regenerate All (Overwrite)" (explicit confirmation dialog).
 - **Placeholder visuals use SVGs with colors baked directly into the `fill` attribute** (§4.18). No `Palette` SO, no `PaletteBinding`, no `PaletteRole` enum — these were explicitly removed. `SpriteRenderer.color` stays white; transient tints (hurt-flash, star-rainbow) are short-lived PrimeTween overrides that reset to white.
+- **SVG pixels-per-unit = 16.** Any SVG under `Assets/_Project/Art/Sprites/` gets `SvgPixelsPerUnit = 16` stamped on import by [SvgImportDefaults.cs](Assets/_Project/Scripts/Editor/Setup/SvgImportDefaults.cs). Author SVGs so 16 SVG units = 1 world tile (a 16×16 viewBox renders as 1×1 world units; a 32×16 renders as 2×1, used for shallow-slope aspect). If you add an SVG and it renders tiny, your import raced the postprocessor — reimport once.
 - **Input architecture** (§4.1 — multiplayer-ready even though V1 is single-player):
   - **One `PlayerInputManager`** on the `Input` GameObject in `Systems.unity` (`JoinPlayersManually`, `InvokeCSharpEvents`). Exposed as `GameServices.InputManager`.
   - **`PlayerInput` components live on the Player prefab** (Phase 1), **not on any Systems GameObject**. `LevelContext.Begin` calls `InputManager.JoinPlayer(...)` on level entry.
@@ -86,7 +90,7 @@ These codify decisions in SPEC.md that conflict with Unity defaults or common tu
 - **The `Action` button is one button with two semantics** (§4.1): held = run; pressed = context-sensitive (fireball / cape sweep / Yoshi tongue / pickup / throw). Always call it `Action` in code and docs.
 - **Crouch is derived, not bound** — read as `Move.y < -0.5` inside `PlayerInputBinding`. No standalone `Crouch` binding.
 - **Cape flight is simplified** (§4.2 and §7): ground sweep + airborne slow-fall (25% gravity while descending, jump held). No flight takeoff, no dive, no P-meter.
-- **Slope set is locked to SMW's two angles** (§4.5 and §7): steep 45° and shallow ~26.57° (1:2). No arbitrary slopes, no ceiling slopes. Slopes are **variable-length `PolygonCollider2D` prefabs** (`Slope_Steep_L/R`, `Slope_Shallow_L/R`). An editor script regenerates the polygon when `length` changes.
+- **Slope set is locked to SMW's two angles** (§4.5 and §7): steep 45° and shallow ~26.57° (1:2). No arbitrary slopes, no ceiling slopes. Slopes are **variable-length `PolygonCollider2D` prefabs** (`Slope_Steep_L/R`, `Slope_Shallow_L/R`). [Slope.cs](Assets/_Project/Scripts/Runtime/Environment/Slope.cs)'s `OnValidate` (and `Configure(kind, length)` for programmatic wiring) regenerates the polygon + scales the transform uniformly when `length` changes.
 - **State lives in exactly three layers** (§4.24): Persistent (`SaveData`), Session (`GameSession` on `GameServices`), Per-attempt (`LevelRunState` on `LevelRoot`). Every mutable field must belong to one of these layers. Death = level scene reload. `SaveManager.Save()` only fires at level clear / overworld move / switch palace activation / file-select — never mid-level.
 - **Audio pauses with gameplay** when `AudioListener.pause = true` (§4.16 / §4.22). The only exception is a dedicated `UiSfxChannel` (`ignoreListenerPause = true`) for the pause SFX and menu-nav cues. No ducking, no fade-out. Music stack is preserved across pause and resumes from the same playback head.
 - **`GameServices` and `LevelContext` are service locators, not DI containers** (§3). Register at Boot (for `GameServices`) or `LevelContext.Begin` (for per-level). Do not introduce Zenject / VContainer.
@@ -94,7 +98,7 @@ These codify decisions in SPEC.md that conflict with Unity defaults or common tu
 - **PrimeTween > coroutines** for time-based behavior that isn't strictly `FixedUpdate` physics. Use `useUnscaledTime: true` for UI animations that must run while `Time.timeScale = 0`.
 - **Rebinding UI is out of V1 scope** (§4.1). Don't build it, don't plan for it.
 - **HUD canvases** (`HUDRoot`, `TitleCanvas`, `OverworldCanvas`) all share `CanvasScalerPresetApplier` targeting 1280×720 with `MatchWidthOrHeight` / `Match = 0.5` (§4.17). One place to change resolution assumptions.
-- **Physics layers and the 2D collision matrix** (§4.19) are committed via `ProjectSettings/TagManager.asset` (layer names) and `ProjectSettings/Physics2DSettings.asset` (the `m_LayerCollisionMatrix` hex field). **`DynamicsManager.asset` is the 3D physics file and is not authoritative for this 2D project** — SPEC.md §4.19 currently mis-names it; trust `Physics2DSettings.asset`.
+- **Physics layers and the 2D collision matrix** (§4.19) are committed via `ProjectSettings/TagManager.asset` (layer names) and `ProjectSettings/Physics2DSettings.asset` (the `m_LayerCollisionMatrix` hex field). `DynamicsManager.asset` is the 3D physics file and is not used by this project.
 - **No central scoring service** (§4.20). Score lives on `SaveData.score` and is mutated inline at each awarding site (coin pickup, stomp, goal, time bonus, shell kill, 1-up pickup). Each 1-up rule lives on its natural owner: stomp combo on `PlayerController`, 100-coin rollover next to the `SaveData.totalCoins` increment, 5-dragon-coin check on `LevelRunState`. **Do not reintroduce** a `ScoreService`, a `ScoreReason` enum, a `Scoring` static, or a central `Awarded` event — there are ~5 callsites in the whole game and each has an obvious local owner for the state it reads.
 - **Enemy combat uses capability interfaces** (§4.7): `IStompable`, `IBumpable`, `IFireballHit`, `ICapeSweepHit`, `IShellImpact`, `IThrowable`, `IConditionallyTangible`. Attackers dispatch via `TryGetComponent<I…>`. Two concerns are modeled as MonoBehaviour components instead of interfaces: `ContactDamage` (attached to enemies/projectiles/hazards that hurt Mario on side-contact) and `SpinJumpSafe` (empty marker on Spiny/Spike Top). **Do not introduce** a `CombatResolver` static, virtual methods on an abstract `Enemy` base class, a `CombatOutcome` struct, or a `MovementKind` enum with switch statements.
 - **No object pooling.** Dynamic spawns (projectiles, VFX, score popups, enemies) use plain `Instantiate` / `Destroy`. If profiling turns up a genuine hot spot, address it locally.
@@ -105,9 +109,9 @@ Game-specific assets live under [Assets/_Project/](Assets/_Project/) (leading un
 
 - [Assets/_Project/Scripts/](Assets/_Project/Scripts/)
   - `Runtime/` — Core, State, Scene, Save, Audio, Feedback, Session, Player, Environment, UI, Data. All under `SMW.Runtime` asmdef.
-  - `Editor/` — `FileExtensions.cs` plus `Setup/` (bootstrap tools) + `Generators/` (prefab/debug-scene generator scaffolds) + `Build/` (`StripDebugScenesOnBuild` preprocessor). All under `SMW.Editor` asmdef.
+  - `Editor/` — `FileExtensions.cs` plus `Setup/` (bootstrap tools, Phase setup composites, SVG import defaults) + `Generators/` (prefab generators only — scene generators were removed after Phase 1) + `Build/` (`StripDebugScenesOnBuild` preprocessor). All under `SMW.Editor` asmdef.
   - `Tests/EditMode/` and `Tests/PlayMode/` — split test asmdefs.
-- [Assets/_Project/Scenes/](Assets/_Project/Scenes/) — `Boot.unity`, `Systems.unity`, `Title.unity`, `Overworld.unity`. `Scenes/Debug/` lands with Phase 1's Movement Test. `Scenes/Levels/` lands in Phase 7.
+- [Assets/_Project/Scenes/](Assets/_Project/Scenes/) — `Boot.unity`, `Systems.unity`, `Title.unity`, `Overworld.unity`. `Scenes/Debug/MovementTest.unity` landed with Phase 1 (hand-authored). `Scenes/Levels/` lands in Phase 7.
 - [Assets/_Project/Settings/](Assets/_Project/Settings/) — URP + 2D renderer + volume profile + `EditorTestSettings.asset`. Modify these, don't create parallel copies.
 - [Assets/_Project/Input/](Assets/_Project/Input/) — `InputSystem_Actions.inputactions` with Player / Overworld / UI action maps, keyboard + gamepad bindings per SPEC.md §4.1.
 - [Assets/_Project/Data/](Assets/_Project/Data/) — `AudioCatalog.asset` today. `Enemies/`, `Pickups/`, `Blocks/`, `PowerStates/`, `Levels/` subfolders land in their respective phases.
@@ -126,5 +130,5 @@ Game-specific assets live under [Assets/_Project/](Assets/_Project/) (leading un
 - [FileExtensions.cs](Assets/_Project/Scripts/Editor/FileExtensions.cs) — `[InitializeOnLoad]` editor utility that draws file extensions in the Project window. Predates Phase 0; not part of any game system.
 - [Phase0SetupAll.cs](Assets/_Project/Scripts/Editor/Setup/Phase0SetupAll.cs) — composite entry point (`Tools → SMW → Setup → Run Full Phase 0 Setup`) invoked from the Unity CLI during CI test runs and by humans after a fresh clone.
 - [SceneBootstrapGenerator.cs](Assets/_Project/Scripts/Editor/Setup/SceneBootstrapGenerator.cs) — regenerates Boot/Systems/Title/Overworld scenes and registers them in Build Settings. Idempotent — safe to re-run.
-- [PrefabGeneratorBase.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorBase.cs) + [DebugSceneGenerator.cs](Assets/_Project/Scripts/Editor/Generators/DebugSceneGenerator.cs) — scaffolds for Phase 1+ to fill in. The two-mode pattern ("Create Missing Only" / "Regenerate All (Overwrite)") lives on the base class.
+- [PrefabGeneratorBase.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorBase.cs) — base for prefab generators. The two-mode pattern ("Create Missing Only" / "Regenerate All (Overwrite)") lives here. Phase 1 populated it with [EnvironmentPrefabGenerator.cs](Assets/_Project/Scripts/Editor/Generators/EnvironmentPrefabGenerator.cs) + [PlayerPrefabGenerator.cs](Assets/_Project/Scripts/Editor/Generators/PlayerPrefabGenerator.cs).
 - [StripDebugScenesOnBuild.cs](Assets/_Project/Scripts/Editor/Build/StripDebugScenesOnBuild.cs) — `IPreprocessBuildWithReport` that removes `Scenes/Debug/*` from the build list at build time. Debug scenes are registered in Build Settings during development for direct-Play-from-scene; this filter keeps them out of shipped builds.

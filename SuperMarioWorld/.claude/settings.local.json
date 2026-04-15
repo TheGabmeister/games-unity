@@ -42,7 +42,8 @@
       "Bash(awk '{print $6, $7, $8}')",
       "Bash(powershell \"Get-Process -Id 18608 -ErrorAction SilentlyContinue | Select-Object CPU,WorkingSet64\")",
       "Bash(powershell 'Get-Process -Id 18608 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.Id -Force }')",
-      "Bash(\"C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe\" -batchmode -nographics -projectPath \"c:/dev/games-unity/SuperMarioWorld\" -runTests -testPlatform EditMode -testResults \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/editmode.xml\" -logFile \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/editmode.log\" -forgetProjectPath)"
+      "Bash(\"C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe\" -batchmode -nographics -projectPath \"c:/dev/games-unity/SuperMarioWorld\" -runTests -testPlatform EditMode -testResults \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/editmode.xml\" -logFile \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/editmode.log\" -forgetProjectPath)",
+      "Bash(\"C:/Program Files/Unity/Hub/Editor/6000.3.12f1/Editor/Unity.exe\" -batchmode -nographics -projectPath \"c:/dev/games-unity/SuperMarioWorld\" -quit -logFile \"c:/dev/games-unity/SuperMarioWorld/Temp/TestReports/compile2.log\")"
     ]
   }
 }

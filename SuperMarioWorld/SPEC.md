@@ -913,23 +913,22 @@ Assets/_Project/Data/
 
 ### 4.26 Debug & Test Scenes
 
-Unity's scene authoring tools (prefab drag-and-drop, grid snapping, the hierarchy panel) are the right tools for creative level design. **Content levels are hand-authored in Unity, not generated.** Generators would fight against Unity's strengths. Ground/slope/decoration prefabs are dragged in from the `Prefabs/Environment/` folder, positioned on the integer grid (Scene-view grid snap = 1), and lengths are set in the inspector.
-
-The exception is **debug/test scenes** — diagnostic environments used throughout development (Phase 1 through Phase 8) to validate specific systems in isolation. These are not gameplay content; they're tooling. They're generator-owned for the same reasons prefabs are: consistency, regeneratability, and the ability to re-verify behavior after tuning changes.
+Unity's scene authoring tools (prefab drag-and-drop, grid snapping, the hierarchy panel) are the right tools for scene composition. **Content levels and debug scenes are both hand-authored in Unity, not generated.** Prefabs and ScriptableObjects are generator-owned (see §4.25 — they get reused across many scenes and re-tuned frequently, which earns its keep), but scene composition is not. Scripting scene construction layers C# → Unity scene YAML on top of the AssetDatabase GUID lifecycle and produces fragile, hard-to-diagnose timing bugs for no real win: a debug scene is authored once per phase, rarely changes, and a human dragging prefabs onto a grid in the editor is faster and more robust than any generator.
 
 #### Scope boundary
 
 | Scene kind | Source of truth | Where it lives | Authored by |
 |---|---|---|---|
 | **Content levels** (V1 levels 1–5, boss room, overworld, title, etc.) | The `.unity` file itself | `Assets/_Project/Scenes/Levels/`, `Assets/_Project/Scenes/Title.unity`, … | Hand, in Unity editor |
-| **Debug/test scenes** | The generator script | `Assets/_Project/Scenes/Debug/` | Editor tool (`DebugSceneGenerator`) |
-| **PlayMode test fixtures** (Phase 8) | The test setup code | In-memory only, no `.unity` file | `TestSceneBuilder` helper |
+| **Debug/test scenes** | The `.unity` file itself | `Assets/_Project/Scenes/Debug/` | Hand, in Unity editor |
+| **PlayMode test fixtures** (Phase 8) | The test setup code | In-memory only, no `.unity` file | `SceneBuildHelpers` static |
 
-If a content level ever gets regenerated from a script, we're doing it wrong. If a debug scene ever gets hand-edited in Unity, we're also doing it wrong (those changes are lost on next regeneration). If a PlayMode test fixture ever gets saved to disk, we're again doing it wrong (fixtures are ephemeral by design).
+If a scene of any kind ever gets regenerated from a script, we're doing it wrong. If a PlayMode test fixture ever gets saved to disk, we're also doing it wrong (fixtures are ephemeral by design). The only programmatic scene-composition path we keep is the PlayMode test fixtures — short-lived, in-memory, teardown-on-finish, no GUID lifecycle concerns.
 
 #### What debug scenes are for
 
-Examples of the kind of scene the generator produces:
+These are diagnostic environments used throughout development (Phase 1 through Phase 8) to validate specific systems in isolation. Not gameplay content — tooling. They stay in the repo and get opened in the editor when the relevant subsystem is under test:
+
 - **Phase 1 Movement Test** — flat ground + platforms at stepped heights + one of each slope variant. No enemies. Used to tune jump arcs, coyote/buffer timing, and slope physics.
 - **All Blocks** — one of each interactive block (`?`, brick, multi-coin brick, note, rotating, P-switch, switch-palace × 4, used) lined up left to right. Used to verify block behaviors after any §4.6 change.
 - **All Enemies** — every V1 enemy variant in a wide flat corridor. Used to verify §4.7 capability interactions (stomp / fireball / cape / shell-impact) and regressions.
@@ -937,33 +936,32 @@ Examples of the kind of scene the generator produces:
 - **Yoshi Test** — a corridor with a Yoshi egg, a few enemies, berries, and a colored shell pickup. Validates §4.8.
 - **Slope Battery** — every combination of slope direction × power state × speed × landing-surface-type. Pure physics test.
 
-None of these are fun. They're diagnostic. They stay in the repo throughout development.
+None of these are fun. They're diagnostic. Each is a 5-to-15-minute drag-and-drop authoring job once its referenced prefabs exist.
 
-#### Generator structure
+#### Authoring a debug scene
 
-`DebugSceneGenerator.cs` in `Assets/_Project/Scripts/Editor/Generators/`. Exposes menu items per scene:
+1. File → New Scene (empty). Delete the default lights.
+2. Add a `Main Camera` with `LevelCamera` component, orthographic, size 7.
+3. Add a `LevelBounds` GameObject (BoxCollider2D marker on layer 18) sized to cover the playable area.
+4. Add a `LevelRoot` GameObject with `LevelRoot` + `LevelContext` + `LevelRunState` components. Wire `LevelRoot.levelData` → `LevelData_Debug.asset` (a shared SO — see §4.15 convention). Wire `LevelContext.levelCamera` / `levelBounds` / `runState` to the scene objects above.
+5. Add a `SpawnMarker` named `Spawn_Default` at the intended player start position. `LevelContext` resolves entry points by marker name at level entry.
+6. Add an `Environment` empty GameObject and drag ground / slope / block / enemy prefabs into it. Use the Scene-view grid snap (set to 1) so everything lands on integer coordinates — this is load-bearing for slope / flat junctions and `GroundProbe` tolerances.
+7. Save to `Assets/_Project/Scenes/Debug/<Name>.unity`. Register in Build Settings (debug scenes must be reachable via `SceneManager.LoadScene` during development; see build-stripping below).
 
-- `Tools → Generate → Debug Scenes → Phase 1 Movement Test`
-- `Tools → Generate → Debug Scenes → All Blocks`
-- `Tools → Generate → Debug Scenes → All Enemies`
-- `Tools → Generate → Debug Scenes → Power-up Transitions`
-- `Tools → Generate → Debug Scenes → Yoshi Test`
-- `Tools → Generate → Debug Scenes → Slope Battery`
-- `Tools → Generate → Debug Scenes → Regenerate All`
+Press Play from the scene directly — `LevelRoot.Start` detects the direct-entry case and hands off to `LevelContext.Begin`, which spawns the player from the `PlayerInputManager.playerPrefab` configured in `Systems.unity`.
 
-Each method creates a new scene, adds the standard level infrastructure (`LevelRoot`, `Environment` group, `LevelBounds`, `LevelCamera`, spawn marker), composes the diagnostic layout via `PrefabUtility.InstantiatePrefab` for every ground/slope/block/enemy instance, points `LevelRoot.levelData` at a shared `LevelData_Debug.asset`, and saves to `Assets/_Project/Scenes/Debug/<Name>.unity`. The scene is also added to Build Settings under a "debug" tier (higher indices than content scenes).
+#### Preventing drift
 
-Debug scenes use the same direct-entry machinery as content levels (§4.14) — press Play from any debug scene and it works, with fresh `SaveData` defaults from `EditorTestSettings`.
+A hand-authored scene CAN drift — someone "fixes" a platform position, then the test suite that assumed a stable layout breaks. We address this via **invariants tests** rather than regeneration:
+
+- Each debug scene gets a companion EditMode test that opens the scene and asserts key invariants (e.g. "MovementTest contains exactly 4 `Ground_Platform` instances + 4 `Slope` instances + 1 `SpawnMarker`", "all environment objects have integer-grid positions", "LevelRoot.levelData references LevelData_Debug.asset"). Phase 1 adds this alongside the Movement Test scene; later phases add one per new debug scene.
+- The tests are cheap (one scene open) and catch accidental hand-edits in PR review.
+
+This is a net trade: we lose "regenerate from code to restore canonical layout" (which we never needed — hand-authoring is fast enough to redo from scratch if needed), and we gain freedom from the AssetDatabase-GUID-lifecycle timing bugs that scripted scene composition produces.
 
 #### Build Settings + production stripping
 
 Debug scenes ARE registered in Build Settings during development (required for `SceneManager.LoadScene` to find them, and for direct-Play from each to work). An `IPreprocessBuildWithReport` hook called `StripDebugScenesOnBuild` runs automatically before production builds and removes scenes under `Assets/_Project/Scenes/Debug/` from the Build Settings list so they don't ship to players. The hook is purely additive — it doesn't modify the `ProjectSettings/EditorBuildSettings.asset` file, it just filters the in-memory build list for that build.
-
-#### Invariants
-
-- Debug scenes are regeneratable at any time. There is no "I made a useful manual tweak to the All Enemies scene" case — tweaks go into the generator code or into the referenced prefabs/SOs.
-- `Assets/_Project/Scenes/Debug/` is listed in the project's scene hygiene rules: any commit that adds a `.unity` file there must also update the generator that produced it.
-- PlayMode test fixtures are a *strict subset* of debug scenes — built programmatically at test setup, torn down at teardown, never saved. They reuse the same infrastructure code as `DebugSceneGenerator` (prefab placement helpers, spawn utilities) through a shared `SceneBuildHelpers` static class.
 
 ## 5. Game Content (V1 scope)
 

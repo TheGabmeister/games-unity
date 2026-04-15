@@ -12,7 +12,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 
 ### Tasks
 - Assembly definitions `SMW.Runtime` / `SMW.Editor` / `SMW.Tests` ([SPEC.md §2](SPEC.md), CLAUDE.md).
-- Physics 2D collision matrix ([SPEC.md §4.19](SPEC.md)). Commit `DynamicsManager.asset`.
+- Physics 2D collision matrix ([SPEC.md §4.19](SPEC.md)). Commit `ProjectSettings/Physics2DSettings.asset` and `ProjectSettings/TagManager.asset`.
 - Input action maps + `PlayerInputManager` on an `Input` GameObject in Systems.unity (no `PlayerInput` yet — that lives on the Player prefab in Phase 1). Map switching driven by `GameStateMachine` states iterating `PlayerInput.all` ([SPEC.md §4.1](SPEC.md)).
 - `Boot.unity`, `Systems.unity`, `Title.unity`, `Overworld.unity` per the step-by-step in [SPEC.md §4.14](SPEC.md) (Creating Boot and Systems scenes + direct-entry support).
 - `GameServices` locator with skeletons for every service: `SaveManager` ([§4.15](SPEC.md)), `SceneLoader` + `ScreenFader` ([§4.14](SPEC.md)), `GameStateMachine` ([§4.13](SPEC.md)), `FeedbackService`, `GameSession` ([§4.24](SPEC.md)), `AudioBus` stub ([§4.16](SPEC.md)).
@@ -58,7 +58,7 @@ Do not skip phases — each validates the architecture against real gameplay.
 - `PlayerCarry` placeholder ([§4.2](SPEC.md)).
 - `LevelCamera` with forward bias, vertical lock, `LevelBounds` clamp ([§4.4](SPEC.md)).
 - Core Environment prefabs needed by the Movement Test: `Ground_Platform`, `Slope_Steep_L/R`, `Slope_Shallow_L/R` — with variable-`length` fields and the collider/visual regen editor hook ([§4.5](SPEC.md)). Remaining Environment prefabs (`OneWay_Platform`, `Pipe`, hazards) come in Phase 2.
-- Phase 1 Movement Test debug scene ([§4.26](SPEC.md)).
+- Phase 1 Movement Test debug scene — hand-authored in Unity per [§4.26](SPEC.md). Lives at `Assets/_Project/Scenes/Debug/MovementTest.unity`.
 
 ### Automated tests
 - `JumpArcReproducibilityTest` (PM) — scripted input at 60Hz FixedUpdate lands at recorded position within ±0.01u. Canary for physics regressions.
