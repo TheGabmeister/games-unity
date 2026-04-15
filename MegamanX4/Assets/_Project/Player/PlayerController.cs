@@ -6,6 +6,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
+    [Header("Visuals")]
+    [SerializeField] Transform visual;
+
     [Header("Movement")]
     [SerializeField] float moveSpeed = 6f;
     [SerializeField] float groundAcceleration = 60f;
@@ -115,9 +118,12 @@ public class PlayerController : MonoBehaviour
         if (moveInput.x > 0.1f) facing = 1;
         else if (moveInput.x < -0.1f) facing = -1;
 
-        var s = transform.localScale;
-        s.x = Mathf.Abs(s.x) * facing;
-        transform.localScale = s;
+        if (visual)
+        {
+            var s = visual.localScale;
+            s.x = Mathf.Abs(s.x) * facing;
+            visual.localScale = s;
+        }
     }
 
     void FixedUpdate()
