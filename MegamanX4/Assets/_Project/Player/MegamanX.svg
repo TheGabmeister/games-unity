@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 80" width="64" height="80">
+  <!--
+    Mega Man X - front-facing standing pose with X-Buster on right arm.
+    Palette:
+      armor-light  #4FC3F7   armor-mid    #29B6F6   armor-dark  #0D47A1
+      accent       #B3E5FC   outline      #0A2472
+      skin         #FFE0B2   gem-red      #E53935   gold        #FDD835
+      eye-green    #00E676   white        #FFFFFF
+  -->
+
+  <!-- ================= LEGS ================= -->
+  <!-- Thighs -->
+  <rect x="22" y="52" width="8" height="12" fill="#4FC3F7" stroke="#0A2472" stroke-width="0.8"/>
+  <rect x="34" y="52" width="8" height="12" fill="#4FC3F7" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Knee highlights -->
+  <circle cx="26" cy="58" r="1.4" fill="#B3E5FC"/>
+  <circle cx="38" cy="58" r="1.4" fill="#B3E5FC"/>
+  <!-- Boots -->
+  <rect x="20" y="62" width="10" height="14" rx="2" fill="#29B6F6" stroke="#0A2472" stroke-width="0.8"/>
+  <rect x="34" y="62" width="10" height="14" rx="2" fill="#29B6F6" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Boot cuffs (white) -->
+  <rect x="20" y="62" width="10" height="3" fill="#FFFFFF" stroke="#0A2472" stroke-width="0.8"/>
+  <rect x="34" y="62" width="10" height="3" fill="#FFFFFF" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Boot tip accents -->
+  <rect x="20" y="73" width="10" height="3" fill="#0D47A1"/>
+  <rect x="34" y="73" width="10" height="3" fill="#0D47A1"/>
+
+  <!-- ================= PELVIS / BELT ================= -->
+  <rect x="20" y="48" width="24" height="5" fill="#0D47A1" stroke="#0A2472" stroke-width="0.8"/>
+
+  <!-- ================= TORSO ================= -->
+  <path d="M 20 32 Q 20 30 22 30 L 42 30 Q 44 30 44 32 L 44 48 L 20 48 Z"
+        fill="#4FC3F7" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Chest plate -->
+  <path d="M 26 33 L 38 33 L 36 44 L 28 44 Z" fill="#B3E5FC" stroke="#0A2472" stroke-width="0.5"/>
+  <!-- Chest vent -->
+  <path d="M 30 35 L 34 35 L 32 42 Z" fill="#0D47A1"/>
+
+  <!-- ================= ARMS ================= -->
+  <!-- Character's left arm (viewer's right): fist -->
+  <rect x="43" y="35" width="6" height="12" rx="1.2" fill="#4FC3F7" stroke="#0A2472" stroke-width="0.8"/>
+  <rect x="42" y="46" width="8" height="6" rx="1.5" fill="#FFFFFF" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Knuckle detail -->
+  <line x1="43.5" y1="48.5" x2="48.5" y2="48.5" stroke="#0A2472" stroke-width="0.6"/>
+
+  <!-- Character's right arm (viewer's left): X-Buster -->
+  <rect x="15" y="35" width="6" height="8" rx="1.2" fill="#4FC3F7" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Buster body -->
+  <path d="M 12 42 L 24 42 L 25 52 L 11 52 Z" fill="#29B6F6" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Buster highlight stripe -->
+  <rect x="13" y="44" width="11" height="1.4" fill="#B3E5FC"/>
+  <!-- Buster muzzle outer -->
+  <ellipse cx="18" cy="52.5" rx="7" ry="2.2" fill="#0D47A1" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Buster muzzle bore -->
+  <ellipse cx="18" cy="52.5" rx="4" ry="1.3" fill="#0A2472"/>
+
+  <!-- ================= SHOULDER PADS (over arms for depth) ================= -->
+  <path d="M 14 30 Q 14 26 19 26 Q 24 26 24 32 L 24 36 L 14 36 Z"
+        fill="#29B6F6" stroke="#0A2472" stroke-width="0.8"/>
+  <path d="M 40 32 Q 40 26 45 26 Q 50 26 50 30 L 50 36 L 40 36 Z"
+        fill="#29B6F6" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Shoulder pad highlights -->
+  <path d="M 16 28 Q 18 27 21 28" fill="none" stroke="#B3E5FC" stroke-width="1" stroke-linecap="round"/>
+  <path d="M 43 28 Q 46 27 48 28" fill="none" stroke="#B3E5FC" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- ================= NECK ================= -->
+  <rect x="29" y="28" width="6" height="3" fill="#FFE0B2" stroke="#0A2472" stroke-width="0.5"/>
+
+  <!-- ================= HEAD ================= -->
+  <!-- Face base -->
+  <path d="M 24 14 L 40 14 L 40 24 Q 40 28 32 29 Q 24 28 24 24 Z"
+        fill="#FFE0B2" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Helmet crown -->
+  <path d="M 22 4 Q 22 1.5 32 1.5 Q 42 1.5 42 4 L 44 14 L 44 18 L 20 18 L 20 14 Z"
+        fill="#4FC3F7" stroke="#0A2472" stroke-width="0.8"/>
+  <!-- Helmet lip -->
+  <rect x="22" y="13" width="20" height="2.2" fill="#0D47A1" stroke="#0A2472" stroke-width="0.5"/>
+  <!-- Forehead gem -->
+  <path d="M 29.5 5 L 34.5 5 L 32 11 Z" fill="#E53935" stroke="#0A2472" stroke-width="0.5"/>
+  <!-- Gem highlight -->
+  <path d="M 30.5 6 L 32 6 L 31.5 8 Z" fill="#FFCDD2"/>
+  <!-- Ear pods -->
+  <circle cx="19" cy="16" r="2.4" fill="#FDD835" stroke="#0A2472" stroke-width="0.7"/>
+  <circle cx="45" cy="16" r="2.4" fill="#FDD835" stroke="#0A2472" stroke-width="0.7"/>
+  <circle cx="19" cy="16" r="0.9" fill="#F57F17"/>
+  <circle cx="45" cy="16" r="0.9" fill="#F57F17"/>
+  <!-- Eyes -->
+  <rect x="26" y="19" width="3.2" height="4" rx="0.4" fill="#00E676" stroke="#0A2472" stroke-width="0.4"/>
+  <rect x="34.8" y="19" width="3.2" height="4" rx="0.4" fill="#00E676" stroke="#0A2472" stroke-width="0.4"/>
+  <!-- Eye shines -->
+  <rect x="26.4" y="19.4" width="0.9" height="1.2" fill="#FFFFFF"/>
+  <rect x="35.2" y="19.4" width="0.9" height="1.2" fill="#FFFFFF"/>
+  <!-- Mouth -->
+  <path d="M 30 26 Q 32 27 34 26" fill="none" stroke="#0A2472" stroke-width="0.8" stroke-linecap="round"/>
+</svg>
