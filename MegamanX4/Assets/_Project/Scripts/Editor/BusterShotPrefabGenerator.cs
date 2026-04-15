@@ -4,8 +4,9 @@ using UnityEngine;
 
 public static class BusterShotPrefabGenerator
 {
-    const string SpritesFolder = "Assets/_Project/Shots";
-    const string PrefabsFolder = "Assets/_Project/Shots/Prefabs";
+    const string SpritesFolder = "Assets/_Project/Player/Shots";
+    const string PrefabsFolder = "Assets/_Project/Player/Shots/Prefabs";
+    const int EnvironmentAndEnemyMask = (1 << 6) | (1 << 7);
 
     readonly struct Variant
     {
@@ -13,23 +14,25 @@ public static class BusterShotPrefabGenerator
         public readonly string SpritePath;
         public readonly float Speed;
         public readonly float Lifetime;
+        public readonly int Damage;
         public readonly float Radius;
 
-        public Variant(string name, string sprite, float speed, float lifetime, float radius)
+        public Variant(string name, string sprite, float speed, float lifetime, int damage, float radius)
         {
             Name = name;
             SpritePath = sprite;
             Speed = speed;
             Lifetime = lifetime;
+            Damage = damage;
             Radius = radius;
         }
     }
 
     static readonly Variant[] Variants =
     {
-        new("Small", $"{SpritesFolder}/MegamanX_Shot_Small.svg", 18f, 0.6f, 0.08f),
-        new("Semi",  $"{SpritesFolder}/MegamanX_Shot_Semi.svg",  16f, 0.8f, 0.15f),
-        new("Full",  $"{SpritesFolder}/MegamanX_Shot_Full.svg",  14f, 1.2f, 0.25f),
+        new("Small", $"{SpritesFolder}/MegamanX_Shot_Small.svg", 18f, 0.6f, 1, 0.08f),
+        new("Semi",  $"{SpritesFolder}/MegamanX_Shot_Semi.svg",  16f, 0.8f, 2, 0.15f),
+        new("Full",  $"{SpritesFolder}/MegamanX_Shot_Full.svg",  14f, 1.2f, 3, 0.25f),
     };
 
     [MenuItem("Tools/MegamanX4/Generate Buster Shot Prefabs")]
@@ -74,6 +77,8 @@ public static class BusterShotPrefabGenerator
             var so = new SerializedObject(shot);
             so.FindProperty("speed").floatValue = v.Speed;
             so.FindProperty("lifetime").floatValue = v.Lifetime;
+            so.FindProperty("damage").intValue = v.Damage;
+            so.FindProperty("hitLayers").intValue = EnvironmentAndEnemyMask;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             var path = $"{PrefabsFolder}/BusterShot_{v.Name}.prefab";

@@ -171,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BusterShot
   speed: 14
   lifetime: 1.2
+  damage: 3
   hitLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192

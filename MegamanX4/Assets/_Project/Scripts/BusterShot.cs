@@ -7,6 +7,7 @@ public class BusterShot : MonoBehaviour
 {
     [SerializeField] float speed = 18f;
     [SerializeField] float lifetime = 0.6f;
+    [SerializeField] int damage = 1;
     [SerializeField] LayerMask hitLayers = ~0;
 
     Rigidbody2D rb;
@@ -32,6 +33,11 @@ public class BusterShot : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if ((hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
+
+        var enemyHealth = other.GetComponentInParent<EnemyHealth>();
+        if (enemyHealth)
+            enemyHealth.ApplyDamage(damage);
+
         Destroy(gameObject);
     }
 
