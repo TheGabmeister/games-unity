@@ -32,6 +32,7 @@ public class WeaponInventory : MonoBehaviour
     bool _isCharging;
     float _chargeTimer;
     readonly List<Projectile> _activeSmallShots = new();
+    int[] _energy = System.Array.Empty<int>();
 
     public WeaponData ActiveWeapon
     {
@@ -53,6 +54,13 @@ public class WeaponInventory : MonoBehaviour
         _playerInput = GetComponent<PlayerInput>();
         _weaponNextAction = _playerInput.actions["WeaponNext"];
         _weaponPrevAction = _playerInput.actions["WeaponPrev"];
+
+        _energy = new int[_weapons.Count];
+        for (int i = 0; i < _weapons.Count; i++)
+        {
+            if (_weapons[i]) _energy[i] = _weapons[i].maxEnergy;
+            else _energy[i] = 0;
+        }
     }
 
     void OnEnable()
@@ -88,17 +96,58 @@ public class WeaponInventory : MonoBehaviour
         var weapon = ActiveWeapon;
         if (weapon)
         {
+            GameObject prefab;
+            int cost;
+            bool isSmall;
             if (_chargeTimer >= _fullChargeTime)
-                Spawn(weapon.fullPrefab, isSmall: false);
+            {
+                prefab = weapon.fullPrefab;
+                cost = weapon.fullCost;
+                isSmall = false;
+            }
             else if (_chargeTimer >= _semiChargeTime)
-                Spawn(weapon.semiPrefab, isSmall: false);
-            else if (_activeIndex != 0 || _activeSmallShots.Count < _maxSmallShots)
-                Spawn(weapon.smallPrefab, isSmall: true);
+            {
+                prefab = weapon.semiPrefab;
+                cost = weapon.semiCost;
+                isSmall = false;
+            }
+            else
+            {
+                prefab = weapon.smallPrefab;
+                cost = weapon.smallCost;
+                isSmall = true;
+            }
+
+            TryFire(weapon, prefab, cost, isSmall);
         }
 
         _chargeTimer = 0f;
         RestoreColor();
         return true;
+    }
+
+    void TryFire(WeaponData weapon, GameObject prefab, int cost, bool isSmall)
+    {
+        if (_activeIndex == 0)
+        {
+            if (isSmall && _activeSmallShots.Count >= _maxSmallShots) return;
+            Spawn(prefab, isSmall);
+            return;
+        }
+
+        if (weapon.maxEnergy > 0 && _energy[_activeIndex] < cost) return;
+
+        Spawn(prefab, isSmall);
+
+        if (weapon.maxEnergy == 0) return;
+
+        _energy[_activeIndex] -= cost;
+        if (_energy[_activeIndex] <= 0)
+        {
+            _energy[_activeIndex] = 0;
+            _activeIndex = 0;
+            ApplyWeaponTint();
+        }
     }
 
     public void CancelCharge()
@@ -129,10 +178,13 @@ public class WeaponInventory : MonoBehaviour
     void Spawn(GameObject prefab, bool isSmall)
     {
         if (!prefab) return;
+
         var muzzle = _controller.MuzzleAnchor;
         var go = Instantiate(prefab, muzzle.position, muzzle.rotation);
+
         if (!isSmall || _activeIndex != 0) return;
         if (!go.TryGetComponent<Projectile>(out var shot)) return;
+        
         _activeSmallShots.Add(shot);
         shot.Destroyed += () => _activeSmallShots.Remove(shot);
     }

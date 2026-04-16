@@ -8,4 +8,10 @@ public class WeaponData : ScriptableObject
     public GameObject smallPrefab;
     public GameObject semiPrefab;
     public GameObject fullPrefab;
+
+    [Header("Energy")]
+    public int maxEnergy;
+    public int smallCost;
+    public int semiCost;
+    public int fullCost;
 }
