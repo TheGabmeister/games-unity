@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StraightMovement : MonoBehaviour
+public class MoveForward : MonoBehaviour
 {
     [SerializeField] float speed = 18f;
 
