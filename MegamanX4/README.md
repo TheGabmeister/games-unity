@@ -62,9 +62,12 @@ Use this list to track implementation progress. Tick a box when a feature is pla
 - [x] 3-shot on-screen cap for lemons
 - [ ] Charge hold visual (arm flash / particles)
 - [ ] Plasma / charged-shot muzzle FX
-- [ ] Weapon-energy meter per special weapon
+- [x] Weapon-energy meter per special weapon
 - [ ] Charged versions of each special weapon
-- [ ] Weapon swap input (shoulder buttons / cycle)
+- [x] Weapon swap input (shoulder buttons / cycle)
+- [ ] Animation locks during firing.
+- [ ] On-screen shot caps for special weapons (only the buster's 3-lemon cap carries over).
+- [x] Per-weapon energy pools and depletion-driven auto-switch.
 
 ### Special weapons (one per Maverick)
 
@@ -76,6 +79,7 @@ Use this list to track implementation progress. Tick a box when a feature is pla
 - [ ] Twin Slasher *(Slash Beast)*
 - [ ] Frost Tower *(Frost Walrus)*
 - [ ] Soul Body *(Split Mushroom)*
+
 
 ## 3. Mega Man X — Fourth Armor parts
 
