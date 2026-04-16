@@ -28,10 +28,16 @@ Key project content currently lives under `Assets/_Project/`.
 - `Scripts/`
   - `Bootstrapper.cs`
   - `PlayerController.cs`
-  - `BusterShot.cs`
+  - `PlayerBuster.cs`
+  - `Projectile.cs`
+  - `Lifetime.cs`
+  - `MoveForward.cs`
+  - `MoveVertical.cs`
+  - `Health.cs`
+  - `HUD.cs`
+  - `StageSession.cs`
   - `SystemsRoot.cs`
   - `Editor/FileExtensions.cs`
-  - `Editor/BusterShotPrefabGenerator.cs`
 - `Resources/`
   - `Systems.prefab`
 - `Player/`
@@ -59,17 +65,25 @@ Ignore generated Unity folders like `Library/`, `Logs/`, and `Temp/` unless a ta
   - `Bootstrapper` runs via `RuntimeInitializeOnLoadMethod` before scene load.
   - `Assets/Resources/Systems.prefab` is the persistent systems root and is guarded by `SystemsRoot`.
   - Authored gameplay scenes such as `Gameplay.unity` should contain stage content and spawn markers like `PlayerStart`, not duplicate persistent systems roots.
+- Prefer narrow edits when refreshing instructions or specs.
+  - Update `AGENTS.md` to reflect the current codebase, not aspirational architecture.
+  - If a spec and the code disagree, verify the code before changing repo guidance.
 
 ## Codebase-specific notes
 
 - The player currently uses a custom 2D kinematic controller in `Assets/_Project/Scripts/PlayerController.cs`.
-- Buster shots are implemented in `Assets/_Project/Scripts/BusterShot.cs` and instantiated from prefabs.
+- X-Buster behavior now lives in `Assets/_Project/Scripts/PlayerBuster.cs`, which handles charge timing, muzzle spawning, and the small-shot on-screen cap.
+- Projectiles are implemented through composition in `Assets/_Project/Scripts/Projectile.cs` plus movement helpers such as `MoveForward.cs` and `MoveVertical.cs`.
 - Shot prefabs currently live under `Assets/_Project/Player/Shots/Prefabs/`.
 - The project now bootstraps persistent systems from `Assets/Resources/Systems.prefab` through `Assets/_Project/Scripts/Bootstrapper.cs`.
 - `SystemsRoot` enforces that only one persistent systems root survives at runtime.
-- Stage entry should resolve a `PlayerStart` marker and spawn the runtime player prefab by code rather than relying on a hand-placed canonical player instance.
+- `StageSession` currently spawns the player prefab at a `PlayerStart` tag if present, otherwise falls back to the active Scene view camera position in the editor, then instantiates the HUD prefab.
 - When changing gameplay code, keep inspector-facing tuning values serialized unless there is a clear reason to hard-code them.
 - Prefer extending the existing input actions asset instead of adding ad hoc polling or bespoke input glue.
+- `PlayerController` depends on `PlayerBuster`; keep charge-shot and projectile-spawn changes in `PlayerBuster` unless the change is specifically about locomotion/input flow.
+- Projectile movement uses transform-based motion. `MoveForward` advances along `transform.right`; orient projectile instances via rotation at spawn time rather than adding script-side facing state.
+- `MoveVertical` exposes an enum-based up/down choice in the inspector for strictly vertical motion.
+- HUD work is still lightweight and code-driven; prefer small, inspector-wired UI components over heavy framework additions unless the scope clearly calls for them.
 
 ## Validation
 
