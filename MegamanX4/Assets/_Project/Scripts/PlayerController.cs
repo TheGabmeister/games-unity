@@ -48,6 +48,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float knockbackSpeedY = 6f;
     [SerializeField] float knockbackDuration = 0.35f;
 
+    [Header("Ladder")]
+    [SerializeField] LayerMask ladderLayer;
+    [SerializeField] float climbSpeed = 5f;
+    [SerializeField] float ladderShootLockTime = 0.2f;
+    [SerializeField] Sprite climbSprite;
+    [SerializeField] Sprite climbShootSprite;
+
     [Header("Collision")]
     [SerializeField] LayerMask environmentLayers = ~0;
     [SerializeField] float skinWidth = 0.02f;
@@ -99,6 +106,14 @@ public class PlayerController : MonoBehaviour
     float knockbackTimer;
     bool IsKnockedBack => knockbackTimer > 0f;
 
+    bool dashJumpLock;
+
+    Collider2D currentLadder;
+    bool onLadder;
+    bool climbingShootLock;
+    float ladderShootLockUntil;
+
+    Collider2D playerCollider;
     Health health;
 
     void Awake()
@@ -114,6 +129,7 @@ public class PlayerController : MonoBehaviour
         attackAction = playerInput.actions["Attack"];
 
         health = GetComponent<Health>();
+        playerCollider = GetComponent<Collider2D>();
 
         contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
         contactFilter.SetLayerMask(environmentLayers);
@@ -125,7 +141,8 @@ public class PlayerController : MonoBehaviour
     void UpdateSprite()
     {
         if (!spriteRenderer) return;
-        Sprite s = IsDashing ? dashSprite
+        Sprite s = onLadder ? (climbingShootLock ? climbShootSprite : climbSprite)
+                 : IsDashing ? dashSprite
                  : !isGrounded && velocity.y > 0.01f ? jumpSprite
                  : !isGrounded ? fallSprite
                  : idleSprite;
@@ -152,7 +169,98 @@ public class PlayerController : MonoBehaviour
         health.Damaged -= OnHealthDamaged;
     }
 
-    void OnHealthDamaged(int amount, Vector2 sourcePosition) => ApplyKnockback(sourcePosition);
+    void OnHealthDamaged(int amount, Vector2 sourcePosition)
+    {
+        if (onLadder) { ExitLadder(fall: true); return; }
+        ApplyKnockback(sourcePosition);
+    }
+
+    Collider2D QueryLadder()
+    {
+        var b = playerCollider.bounds;
+        return Physics2D.OverlapBox(b.center, b.size, 0f, ladderLayer);
+    }
+
+    bool AtLadderTop(Collider2D ladder)
+    {
+        float feet = rb.position.y - playerCollider.bounds.extents.y;
+        return Mathf.Abs(feet - ladder.bounds.max.y) < 0.1f;
+    }
+
+    void TryGrabLadder(Collider2D ladder)
+    {
+        if (ladder == null) return;
+        bool pressingUp   = moveInput.y >  0.5f;
+        bool pressingDown = moveInput.y < -0.5f;
+        bool grab = pressingUp
+                 || (pressingDown && !isGrounded)
+                 || (pressingDown && isGrounded && AtLadderTop(ladder));
+        if (grab) EnterLadder(ladder);
+    }
+
+    void EnterLadder(Collider2D ladder)
+    {
+        currentLadder = ladder;
+        onLadder = true;
+        rb.position = new Vector2(ladder.bounds.center.x, rb.position.y);
+        velocity = Vector2.zero;
+        dashJumpLock = false;
+        wallJumpLockTimer = 0f;
+        coyoteTimer = 0f;
+        dashTimer = 0f;
+        climbingShootLock = false;
+        ladderShootLockUntil = 0f;
+    }
+
+    void ExitLadder(bool fall)
+    {
+        onLadder = false;
+        currentLadder = null;
+        climbingShootLock = false;
+        if (fall) velocity = Vector2.zero;
+    }
+
+    void TickLadder()
+    {
+        if (climbingShootLock && Time.time >= ladderShootLockUntil)
+            climbingShootLock = false;
+
+        // Facing updates from input even while locked so next shot aims correctly;
+        // no horizontal motion is applied.
+        if (moveInput.x >  0.1f) facing =  1;
+        else if (moveInput.x < -0.1f) facing = -1;
+
+        // Jump off ladder: exit + normal jump; inherit walk speed only if a direction is held.
+        if (jumpBufferTimer > 0f)
+        {
+            jumpBufferTimer = 0f;
+            velocity = new Vector2(moveInput.x * moveSpeed, jumpSpeed);
+            ExitLadder(fall: false);
+            return;
+        }
+
+        // Auto-dismount at top rung.
+        if (rb.position.y >= currentLadder.bounds.max.y)
+        {
+            rb.position = new Vector2(rb.position.x, currentLadder.bounds.max.y + playerCollider.bounds.extents.y);
+            velocity = Vector2.zero;
+            ExitLadder(fall: false);
+            return;
+        }
+
+        // Drop off at bottom rung when pressing Down.
+        if (moveInput.y < -0.5f && rb.position.y <= currentLadder.bounds.min.y)
+        {
+            ExitLadder(fall: true);
+            return;
+        }
+
+        velocity = climbingShootLock
+            ? Vector2.zero
+            : new Vector2(0f, moveInput.y * climbSpeed);
+
+        Move(velocity * Time.fixedDeltaTime);
+    }
 
     public void ApplyKnockback(Vector2 sourcePosition)
     {
@@ -166,6 +274,7 @@ public class PlayerController : MonoBehaviour
         knockbackTimer = knockbackDuration;
 
         dashTimer = 0f;
+        dashJumpLock = false;
         wallJumpLockTimer = 0f;
         jumpBufferTimer = 0f;
 
@@ -210,6 +319,12 @@ public class PlayerController : MonoBehaviour
 
         chargeTimer = 0f;
         if (spriteRenderer) spriteRenderer.color = baseSpriteColor;
+
+        if (onLadder)
+        {
+            climbingShootLock = true;
+            ladderShootLockUntil = Time.time + ladderShootLockTime;
+        }
     }
 
     void Spawn(GameObject prefab, bool isSmall)
@@ -284,7 +399,20 @@ public class PlayerController : MonoBehaviour
     {
         Probe();
 
-        if (isGrounded) coyoteTimer = coyoteTime;
+        var ladder = QueryLadder();
+        if (!onLadder) TryGrabLadder(ladder);
+
+        if (onLadder)
+        {
+            TickLadder();
+            return;
+        }
+
+        if (isGrounded)
+        {
+            coyoteTimer = coyoteTime;
+            dashJumpLock = false;
+        }
 
         if (jumpBufferTimer > 0f && TryJump())
             jumpBufferTimer = 0f;
@@ -300,10 +428,12 @@ public class PlayerController : MonoBehaviour
         }
         else if (IsDashing)
             velocity = new Vector2(dashDirection * dashSpeed, 0f);
+        else if (dashJumpLock)
+            velocity.x = dashDirection * dashSpeed;
         else if (wallJumpLockTimer <= 0f)
             ApplyHorizontalInput();
 
-        if (WallSliding && !IsKnockedBack)
+        if (WallSliding && !IsKnockedBack && !onLadder)
             velocity.y = Mathf.Max(velocity.y, -wallSlideSpeed);
 
         Move(velocity * Time.fixedDeltaTime);
@@ -363,7 +493,16 @@ public class PlayerController : MonoBehaviour
 
     bool TryJump()
     {
-        if (IsKnockedBack) return false;
+        if (IsKnockedBack || onLadder) return false;
+
+        if (IsDashing)
+        {
+            velocity = new Vector2(dashDirection * dashSpeed, jumpSpeed);
+            dashTimer = 0f;
+            dashJumpLock = true;
+            coyoteTimer = 0f;
+            return true;
+        }
 
         if (isTouchingWall && !isGrounded)
         {
@@ -371,6 +510,7 @@ public class PlayerController : MonoBehaviour
             wallJumpLockTimer = wallJumpLockTime;
             facing = -facing;
             coyoteTimer = 0f;
+            dashJumpLock = false;
             return true;
         }
 
@@ -386,9 +526,10 @@ public class PlayerController : MonoBehaviour
 
     void TryStartDash()
     {
-        if (dashCooldownTimer > 0f || IsDashing || IsKnockedBack) return;
+        if (dashCooldownTimer > 0f || IsDashing || IsKnockedBack || onLadder) return;
         dashTimer = dashDuration;
         dashCooldownTimer = dashDuration + dashCooldown;
         dashDirection = Mathf.Abs(moveInput.x) > 0.1f ? (int)Mathf.Sign(moveInput.x) : facing;
+        coyoteTimer = 0f;   // dashing off a ledge must not preserve coyote (SPEC.md §1.2)
     }
 }
