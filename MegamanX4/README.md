@@ -51,7 +51,7 @@ Use this list to track implementation progress. Tick a box when a feature is pla
 - [x] Wall slide (friction-slowed descent while pressing into wall)
 - [x] Wall jump (diagonal kick off wall, consumes wall contact)
 - [ ] Ladder climb / top-of-ladder dismount
-- [ ] Damage knockback / invincibility frames *(specced in [SPEC2.md](SPEC2.md); prerequisite for SPEC.md ladder damage)*
+- [x] Damage knockback / invincibility frames
 - [ ] Death + respawn at checkpoint
 
 ## 2. Mega Man X — combat
