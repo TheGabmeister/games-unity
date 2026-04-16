@@ -29,9 +29,9 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        var health = other.GetComponentInParent<Health>();
-        if (health)
-            health.ApplyDamage(_damage, transform.position);
+        var hurtBox = other.GetComponentInParent<HurtBox>();
+        if (hurtBox)
+            hurtBox.ReceiveHit(_damage, transform.position);
 
         if (!_piercing)
             Destroy(gameObject);

@@ -80,7 +80,6 @@ Use this list to track implementation progress. Tick a box when a feature is pla
 - [ ] Frost Tower *(Frost Walrus)*
 - [ ] Soul Body *(Split Mushroom)*
 
-
 ## 3. Mega Man X — Fourth Armor parts
 
 - [ ] **Helmet** — item detection / stage map reveal
@@ -157,15 +156,17 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 
 ## 8. Stages
 
-- [ ] Opening / intro stage (Sky Lagoon)
-- [ ] Web Spider — forest / cyber-forest
-- [ ] Cyber Peacock — cyberspace data stage (rank-based time-trial rooms)
-- [ ] Storm Owl — airship interior + exterior
-- [ ] Magma Dragoon — volcano / magma
-- [ ] Jet Stingray — high-speed water-ski chase
-- [ ] Slash Beast — speeding train
-- [ ] Frost Walrus — ice base
-- [ ] Split Mushroom — neon nightclub / illusion tower
+- [ ] Opening / intro stage — Sky Lagoon
+- [ ] Web Spider — Jungle
+- [ ] Cyber Peacock — Cyber Space
+- [ ] Storm Owl — Air Force
+- [ ] Magma Dragoon — Volcano
+- [ ] Jet Stingray — Marine Base
+- [ ] Slash Beast — Military Train
+- [ ] Frost Walrus — Snow Base
+- [ ] Split Mushroom — Bio Laboratory
+- [ ] Colonel — Memorial Hall
+- [ ] Space Port
 - [ ] Final Weapon 1
 - [ ] Final Weapon 2
 - [ ] Final Weapon 3 / Sigma
@@ -174,16 +175,14 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 
 ### Sky Lagoon enemy roster
 
-Opening-stage enemies currently tracked for Sky Lagoon:
-
-- Knot Beret B
-- Knot Beret G
-- Tonboroid S
-- Spike Marl
-- Mad Bull 97
-- Trap Blast
-- Kyunnbyunn
-- Eregion *(boss)*
+- [ ] Knot Beret B
+- [ ] Knot Beret G
+- [ ] Tonboroid S
+- [ ] Spike Marl
+- [ ] Mad Bull 97
+- [ ] Trap Blast
+- [ ] Kyunnbyunn
+- [ ] Eregion *(boss)*
 
 ## 9. Progression / meta
 

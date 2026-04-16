@@ -17,12 +17,18 @@ public class HUD : MonoBehaviour
         _health = health;
         _weapons = weapons;
 
-        if (_health != null) _health.HealthChanged += OnHealthChanged;
+        if (_health != null)
+            _health.HealthChanged += OnHealthChanged;
+        else
+            Debug.LogWarning("HUD.Bind: no Health component on player.", this);
+
         if (_weapons != null)
         {
             _weapons.EnergyChanged += OnEnergyChanged;
             _weapons.ActiveWeaponChanged += OnActiveWeaponChanged;
         }
+        else
+            Debug.LogWarning("HUD.Bind: no WeaponInventory component on player.", this);
 
         RefreshHealth();
         RefreshActiveWeapon();

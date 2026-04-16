@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class ContactDamageTests
+public class HitBoxHurtBoxTests
 {
     [UnityTest]
     public IEnumerator TriggerContact_DamagesPlayerOnceUntilReenter()
@@ -92,6 +92,8 @@ public class ContactDamageTests
         var health = player.AddComponent<Health>();
         SetPrivateField(health, "_maxHealth", 3);
 
+        player.AddComponent<HurtBox>();
+
         player.SetActive(true);
         return player;
     }
@@ -105,8 +107,8 @@ public class ContactDamageTests
         collider.isTrigger = trigger;
         collider.size = new Vector2(1f, 1f);
 
-        var contactDamage = damager.AddComponent<ContactDamage>();
-        SetPrivateField(contactDamage, "_damageAmount", 1);
+        var hitBox = damager.AddComponent<HitBox>();
+        SetPrivateField(hitBox, "_damage", 1);
         return damager;
     }
 
