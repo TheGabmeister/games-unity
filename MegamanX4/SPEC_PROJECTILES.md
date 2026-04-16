@@ -2,11 +2,11 @@
 
 Status: **Design complete, unimplemented.**
 
-Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) with a composable projectile system used by both player and enemy weapons. A shared `Projectile` component handles damage, hit detection, lifetime, and despawn. Separate small behavior components handle movement patterns. Prefabs compose the two.
+Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) with a composable projectile system used by both player and enemy weapons. A shared `Projectile` component handles damage, hit detection, and despawn. Separate small behavior components handle movement patterns. Prefabs compose the two.
 
 **Relationship to other specs:**
 
-- [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — the weapon system spawns projectile prefabs. This spec defines what those prefabs are made of. `TwinSlasherProjectile.cs` and `FrostTowerProjectile.cs` from SPEC_XWEAPONS are superseded: Twin Slasher becomes `Projectile + StraightMovement`, Frost Tower becomes `Projectile + Lifetime` (stationary, spawned at full scale). `WeaponData` gains a `SpawnEntry[]` array (§6).
+- [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — the weapon system spawns projectile prefabs defined here. BusterShot migration, WeaponData spawn patterns, and on-screen cap tracking are covered there.
 - [SPEC2.md](SPEC2.md) — `Projectile` calls `Health.ApplyDamage(damage, transform.position)` using the source-position overload added there.
 
 ---
@@ -17,7 +17,7 @@ Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) w
 Prefab: MegamanX_Shot_Small
 ├── Projectile           (damage, hitLayers, piercing)
 ├── Lifetime             (duration=0.6s)
-├── StraightMovement     (speed, direction \u2014 moves via transform.position)
+├── StraightMovement     (speed, direction — moves via transform.position)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
 └── SpriteRenderer
@@ -80,7 +80,7 @@ public class Projectile : MonoBehaviour
 
 | Concern | Resolution |
 |---|---|
-| Damage amount | `[SerializeField]` on Projectile. Baked per prefab. WeaponData does not carry damage — the prefab is the source of truth for what it does. |
+| Damage amount | `[SerializeField]` on Projectile. Baked per prefab. The prefab is the source of truth for what it does. |
 | Hit filtering | `hitLayers` LayerMask. Player projectiles filter to Enemy layer; enemy projectiles filter to Player layer. Inspector-configured. |
 | Piercing | `bool piercing`. Twin Slasher = true (passes through enemies). Buster = false (destroys on first hit). |
 | Lifetime | Extracted into a separate `Lifetime` component (§2.1). Projectile does not handle its own timer. |
@@ -199,149 +199,7 @@ SerializeFields: `float outSpeed`, `float returnSpeed`, `float hangTime`.
 
 ---
 
-## 5. BusterShot migration
-
-[BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) is deleted. Its responsibilities split:
-
-| BusterShot responsibility | New owner |
-|---|---|
-| `Awake`: Kinematic + gravityScale | `Projectile.Awake` |
-| `Fire(direction)`: set scale + direction | Spawner flips `localScale.x`; `StraightMovement.Start` reads it |
-| `OnTriggerEnter2D`: layer check + damage + destroy | `Projectile.OnTriggerEnter2D` |
-| `Destroyed` event | `Projectile.Destroyed` |
-| `speed`, `lifetime`, `damage`, `hitLayers` fields | Split: `speed` on `StraightMovement`, `lifetime` on `Lifetime`, `damage`/`hitLayers` on `Projectile` |
-
-### Prefab updates
-
-The three buster shot prefabs (`MegamanX_Shot_{Small,Semi,Full}`) are re-authored:
-
-- Remove `BusterShot` component.
-- Add `Projectile` component (configure damage, hitLayers, piercing=false).
-- Add `Lifetime` component (configure duration).
-- Add `StraightMovement` component (configure speed, angleDeg=0).
-
-### PlayerBuster / WeaponInventory impact
-
-`PlayerBuster`'s lemon-cap tracking currently references `BusterShot`. After migration:
-
-```csharp
-// Before:
-var shot = go.GetComponent<BusterShot>();
-shot.Fire(facing);
-activeSmallShots.Add(shot);
-shot.Destroyed += () => activeSmallShots.Remove(shot);
-
-// After:
-var s = go.transform.localScale;
-s.x = Mathf.Abs(s.x) * facing;
-go.transform.localScale = s;
-var projectile = go.GetComponent<Projectile>();
-activeSmallShots.Add(projectile);
-projectile.Destroyed += () => activeSmallShots.Remove(projectile);
-```
-
-`activeSmallShots` changes type from `List<BusterShot>` to `List<Projectile>`.
-
----
-
-## 6. WeaponData spawn descriptor (updates SPEC_XWEAPONS)
-
-`WeaponData` gains a serialized array describing what to spawn per fire. Angles and behavior config are baked into prefabs — `SpawnEntry` only carries the prefab reference and a position offset:
-
-```csharp
-[System.Serializable]
-public struct SpawnEntry
-{
-    public GameObject prefab;
-    public Vector2 positionOffset;   // relative to muzzle, in facing-local space
-}
-
-// In WeaponData:
-[Header("Spawn Pattern")]
-public SpawnEntry[] spawnPattern = { new() };
-public SpawnEntry[] chargedSpawnPattern;
-```
-
-### Examples
-
-**Base Buster** (small lemon):
-
-```
-spawnPattern: [{ prefab: SmallShot, offset: (0,0) }]
-chargedSpawnPattern: null   // handled specially by PlayerBuster tiers
-```
-
-**Twin Slasher** (uncharged) — single composite prefab:
-
-```
-spawnPattern: [{ prefab: TwinSlasher, offset: (0,0) }]
-```
-
-The `TwinSlasher` prefab is a composite with two child blades (see §8):
-
-```
-TwinSlasher (root)
-├── Lifetime             (duration >= children's; destroys entire hierarchy on expiry)
-├── Blade_Up (child)     angleDeg=+30 baked in StraightMovement
-│   ├── Projectile + Lifetime + StraightMovement + Rigidbody2D + Collider2D
-├── Blade_Down (child)   angleDeg=-30 baked in StraightMovement
-│   ├── Projectile + Lifetime + StraightMovement + Rigidbody2D + Collider2D
-```
-
-**Twin Slasher** (charged) — composite with four blades:
-
-```
-chargedSpawnPattern: [{ prefab: TwinSlasherCharged, offset: (0,0) }]
-```
-
-Same structure, four children at ±30° and ±15°.
-
-**Frost Tower** (uncharged):
-
-```
-spawnPattern: [{ prefab: FrostTower, offset: (0, -0.5) }]
-// offset.y negative = spawn at feet
-```
-
-### WeaponInventory spawn loop
-
-```csharp
-void SpawnWeaponShots(WeaponSlot slot, bool charged)
-{
-    var pattern = charged ? slot.data.chargedSpawnPattern : slot.data.spawnPattern;
-    if (pattern == null || pattern.Length == 0) return;
-    if (slot.liveShots.Count >= slot.data.maxOnScreen) return;
-
-    Vector2 muzzle = controller.MuzzleAnchor
-        ? (Vector2)controller.MuzzleAnchor.position
-        : (Vector2)controller.transform.position;
-    int facing = controller.Facing;
-
-    foreach (var entry in pattern)
-    {
-        Vector2 offset = new(entry.positionOffset.x * facing, entry.positionOffset.y);
-        var go = Instantiate(entry.prefab, muzzle + offset, Quaternion.identity);
-
-        // Flip scale to set facing; behaviors read lossyScale.x in Start.
-        var s = go.transform.localScale;
-        s.x = Mathf.Abs(s.x) * facing;
-        go.transform.localScale = s;
-
-        // Track for on-screen cap (check root and children for Projectile)
-        foreach (var proj in go.GetComponentsInChildren<Projectile>())
-        {
-            slot.liveShots.Add(go);
-            proj.Destroyed += () => slot.liveShots.Remove(go);
-        }
-    }
-}
-```
-
-No behavior-specific initialization calls. The spawner's only job beyond `Instantiate` is flipping `localScale.x` for facing.
-
----
-
-## 7. Enemy projectiles
+## 5. Enemy projectiles
 
 Enemies use the same `Projectile + Behavior` composition. The only difference is `hitLayers`:
 
@@ -362,13 +220,13 @@ No changes to `Projectile` or behaviors. Layer configuration in the prefab handl
 
 ---
 
-## 8. Prefab catalog
+## 6. Prefab catalog
 
 ### Implemented in this spec
 
 | Prefab | Components | Notes |
 |---|---|---|
-| `MegamanX_Shot_Small` | Projectile + StraightMovement | Refactored from BusterShot. damage=1, speed=18, piercing=false |
+| `MegamanX_Shot_Small` | Projectile + StraightMovement | damage=1, speed=18, piercing=false |
 | `MegamanX_Shot_Semi` | Projectile + StraightMovement | damage=2, speed=18, piercing=false |
 | `MegamanX_Shot_Full` | Projectile + StraightMovement | damage=4, speed=14, piercing=true, lifetime=0.8 |
 | `TwinSlasher` | Root: Lifetime. 2 children: Projectile + Lifetime + StraightMovement (±30°) | damage=2, speed=10, piercing=true, duration=0.6 |
@@ -389,27 +247,15 @@ No changes to `Projectile` or behaviors. Layer configuration in the prefab handl
 
 ---
 
-## 9. Cross-cutting
+## 7. Cross-cutting
 
 ### DamageFlash
 
 Projectile calls `Health.ApplyDamage(damage, transform.position)` — the source-position overload from [SPEC2.md](SPEC2.md). If the target has `DamageFlash`, the hit feedback fires automatically.
 
-### On-screen cap
-
-`WeaponInventory` tracks `slot.liveShots` (a `List<GameObject>`). Before spawning, checks `liveShots.Count >= data.maxOnScreen`. On `Projectile.Destroyed`, removes the entry. `PlayerBuster` tracks its own `activeSmallShots` for the buster lemon cap (3), using `List<Projectile>` instead of the old `List<BusterShot>`.
-
-### Knockback
-
-Projectiles are not affected by player knockback. They live independently once spawned. If the player is knocked back mid-charge, `PlayerBuster.CancelCharge()` fires (per SPEC2), but any already-spawned projectiles continue their trajectory.
-
-### Ladder
-
-Shooting on ladder fires the active weapon as normal. The shoot-halt-and-lock-facing behavior is handled by `WeaponInventory` / `PlayerController.TriggerLadderShootLock()` (per SPEC.md §3.4). Projectiles spawn from `muzzleAnchor` regardless of player state.
-
 ---
 
-## 10. Testing plan
+## 8. Testing plan
 
 EditMode tests (requires `.asmdef` setup from README §12):
 
@@ -422,36 +268,28 @@ EditMode tests (requires `.asmdef` setup from README §12):
   - Auto-destroys after `duration` seconds.
   - Triggers `Projectile.Destroyed` on the same GameObject.
 - **StraightMovement**
-  - `Initialize(1, 0f)` → direction = (1, 0). `Initialize(-1, 30f)` → correct angle.
+  - Facing derived from `lossyScale.x` at `Start`.
   - Update advances position by `direction * speed * dt`.
 
 Manual QA:
-- Fire buster → shot behaves identically to old BusterShot.
-- Equip Twin Slasher → fire → two blades at ±30°, pierce through enemies.
-- Equip Frost Tower → fire → pillar spawns at full scale, persists, damages on contact, despawns at lifetime.
-- Fire into an empty screen → projectile despawns after lifetime expires.
-- Enemy fires at player → same Projectile, hits Player layer.
+- Drop a buster shot prefab in the scene → it moves, hits enemies, despawns on contact or lifetime.
+- Drop a Frost Tower prefab → it sits at full scale, damages on contact, despawns at lifetime.
+- Drop an enemy bullet prefab → hits Player layer, ignores Enemy layer.
 
 ---
 
-## 11. Implementation order
+## 9. Implementation order
 
 1. **Projectile.cs** — create the component per §2.
 2. **Lifetime.cs** — create per §2.1.
 3. **StraightMovement.cs** — create per §3.1.
-4. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + Lifetime + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
-5. **Delete BusterShot.cs** — only after step 4 is verified.
-6. **Add SpawnEntry[] to WeaponData** — per §6.
-7. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
-8. **Author Twin Slasher composite prefab** — root with `Lifetime`, two children each with `Projectile + Lifetime + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
-9. **Author Frost Tower prefab** — `Projectile + Lifetime` (stationary, spawned at full scale), WeaponData asset with 1-entry spawn pattern.
-10. Verify all buster + special weapon fire works end-to-end.
+4. **Author prefabs** — compose components onto prefabs per §6. Drop in scene to verify.
 
-Steps 1–5 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
+BusterShot migration (replacing `BusterShot.cs` with these components in the weapon pipeline) is covered in [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md).
 
 ---
 
-## 12. Files summary
+## 10. Files summary
 
 ### New
 
@@ -460,17 +298,3 @@ Steps 1–5 are the critical path. The projectile system must work with the exis
 | `Assets/_Project/Scripts/Projectile.cs` | MonoBehaviour |
 | `Assets/_Project/Scripts/Lifetime.cs` | MonoBehaviour (general-purpose auto-destroy timer) |
 | `Assets/_Project/Scripts/StraightMovement.cs` | MonoBehaviour |
-
-### Modified
-
-| File | Change |
-|---|---|
-| `WeaponData.cs` | Add `SpawnEntry` struct + `spawnPattern` / `chargedSpawnPattern` arrays |
-| `WeaponInventory.cs` | Use `SpawnWeaponShots` loop with scale-flip for facing |
-| `PlayerBuster.cs` | Track `List<Projectile>` instead of `List<BusterShot>` |
-
-### Deleted
-
-| File | Reason |
-|---|---|
-| `BusterShot.cs` | Superseded by `Projectile + StraightMovement` |

@@ -1,7 +1,8 @@
 {
     "name": "MegamanX4.Runtime",
     "references": [
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "PrimeTween.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

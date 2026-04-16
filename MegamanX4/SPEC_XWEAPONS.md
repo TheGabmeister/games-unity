@@ -34,17 +34,21 @@ Covers [README.md §2](README.md) (Mega Man X — combat): special weapons, weap
 
 | File | Type | Purpose |
 |---|---|---|
-| `Assets/_Project/Scripts/WeaponData.cs` | ScriptableObject | Per-weapon configuration asset |
+| `Assets/_Project/Scripts/WeaponData.cs` | ScriptableObject | Per-weapon configuration asset (includes `SpawnEntry` struct) |
 | `Assets/_Project/Scripts/PlayerBuster.cs` | MonoBehaviour | Extracted buster charge/fire/cap/flash |
 | `Assets/_Project/Scripts/WeaponInventory.cs` | MonoBehaviour | Weapon slots, swap, energy, attack routing |
-| `Assets/_Project/Scripts/TwinSlasherProjectile.cs` | MonoBehaviour | Spread projectile for Twin Slasher |
-| `Assets/_Project/Scripts/FrostTowerProjectile.cs` | MonoBehaviour | Stationary ice pillar for Frost Tower |
 | `Assets/_Project/Data/` | Folder | Home for `WeaponData` SO assets |
+
+Projectile components (`Projectile.cs`, `Lifetime.cs`, `StraightMovement.cs`) are defined in [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md). Weapon prefabs (Twin Slasher, Frost Tower) compose those components — no standalone projectile scripts needed.
 
 ### Existing files modified
 
 - `PlayerController.cs` — remove buster code, add `PlayerBuster` / `WeaponInventory` coordination hooks.
 - `InputSystem_Actions.inputactions` — add `WeaponNext`, `WeaponPrev` actions.
+
+### Deleted files
+
+- `BusterShot.cs` — superseded by `Projectile + StraightMovement` (see §16 step 5).
 
 ---
 
@@ -59,8 +63,8 @@ public class WeaponData : ScriptableObject
     public Color weaponTint = Color.white;
 
     [Header("Projectile")]
-    public GameObject projectilePrefab;
-    public GameObject chargedPrefab;       // null = no charged form
+    public SpawnEntry[] spawnPattern = { new() };
+    public SpawnEntry[] chargedSpawnPattern;   // null = no charged form
     public int maxOnScreen = 3;
 
     [Header("Energy")]
@@ -71,15 +75,24 @@ public class WeaponData : ScriptableObject
     public SfxId fireSfx;
     public SfxId chargedFireSfx;
 }
+
+[System.Serializable]
+public struct SpawnEntry
+{
+    public GameObject prefab;
+    public Vector2 positionOffset;   // relative to muzzle, in facing-local space
+}
 ```
+
+Angles and behavior config are baked into the projectile prefabs (per [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md)) — `SpawnEntry` only carries the prefab reference and a position offset.
 
 ### Asset instances
 
-| Asset | Tint | Prefab | maxOnScreen | energyCost | chargedCost |
+| Asset | Tint | spawnPattern | maxOnScreen | energyCost | chargedCost |
 |---|---|---|---|---|---|
 | `BaseBuster` | white | (handled by PlayerBuster, not used) | 3 | 0 | 0 |
-| `TwinSlasher` | purple | TwinSlasherProjectile prefab | 2 | 2 | 4 |
-| `FrostTower` | ice blue | FrostTowerProjectile prefab | 1 | 3 | 6 |
+| `TwinSlasher` | purple | `[{ TwinSlasher, (0,0) }]` | 2 | 2 | 4 |
+| `FrostTower` | ice blue | `[{ FrostTower, (0,-0.5) }]` | 1 | 3 | 6 |
 | (remaining 6) | per-weapon | — | — | — | — |
 
 `BaseBuster` is a sentinel entry in the inventory (slot 0). Its `energyCost = 0` means it never depletes. `PlayerBuster` handles the actual fire logic for this slot — `WeaponInventory` delegates to `PlayerBuster` when slot 0 is active.
@@ -241,29 +254,48 @@ if activeIndex == 0 (buster):
     buster.ReleaseCharge()
 else:
     slot = slots[activeIndex]
-    if buster.ChargeTimer >= fullChargeTime && slot.data.chargedPrefab != null:
+    if buster.ChargeTimer >= fullChargeTime && slot.data.chargedSpawnPattern != null:
         if TryConsumeEnergy(slot, slot.data.chargedEnergyCost):
-            SpawnWeaponShot(slot, charged: true)
+            SpawnWeaponShots(slot, charged: true)
     else:
         if TryConsumeEnergy(slot, slot.data.energyCost):
-            SpawnWeaponShot(slot, charged: false)
+            SpawnWeaponShots(slot, charged: false)
     buster.CancelCharge()   // always cancel charge state after special fire
 ```
 
-### `SpawnWeaponShot`:
+### `SpawnWeaponShots`:
+
+Iterates the active weapon's `SpawnEntry[]` pattern array. Flips `localScale.x` for facing — behavior components read `lossyScale.x` at `Start` (per [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) §3). No behavior-specific initialization calls.
 
 ```csharp
-void SpawnWeaponShot(ref WeaponSlot slot, bool charged)
+void SpawnWeaponShots(ref WeaponSlot slot, bool charged)
 {
+    var pattern = charged ? slot.data.chargedSpawnPattern : slot.data.spawnPattern;
+    if (pattern == null || pattern.Length == 0) return;
     if (slot.liveShots.Count >= slot.data.maxOnScreen) return;
-    var prefab = charged ? slot.data.chargedPrefab : slot.data.projectilePrefab;
-    if (!prefab) return;
-    Vector2 pos = controller.MuzzleAnchor ? (Vector2)controller.MuzzleAnchor.position
-                                          : (Vector2)controller.transform.position;
-    var go = Instantiate(prefab, pos, Quaternion.identity);
-    slot.liveShots.Add(go);
-    // Track destruction to remove from liveShots.
-    // If the projectile has a known lifetime, use OnDestroy event.
+
+    Vector2 muzzle = controller.MuzzleAnchor
+        ? (Vector2)controller.MuzzleAnchor.position
+        : (Vector2)controller.transform.position;
+    int facing = controller.Facing;
+
+    foreach (var entry in pattern)
+    {
+        Vector2 offset = new(entry.positionOffset.x * facing, entry.positionOffset.y);
+        var go = Instantiate(entry.prefab, muzzle + offset, Quaternion.identity);
+
+        // Flip scale to set facing; behaviors read lossyScale.x in Start.
+        var s = go.transform.localScale;
+        s.x = Mathf.Abs(s.x) * facing;
+        go.transform.localScale = s;
+
+        // Track for on-screen cap (check root and children for Projectile)
+        foreach (var proj in go.GetComponentsInChildren<Projectile>())
+        {
+            slot.liveShots.Add(go);
+            proj.Destroyed += () => slot.liveShots.Remove(go);
+        }
+    }
 }
 ```
 
@@ -338,7 +370,7 @@ void ApplyWeaponTint()
 
 - Charge timing is **global** — the same `fullChargeTime` (1.2 s) applies to all weapons.
 - **Semi-charge tier is buster-only.** Specials use two outcomes: release before full charge → uncharged fire; release at/after full charge → charged fire. No "semi-charged" state for specials.
-- `WeaponData.chargedPrefab == null` means the weapon has no charged form; releasing at full charge still fires the uncharged version.
+- `WeaponData.chargedSpawnPattern == null` means the weapon has no charged form; releasing at full charge still fires the uncharged version.
 - `WeaponData.chargedEnergyCost` is deducted for a charged shot. If insufficient energy, uncharged version fires instead (with its own `energyCost`).
 
 ### Charge flash for specials
@@ -355,64 +387,27 @@ While a special is equipped and charging, `PlayerBuster.UpdateChargeFlash` uses 
 - **Charged:** Four blades — two at ±30° and two at ±15°. Same speed, higher individual damage. Costs more energy.
 - Both versions pierce through enemies (no despawn on contact; despawn on timer or off-screen).
 
-### TwinSlasherProjectile.cs
-
-```csharp
-public class TwinSlasherProjectile : MonoBehaviour
-{
-    [SerializeField] float speed = 10f;
-    [SerializeField] float lifetime = 0.6f;
-    [SerializeField] int damage = 2;
-
-    Rigidbody2D rb;
-    float timer;
-    Vector2 direction;
-
-    public void Fire(int facing, float angleDeg)
-    {
-        float rad = angleDeg * Mathf.Deg2Rad;
-        direction = new Vector2(Mathf.Cos(rad) * facing, Mathf.Sin(rad));
-        rb = GetComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Kinematic;
-        rb.gravityScale = 0f;
-    }
-
-    void FixedUpdate()
-    {
-        rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
-        timer += Time.fixedDeltaTime;
-        if (timer >= lifetime) Destroy(gameObject);
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        var health = other.GetComponentInParent<Health>();
-        if (health) health.ApplyDamage(damage, transform.position);
-        // no destroy — piercing
-    }
-}
-```
-
-`WeaponInventory.SpawnWeaponShot` for Twin Slasher spawns **two** instances (calling `Fire(facing, +30f)` and `Fire(facing, -30f)`). Charged spawns four. The spawn-count logic lives in a small `ITwinSlasherSpawner` helper or in `SpawnWeaponShot` with a type check — but to stay composition-based, the simpler approach: the Twin Slasher **prefab itself** is a parent with two child projectile objects, both activated on `Fire()`. One prefab = one logical shot = one `liveShots` entry.
-
-Alternative: `WeaponInventory` calls a spawn method on the projectile's root script. `TwinSlasherProjectile` has a `Fire(int facing)` that instantiates its own child blades internally.
-
-**Chosen approach:** The prefab root has `TwinSlasherProjectile` which spawns sub-projectiles internally. `WeaponInventory` instantiates one prefab and calls `Fire(facing)`. The root despawns when all children are gone.
-
 ### Prefab structure
+
+Uses the composable projectile system from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md). No standalone `TwinSlasherProjectile.cs` — the prefab composes standard components:
 
 ```
 TwinSlasher (root)
-├── TwinSlasherProjectile.cs (spawns blades as children)
-└── (children instantiated at Fire time)
+├── Lifetime             (duration >= children's; destroys entire hierarchy on expiry)
+├── Blade_Up (child)     angleDeg=+30 baked in StraightMovement
+│   ├── Projectile + Lifetime + StraightMovement + Rigidbody2D + Collider2D
+├── Blade_Down (child)   angleDeg=-30 baked in StraightMovement
+│   ├── Projectile + Lifetime + StraightMovement + Rigidbody2D + Collider2D
 ```
+
+`WeaponInventory.SpawnWeaponShots` instantiates one composite prefab and flips `localScale.x` for facing. One prefab = one logical shot = one `liveShots` entry. No `Fire()` call needed.
 
 ### WeaponData asset
 
 - `displayName`: "Twin Slasher"
 - `weaponTint`: purple `(0.7f, 0.2f, 0.9f)`
-- `projectilePrefab`: TwinSlasher prefab
-- `chargedPrefab`: TwinSlasherCharged prefab (same script, 4 blades)
+- `spawnPattern`: `[{ TwinSlasher, (0,0) }]`
+- `chargedSpawnPattern`: `[{ TwinSlasherCharged, (0,0) }]` (same structure, four children at ±30° and ±15°)
 - `maxOnScreen`: 2
 - `energyCost`: 2
 - `chargedEnergyCost`: 4
@@ -423,66 +418,31 @@ TwinSlasher (root)
 
 ### Behavior
 
-- **Uncharged:** A tall ice pillar spawns at the player's feet. It rises from the ground over ~0.15 s, stays for ~1.5 s, then shatters (destroy). Damages enemies on contact while active. Stationary — does not follow the player.
+- **Uncharged:** A tall ice pillar spawns at the player's feet at full scale. Stays for ~1.5 s, then despawns. Damages enemies on contact while active. Stationary — does not follow the player.
 - **Charged:** Same pillar but much taller (2x height), wider hitbox, higher damage, longer duration (~2.5 s).
 - Only one Frost Tower can exist at a time (`maxOnScreen = 1`). Firing again while one exists does nothing (energy isn't consumed).
 
-### FrostTowerProjectile.cs
-
-```csharp
-public class FrostTowerProjectile : MonoBehaviour
-{
-    [SerializeField] float riseTime = 0.15f;
-    [SerializeField] float duration = 1.5f;
-    [SerializeField] int damage = 3;
-    [SerializeField] float fullHeight = 2f;
-
-    float timer;
-    Vector3 targetScale;
-
-    public void Fire(int facing)
-    {
-        // Spawn at player's feet, facing doesn't matter for a vertical pillar.
-        targetScale = transform.localScale;
-        transform.localScale = new Vector3(targetScale.x, 0f, targetScale.z);
-    }
-
-    void Update()
-    {
-        timer += Time.deltaTime;
-        if (timer <= riseTime)
-        {
-            float t = timer / riseTime;
-            transform.localScale = new Vector3(targetScale.x, targetScale.y * t, targetScale.z);
-        }
-        if (timer >= riseTime + duration)
-            Destroy(gameObject);
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        var health = other.GetComponentInParent<Health>();
-        if (health) health.ApplyDamage(damage, transform.position);
-    }
-}
-```
-
 ### Prefab structure
+
+Uses the composable projectile system from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md). No standalone `FrostTowerProjectile.cs` — the prefab uses `Projectile + Lifetime` with no movement component (stationary):
 
 ```
 FrostTower (root)
-├── FrostTowerProjectile.cs
+├── Projectile (damage=3, hitLayers=Enemy, piercing=true)
+├── Lifetime (duration=1.5)
 ├── Rigidbody2D (Kinematic, gravityScale=0)
 ├── BoxCollider2D (isTrigger=true, sized to full pillar)
 └── SpriteRenderer (ice pillar SVG)
 ```
 
+Spawned at full scale via `SpawnWeaponShots`. The `positionOffset.y = -0.5` in the `SpawnEntry` places it at the player's feet.
+
 ### WeaponData asset
 
 - `displayName`: "Frost Tower"
 - `weaponTint`: ice blue `(0.5f, 0.85f, 1f)`
-- `projectilePrefab`: FrostTower prefab
-- `chargedPrefab`: FrostTowerCharged prefab (taller, longer duration)
+- `spawnPattern`: `[{ FrostTower, (0,-0.5) }]`
+- `chargedSpawnPattern`: `[{ FrostTowerCharged, (0,-0.5) }]` (taller, longer duration)
 - `maxOnScreen`: 1
 - `energyCost`: 3
 - `chargedEnergyCost`: 6
@@ -572,9 +532,13 @@ Shooting on ladder works identically — `WeaponInventory` fires the active weap
 
 No interaction with weapons. `dashJumpLock` doesn't affect firing.
 
-### Existing callers
+### On-screen cap
 
-`BusterShot.Destroyed` event — `PlayerBuster` subscribes to this for the lemon cap, same as before. `WeaponInventory` uses its own `liveShots` list for special weapons and listens to `OnDestroy` on those projectiles.
+`WeaponInventory` tracks `slot.liveShots` (a `List<GameObject>`). Before spawning, checks `liveShots.Count >= data.maxOnScreen`. On `Projectile.Destroyed`, removes the entry. `PlayerBuster` tracks its own `activeSmallShots` for the buster lemon cap (3), using `List<Projectile>` instead of the old `List<BusterShot>`.
+
+### Projectile interactions
+
+Projectiles live independently once spawned. Player knockback, weapon swap, or ladder state do not affect in-flight projectiles. `WeaponInventory` uses its own `liveShots` list for special weapons and listens to `Projectile.Destroyed` on those projectiles.
 
 ---
 
@@ -595,7 +559,7 @@ EditMode tests (same infra constraint as other specs — requires `.asmdef` setu
 
 Manual QA:
 - Equip Twin Slasher → fire → two blades at ±30°. Charged fire → four blades.
-- Equip Frost Tower → fire → pillar rises, persists, shatters. Second fire while pillar active → blocked.
+- Equip Frost Tower → fire → pillar spawns at full scale, persists, damages on contact. Second fire while pillar active → blocked.
 - Swap weapons mid-charge → charge resets, tint changes.
 - Deplete weapon energy → auto-switch to buster.
 - Fire on ladder → shoot-lock triggers regardless of active weapon.
@@ -604,15 +568,16 @@ Manual QA:
 
 ## 16. Implementation order
 
-1. **WeaponData SO** — create `WeaponData.cs` + `Assets/_Project/Data/` folder + `BaseBuster` asset.
+1. **WeaponData SO** — create `WeaponData.cs` (with `SpawnEntry` struct) + `Assets/_Project/Data/` folder + `BaseBuster` asset.
 2. **PlayerBuster extraction** — move code, add public API, verify buster works identically.
 3. **PlayerController cleanup** — remove attack code, add public properties, update `ApplyKnockback` to call `buster.CancelCharge()`.
-4. **WeaponInventory** — slots, swap, energy, attack routing. Test with buster-only (slot 0).
-5. **Input actions** — add `WeaponNext`/`WeaponPrev` to action asset. Bind Q/E + L1/R1.
-6. **Twin Slasher** — `TwinSlasherProjectile.cs` + prefab + `WeaponData` asset. Unlock in editor for testing.
-7. **Frost Tower** — `FrostTowerProjectile.cs` + prefab + `WeaponData` asset.
-8. **Weapon tint** — `ApplyWeaponTint` on swap. Integrate with charge flash.
-9. **Charged variants** — charged prefabs for Twin Slasher + Frost Tower.
-10. Update [README.md](README.md) checklist.
+4. **WeaponInventory** — slots, swap, energy, attack routing with `SpawnWeaponShots` loop. Test with buster-only (slot 0).
+5. **BusterShot migration** — replace `BusterShot` on buster prefabs with `Projectile + Lifetime + StraightMovement` (from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md)). Update `PlayerBuster` to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Delete `BusterShot.cs` after verification.
+6. **Input actions** — add `WeaponNext`/`WeaponPrev` to action asset. Bind Q/E + L1/R1.
+7. **Twin Slasher** — author composite prefab (per SPEC_PROJECTILES §6) + `WeaponData` asset. Unlock in editor for testing.
+8. **Frost Tower** — author `Projectile + Lifetime` prefab (per SPEC_PROJECTILES §6) + `WeaponData` asset.
+9. **Weapon tint** — `ApplyWeaponTint` on swap. Integrate with charge flash.
+10. **Charged variants** — charged prefabs for Twin Slasher + Frost Tower.
+11. Update [README.md](README.md) checklist.
 
-Steps 2–4 are the critical path — the system must work with just the base buster before any specials are added. If buster behavior regresses after extraction, fix before proceeding.
+Steps 2–5 are the critical path — the weapon system must work with just the base buster (using the new projectile components) before any specials are added. If buster behavior regresses after extraction, fix before proceeding.
