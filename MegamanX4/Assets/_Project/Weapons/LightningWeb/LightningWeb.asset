@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: LightningWeb
   m_EditorClassIdentifier: MegamanX4.Runtime::WeaponData
   displayName: 
-  tint: {r: 0, g: 1, b: 0.16316032, a: 1}
+  tint: {r: 1, g: 0.9882855, b: 0, a: 1}
   smallPrefab: {fileID: 0}
   semiPrefab: {fileID: 0}
   fullPrefab: {fileID: 0}
+  maxEnergy: 0
+  smallCost: 0
+  semiCost: 0
+  fullCost: 0

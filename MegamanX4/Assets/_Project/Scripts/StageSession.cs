@@ -30,8 +30,15 @@ public class StageSession : MonoBehaviour
 
     void SpawnPlayer(Vector3 position)
     {
-        Instantiate(_playerPrefab, position, Quaternion.identity);
-        Instantiate(_hudPrefab);
+        var player = Instantiate(_playerPrefab, position, Quaternion.identity);
+        var health = player.GetComponent<Health>();
+        var weapons = player.GetComponent<WeaponInventory>();
+
+        if (!_hudPrefab) return;
+
+        var hudGo = Instantiate(_hudPrefab);
+        var hud = hudGo.GetComponent<HUD>();
+        if (hud) hud.Bind(health, weapons);
     }
 
     GameObject FindPlayerStart()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -47,6 +48,23 @@ public class WeaponInventory : MonoBehaviour
     public bool IsCharging => _isCharging;
     public float ChargeTimer => _chargeTimer;
     public int ActiveSmallShotCount => _activeSmallShots.Count;
+    public int ActiveIndex => _activeIndex;
+
+    public event Action EnergyChanged;
+    public event Action ActiveWeaponChanged;
+
+    public int GetEnergy(int index)
+    {
+        if (index < 0 || index >= _energy.Length) return 0;
+        return _energy[index];
+    }
+
+    public int GetMaxEnergy(int index)
+    {
+        if (index < 0 || index >= _weapons.Count) return 0;
+        if (!_weapons[index]) return 0;
+        return _weapons[index].maxEnergy;
+    }
 
     void Awake()
     {
@@ -147,7 +165,10 @@ public class WeaponInventory : MonoBehaviour
             _energy[_activeIndex] = 0;
             _activeIndex = 0;
             ApplyWeaponTint();
+            ActiveWeaponChanged?.Invoke();
+            return;
         }
+        EnergyChanged?.Invoke();
     }
 
     public void CancelCharge()
@@ -173,6 +194,7 @@ public class WeaponInventory : MonoBehaviour
         CancelCharge();
         _activeIndex = (_activeIndex + direction + _weapons.Count) % _weapons.Count;
         ApplyWeaponTint();
+        ActiveWeaponChanged?.Invoke();
     }
 
     void Spawn(GameObject prefab, bool isSmall)
