@@ -1,9 +1,9 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class SystemsRoot : MonoBehaviour
+public class Services : MonoBehaviour
 {
-    public static SystemsRoot Instance { get; private set; }
+    public static Services Instance { get; private set; }
 
     void Awake()
     {

@@ -5,7 +5,7 @@ public static class Bootstrapper
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Execute()
     {
-        if (SystemsRoot.Instance || Object.FindFirstObjectByType<SystemsRoot>())
+        if (Services.Instance || Object.FindFirstObjectByType<Services>())
             return;
 
         var prefab = Resources.Load<GameObject>("Systems");
