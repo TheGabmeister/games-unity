@@ -172,14 +172,14 @@ MonoBehaviour:
   _knockbackDuration: 0.35
   _ladderLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   _climbSpeed: 5
   _ladderShootLockTime: 0.2
   _climbSprite: {fileID: 0}
   _climbShootSprite: {fileID: 0}
   _environmentLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 64
   _skinWidth: 0.02
   _probeDistance: 0.05
   _muzzleAnchor: {fileID: 3947491078196069659}
