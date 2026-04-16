@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Health))]
-[RequireComponent(typeof(PlayerBuster))]
+[RequireComponent(typeof(WeaponInventory))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Visuals")]
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
     Rigidbody2D _rb;
     PlayerInput _playerInput;
-    PlayerBuster _buster;
+    WeaponInventory _inventory;
     InputAction _moveAction;
     InputAction _jumpAction;
     InputAction _sprintAction;
@@ -120,13 +120,13 @@ public class PlayerController : MonoBehaviour
 
         _health = GetComponent<Health>();
         _playerCollider = GetComponent<Collider2D>();
-        _buster = GetComponent<PlayerBuster>();
+        _inventory = GetComponent<WeaponInventory>();
 
         _contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
         _contactFilter.SetLayerMask(_environmentLayers);
 
         if (_visual) _spriteRenderer = _visual.GetComponent<SpriteRenderer>();
-        _buster.Initialize(_spriteRenderer);
+        _inventory.Initialize(_spriteRenderer);
     }
 
     void UpdateSprite()
@@ -269,7 +269,7 @@ public class PlayerController : MonoBehaviour
         _wallJumpLockTimer = 0f;
         _jumpBufferTimer = 0f;
 
-        _buster.CancelCharge();
+        _inventory.CancelCharge();
 
         _facing = -dir;
     }
@@ -284,11 +284,11 @@ public class PlayerController : MonoBehaviour
 
     void OnSprintStarted(InputAction.CallbackContext _) => TryStartDash();
 
-    void OnAttackStarted(InputAction.CallbackContext _) => _buster.StartCharge();
+    void OnAttackStarted(InputAction.CallbackContext _) => _inventory.StartCharge();
 
     void OnAttackCanceled(InputAction.CallbackContext _)
     {
-        if (!_buster.ReleaseCharge()) return;
+        if (!_inventory.ReleaseCharge()) return;
 
         if (_onLadder)
         {

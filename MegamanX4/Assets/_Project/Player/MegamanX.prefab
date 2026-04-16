@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3099517297308019227}
   - component: {fileID: 2515517915452380801}
   - component: {fileID: 8700920407511137899}
-  - component: {fileID: 7398330388965074056}
+  - component: {fileID: 6975209517903228683}
   m_Layer: 3
   m_Name: MegamanX
   m_TagString: Untagged
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: MegamanX4.Runtime::DamageFlash
   _target: {fileID: 0}
   _period: 0.08
---- !u!114 &7398330388965074056
+--- !u!114 &6975209517903228683
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -237,12 +237,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 2827737925019994148}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9818a1a75c6653469975e2336530d1f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7390fe528cded2b4196870da466efbcd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: MegamanX4.Runtime::PlayerBuster
-  _smallShotPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
-  _semiShotPrefab: {fileID: 6249736849717060126, guid: 409cf0458ba1be540be4d8aa11f7549b, type: 3}
-  _fullShotPrefab: {fileID: 6249736849717060126, guid: d49d348e804ffa5438f612592f1aea8c, type: 3}
+  m_EditorClassIdentifier: MegamanX4.Runtime::WeaponInventory
+  _weapons:
+  - {fileID: 11400000, guid: cb4006906d949b444bc7fb4e30ceafc5, type: 2}
+  - {fileID: 11400000, guid: 634bb09fef878754ab4cdb708b18bccb, type: 2}
+  - {fileID: 11400000, guid: 625e661613880b44ea14afe2068abc67, type: 2}
+  - {fileID: 11400000, guid: 64639dcf50fdfd8408f31b1dcdb59355, type: 2}
+  - {fileID: 11400000, guid: fb5755b3ad6db72489c9e021271735ee, type: 2}
+  - {fileID: 11400000, guid: 1734f41efce13d2458483696ef8339e1, type: 2}
+  - {fileID: 11400000, guid: 458d60afab4e01541a4e51cede6b190a, type: 2}
+  - {fileID: 11400000, guid: 18c65e3b0dd1dfd4e8561018518695f6, type: 2}
+  - {fileID: 11400000, guid: 755cd32c6f90dfd489ae6a24acbdf175, type: 2}
   _semiChargeTime: 0.4
   _fullChargeTime: 1.2
   _maxSmallShots: 3

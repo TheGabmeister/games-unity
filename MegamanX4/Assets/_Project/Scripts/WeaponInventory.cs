@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerController))]
-public class PlayerBuster : MonoBehaviour
+[RequireComponent(typeof(PlayerInput))]
+public class WeaponInventory : MonoBehaviour
 {
-    [Header("Projectiles")]
-    [SerializeField] GameObject _smallShotPrefab;
-    [SerializeField] GameObject _semiShotPrefab;
-    [SerializeField] GameObject _fullShotPrefab;
+    [Header("Weapons")]
+    [SerializeField] List<WeaponData> _weapons = new();
 
     [Header("Charge")]
     [SerializeField] float _semiChargeTime = 0.4f;
     [SerializeField] float _fullChargeTime = 1.2f;
 
-    [Header("On-screen cap")]
+    [Header("Buster lemon cap")]
     [SerializeField] int _maxSmallShots = 3;
 
     [Header("Charge flash")]
@@ -22,12 +22,21 @@ public class PlayerBuster : MonoBehaviour
     [SerializeField] float _flashPeriod = 0.08f;
 
     PlayerController _controller;
+    PlayerInput _playerInput;
     SpriteRenderer _spriteRenderer;
 
+    InputAction _weaponNextAction;
+    InputAction _weaponPrevAction;
+
+    int _activeIndex;
     bool _isCharging;
     float _chargeTimer;
-    Color _baseSpriteColor = Color.white;
     readonly List<Projectile> _activeSmallShots = new();
+
+    public WeaponData ActiveWeapon =>
+        _weapons.Count > 0 && _activeIndex >= 0 && _activeIndex < _weapons.Count
+            ? _weapons[_activeIndex]
+            : null;
 
     public bool IsCharging => _isCharging;
     public float ChargeTimer => _chargeTimer;
@@ -36,12 +45,27 @@ public class PlayerBuster : MonoBehaviour
     void Awake()
     {
         _controller = GetComponent<PlayerController>();
+        _playerInput = GetComponent<PlayerInput>();
+        _weaponNextAction = _playerInput.actions["WeaponNext"];
+        _weaponPrevAction = _playerInput.actions["WeaponPrev"];
+    }
+
+    void OnEnable()
+    {
+        if (_weaponNextAction != null) _weaponNextAction.started += OnWeaponNext;
+        if (_weaponPrevAction != null) _weaponPrevAction.started += OnWeaponPrev;
+    }
+
+    void OnDisable()
+    {
+        if (_weaponNextAction != null) _weaponNextAction.started -= OnWeaponNext;
+        if (_weaponPrevAction != null) _weaponPrevAction.started -= OnWeaponPrev;
     }
 
     public void Initialize(SpriteRenderer sr)
     {
         _spriteRenderer = sr;
-        if (_spriteRenderer) _baseSpriteColor = _spriteRenderer.color;
+        ApplyWeaponTint();
     }
 
     public void StartCharge()
@@ -56,12 +80,16 @@ public class PlayerBuster : MonoBehaviour
         if (!_isCharging) return false;
         _isCharging = false;
 
-        if (_chargeTimer >= _fullChargeTime)
-            Spawn(_fullShotPrefab, isSmall: false);
-        else if (_chargeTimer >= _semiChargeTime)
-            Spawn(_semiShotPrefab, isSmall: false);
-        else if (_activeSmallShots.Count < _maxSmallShots)
-            Spawn(_smallShotPrefab, isSmall: true);
+        var weapon = ActiveWeapon;
+        if (weapon)
+        {
+            if (_chargeTimer >= _fullChargeTime)
+                Spawn(weapon.fullPrefab, isSmall: false);
+            else if (_chargeTimer >= _semiChargeTime)
+                Spawn(weapon.semiPrefab, isSmall: false);
+            else if (_activeIndex != 0 || _activeSmallShots.Count < _maxSmallShots)
+                Spawn(weapon.smallPrefab, isSmall: true);
+        }
 
         _chargeTimer = 0f;
         RestoreColor();
@@ -82,12 +110,23 @@ public class PlayerBuster : MonoBehaviour
         UpdateChargeFlash();
     }
 
+    void OnWeaponNext(InputAction.CallbackContext _) => CycleWeapon(+1);
+    void OnWeaponPrev(InputAction.CallbackContext _) => CycleWeapon(-1);
+
+    void CycleWeapon(int direction)
+    {
+        if (_weapons.Count <= 1) return;
+        CancelCharge();
+        _activeIndex = (_activeIndex + direction + _weapons.Count) % _weapons.Count;
+        ApplyWeaponTint();
+    }
+
     void Spawn(GameObject prefab, bool isSmall)
     {
         if (!prefab) return;
         var muzzle = _controller.MuzzleAnchor;
         var go = Instantiate(prefab, muzzle.position, muzzle.rotation);
-        if (!isSmall) return;
+        if (!isSmall || _activeIndex != 0) return;
         if (!go.TryGetComponent<Projectile>(out var shot)) return;
         _activeSmallShots.Add(shot);
         shot.Destroyed += () => _activeSmallShots.Remove(shot);
@@ -98,7 +137,7 @@ public class PlayerBuster : MonoBehaviour
         if (!_spriteRenderer) return;
         if (!_isCharging)
         {
-            _spriteRenderer.color = _baseSpriteColor;
+            _spriteRenderer.color = IdleColor;
             return;
         }
 
@@ -110,17 +149,23 @@ public class PlayerBuster : MonoBehaviour
         else if (_chargeTimer >= _semiChargeTime)
         {
             bool phase = Mathf.FloorToInt(_chargeTimer / _flashPeriod) % 2 == 0;
-            _spriteRenderer.color = phase ? _semiFlashColor : _baseSpriteColor;
+            _spriteRenderer.color = phase ? _semiFlashColor : IdleColor;
         }
         else
         {
-            _spriteRenderer.color = _baseSpriteColor;
+            _spriteRenderer.color = IdleColor;
         }
     }
 
     void RestoreColor()
     {
-        if (_spriteRenderer)
-            _spriteRenderer.color = _baseSpriteColor;
+        if (_spriteRenderer) _spriteRenderer.color = IdleColor;
     }
+
+    void ApplyWeaponTint()
+    {
+        if (_spriteRenderer) _spriteRenderer.color = IdleColor;
+    }
+
+    Color IdleColor => ActiveWeapon ? ActiveWeapon.tint : Color.white;
 }
