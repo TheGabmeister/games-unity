@@ -7,7 +7,9 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:docs.unity3d.com)",
-      "WebFetch(domain:packages.unity.com)"
+      "WebFetch(domain:packages.unity.com)",
+      "Bash(ls \"c:/dev/games-unity/MegamanX4/Assets/_Project/Scripts/BusterShot.cs\"* \"c:/dev/games-unity/MegamanX4/Assets/Tests/PlayMode/BusterShotEnemyDamageTests.cs\"* \"c:/dev/games-unity/MegamanX4/Assets/_Project/Scripts/Editor/BusterShotPrefabGenerator.cs\"*)",
+      "Bash(git -C \"c:/dev/games-unity/MegamanX4\" status --short)"
     ]
   }
 }

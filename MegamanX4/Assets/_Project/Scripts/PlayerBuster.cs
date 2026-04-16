@@ -27,7 +27,7 @@ public class PlayerBuster : MonoBehaviour
     bool _isCharging;
     float _chargeTimer;
     Color _baseSpriteColor = Color.white;
-    readonly List<BusterShot> _activeSmallShots = new();
+    readonly List<Projectile> _activeSmallShots = new();
 
     public bool IsCharging => _isCharging;
     public float ChargeTimer => _chargeTimer;
@@ -86,14 +86,11 @@ public class PlayerBuster : MonoBehaviour
     {
         if (!prefab) return;
         var muzzle = _controller.MuzzleAnchor;
-        var go = Instantiate(prefab, muzzle.transform.position, muzzle.transform.rotation);
-        if (!go.TryGetComponent<BusterShot>(out var shot)) return;
-        shot.Fire();
-        if (isSmall)
-        {
-            _activeSmallShots.Add(shot);
-            shot.Destroyed += () => _activeSmallShots.Remove(shot);
-        }
+        var go = Instantiate(prefab, muzzle.position, muzzle.rotation);
+        if (!isSmall) return;
+        if (!go.TryGetComponent<Projectile>(out var shot)) return;
+        _activeSmallShots.Add(shot);
+        shot.Destroyed += () => _activeSmallShots.Remove(shot);
     }
 
     void UpdateChargeFlash()
