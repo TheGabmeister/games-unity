@@ -27,16 +27,21 @@ public class WeaponInventory : MonoBehaviour
 
     InputAction _weaponNextAction;
     InputAction _weaponPrevAction;
-
+    Color IdleColor => ActiveWeapon ? ActiveWeapon.tint : Color.white;
     int _activeIndex;
     bool _isCharging;
     float _chargeTimer;
     readonly List<Projectile> _activeSmallShots = new();
 
-    public WeaponData ActiveWeapon =>
-        _weapons.Count > 0 && _activeIndex >= 0 && _activeIndex < _weapons.Count
-            ? _weapons[_activeIndex]
-            : null;
+    public WeaponData ActiveWeapon
+    {
+        get
+        {
+            if (_weapons.Count == 0) return null;
+            if (_activeIndex < 0 || _activeIndex >= _weapons.Count) return null;
+            return _weapons[_activeIndex];
+        }
+    }
 
     public bool IsCharging => _isCharging;
     public float ChargeTimer => _chargeTimer;
@@ -167,5 +172,5 @@ public class WeaponInventory : MonoBehaviour
         if (_spriteRenderer) _spriteRenderer.color = IdleColor;
     }
 
-    Color IdleColor => ActiveWeapon ? ActiveWeapon.tint : Color.white;
+    
 }

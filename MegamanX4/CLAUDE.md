@@ -43,7 +43,8 @@ Assets/_Project/
 │   ├── ContactDamage.cs          enemy-to-player contact damage trigger
 │   ├── DamageFlash.cs            SpriteRenderer blink during i-frames
 │   ├── Enemy.cs                  base enemy (Health + Depleted → Destroy)
-│   ├── PlayerBuster.cs           charge/fire/lemon-cap + charge-flash, extracted from PlayerController
+│   ├── WeaponInventory.cs        weapon list + charge state machine + Q/E switch + tint
+│   ├── WeaponData.cs             ScriptableObject: displayName, tint, small/semi/full prefab
 │   ├── Projectile.cs             composable projectile: damage + hit detection + Destroyed event
 │   ├── Lifetime.cs               general-purpose auto-destroy timer
 │   ├── MoveForward.cs            movement behavior: advances along transform.right
@@ -75,21 +76,21 @@ Assets/_Project/
 
 ### Player movement — Kinematic + swept cast
 
-[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic lives in [PlayerBuster.cs](Assets/_Project/Scripts/PlayerBuster.cs) — the controller delegates `OnAttackStarted`/`OnAttackCanceled` to it and calls `buster.CancelCharge()` from `ApplyKnockback`. The full weapon system (WeaponData SO, WeaponInventory, swap, per-weapon energy) is still planned in [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md). Key choices that the next maintainer should not accidentally undo:
+[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic + weapon switching live in [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) — the controller delegates `OnAttackStarted`/`OnAttackCanceled` to it and calls `_inventory.CancelCharge()` from `ApplyKnockback`. Per-weapon data lives in [WeaponData.cs](Assets/_Project/Scripts/WeaponData.cs) ScriptableObject assets. See [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) for the weapon-system roadmap. Key choices that the next maintainer should not accidentally undo:
 
 - **Rigidbody2D is `Kinematic` with `gravityScale = 0`**, forced in `Awake`. Don't rely on the inspector setting — the script enforces it.
 - The controller maintains its own `Vector2 velocity`, applies its own `gravity`, and resolves movement via **`Rigidbody2D.Cast` swept collision** in `MoveAxis` (one axis at a time, trim travel by `skinWidth`, zero velocity axis on contact). This is the Celeste/Hollow-Knight pattern — replacing it with physics-driven Dynamic body is a regression.
 - Ground + wall contact state comes from `Probe()` (short casts from the body) run at the **start** of FixedUpdate. `isGrounded` additionally gates on `velocity.y <= 0` so the first frame of a jump isn't still "grounded". `isTouchingWall` requires the player to be actively pressing into the wall.
-- `int facing` (±1) is the source of truth for direction. Never read direction back from a transform's scale — the `Visual` child's scale is a rendering detail that *follows* `facing`, not the other way around.
-- **Knockback** (`knockbackTimer`, `IsKnockedBack`) gates all input: `TryJump`, `TryStartDash`, `OnAttackStarted`, facing updates, `ApplyHorizontalInput`, wall-slide clamp. Triggered by `Health.Damaged` event via `ApplyKnockback(sourcePosition)`. Charge is canceled on hit.
-- **Ladder** (`onLadder`, `currentLadder`) — player snaps to ladder center X on grab, climbs via `moveInput.y * climbSpeed`. Detected via `Physics2D.OverlapBox` on a `Ladder` layer. Shoot-on-ladder halts climbing and locks facing briefly. Jump off ladder gives normal jump height + optional horizontal from stick. Damage on ladder → drop off, no knockback push.
-- **Dash-jump** (`dashJumpLock`) — jumping during an active dash preserves horizontal speed for the entire airtime. Cleared on ground contact, wall-jump, ladder grab, or knockback.
+- `int _facing` (±1) is the source of truth for direction, exposed publicly as `Facing`. Never read direction back from a transform's rotation or scale — the `Visual` child's rotation is a rendering detail that *follows* `_facing`, not the other way around.
+- **Knockback** (`_knockbackTimer`, public `IsKnockedBack`) gates all input: `TryJump`, `TryStartDash`, `OnAttackStarted`, facing updates, `ApplyHorizontalInput`, wall-slide clamp. Triggered by `Health.Damaged` event via `ApplyKnockback(sourcePosition)`. Charge is canceled on hit.
+- **Ladder** (`_onLadder`, `_currentLadder`) — player snaps to ladder center X on grab, climbs via `_moveInput.y * _climbSpeed`. Detected via `Physics2D.OverlapBox` on a `Ladder` layer. Shoot-on-ladder halts climbing and locks facing briefly. Jump off ladder gives normal jump height + optional horizontal from stick. Damage on ladder → drop off, no knockback push.
+- **Dash-jump** (`_dashJumpLock`) — jumping during an active dash preserves horizontal speed for the entire airtime. Cleared on ground contact, wall-jump, ladder grab, or knockback.
 
 ### Visual child / sprite flip (characters)
 
-The root GameObject never flips. Sprites live on a child `Visual` GameObject (drag into `PlayerController.visual`). Flip happens via `visual.localScale.x = ±Mathf.Abs(...)` in Update. This keeps colliders, `rb.Cast()` directions, and every other physical system at positive scale permanently.
+The root GameObject never flips. Sprites live on a child `Visual` GameObject (drag into `PlayerController._visual`). Flip happens via `_visual.localRotation = _facing >= 0 ? Quaternion.identity : Quaternion.Euler(0, 180, 0)` in Update — a 180° rotation around Y mirrors the quad horizontally. This keeps colliders, `rb.Cast()` directions, and every other physical system at positive scale permanently. It also means the muzzle anchor (parented under `Visual`) has its world rotation flipped with the character, which is how projectile firing direction flows naturally from the muzzle's transform — no facing parameter passed down.
 
-**Character** SVG sprites are authored facing left and wrapped in `<g transform="translate(128 0) scale(-2 2)">` so they render facing right at 2× size. That means `facing == +1` corresponds to un-mirrored scale. If you ever author a new pose SVG, keep this wrapper convention so the existing flip math continues to work. **This is the character convention only** — projectile SVGs follow a different rule (see below).
+**Character** SVG sprites are authored facing left and wrapped in `<g transform="translate(128 0) scale(-2 2)">` so they render facing right at 2× size. That means `_facing == +1` corresponds to un-rotated visual, and flipping the `Visual`'s Y-rotation mirrors the wrapped sprite back to facing left when `_facing == -1`. If you ever author a new pose SVG, keep this wrapper convention so the flip math continues to work. **This is the character convention only** — projectile SVGs follow a different rule (see below).
 
 ### Projectile SVGs — authored facing right
 
@@ -104,6 +105,20 @@ Projectile SVGs (buster shots, Twin Slasher blade, Frost Tower pillar, etc.) are
 3. For Value-type actions (`Move`), poll each frame with `moveAction.ReadValue<Vector2>()`.
 
 String lookups happen once at Awake. Don't switch to Send Messages for new features.
+
+Actions in [InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_Actions.inputactions) that gameplay code subscribes to today: `Move`, `Jump`, `Sprint`, `Attack`, `WeaponNext` (E / RB), `WeaponPrev` (Q / LB). `PlayerController` owns subscription for movement + attack + jump and delegates to `WeaponInventory`; `WeaponInventory` subscribes directly to `WeaponNext` / `WeaponPrev`.
+
+### Weapon system
+
+[WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) owns both the weapon list and the universal charge state machine (previously split across a separate `PlayerBuster` component that has been absorbed). Shape:
+
+- Serialized `List<WeaponData> _weapons` — slot 0 is the buster.
+- `_activeIndex` cycles with Q/E. On swap: `CancelCharge()` zeroes any in-progress charge, then `ActiveWeapon.tint` is written to the player's `SpriteRenderer.color`.
+- Hold-Attack/release-Attack works for every weapon. `_chargeTimer` ticks while `_isCharging`, charge-flash visuals play during semi/full thresholds, and `RestoreColor` returns the sprite to `ActiveWeapon.tint` (not white) on release.
+- On `ReleaseCharge`, the spawner picks from `ActiveWeapon.fullPrefab` / `semiPrefab` / `smallPrefab` based on charge timer. Instantiation is one call: `Instantiate(prefab, muzzle.position, muzzle.rotation)`. Direction flows entirely from the muzzle transform.
+- The 3-lemon on-screen cap (`_activeSmallShots` tracked via `Projectile.Destroyed`) only applies to the buster slot (`_activeIndex == 0`). Special weapons currently have no cap.
+
+`WeaponData` (ScriptableObject) shape: `displayName`, `tint`, `smallPrefab`, `semiPrefab`, `fullPrefab`. All three prefab slots are used by every weapon. **Convention for special weapons:** set `semiPrefab = smallPrefab` so a semi-charge release fires the same projectile as a tap (specials don't have a middle tier). `fullPrefab` can either match `smallPrefab` (no charged variant) or be distinct (charged variant for that weapon) — author's call per asset.
 
 ### Health / damage system
 
@@ -136,7 +151,7 @@ Composable design: one shared `Projectile` component + a `Lifetime` timer + one 
 
 The `Projectile` script has no `hitLayers` / `hitTargets` field — the matrix is the single source of truth for layer filtering.
 
-The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}.prefab` assets now compose `Projectile` + `Lifetime` + `MoveForward`, and [PlayerBuster.cs](Assets/_Project/Scripts/PlayerBuster.cs) spawns them at `muzzle.position` / `muzzle.rotation` — direction flows from the muzzle's world rotation, which itself is driven by `Visual`'s Y-flip when facing changes. No `BusterShot.cs` component exists anymore.
+The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}.prefab` assets compose `Projectile` + `Lifetime` + `MoveForward`, and [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) spawns them at `muzzle.position` / `muzzle.rotation` — direction flows from the muzzle's world rotation, which itself is driven by `Visual`'s Y-flip when facing changes. No `BusterShot.cs` component exists anymore; no facing parameter is passed to projectiles.
 
 ### Prefab generation (allowed)
 
@@ -148,10 +163,11 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 
 - **Do not script scene composition.** Content scenes, debug scenes, and test level fixtures are authored by hand in the Unity editor. Editor scripts that build scenes and save them to disk are banned — they layer C# → scene YAML on top of AssetDatabase GUID timing and have historically produced hard-to-diagnose serialization bugs. Prefab generators and ScriptableObject authoring utilities are fine and encouraged. The only exception is ephemeral PlayMode test fixtures built in-memory that are torn down at teardown — never saved.
 - **Composition over inheritance.** Prefer component + ScriptableObject composition over class hierarchies for gameplay systems. `Health` + `ContactDamage` + `DamageFlash` as independent MonoBehaviours is the template, not `EnemyBase → FlyingEnemy → Bat`.
+- **Private field naming: underscore prefix.** Class-level private fields use `_camelCase` (including `[SerializeField]` fields): `_rb`, `_facing`, `[SerializeField] int _maxHealth`. Public properties and methods stay PascalCase (`IsKnockedBack`, `ApplyKnockback`). `const` and `static readonly` stay PascalCase too. Local variables and parameters stay plain (no underscore). When editing an existing file that doesn't yet follow this, rename its private fields to match while you're there.
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
   - [SPEC.md](SPEC.md) — coyote time, dash-jump, ladder climb
   - [SPEC2.md](SPEC2.md) — damage knockback + invincibility frames
-  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system, WeaponData SO, WeaponInventory (PlayerBuster extraction + BusterShot migration both complete; the rest is pending)
+  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system. Phase 1 (weapon switching + universal charging + unified inventory) is specced and scaffolded; code runtime exists but needs `WeaponData` assets authored in the editor and the `WeaponInventory` component added to the `MegamanX` prefab before playtest.
   - [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) — composable projectile system, layer-based filtering, environment-destroys-on-contact
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.
 - **ScriptableObjects for game data** (enemy stats, weapon data, level metadata, palettes). Prefer SO-driven configuration over hard-coded constants for anything designers would tune.
