@@ -34,7 +34,7 @@ Covers [README.md §2](README.md) (Mega Man X — combat): special weapons, weap
 
 | File | Type | Purpose |
 |---|---|---|
-| `Assets/_Project/Scripts/WeaponData.cs` | ScriptableObject | Per-weapon configuration asset (includes `SpawnEntry` struct) |
+| `Assets/_Project/Scripts/WeaponData.cs` | ScriptableObject | Per-weapon configuration asset — single prefab reference (+ optional charged variant) |
 | `Assets/_Project/Scripts/PlayerBuster.cs` | MonoBehaviour | Extracted buster charge/fire/cap/flash |
 | `Assets/_Project/Scripts/WeaponInventory.cs` | MonoBehaviour | Weapon slots, swap, energy, attack routing |
 | `Assets/_Project/Data/` | Folder | Home for `WeaponData` SO assets |
@@ -63,8 +63,8 @@ public class WeaponData : ScriptableObject
     public Color weaponTint = Color.white;
 
     [Header("Projectile")]
-    public SpawnEntry[] spawnPattern = { new() };
-    public SpawnEntry[] chargedSpawnPattern;   // null = no charged form
+    public GameObject prefab;          // spawned at muzzle.position / muzzle.rotation
+    public GameObject chargedPrefab;   // null = no charged form
     public int maxOnScreen = 3;
 
     [Header("Energy")]
@@ -75,25 +75,22 @@ public class WeaponData : ScriptableObject
     public SfxId fireSfx;
     public SfxId chargedFireSfx;
 }
-
-[System.Serializable]
-public struct SpawnEntry
-{
-    public GameObject prefab;
-    public Vector2 positionOffset;   // relative to muzzle, in facing-local space
-    public float angleDeg;           // rotation from facing-forward: 0 = straight ahead, +30 = upward diagonal
-}
 ```
 
-`MoveForward` reads `transform.right` with no angle/facing fields (see [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md)) — direction is set entirely by the spawner via transform rotation at `Instantiate`. `SpawnEntry.angleDeg` is that rotation, relative to the player's facing. Speed, damage, piercing, and lifetime remain baked on the prefab.
+One weapon = one prefab (plus an optional charged prefab). The weapon system does **not** control angles, offsets, or fan-spread counts. Each prefab is spawned once per shot at the muzzle anchor's world position and rotation — identical to `PlayerBuster.Spawn`. Anything more elaborate than "a single projectile flies forward" lives inside the prefab itself:
+
+- **Fan spread** (e.g., Twin Slasher's two blades at ±30°): authored as a composite prefab with two child GameObjects whose local Z-rotations are baked at +30° and −30°. `MoveForward` on each child reads `transform.right`, which compounds the muzzle rotation with the baked local rotation — so a left-facing shot and a right-facing shot both produce a symmetric fan automatically. See §10.
+- **Stationary zones** (e.g., Frost Tower): the prefab has no movement component; its world position is wherever the muzzle was at the moment of spawn. If a weapon needs a *different* anchor (feet, head, center of mass), either add more anchor fields to `PlayerController` later or parent a dedicated spawn point under the character and wire `MuzzleAnchor` to that — not the spawner's problem.
+
+Speed, damage, piercing, lifetime, baked angles, and any multi-shot composition are all prefab concerns. `WeaponData` only declares *which prefab* and how many of them can live concurrently on-screen.
 
 ### Asset instances
 
-| Asset | Tint | spawnPattern | maxOnScreen | energyCost | chargedCost |
+| Asset | Tint | prefab | maxOnScreen | energyCost | chargedCost |
 |---|---|---|---|---|---|
 | `BaseBuster` | white | (handled by PlayerBuster, not used) | 3 | 0 | 0 |
-| `TwinSlasher` | purple | `[{ TwinSlasher, (0,0) }]` | 2 | 2 | 4 |
-| `FrostTower` | ice blue | `[{ FrostTower, (0,-0.5) }]` | 1 | 3 | 6 |
+| `TwinSlasher` | purple | `TwinSlasher` (composite: 2 blade children at ±30°) | 2 | 2 | 4 |
+| `FrostTower` | ice blue | `FrostTower` (stationary pillar) | 1 | 3 | 6 |
 | (remaining 6) | per-weapon | — | — | — | — |
 
 `BaseBuster` is a sentinel entry in the inventory (slot 0). Its `energyCost = 0` means it never depletes. `PlayerBuster` handles the actual fire logic for this slot — `WeaponInventory` delegates to `PlayerBuster` when slot 0 is active.
@@ -255,52 +252,37 @@ if activeIndex == 0 (buster):
     buster.ReleaseCharge()
 else:
     slot = slots[activeIndex]
-    if buster.ChargeTimer >= fullChargeTime && slot.data.chargedSpawnPattern != null:
-        if TryConsumeEnergy(slot, slot.data.chargedEnergyCost):
-            SpawnWeaponShots(slot, charged: true)
-    else:
-        if TryConsumeEnergy(slot, slot.data.energyCost):
-            SpawnWeaponShots(slot, charged: false)
+    bool chargedShot = buster.ChargeTimer >= fullChargeTime && slot.data.chargedPrefab != null;
+    int cost = chargedShot ? slot.data.chargedEnergyCost : slot.data.energyCost;
+    if TryConsumeEnergy(slot, cost):
+        SpawnWeaponShot(slot, charged: chargedShot)
     buster.CancelCharge()   // always cancel charge state after special fire
 ```
 
-### `SpawnWeaponShots`:
+### `SpawnWeaponShot`:
 
-Iterates the active weapon's `SpawnEntry[]` pattern array. Sets direction via **transform rotation** at `Instantiate` — behavior components like `MoveForward` read `transform.right` each Update (per [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) §3). No behavior-specific initialization calls, no `localScale` flipping for direction. Projectile SVGs are authored facing right (leading edge on +X) so un-rotated = "fire right"; rotating by 180° fires left.
+Instantiates the weapon's prefab once at the muzzle's world position and rotation — same pattern as [`PlayerBuster.Spawn`](Assets/_Project/Scripts/PlayerBuster.cs). No angle math, no per-entry offset, no fan loop. If the weapon spawns multiple projectiles (Twin Slasher, charged variants with extra blades), that's a **composite prefab** concern — the children are baked into the prefab with local rotations set, and `MoveForward` compounds the muzzle rotation with each child's local rotation at `transform.right` read time.
 
 ```csharp
-void SpawnWeaponShots(ref WeaponSlot slot, bool charged)
+void SpawnWeaponShot(ref WeaponSlot slot, bool charged)
 {
-    var pattern = charged ? slot.data.chargedSpawnPattern : slot.data.spawnPattern;
-    if (pattern == null || pattern.Length == 0) return;
+    var prefab = charged ? slot.data.chargedPrefab : slot.data.prefab;
+    if (!prefab) return;
     if (slot.liveShots.Count >= slot.data.maxOnScreen) return;
 
-    Vector2 muzzle = controller.MuzzleAnchor
-        ? (Vector2)controller.MuzzleAnchor.position
-        : (Vector2)controller.transform.position;
-    int facing = controller.Facing;
+    var muzzle = controller.MuzzleAnchor;
+    var go = Instantiate(prefab, muzzle.position, muzzle.rotation);
 
-    foreach (var entry in pattern)
+    // Track for on-screen cap (check root and children for Projectile)
+    foreach (var proj in go.GetComponentsInChildren<Projectile>())
     {
-        Vector2 offset = new(entry.positionOffset.x * facing, entry.positionOffset.y);
-
-        // Rotate so transform.right points in the firing direction:
-        //   facing right (+1): zRot = angleDeg
-        //   facing left  (-1): zRot = 180 - angleDeg  (mirrors angle across Y axis)
-        float zRot = facing >= 0 ? entry.angleDeg : 180f - entry.angleDeg;
-        var rot = Quaternion.Euler(0f, 0f, zRot);
-
-        var go = Instantiate(entry.prefab, muzzle + offset, rot);
-
-        // Track for on-screen cap (check root and children for Projectile)
-        foreach (var proj in go.GetComponentsInChildren<Projectile>())
-        {
-            slot.liveShots.Add(go);
-            proj.Destroyed += () => slot.liveShots.Remove(go);
-        }
+        slot.liveShots.Add(go);
+        proj.Destroyed += () => slot.liveShots.Remove(go);
     }
 }
 ```
+
+The muzzle anchor is parented under `PlayerController.Visual`, which rotates 180° around Y when the player faces left (see [PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs)). That means `muzzle.rotation` already encodes facing — the spawner does not need to look at `controller.Facing` at all. Projectile SVGs are authored facing right (leading edge on +X) so the un-rotated prefab fires right, and the muzzle's rotation takes care of the rest.
 
 ### `TryConsumeEnergy`:
 
@@ -373,7 +355,7 @@ void ApplyWeaponTint()
 
 - Charge timing is **global** — the same `fullChargeTime` (1.2 s) applies to all weapons.
 - **Semi-charge tier is buster-only.** Specials use two outcomes: release before full charge → uncharged fire; release at/after full charge → charged fire. No "semi-charged" state for specials.
-- `WeaponData.chargedSpawnPattern == null` means the weapon has no charged form; releasing at full charge still fires the uncharged version.
+- `WeaponData.chargedPrefab == null` means the weapon has no charged form; releasing at full charge still fires the uncharged version.
 - `WeaponData.chargedEnergyCost` is deducted for a charged shot. If insufficient energy, uncharged version fires instead (with its own `energyCost`).
 
 ### Charge flash for specials
@@ -392,35 +374,33 @@ While a special is equipped and charging, `PlayerBuster.UpdateChargeFlash` uses 
 
 ### Prefab structure
 
-Uses the composable projectile system from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md). No standalone `TwinSlasherProjectile.cs` — a single `TwinSlasherBlade` prefab represents one blade. The spread (two or four blades) is produced by multiple `SpawnEntry` items in the `WeaponData`, each with its own `angleDeg`.
+Uses the composable projectile system from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md). No standalone `TwinSlasherProjectile.cs` — the spread is authored inside the prefab as two child GameObjects with pre-baked local rotations. The spawner instantiates the root once, and `MoveForward` on each child reads the compounded world rotation.
 
 ```
-TwinSlasherBlade (leaf prefab, layer: PlayerProjectile)
-├── Projectile         (damage, piercing=true)
-├── Lifetime           (duration=0.6)
-├── MoveForward        (speed=10)
-├── Rigidbody2D        (Kinematic, gravityScale=0)
-├── Collider2D         (isTrigger=true)
-└── SpriteRenderer     (TwinSlasher.svg, authored facing right)
+TwinSlasher (composite root, empty GameObject — no components beyond Transform)
+├── Blade_Up   (child, localRotation Z=+30°, layer: PlayerProjectile)
+│   ├── Projectile         (damage, piercing=true)
+│   ├── Lifetime           (duration=0.6)
+│   ├── MoveForward        (speed=10)
+│   ├── Rigidbody2D        (Kinematic, gravityScale=0)
+│   ├── Collider2D         (isTrigger=true)
+│   └── SpriteRenderer     (TwinSlasher.svg, authored facing right)
+└── Blade_Down (child, localRotation Z=−30°, same components)
 ```
 
-`WeaponInventory.SpawnWeaponShots` instantiates this prefab once per entry, rotating each copy by its `angleDeg` (mirrored for left-facing). Each blade is one `liveShots` entry, so `maxOnScreen` counts individual blades, not volleys. On-screen cap for uncharged is `4` (two blades × two volleys simultaneously allowed) — tune during QA.
+Spawning is one `Instantiate(prefab, muzzle.position, muzzle.rotation)` call. Both blades inherit muzzle rotation through the parent transform, then each child's baked local Z adds ±30°, so their `transform.right` fans symmetrically above and below the aim direction — whether the player faces right (muzzle Y=0°) or left (muzzle Y=180°). No `angleDeg` field, no mirror-math in the spawner.
 
-For the charged form, a distinct `TwinSlasherBladeCharged` prefab holds higher damage + piercing on `PlayerProjectileNoClip` (walls-pass-through), spawned four times at ±30° and ±15°.
+On-screen cap counts **root prefabs**, not individual blades: `maxOnScreen = 2` means two Twin Slasher volleys can coexist. The cap tracks root GameObjects, and `Projectile.Destroyed` on any child removes the root from the live list when both blades are gone — see `SpawnWeaponShot` in §6, which already walks `GetComponentsInChildren<Projectile>()`.
+
+The charged form is a separate composite prefab, `TwinSlasherCharged`, with four children at ±30° and ±15°, layer `PlayerProjectileNoClip` (wall-piercing), higher damage.
 
 ### WeaponData asset
 
 - `displayName`: "Twin Slasher"
 - `weaponTint`: purple `(0.7f, 0.2f, 0.9f)`
-- `spawnPattern`:
-  - `{ TwinSlasherBlade, (0, 0), +30 }`
-  - `{ TwinSlasherBlade, (0, 0), -30 }`
-- `chargedSpawnPattern`:
-  - `{ TwinSlasherBladeCharged, (0, 0), +30 }`
-  - `{ TwinSlasherBladeCharged, (0, 0), -30 }`
-  - `{ TwinSlasherBladeCharged, (0, 0), +15 }`
-  - `{ TwinSlasherBladeCharged, (0, 0), -15 }`
-- `maxOnScreen`: 4 (uncharged ≈ 2 volleys of 2 blades; tune during QA)
+- `prefab`: `TwinSlasher` (2-blade composite)
+- `chargedPrefab`: `TwinSlasherCharged` (4-blade composite)
+- `maxOnScreen`: 2
 - `energyCost`: 2
 - `chargedEnergyCost`: 4
 
@@ -447,14 +427,17 @@ FrostTower (root, layer: PlayerProjectile)
 └── SpriteRenderer      (FrostTower.svg — symmetric about Y, so facing doesn't matter)
 ```
 
-No movement component — the pillar is stationary. Hit filtering is the Physics2D collision matrix (see [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) §2); `Projectile` carries no `hitLayers` field. Spawned at full scale via `SpawnWeaponShots`; `positionOffset.y = -0.5` places it at the player's feet. `angleDeg` is unused here since the pillar is visually symmetric.
+No movement component — the pillar is stationary. Hit filtering is the Physics2D collision matrix (see [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) §2); `Projectile` carries no `hitLayers` field. Spawned at `muzzle.position` / `muzzle.rotation` by `SpawnWeaponShot` (§6). Two things to bake into the prefab:
+
+1. **Vertical offset to the player's feet.** The muzzle sits at buster height, not at the ground. Inside the prefab, parent the pillar's visuals + collider under the root at a local Y offset of roughly `-0.5` (tune to match the character's feet). The root spawns at muzzle height; the child hangs down to the floor.
+2. **Cancel the muzzle's Y rotation.** Facing left rotates the muzzle 180° around Y, which would flip/mirror the pillar sprite. Since the pillar is symmetric about Y, set its visual child's `localRotation` to `Quaternion.Euler(0, 180, 0)` as well so the double-flip cancels — or simpler, use a sprite material that renders both sides equally and ignore it. If a dedicated spawn anchor is added later (a `FeetAnchor` Transform on `PlayerController`), the weapon system can switch to that and sidestep both concerns.
 
 ### WeaponData asset
 
 - `displayName`: "Frost Tower"
 - `weaponTint`: ice blue `(0.5f, 0.85f, 1f)`
-- `spawnPattern`: `[{ FrostTower, (0, -0.5), 0 }]`
-- `chargedSpawnPattern`: `[{ FrostTowerCharged, (0, -0.5), 0 }]` (taller, longer duration)
+- `prefab`: `FrostTower`
+- `chargedPrefab`: `FrostTowerCharged` (taller, longer duration)
 - `maxOnScreen`: 1
 - `energyCost`: 3
 - `chargedEnergyCost`: 6
@@ -580,16 +563,16 @@ Manual QA:
 
 ## 16. Implementation order
 
-1. **WeaponData SO** — create `WeaponData.cs` (with `SpawnEntry` struct) + `Assets/_Project/Data/` folder + `BaseBuster` asset.
-2. **PlayerBuster extraction** — move code, add public API, verify buster works identically.
-3. **PlayerController cleanup** — remove attack code, add public properties, update `ApplyKnockback` to call `buster.CancelCharge()`.
-4. **WeaponInventory** — slots, swap, energy, attack routing with `SpawnWeaponShots` loop. Test with buster-only (slot 0).
-5. **BusterShot migration** — replace `BusterShot` on buster prefabs with `Projectile + Lifetime + MoveForward` (from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md)). Update `PlayerBuster` to set firing direction via transform rotation (Z = 0 for right, 180 for left) and track `List<Projectile>` instead of `List<BusterShot>`. Delete `BusterShot.cs` after verification.
+1. **WeaponData SO** — create `WeaponData.cs` (single `prefab` + `chargedPrefab` fields, no `SpawnEntry`) + `Assets/_Project/Data/` folder + `BaseBuster` asset.
+2. ~~**PlayerBuster extraction** — move code, add public API, verify buster works identically.~~ Done.
+3. ~~**PlayerController cleanup** — remove attack code, add public properties, update `ApplyKnockback` to call `buster.CancelCharge()`.~~ Done.
+4. **WeaponInventory** — slots, swap, energy, attack routing with `SpawnWeaponShot` (single-prefab instantiate at muzzle). Test with buster-only (slot 0).
+5. **BusterShot migration** — replace `BusterShot` on buster prefabs with `Projectile + Lifetime + MoveForward` (from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md)). `PlayerBuster.Spawn` already uses `muzzle.rotation`, so no direction wiring changes. Update `PlayerBuster` to track `List<Projectile>` instead of `List<BusterShot>`. Delete `BusterShot.cs` after verification.
 6. **Input actions** — add `WeaponNext`/`WeaponPrev` to action asset. Bind Q/E + L1/R1.
-7. **Twin Slasher** — author single-blade `TwinSlasherBlade` prefab (per SPEC_PROJECTILES §6) + `WeaponData` asset whose `spawnPattern` lists the two blade entries with ±30° angles. Unlock in editor for testing.
-8. **Frost Tower** — author `Projectile + Lifetime` prefab (per SPEC_PROJECTILES §6) + `WeaponData` asset.
+7. **Twin Slasher** — author composite `TwinSlasher` prefab: empty root + two blade children at localRotation Z=±30° (each child: `Projectile` + `Lifetime` + `MoveForward` + `Rigidbody2D` + `Collider2D` + `SpriteRenderer`). Create `WeaponData` asset referencing it. Unlock in editor for testing.
+8. **Frost Tower** — author `Projectile + Lifetime` prefab with a child offset to feet height + `WeaponData` asset.
 9. **Weapon tint** — `ApplyWeaponTint` on swap. Integrate with charge flash.
-10. **Charged variants** — charged prefabs for Twin Slasher + Frost Tower.
+10. **Charged variants** — charged composite prefabs for Twin Slasher (4 blades) + Frost Tower.
 11. Update [README.md](README.md) checklist.
 
 Steps 2–5 are the critical path — the weapon system must work with just the base buster (using the new projectile components) before any specials are added. If buster behavior regresses after extraction, fix before proceeding.
