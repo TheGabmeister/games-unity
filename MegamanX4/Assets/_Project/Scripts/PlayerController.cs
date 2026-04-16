@@ -315,11 +315,7 @@ public class PlayerController : MonoBehaviour
         }
 
         if (visual)
-        {
-            var s = visual.localScale;
-            s.x = Mathf.Abs(s.x) * facing;
-            visual.localScale = s;
-        }
+            visual.localRotation = facing >= 0 ? Quaternion.identity : Quaternion.Euler(0f, 180f, 0f);
 
         UpdateSprite();
     }
