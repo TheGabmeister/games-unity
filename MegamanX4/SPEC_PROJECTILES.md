@@ -2,11 +2,11 @@
 
 Status: **Core components implemented.** [Projectile.cs](Assets/_Project/Scripts/Projectile.cs), [Lifetime.cs](Assets/_Project/Scripts/Lifetime.cs), [MoveForward.cs](Assets/_Project/Scripts/MoveForward.cs), and [MoveVertical.cs](Assets/_Project/Scripts/MoveVertical.cs) are live in the codebase. Weapon prefabs (buster migration, Twin Slasher, Frost Tower) still pending per [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md).
 
-Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) with a composable projectile system used by both player and enemy weapons. A shared `Projectile` component handles damage, hit detection, and despawn. Separate small behavior components handle movement patterns. Prefabs compose the two.
+Replaced the standalone `BusterShot.cs` (now deleted) with a composable projectile system used by both player and enemy weapons. A shared `Projectile` component handles damage, hit detection, and despawn. Separate small behavior components handle movement patterns. Prefabs compose the two.
 
 **Relationship to other specs:**
 
-- [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — the weapon system spawns projectile prefabs defined here. BusterShot migration, WeaponData spawn patterns, and on-screen cap tracking are covered there.
+- [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — the weapon system spawns projectile prefabs defined here. WeaponData + on-screen cap tracking are covered there.
 - [SPEC2.md](SPEC2.md) — `Projectile` calls `Health.ApplyDamage(damage, transform.position)` using the source-position overload added there.
 
 ---
@@ -93,8 +93,8 @@ public class Projectile : MonoBehaviour
 | Piercing | `bool piercing`. Twin Slasher = true (passes through enemies). Buster = false (destroys on first hit). |
 | Lifetime | Extracted into a separate `Lifetime` component (§2.1). Projectile does not handle its own timer. |
 | Off-screen despawn | Deferred. Lifetime-only for now; off-screen cleanup addressed later. |
-| Despawn event | `event Action Destroyed` fired from `OnDestroy`. Same pattern as current BusterShot. Spawner subscribes at spawn time to track live-shot count. No metadata — spawner already knows which slot the shot belongs to. |
-| Kinematic enforcement | `Awake` forces Kinematic + gravityScale 0, same as BusterShot and PlayerController. |
+| Despawn event | `event Action Destroyed` fired from `OnDestroy`. Spawner subscribes at spawn time to track live-shot count. No metadata — spawner already knows which slot the shot belongs to. |
+| Kinematic enforcement | `Awake` forces Kinematic + gravityScale 0, same as PlayerController's Rigidbody2D. |
 
 ### What Projectile does NOT do
 
@@ -305,7 +305,7 @@ Steps 1–3 are already done in the codebase. Step 4 (prefab composition) is the
 3. ~~**MoveForward.cs** / **MoveVertical.cs** — create per §3.~~ Done.
 4. **Author prefabs** — compose components onto prefabs per §6. Drop in scene to verify.
 
-BusterShot migration (replacing `BusterShot.cs` with these components in the weapon pipeline) is covered in [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md).
+BusterShot migration is complete — `BusterShot.cs` has been deleted and the `BusterShot_{Small,Semi,Full}.prefab` assets now compose `Projectile + Lifetime + MoveForward`. See [SPEC_XWEAPONS.md §16](SPEC_XWEAPONS.md) for the full weapon-system roadmap.
 
 ---
 

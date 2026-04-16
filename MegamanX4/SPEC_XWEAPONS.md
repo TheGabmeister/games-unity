@@ -48,7 +48,7 @@ Projectile components (`Projectile.cs`, `Lifetime.cs`, `MoveForward.cs`) are def
 
 ### Deleted files
 
-- `BusterShot.cs` — superseded by `Projectile + Lifetime + MoveForward` (see §16 step 5).
+- `BusterShot.cs` — superseded by `Projectile + Lifetime + MoveForward`. **Already deleted;** the buster prefabs compose the new components, and `PlayerBuster.Spawn` tracks `Projectile.Destroyed` for the on-screen cap.
 
 ---
 
@@ -529,7 +529,7 @@ No interaction with weapons. `dashJumpLock` doesn't affect firing.
 
 ### On-screen cap
 
-`WeaponInventory` tracks `slot.liveShots` (a `List<GameObject>`). Before spawning, checks `liveShots.Count >= data.maxOnScreen`. On `Projectile.Destroyed`, removes the entry. `PlayerBuster` tracks its own `activeSmallShots` for the buster lemon cap (3), using `List<Projectile>` instead of the old `List<BusterShot>`.
+`WeaponInventory` tracks `slot.liveShots` (a `List<GameObject>`). Before spawning, checks `liveShots.Count >= data.maxOnScreen`. On `Projectile.Destroyed`, removes the entry. `PlayerBuster` already tracks its own `_activeSmallShots` (`List<Projectile>`) for the buster lemon cap (3).
 
 ### Projectile interactions
 
@@ -567,7 +567,7 @@ Manual QA:
 2. ~~**PlayerBuster extraction** — move code, add public API, verify buster works identically.~~ Done.
 3. ~~**PlayerController cleanup** — remove attack code, add public properties, update `ApplyKnockback` to call `buster.CancelCharge()`.~~ Done.
 4. **WeaponInventory** — slots, swap, energy, attack routing with `SpawnWeaponShot` (single-prefab instantiate at muzzle). Test with buster-only (slot 0).
-5. **BusterShot migration** — replace `BusterShot` on buster prefabs with `Projectile + Lifetime + MoveForward` (from [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md)). `PlayerBuster.Spawn` already uses `muzzle.rotation`, so no direction wiring changes. Update `PlayerBuster` to track `List<Projectile>` instead of `List<BusterShot>`. Delete `BusterShot.cs` after verification.
+5. ~~**BusterShot migration** — replace `BusterShot` on buster prefabs with `Projectile + Lifetime + MoveForward`; update `PlayerBuster` to track `List<Projectile>`; delete `BusterShot.cs`.~~ Done.
 6. **Input actions** — add `WeaponNext`/`WeaponPrev` to action asset. Bind Q/E + L1/R1.
 7. **Twin Slasher** — author composite `TwinSlasher` prefab: empty root + two blade children at localRotation Z=±30° (each child: `Projectile` + `Lifetime` + `MoveForward` + `Rigidbody2D` + `Collider2D` + `SpriteRenderer`). Create `WeaponData` asset referencing it. Unlock in editor for testing.
 8. **Frost Tower** — author `Projectile + Lifetime` prefab with a child offset to feet height + `WeaponData` asset.

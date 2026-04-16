@@ -43,10 +43,11 @@ Assets/_Project/
 │   ├── ContactDamage.cs          enemy-to-player contact damage trigger
 │   ├── DamageFlash.cs            SpriteRenderer blink during i-frames
 │   ├── Enemy.cs                  base enemy (Health + Depleted → Destroy)
-│   ├── BusterShot.cs             current lemon runtime (pending migration per SPEC_XWEAPONS)
+│   ├── PlayerBuster.cs           charge/fire/lemon-cap + charge-flash, extracted from PlayerController
 │   ├── Projectile.cs             composable projectile: damage + hit detection + Destroyed event
 │   ├── Lifetime.cs               general-purpose auto-destroy timer
 │   ├── MoveForward.cs            movement behavior: advances along transform.right
+│   ├── MoveVertical.cs           movement behavior: advances along ±transform.up
 │   ├── DashSilhouetteTrail.cs    LateUpdate-driven sprite afterimage trail
 │   ├── HUD.cs                    in-scene gameplay HUD root
 │   ├── StageSession.cs           per-stage runtime state
@@ -55,8 +56,7 @@ Assets/_Project/
 │   ├── Description.cs            editor-only annotation (TextArea on any GO)
 │   ├── Systems/                  GameManager, MusicManager, SfxManager, ScreenFader, SceneLoader/
 │   ├── Editor/
-│   │   ├── FileExtensions.cs              Project-panel extension labels
-│   │   ├── BusterShotPrefabGenerator.cs   Menu: Tools/MegamanX4/…
+│   │   ├── FileExtensions.cs     Project-panel extension labels
 │   │   └── MegamanX4.Editor.asmdef
 │   └── MegamanX4.Runtime.asmdef
 ├── Settings/      URP / Renderer2D / Volume profile assets
@@ -75,7 +75,7 @@ Assets/_Project/
 
 ### Player movement — Kinematic + swept cast
 
-[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic will be extracted into a `PlayerBuster` component per [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md). Key choices that the next maintainer should not accidentally undo:
+[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic lives in [PlayerBuster.cs](Assets/_Project/Scripts/PlayerBuster.cs) — the controller delegates `OnAttackStarted`/`OnAttackCanceled` to it and calls `buster.CancelCharge()` from `ApplyKnockback`. The full weapon system (WeaponData SO, WeaponInventory, swap, per-weapon energy) is still planned in [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md). Key choices that the next maintainer should not accidentally undo:
 
 - **Rigidbody2D is `Kinematic` with `gravityScale = 0`**, forced in `Awake`. Don't rely on the inspector setting — the script enforces it.
 - The controller maintains its own `Vector2 velocity`, applies its own `gravity`, and resolves movement via **`Rigidbody2D.Cast` swept collision** in `MoveAxis` (one axis at a time, trim travel by `skinWidth`, zero velocity axis on contact). This is the Celeste/Hollow-Knight pattern — replacing it with physics-driven Dynamic body is a regression.
@@ -136,11 +136,11 @@ Composable design: one shared `Projectile` component + a `Lifetime` timer + one 
 
 The `Projectile` script has no `hitLayers` / `hitTargets` field — the matrix is the single source of truth for layer filtering.
 
-[BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) is still the current runtime for the basic lemon, pending the weapon-system migration tracked in [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md). Its responsibilities (Kinematic + gravity 0, trigger layer check, destroy-on-hit, `Destroyed` event) map onto `Projectile` + `Lifetime` + `MoveForward` once the migration runs.
+The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}.prefab` assets now compose `Projectile` + `Lifetime` + `MoveForward`, and [PlayerBuster.cs](Assets/_Project/Scripts/PlayerBuster.cs) spawns them at `muzzle.position` / `muzzle.rotation` — direction flows from the muzzle's world rotation, which itself is driven by `Visual`'s Y-flip when facing changes. No `BusterShot.cs` component exists anymore.
 
 ### Prefab generation (allowed)
 
-[BusterShotPrefabGenerator.cs](Assets/_Project/Scripts/Editor/BusterShotPrefabGenerator.cs) is the template pattern: temp `new GameObject`, add components, `PrefabUtility.SaveAsPrefabAsset`, `DestroyImmediate`. Use `SerializedObject` + `FindProperty` to write private `[SerializeField]` fields without exposing them publicly.
+When a generator is needed, the pattern is: temp `new GameObject`, add components, `PrefabUtility.SaveAsPrefabAsset`, `DestroyImmediate`. Use `SerializedObject` + `FindProperty("_fieldName")` (note the underscore prefix) to write private `[SerializeField]` fields without exposing them publicly.
 
 Scripted *scene* composition remains banned (see below) — prefab generators are fine.
 
@@ -151,7 +151,7 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
   - [SPEC.md](SPEC.md) — coyote time, dash-jump, ladder climb
   - [SPEC2.md](SPEC2.md) — damage knockback + invincibility frames
-  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system, PlayerBuster extraction, WeaponData SO, BusterShot migration
+  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system, WeaponData SO, WeaponInventory (PlayerBuster extraction + BusterShot migration both complete; the rest is pending)
   - [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) — composable projectile system, layer-based filtering, environment-destroys-on-contact
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.
 - **ScriptableObjects for game data** (enemy stats, weapon data, level metadata, palettes). Prefer SO-driven configuration over hard-coded constants for anything designers would tune.
