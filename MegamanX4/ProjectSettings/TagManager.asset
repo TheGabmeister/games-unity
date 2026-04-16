@@ -15,11 +15,11 @@ TagManager:
   - Environment
   - Enemy
   - Ladder
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerProjectile
+  - PlayerProjectileNoClip
+  - EnemyProjectile
+  -
+  -
   - 
   - 
   - 

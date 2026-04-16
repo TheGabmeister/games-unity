@@ -14,16 +14,16 @@ Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) w
 ## 1. Architecture overview
 
 ```
-Prefab: MegamanX_Shot_Small
-├── Projectile           (damage, hitLayers, piercing)
+Prefab: MegamanX_Shot_Small   (layer: PlayerProjectile)
+├── Projectile           (damage, piercing)
 ├── Lifetime             (duration=0.6s)
 ├── StraightMovement     (speed, direction — moves via transform.position)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
 └── SpriteRenderer
 
-Prefab: FrostTower
-├── Projectile           (damage, hitLayers, piercing=true)
+Prefab: FrostTower            (layer: PlayerProjectile)
+├── Projectile           (damage, piercing=true)
 ├── Lifetime             (duration=1.5s)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
@@ -48,21 +48,28 @@ This is composition, not inheritance. No base class is shared between behaviors.
 public class Projectile : MonoBehaviour
 {
     [SerializeField] int damage = 1;
-    [SerializeField] LayerMask hitLayers = ~0;
     [SerializeField] bool piercing;
 
     public event Action Destroyed;
+
+    int environmentLayer;
 
     void Awake()
     {
         var rb = GetComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
+
+        environmentLayer = LayerMask.NameToLayer("Environment");
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if ((hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
+        if (other.gameObject.layer == environmentLayer)
+        {
+            Destroy(gameObject);   // walls stop all projectiles, including piercing
+            return;
+        }
 
         var health = other.GetComponentInParent<Health>();
         if (health)
@@ -81,7 +88,8 @@ public class Projectile : MonoBehaviour
 | Concern | Resolution |
 |---|---|
 | Damage amount | `[SerializeField]` on Projectile. Baked per prefab. The prefab is the source of truth for what it does. |
-| Hit filtering | `hitLayers` LayerMask. Player projectiles filter to Enemy layer; enemy projectiles filter to Player layer. Inspector-configured. |
+| Hit filtering | Handled by the Physics2D collision matrix via dedicated layers (`PlayerProjectile`, `PlayerProjectileNoClip`, `EnemyProjectile`). The Projectile component itself does no layer filtering — the matrix gates which pairs ever fire `OnTriggerEnter2D`. Each prefab sets its GameObject layer per its team/clip behavior. |
+| Wall stopping | Explicit check on `Environment` layer in `OnTriggerEnter2D`: walls destroy any projectile on contact, regardless of `piercing`. Piercing means "pass through enemies," not "pass through walls." For genuinely wall-piercing projectiles (Soul Body, charged Twin Slasher), put them on `PlayerProjectileNoClip` — the matrix disables their Environment collisions entirely, so the callback never fires. |
 | Piercing | `bool piercing`. Twin Slasher = true (passes through enemies). Buster = false (destroys on first hit). |
 | Lifetime | Extracted into a separate `Lifetime` component (§2.1). Projectile does not handle its own timer. |
 | Off-screen despawn | Deferred. Lifetime-only for now; off-screen cleanup addressed later. |
@@ -201,10 +209,12 @@ SerializeFields: `float outSpeed`, `float returnSpeed`, `float hangTime`.
 
 ## 5. Enemy projectiles
 
-Enemies use the same `Projectile + Behavior` composition. The only difference is `hitLayers`:
+Enemies use the same `Projectile + Behavior` composition. The only difference is the GameObject layer:
 
-- Player projectile prefabs: `hitLayers` = Enemy layer.
-- Enemy projectile prefabs: `hitLayers` = Player layer.
+- Player projectile prefabs: layer = `PlayerProjectile` (or `PlayerProjectileNoClip` for wall-piercing).
+- Enemy projectile prefabs: layer = `EnemyProjectile`.
+
+The Physics2D collision matrix handles the rest (see §2 "Hit filtering").
 
 Enemy spawning follows the same pattern: instantiate prefab, flip `localScale.x` for facing. Enemy scripts call this directly — no `WeaponInventory` needed on the enemy side.
 
@@ -260,8 +270,9 @@ Projectile calls `Health.ApplyDamage(damage, transform.position)` — the source
 EditMode tests (requires `.asmdef` setup from README §12):
 
 - **Projectile**
-  - Hit detection respects `hitLayers`.
-  - `piercing = false` → destroy on first trigger hit.
+  - Enemy contact applies damage via `Health.ApplyDamage(damage, position)`.
+  - Environment contact destroys the projectile regardless of `piercing`.
+  - `piercing = false` → destroy on first enemy hit.
   - `piercing = true` → survives trigger hit.
   - `Destroyed` event fires on destroy.
 - **Lifetime**

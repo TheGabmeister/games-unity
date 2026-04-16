@@ -17,7 +17,7 @@ The Claude workspace is scoped to `MegamanX4/` — `.claude/settings.json` denie
   - `com.kyrylokuzyk.primetween` — tweening lib (via npm scoped registry); prefer it over DOTween or coroutines for tweens.
   - `com.unity.feature.2d`, `com.unity.2d.aseprite`, `com.unity.2d.spriteshape`, `com.unity.2d.tilemap.extras`.
   - `com.unity.test-framework` — EditMode/PlayMode tests.
-- **Solution:** `MegamanX4.slnx`. One assembly (`Assembly-CSharp`); no `.asmdef` files yet.
+- **Solution:** `MegamanX4.slnx`. Two assemblies: `MegamanX4.Runtime` (refs `Unity.InputSystem`, `PrimeTween.Runtime`) and `MegamanX4.Editor`.
 
 ## Build / test
 
@@ -29,29 +29,46 @@ Generator utilities are exposed as editor menu items under **Tools/MegamanX4/** 
 
 ```
 Assets/_Project/
-├── Input/       InputSystem_Actions.inputactions
-├── Scenes/      Init.unity, Gameplay.unity
+├── Enemies/       TargetDummy.prefab
+├── Input/         InputSystem_Actions.inputactions
+├── Interactables/ Ladder.prefab
+├── Player/
+│   ├── Character/ MegamanX_{Idle,Jump,Fall,Dash}.svg
+│   └── MegamanX.prefab   (Rigidbody2D + Collider2D + PlayerInput + PlayerController
+│                          + Health + DamageFlash + child Visual)
+├── Scenes/        Gameplay.unity
 ├── Scripts/
 │   ├── PlayerController.cs       movement, input, sprite swap, knockback, ladder
 │   ├── Health.cs                 HP, damage with source position, i-frames
 │   ├── ContactDamage.cs          enemy-to-player contact damage trigger
 │   ├── DamageFlash.cs            SpriteRenderer blink during i-frames
 │   ├── Enemy.cs                  base enemy (Health + Depleted → Destroy)
-│   ├── BusterShot.cs             projectile runtime (to be replaced by Projectile system)
+│   ├── BusterShot.cs             current lemon runtime (pending migration per SPEC_XWEAPONS)
+│   ├── Projectile.cs             composable projectile: damage + hit detection + Destroyed event
+│   ├── Lifetime.cs               general-purpose auto-destroy timer
+│   ├── MoveForward.cs            movement behavior: advances along transform.right
 │   ├── DashSilhouetteTrail.cs    LateUpdate-driven sprite afterimage trail
-│   ├── Bootstrapper.cs           [RuntimeInitializeOnLoadMethod] → loads Systems prefab
+│   ├── HUD.cs                    in-scene gameplay HUD root
+│   ├── StageSession.cs           per-stage runtime state
+│   ├── Bootstrapper.cs           [RuntimeInitializeOnLoadMethod] → loads Resources/Systems
 │   ├── SystemsRoot.cs            singleton DontDestroyOnLoad root for persistent systems
 │   ├── Description.cs            editor-only annotation (TextArea on any GO)
-│   └── Editor/
-│       ├── FileExtensions.cs              Project-panel extension labels
-│       └── BusterShotPrefabGenerator.cs   Menu: Tools/MegamanX4/…
-├── Player/
-│   ├── MegamanX.prefab                   player prefab (Rigidbody2D + Collider2D
-│   │                                     + PlayerInput + PlayerController
-│   │                                     + Health + DamageFlash + child Visual)
-│   ├── Character/  MegamanX_{Idle,Jump,Fall,Dash}.svg
-│   └── Shots/      MegamanX_Shot_{Small,Semi,Full}.svg + Prefabs/
-└── Settings/    URP / Renderer2D / Volume profile assets
+│   ├── Systems/                  GameManager, MusicManager, SfxManager, ScreenFader, SceneLoader/
+│   ├── Editor/
+│   │   ├── FileExtensions.cs              Project-panel extension labels
+│   │   ├── BusterShotPrefabGenerator.cs   Menu: Tools/MegamanX4/…
+│   │   └── MegamanX4.Editor.asmdef
+│   └── MegamanX4.Runtime.asmdef
+├── Settings/      URP / Renderer2D / Volume profile assets
+├── UI/            GameplayHUD.prefab
+└── Weapons/
+    ├── Buster/        BusterShot_{Small,Semi,Full}.{svg,prefab}
+    ├── DoubleCyclone/ (placeholder)
+    ├── FrostTower/    FrostTower.svg
+    ├── GroundHunter/  (placeholder)
+    ├── RisingFire/    (placeholder)
+    ├── SoulBody/      (placeholder)
+    └── TwinSlasher/   TwinSlasher.svg
 ```
 
 ## Architecture notes
@@ -68,11 +85,15 @@ Assets/_Project/
 - **Ladder** (`onLadder`, `currentLadder`) — player snaps to ladder center X on grab, climbs via `moveInput.y * climbSpeed`. Detected via `Physics2D.OverlapBox` on a `Ladder` layer. Shoot-on-ladder halts climbing and locks facing briefly. Jump off ladder gives normal jump height + optional horizontal from stick. Damage on ladder → drop off, no knockback push.
 - **Dash-jump** (`dashJumpLock`) — jumping during an active dash preserves horizontal speed for the entire airtime. Cleared on ground contact, wall-jump, ladder grab, or knockback.
 
-### Visual child / sprite flip
+### Visual child / sprite flip (characters)
 
 The root GameObject never flips. Sprites live on a child `Visual` GameObject (drag into `PlayerController.visual`). Flip happens via `visual.localScale.x = ±Mathf.Abs(...)` in Update. This keeps colliders, `rb.Cast()` directions, and every other physical system at positive scale permanently.
 
-SVG sprites are **authored facing left** and wrapped in `<g transform="translate(128 0) scale(-2 2)">` so they render facing right at 2× size. That means `facing == +1` corresponds to un-mirrored scale. If you ever author a new pose SVG, keep this wrapper convention so the existing flip math continues to work.
+**Character** SVG sprites are authored facing left and wrapped in `<g transform="translate(128 0) scale(-2 2)">` so they render facing right at 2× size. That means `facing == +1` corresponds to un-mirrored scale. If you ever author a new pose SVG, keep this wrapper convention so the existing flip math continues to work. **This is the character convention only** — projectile SVGs follow a different rule (see below).
+
+### Projectile SVGs — authored facing right
+
+Projectile SVGs (buster shots, Twin Slasher blade, Frost Tower pillar, etc.) are authored facing right directly — **no** flip-wrapper. "Facing right" means the leading/cutting edge is on +X: pellet head on +X with tail wisps on -X; crescent blade with convex cutting edge on +X and concave trailing side on -X. The weapon spawner sets direction by rotating the transform (not by scaling), so the canonical sprite must be in its natural right-facing form. For symmetric verticals (Frost Tower), facing doesn't matter.
 
 ### Input — PlayerInput with Invoke C# Events
 
@@ -96,16 +117,26 @@ Three decoupled concerns:
 
 ### Bootstrapper / persistent systems
 
-`Bootstrapper` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to load a `Resources/Systems` prefab. `SystemsRoot` on that prefab is a singleton that calls `DontDestroyOnLoad`. This guarantees persistent systems exist regardless of which scene is loaded first (play-from-any-scene workflow).
+`Bootstrapper` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to instantiate `Resources/Systems`. `SystemsRoot` on that prefab is a singleton that calls `DontDestroyOnLoad`. This guarantees persistent systems exist regardless of which scene is loaded first (play-from-any-scene workflow). Per-stage gameplay lives in `Gameplay.unity`.
 
-### Projectile pattern (BusterShot → Projectile system)
+### Projectile system
 
-[BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) is the current "straight-line bullet" but is scheduled for replacement by a composable `Projectile + Behavior` system per [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md). Until then:
+Composable design: one shared `Projectile` component + a `Lifetime` timer + one movement behavior (currently `MoveForward`). Each piece has a single responsibility:
 
-- Kinematic `Rigidbody2D`, `gravityScale = 0`, trigger `Collider2D`.
-- Exposes `public event Action Destroyed;` fired from `OnDestroy`, used by the player to track the 3-lemon cap without a scene scan.
+- **`Projectile`** — damage, trigger-based hit detection, `Destroyed` event. Does not move the object. Enforces Kinematic + `gravityScale = 0` in Awake. `OnTriggerEnter2D` has an explicit Environment-layer branch: **walls destroy any projectile regardless of `piercing`**. Piercing means "pass through enemies," not "pass through walls."
+- **`Lifetime`** — general-purpose auto-destroy timer. Usable on any GameObject (VFX, afterimages), not just projectiles.
+- **`MoveForward`** — advances along `transform.right` at a fixed speed. The spawner rotates the transform to set direction; the script reads no facing/angle fields.
 
-The planned replacement composes small, reusable components: `Projectile` (damage + hit detection + despawn event), `Lifetime` (auto-destroy timer), `StraightMovement` / etc. (movement behavior). Stationary projectiles (Frost Tower, Lightning Web) use `Projectile + Lifetime` with no movement component — spawned at full scale. Behaviors have no `Rigidbody2D` dependency — they move via `transform.position`, making them reusable for non-physics objects. Facing is derived from `transform.lossyScale.x` (spawner flips `localScale.x`), not via an Initialize method.
+**Hit filtering is handled by the Physics2D collision matrix**, not per-prefab `LayerMask` fields. Dedicated layers: `PlayerProjectile`, `PlayerProjectileNoClip`, `EnemyProjectile`. The matrix is configured so:
+
+- `PlayerProjectile` ↔ `Enemy`, `Environment`.
+- `PlayerProjectileNoClip` ↔ `Enemy` only — wall-piercing weapons (Soul Body, charged Twin Slasher) live here. Environment contacts never fire.
+- `EnemyProjectile` ↔ `Player`, `Environment`.
+- All other pairs involving projectile layers are disabled.
+
+The `Projectile` script has no `hitLayers` / `hitTargets` field — the matrix is the single source of truth for layer filtering.
+
+[BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) is still the current runtime for the basic lemon, pending the weapon-system migration tracked in [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md). Its responsibilities (Kinematic + gravity 0, trigger layer check, destroy-on-hit, `Destroyed` event) map onto `Projectile` + `Lifetime` + `MoveForward` once the migration runs.
 
 ### Prefab generation (allowed)
 
@@ -120,14 +151,16 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
   - [SPEC.md](SPEC.md) — coyote time, dash-jump, ladder climb
   - [SPEC2.md](SPEC2.md) — damage knockback + invincibility frames
-  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system, PlayerBuster extraction, WeaponData SO
-  - [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) — composable projectile system (Projectile + Lifetime + behaviors)
+  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system, PlayerBuster extraction, WeaponData SO, BusterShot migration
+  - [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) — composable projectile system, layer-based filtering, environment-destroys-on-contact
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.
 - **ScriptableObjects for game data** (enemy stats, weapon data, level metadata, palettes). Prefer SO-driven configuration over hard-coded constants for anything designers would tune.
-- **Additive scene loading.** Boot into `Init.unity`, load `Gameplay.unity` (and future per-stage scenes) additively; persistent systems live in the bootstrap scene.
 
 ## Small gotchas worth remembering
 
 - Renaming an `.svg` always renames its `.svg.meta` alongside it — the meta holds the GUID that prefabs reference. Use `mv src.svg dst.svg && mv src.svg.meta dst.svg.meta` (or the Unity Project panel).
 - SVG sprite-sheets are not a thing with `com.unity.vectorgraphics` — one `.svg` = one `Sprite`. Author multiple poses as separate files and swap `SpriteRenderer.sprite`.
 - When spawning projectiles, pass the position to `Instantiate(prefab, pos, rot)` directly — not via a setter after. Colliders activate in `Awake` before any post-instantiate method runs, so a wrong initial position can fire bogus trigger events.
+- New projectile prefabs go on layer `PlayerProjectile` (default), `PlayerProjectileNoClip` (wall-piercers like Soul Body or charged Twin Slasher), or `EnemyProjectile`. The `Projectile` script carries no `LayerMask` field — the Physics2D collision matrix gates which pairs ever fire `OnTriggerEnter2D`.
+- Environment collisions destroy any projectile in the matrix-allowed set, regardless of `piercing`. To truly pass through walls, put the projectile on `PlayerProjectileNoClip` — the matrix disables the pair, so the callback never fires.
+- Projectile SVGs face right by default (leading/cutting edge on +X). Character SVGs use the opposite convention (authored facing left, flip-wrapped). Don't mix them up.

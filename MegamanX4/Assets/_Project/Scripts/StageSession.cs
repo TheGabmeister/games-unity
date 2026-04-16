@@ -7,6 +7,7 @@ using UnityEditor;
 public class StageSession : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
+    [SerializeField] GameObject _hudPrefab;
 
     void Start()
     {
@@ -19,12 +20,18 @@ public class StageSession : MonoBehaviour
         var playerStart = FindPlayerStart();
         if (playerStart)
         {
-            Instantiate(_playerPrefab, playerStart.transform.position, playerStart.transform.rotation);
+            SpawnPlayer(playerStart.transform.position);
             return;
         }
 
         var spawnPosition = ResolveFallbackSpawnPosition();
-        Instantiate(_playerPrefab, spawnPosition, Quaternion.identity);
+        SpawnPlayer(spawnPosition);
+    }
+
+    void SpawnPlayer(Vector3 position)
+    {
+        Instantiate(_playerPrefab, position, Quaternion.identity);
+        Instantiate(_hudPrefab);
     }
 
     GameObject FindPlayerStart()
