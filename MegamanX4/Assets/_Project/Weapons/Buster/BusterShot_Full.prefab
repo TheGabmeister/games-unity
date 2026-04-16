@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -2420068050858150765}
   - component: {fileID: 7203728959279093020}
   - component: {fileID: 6653391665175301198}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BusterShot_Full
   m_TagString: Untagged
   m_Icon: {fileID: 0}

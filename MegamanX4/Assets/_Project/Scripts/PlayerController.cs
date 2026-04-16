@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Health))]
+[RequireComponent(typeof(PlayerBuster))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Visuals")]
@@ -61,28 +61,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float probeDistance = 0.05f;
 
     [Header("Shooting")]
-    [SerializeField] GameObject smallShotPrefab;
-    [SerializeField] GameObject semiShotPrefab;
-    [SerializeField] GameObject fullShotPrefab;
     [SerializeField] Transform muzzleAnchor;
-    [SerializeField] float semiChargeTime = 0.4f;
-    [SerializeField] float fullChargeTime = 1.2f;
-    [SerializeField] int maxSmallShots = 3;
-    [SerializeField] Color semiFlashColor = Color.white;
-    [SerializeField] Color fullFlashColor = new(0.4f, 1f, 1f);
-    [SerializeField] float flashPeriod = 0.08f;
 
     Rigidbody2D rb;
     PlayerInput playerInput;
+    PlayerBuster buster;
     InputAction moveAction;
     InputAction jumpAction;
     InputAction sprintAction;
     InputAction attackAction;
-
-    bool isCharging;
-    float chargeTimer;
-    Color baseSpriteColor = Color.white;
-    readonly List<BusterShot> activeSmallShots = new();
 
     ContactFilter2D contactFilter;
     readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
@@ -104,7 +91,10 @@ public class PlayerController : MonoBehaviour
     int dashDirection;
     float wallJumpLockTimer;
     float knockbackTimer;
-    bool IsKnockedBack => knockbackTimer > 0f;
+    public bool IsKnockedBack => knockbackTimer > 0f;
+    public int Facing => facing;
+    public bool OnLadder => onLadder;
+    public Transform MuzzleAnchor => muzzleAnchor;
 
     bool dashJumpLock;
 
@@ -130,12 +120,13 @@ public class PlayerController : MonoBehaviour
 
         health = GetComponent<Health>();
         playerCollider = GetComponent<Collider2D>();
+        buster = GetComponent<PlayerBuster>();
 
         contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
         contactFilter.SetLayerMask(environmentLayers);
 
         if (visual) spriteRenderer = visual.GetComponent<SpriteRenderer>();
-        if (spriteRenderer) baseSpriteColor = spriteRenderer.color;
+        buster.Initialize(spriteRenderer);
     }
 
     void UpdateSprite()
@@ -278,12 +269,7 @@ public class PlayerController : MonoBehaviour
         wallJumpLockTimer = 0f;
         jumpBufferTimer = 0f;
 
-        if (isCharging)
-        {
-            isCharging = false;
-            chargeTimer = 0f;
-            if (spriteRenderer) spriteRenderer.color = baseSpriteColor;
-        }
+        buster.CancelCharge();
 
         facing = -dir;
     }
@@ -298,71 +284,16 @@ public class PlayerController : MonoBehaviour
 
     void OnSprintStarted(InputAction.CallbackContext _) => TryStartDash();
 
-    void OnAttackStarted(InputAction.CallbackContext _)
-    {
-        if (IsKnockedBack) return;
-        isCharging = true;
-        chargeTimer = 0f;
-    }
+    void OnAttackStarted(InputAction.CallbackContext _) => buster.StartCharge();
 
     void OnAttackCanceled(InputAction.CallbackContext _)
     {
-        if (!isCharging) return;
-        isCharging = false;
-
-        if (chargeTimer >= fullChargeTime)
-            Spawn(fullShotPrefab, isSmall: false);
-        else if (chargeTimer >= semiChargeTime)
-            Spawn(semiShotPrefab, isSmall: false);
-        else if (activeSmallShots.Count < maxSmallShots)
-            Spawn(smallShotPrefab, isSmall: true);
-
-        chargeTimer = 0f;
-        if (spriteRenderer) spriteRenderer.color = baseSpriteColor;
+        if (!buster.ReleaseCharge()) return;
 
         if (onLadder)
         {
             climbingShootLock = true;
             ladderShootLockUntil = Time.time + ladderShootLockTime;
-        }
-    }
-
-    void Spawn(GameObject prefab, bool isSmall)
-    {
-        if (!prefab) return;
-        Vector2 pos = muzzleAnchor ? (Vector2)muzzleAnchor.position : (Vector2)transform.position;
-        var go = Instantiate(prefab, pos, Quaternion.identity);
-        if (!go.TryGetComponent<BusterShot>(out var shot)) return;
-        shot.Fire(facing);
-        if (isSmall)
-        {
-            activeSmallShots.Add(shot);
-            shot.Destroyed += () => activeSmallShots.Remove(shot);
-        }
-    }
-
-    void UpdateChargeFlash()
-    {
-        if (!spriteRenderer) return;
-        if (!isCharging)
-        {
-            spriteRenderer.color = baseSpriteColor;
-            return;
-        }
-
-        if (chargeTimer >= fullChargeTime)
-        {
-            bool phase = Mathf.FloorToInt(chargeTimer / flashPeriod) % 2 == 0;
-            spriteRenderer.color = phase ? fullFlashColor : Color.white;
-        }
-        else if (chargeTimer >= semiChargeTime)
-        {
-            bool phase = Mathf.FloorToInt(chargeTimer / flashPeriod) % 2 == 0;
-            spriteRenderer.color = phase ? semiFlashColor : baseSpriteColor;
-        }
-        else
-        {
-            spriteRenderer.color = baseSpriteColor;
         }
     }
 
@@ -390,8 +321,6 @@ public class PlayerController : MonoBehaviour
             visual.localScale = s;
         }
 
-        if (isCharging) chargeTimer += Time.deltaTime;
-        UpdateChargeFlash();
         UpdateSprite();
     }
 

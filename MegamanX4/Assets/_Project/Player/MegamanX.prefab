@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3099517297308019227}
   - component: {fileID: 2515517915452380801}
   - component: {fileID: 8700920407511137899}
+  - component: {fileID: 7398330388965074056}
   m_Layer: 3
   m_Name: MegamanX
   m_TagString: Untagged
@@ -181,16 +182,7 @@ MonoBehaviour:
     m_Bits: 64
   skinWidth: 0.02
   probeDistance: 0.05
-  smallShotPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
-  semiShotPrefab: {fileID: 6249736849717060126, guid: 409cf0458ba1be540be4d8aa11f7549b, type: 3}
-  fullShotPrefab: {fileID: 6249736849717060126, guid: d49d348e804ffa5438f612592f1aea8c, type: 3}
   muzzleAnchor: {fileID: 3947491078196069659}
-  semiChargeTime: 0.4
-  fullChargeTime: 1.2
-  maxSmallShots: 3
-  semiFlashColor: {r: 1, g: 1, b: 1, a: 1}
-  fullFlashColor: {r: 0.4, g: 1, b: 1, a: 1}
-  flashPeriod: 0.08
 --- !u!114 &3099517297308019227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,6 +228,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: MegamanX4.Runtime::DamageFlash
   target: {fileID: 8224132748615150196}
   period: 0.08
+--- !u!114 &7398330388965074056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827737925019994148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9818a1a75c6653469975e2336530d1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::PlayerBuster
+  smallShotPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
+  semiShotPrefab: {fileID: 6249736849717060126, guid: 409cf0458ba1be540be4d8aa11f7549b, type: 3}
+  fullShotPrefab: {fileID: 6249736849717060126, guid: d49d348e804ffa5438f612592f1aea8c, type: 3}
+  semiChargeTime: 0.4
+  fullChargeTime: 1.2
+  maxSmallShots: 3
+  semiFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  fullFlashColor: {r: 0.4, g: 1, b: 1, a: 1}
+  flashPeriod: 0.08
 --- !u!1 &4554798857488393429
 GameObject:
   m_ObjectHideFlags: 0
