@@ -44,13 +44,13 @@ Use this list to track implementation progress. Tick a box when a feature is pla
 - [x] Ground probe / wall probe state
 - [x] Facing direction (int, independent of transform scale)
 - [x] Sprite flip on child `Visual` (root never flips)
-- [ ] Coyote time / jump buffer (if desired for feel)
+- [x] Coyote time / jump buffer (if desired for feel)
 - [x] Dash (ground, fixed distance, cancelable)
-- [ ] Dash-jump (extended air speed after ground dash into jump)
+- [x] Dash-jump (extended air speed after ground dash into jump)
 - [x] Air dash *(X only, via Fourth Armor Foot Parts in the real game)*
 - [x] Wall slide (friction-slowed descent while pressing into wall)
 - [x] Wall jump (diagonal kick off wall, consumes wall contact)
-- [ ] Ladder climb / top-of-ladder dismount
+- [x] Ladder climb / top-of-ladder dismount
 - [x] Damage knockback / invincibility frames
 - [ ] Death + respawn at checkpoint
 
