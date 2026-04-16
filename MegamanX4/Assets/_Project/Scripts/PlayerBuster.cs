@@ -87,9 +87,12 @@ public class PlayerBuster : MonoBehaviour
         if (!prefab) return;
         var muzzle = controller.MuzzleAnchor;
         Vector2 pos = muzzle ? (Vector2)muzzle.position : (Vector2)controller.transform.position;
-        var go = Instantiate(prefab, pos, Quaternion.identity);
+        Quaternion rot = muzzle
+            ? muzzle.rotation
+            : (controller.Facing >= 0 ? Quaternion.identity : Quaternion.Euler(0f, 180f, 0f));
+        var go = Instantiate(prefab, pos, rot);
         if (!go.TryGetComponent<BusterShot>(out var shot)) return;
-        shot.Fire(controller.Facing);
+        shot.Fire();
         if (isSmall)
         {
             activeSmallShots.Add(shot);

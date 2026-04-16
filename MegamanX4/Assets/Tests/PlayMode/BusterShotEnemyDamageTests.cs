@@ -89,7 +89,7 @@ public class BusterShotEnemyDamageTests
         SetPrivateField(shot, "hitLayers", LayerMask.GetMask("Enemy"));
 
         shotObject.SetActive(true);
-        shot.Fire(direction: 1);
+        shot.Fire();
         return shot;
     }
 

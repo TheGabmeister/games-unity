@@ -21,12 +21,9 @@ public class BusterShot : MonoBehaviour
         rb.gravityScale = 0f;
     }
 
-    public void Fire(int direction)
+    public void Fire()
     {
-        var s = transform.localScale;
-        s.x = Mathf.Abs(s.x) * Mathf.Sign(direction);
-        transform.localScale = s;
-        rb.linearVelocity = new Vector2(speed * Mathf.Sign(direction), 0f);
+        rb.linearVelocity = (Vector2)(transform.right * speed);
         Destroy(gameObject, lifetime);
     }
 
