@@ -9,313 +9,313 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Visuals")]
-    [SerializeField] Transform visual;
-    [SerializeField] Sprite idleSprite;
-    [SerializeField] Sprite jumpSprite;
-    [SerializeField] Sprite fallSprite;
-    [SerializeField] Sprite dashSprite;
+    [SerializeField] Transform _visual;
+    [SerializeField] Sprite _idleSprite;
+    [SerializeField] Sprite _jumpSprite;
+    [SerializeField] Sprite _fallSprite;
+    [SerializeField] Sprite _dashSprite;
 
-    SpriteRenderer spriteRenderer;
+    SpriteRenderer _spriteRenderer;
 
     [Header("Movement")]
-    [SerializeField] float moveSpeed = 6f;
-    [SerializeField] float groundAcceleration = 60f;
-    [SerializeField] float airAcceleration = 30f;
+    [SerializeField] float _moveSpeed = 6f;
+    [SerializeField] float _groundAcceleration = 60f;
+    [SerializeField] float _airAcceleration = 30f;
 
     [Header("Jump")]
-    [SerializeField] float jumpSpeed = 12f;
-    [SerializeField] float jumpCutMultiplier = 0.5f;
-    [SerializeField] float coyoteTime = 0.1f;
-    [SerializeField] float jumpBufferTime = 0.1f;
-    [SerializeField] float fallGravityMultiplier = 1.8f;
+    [SerializeField] float _jumpSpeed = 12f;
+    [SerializeField] float _jumpCutMultiplier = 0.5f;
+    [SerializeField] float _coyoteTime = 0.1f;
+    [SerializeField] float _jumpBufferTime = 0.1f;
+    [SerializeField] float _fallGravityMultiplier = 1.8f;
 
     [Header("Gravity")]
-    [SerializeField] float gravity = 40f;
-    [SerializeField] float maxFallSpeed = 20f;
+    [SerializeField] float _gravity = 40f;
+    [SerializeField] float _maxFallSpeed = 20f;
 
     [Header("Dash")]
-    [SerializeField] float dashSpeed = 14f;
-    [SerializeField] float dashDuration = 0.35f;
-    [SerializeField] float dashCooldown = 0.15f;
+    [SerializeField] float _dashSpeed = 14f;
+    [SerializeField] float _dashDuration = 0.35f;
+    [SerializeField] float _dashCooldown = 0.15f;
 
     [Header("Wall")]
-    [SerializeField] float wallSlideSpeed = 2f;
-    [SerializeField] Vector2 wallJumpVelocity = new(8f, 11f);
-    [SerializeField] float wallJumpLockTime = 0.18f;
+    [SerializeField] float _wallSlideSpeed = 2f;
+    [SerializeField] Vector2 _wallJumpVelocity = new(8f, 11f);
+    [SerializeField] float _wallJumpLockTime = 0.18f;
 
     [Header("Knockback")]
-    [SerializeField] float knockbackSpeedX = 5f;
-    [SerializeField] float knockbackSpeedY = 6f;
-    [SerializeField] float knockbackDuration = 0.35f;
+    [SerializeField] float _knockbackSpeedX = 5f;
+    [SerializeField] float _knockbackSpeedY = 6f;
+    [SerializeField] float _knockbackDuration = 0.35f;
 
     [Header("Ladder")]
-    [SerializeField] LayerMask ladderLayer;
-    [SerializeField] float climbSpeed = 5f;
-    [SerializeField] float ladderShootLockTime = 0.2f;
-    [SerializeField] Sprite climbSprite;
-    [SerializeField] Sprite climbShootSprite;
+    [SerializeField] LayerMask _ladderLayer;
+    [SerializeField] float _climbSpeed = 5f;
+    [SerializeField] float _ladderShootLockTime = 0.2f;
+    [SerializeField] Sprite _climbSprite;
+    [SerializeField] Sprite _climbShootSprite;
 
     [Header("Collision")]
-    [SerializeField] LayerMask environmentLayers = ~0;
-    [SerializeField] float skinWidth = 0.02f;
-    [SerializeField] float probeDistance = 0.05f;
+    [SerializeField] LayerMask _environmentLayers = ~0;
+    [SerializeField] float _skinWidth = 0.02f;
+    [SerializeField] float _probeDistance = 0.05f;
 
     [Header("Shooting")]
-    [SerializeField] Transform muzzleAnchor;
+    [SerializeField] Transform _muzzleAnchor;
 
-    Rigidbody2D rb;
-    PlayerInput playerInput;
-    PlayerBuster buster;
-    InputAction moveAction;
-    InputAction jumpAction;
-    InputAction sprintAction;
-    InputAction attackAction;
+    Rigidbody2D _rb;
+    PlayerInput _playerInput;
+    PlayerBuster _buster;
+    InputAction _moveAction;
+    InputAction _jumpAction;
+    InputAction _sprintAction;
+    InputAction _attackAction;
 
-    ContactFilter2D contactFilter;
-    readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
+    ContactFilter2D _contactFilter;
+    readonly RaycastHit2D[] _castHits = new RaycastHit2D[8];
 
-    Vector2 velocity;
-    Vector2 moveInput;
-    bool jumpHeld;
-    int facing = 1;
+    Vector2 _velocity;
+    Vector2 _moveInput;
+    bool _jumpHeld;
+    int _facing = 1;
 
-    bool isGrounded;
-    bool isTouchingWall;
-    bool WallSliding => isTouchingWall && !isGrounded && velocity.y < 0f;
-    public bool IsDashing => dashTimer > 0f;
+    bool _isGrounded;
+    bool _isTouchingWall;
+    bool WallSliding => _isTouchingWall && !_isGrounded && _velocity.y < 0f;
+    public bool IsDashing => _dashTimer > 0f;
 
-    float coyoteTimer;
-    float jumpBufferTimer;
-    float dashTimer;
-    float dashCooldownTimer;
-    int dashDirection;
-    float wallJumpLockTimer;
-    float knockbackTimer;
-    public bool IsKnockedBack => knockbackTimer > 0f;
-    public int Facing => facing;
-    public bool OnLadder => onLadder;
-    public Transform MuzzleAnchor => muzzleAnchor;
+    float _coyoteTimer;
+    float _jumpBufferTimer;
+    float _dashTimer;
+    float _dashCooldownTimer;
+    int _dashDirection;
+    float _wallJumpLockTimer;
+    float _knockbackTimer;
+    public bool IsKnockedBack => _knockbackTimer > 0f;
+    public int Facing => _facing;
+    public bool OnLadder => _onLadder;
+    public Transform MuzzleAnchor => _muzzleAnchor;
 
-    bool dashJumpLock;
+    bool _dashJumpLock;
 
-    Collider2D currentLadder;
-    bool onLadder;
-    bool climbingShootLock;
-    float ladderShootLockUntil;
+    Collider2D _currentLadder;
+    bool _onLadder;
+    bool _climbingShootLock;
+    float _ladderShootLockUntil;
 
-    Collider2D playerCollider;
-    Health health;
+    Collider2D _playerCollider;
+    Health _health;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Kinematic;
-        rb.gravityScale = 0f;
+        _rb = GetComponent<Rigidbody2D>();
+        _rb.bodyType = RigidbodyType2D.Kinematic;
+        _rb.gravityScale = 0f;
 
-        playerInput = GetComponent<PlayerInput>();
-        moveAction = playerInput.actions["Move"];
-        jumpAction = playerInput.actions["Jump"];
-        sprintAction = playerInput.actions["Sprint"];
-        attackAction = playerInput.actions["Attack"];
+        _playerInput = GetComponent<PlayerInput>();
+        _moveAction = _playerInput.actions["Move"];
+        _jumpAction = _playerInput.actions["Jump"];
+        _sprintAction = _playerInput.actions["Sprint"];
+        _attackAction = _playerInput.actions["Attack"];
 
-        health = GetComponent<Health>();
-        playerCollider = GetComponent<Collider2D>();
-        buster = GetComponent<PlayerBuster>();
+        _health = GetComponent<Health>();
+        _playerCollider = GetComponent<Collider2D>();
+        _buster = GetComponent<PlayerBuster>();
 
-        contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
-        contactFilter.SetLayerMask(environmentLayers);
+        _contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
+        _contactFilter.SetLayerMask(_environmentLayers);
 
-        if (visual) spriteRenderer = visual.GetComponent<SpriteRenderer>();
-        buster.Initialize(spriteRenderer);
+        if (_visual) _spriteRenderer = _visual.GetComponent<SpriteRenderer>();
+        _buster.Initialize(_spriteRenderer);
     }
 
     void UpdateSprite()
     {
-        if (!spriteRenderer) return;
-        Sprite s = onLadder ? (climbingShootLock ? climbShootSprite : climbSprite)
-                 : IsDashing ? dashSprite
-                 : !isGrounded && velocity.y > 0.01f ? jumpSprite
-                 : !isGrounded ? fallSprite
-                 : idleSprite;
-        if (s) spriteRenderer.sprite = s;
+        if (!_spriteRenderer) return;
+        Sprite s = _onLadder ? (_climbingShootLock ? _climbShootSprite : _climbSprite)
+                 : IsDashing ? _dashSprite
+                 : !_isGrounded && _velocity.y > 0.01f ? _jumpSprite
+                 : !_isGrounded ? _fallSprite
+                 : _idleSprite;
+        if (s) _spriteRenderer.sprite = s;
     }
 
     void OnEnable()
     {
-        jumpAction.started += OnJumpStarted;
-        jumpAction.canceled += OnJumpCanceled;
-        sprintAction.started += OnSprintStarted;
-        attackAction.started += OnAttackStarted;
-        attackAction.canceled += OnAttackCanceled;
-        health.Damaged += OnHealthDamaged;
+        _jumpAction.started += OnJumpStarted;
+        _jumpAction.canceled += OnJumpCanceled;
+        _sprintAction.started += OnSprintStarted;
+        _attackAction.started += OnAttackStarted;
+        _attackAction.canceled += OnAttackCanceled;
+        _health.Damaged += OnHealthDamaged;
     }
 
     void OnDisable()
     {
-        jumpAction.started -= OnJumpStarted;
-        jumpAction.canceled -= OnJumpCanceled;
-        sprintAction.started -= OnSprintStarted;
-        attackAction.started -= OnAttackStarted;
-        attackAction.canceled -= OnAttackCanceled;
-        health.Damaged -= OnHealthDamaged;
+        _jumpAction.started -= OnJumpStarted;
+        _jumpAction.canceled -= OnJumpCanceled;
+        _sprintAction.started -= OnSprintStarted;
+        _attackAction.started -= OnAttackStarted;
+        _attackAction.canceled -= OnAttackCanceled;
+        _health.Damaged -= OnHealthDamaged;
     }
 
     void OnHealthDamaged(int amount, Vector2 sourcePosition)
     {
-        if (onLadder) { ExitLadder(fall: true); return; }
+        if (_onLadder) { ExitLadder(fall: true); return; }
         ApplyKnockback(sourcePosition);
     }
 
     Collider2D QueryLadder()
     {
-        var b = playerCollider.bounds;
-        return Physics2D.OverlapBox(b.center, b.size, 0f, ladderLayer);
+        var b = _playerCollider.bounds;
+        return Physics2D.OverlapBox(b.center, b.size, 0f, _ladderLayer);
     }
 
     bool AtLadderTop(Collider2D ladder)
     {
-        float feet = rb.position.y - playerCollider.bounds.extents.y;
+        float feet = _rb.position.y - _playerCollider.bounds.extents.y;
         return Mathf.Abs(feet - ladder.bounds.max.y) < 0.1f;
     }
 
     void TryGrabLadder(Collider2D ladder)
     {
         if (ladder == null) return;
-        bool pressingUp   = moveInput.y >  0.5f;
-        bool pressingDown = moveInput.y < -0.5f;
+        bool pressingUp   = _moveInput.y >  0.5f;
+        bool pressingDown = _moveInput.y < -0.5f;
         bool grab = pressingUp
-                 || (pressingDown && !isGrounded)
-                 || (pressingDown && isGrounded && AtLadderTop(ladder));
+                 || (pressingDown && !_isGrounded)
+                 || (pressingDown && _isGrounded && AtLadderTop(ladder));
         if (grab) EnterLadder(ladder);
     }
 
     void EnterLadder(Collider2D ladder)
     {
-        currentLadder = ladder;
-        onLadder = true;
-        rb.position = new Vector2(ladder.bounds.center.x, rb.position.y);
-        velocity = Vector2.zero;
-        dashJumpLock = false;
-        wallJumpLockTimer = 0f;
-        coyoteTimer = 0f;
-        dashTimer = 0f;
-        climbingShootLock = false;
-        ladderShootLockUntil = 0f;
+        _currentLadder = ladder;
+        _onLadder = true;
+        _rb.position = new Vector2(ladder.bounds.center.x, _rb.position.y);
+        _velocity = Vector2.zero;
+        _dashJumpLock = false;
+        _wallJumpLockTimer = 0f;
+        _coyoteTimer = 0f;
+        _dashTimer = 0f;
+        _climbingShootLock = false;
+        _ladderShootLockUntil = 0f;
     }
 
     void ExitLadder(bool fall)
     {
-        onLadder = false;
-        currentLadder = null;
-        climbingShootLock = false;
-        if (fall) velocity = Vector2.zero;
+        _onLadder = false;
+        _currentLadder = null;
+        _climbingShootLock = false;
+        if (fall) _velocity = Vector2.zero;
     }
 
     void TickLadder()
     {
-        if (climbingShootLock && Time.time >= ladderShootLockUntil)
-            climbingShootLock = false;
+        if (_climbingShootLock && Time.time >= _ladderShootLockUntil)
+            _climbingShootLock = false;
 
         // Facing updates from input even while locked so next shot aims correctly;
         // no horizontal motion is applied.
-        if (moveInput.x >  0.1f) facing =  1;
-        else if (moveInput.x < -0.1f) facing = -1;
+        if (_moveInput.x >  0.1f) _facing =  1;
+        else if (_moveInput.x < -0.1f) _facing = -1;
 
         // Jump off ladder: exit + normal jump; inherit walk speed only if a direction is held.
-        if (jumpBufferTimer > 0f)
+        if (_jumpBufferTimer > 0f)
         {
-            jumpBufferTimer = 0f;
-            velocity = new Vector2(moveInput.x * moveSpeed, jumpSpeed);
+            _jumpBufferTimer = 0f;
+            _velocity = new Vector2(_moveInput.x * _moveSpeed, _jumpSpeed);
             ExitLadder(fall: false);
             return;
         }
 
         // Auto-dismount at top rung.
-        if (rb.position.y >= currentLadder.bounds.max.y)
+        if (_rb.position.y >= _currentLadder.bounds.max.y)
         {
-            rb.position = new Vector2(rb.position.x, currentLadder.bounds.max.y + playerCollider.bounds.extents.y);
-            velocity = Vector2.zero;
+            _rb.position = new Vector2(_rb.position.x, _currentLadder.bounds.max.y + _playerCollider.bounds.extents.y);
+            _velocity = Vector2.zero;
             ExitLadder(fall: false);
             return;
         }
 
         // Drop off at bottom rung when pressing Down.
-        if (moveInput.y < -0.5f && rb.position.y <= currentLadder.bounds.min.y)
+        if (_moveInput.y < -0.5f && _rb.position.y <= _currentLadder.bounds.min.y)
         {
             ExitLadder(fall: true);
             return;
         }
 
-        velocity = climbingShootLock
+        _velocity = _climbingShootLock
             ? Vector2.zero
-            : new Vector2(0f, moveInput.y * climbSpeed);
+            : new Vector2(0f, _moveInput.y * _climbSpeed);
 
-        Move(velocity * Time.fixedDeltaTime);
+        Move(_velocity * Time.fixedDeltaTime);
     }
 
     public void ApplyKnockback(Vector2 sourcePosition)
     {
         int dir;
         if (WallSliding)
-            dir = -facing;
+            dir = -_facing;
         else
-            dir = rb.position.x >= sourcePosition.x ? 1 : -1;
+            dir = _rb.position.x >= sourcePosition.x ? 1 : -1;
 
-        velocity = new Vector2(dir * knockbackSpeedX, knockbackSpeedY);
-        knockbackTimer = knockbackDuration;
+        _velocity = new Vector2(dir * _knockbackSpeedX, _knockbackSpeedY);
+        _knockbackTimer = _knockbackDuration;
 
-        dashTimer = 0f;
-        dashJumpLock = false;
-        wallJumpLockTimer = 0f;
-        jumpBufferTimer = 0f;
+        _dashTimer = 0f;
+        _dashJumpLock = false;
+        _wallJumpLockTimer = 0f;
+        _jumpBufferTimer = 0f;
 
-        buster.CancelCharge();
+        _buster.CancelCharge();
 
-        facing = -dir;
+        _facing = -dir;
     }
 
     void OnJumpStarted(InputAction.CallbackContext _)
     {
-        jumpHeld = true;
-        jumpBufferTimer = jumpBufferTime;
+        _jumpHeld = true;
+        _jumpBufferTimer = _jumpBufferTime;
     }
 
-    void OnJumpCanceled(InputAction.CallbackContext _) => jumpHeld = false;
+    void OnJumpCanceled(InputAction.CallbackContext _) => _jumpHeld = false;
 
     void OnSprintStarted(InputAction.CallbackContext _) => TryStartDash();
 
-    void OnAttackStarted(InputAction.CallbackContext _) => buster.StartCharge();
+    void OnAttackStarted(InputAction.CallbackContext _) => _buster.StartCharge();
 
     void OnAttackCanceled(InputAction.CallbackContext _)
     {
-        if (!buster.ReleaseCharge()) return;
+        if (!_buster.ReleaseCharge()) return;
 
-        if (onLadder)
+        if (_onLadder)
         {
-            climbingShootLock = true;
-            ladderShootLockUntil = Time.time + ladderShootLockTime;
+            _climbingShootLock = true;
+            _ladderShootLockUntil = Time.time + _ladderShootLockTime;
         }
     }
 
     void Update()
     {
-        moveInput = moveAction.ReadValue<Vector2>();
+        _moveInput = _moveAction.ReadValue<Vector2>();
 
-        coyoteTimer -= Time.deltaTime;
-        jumpBufferTimer -= Time.deltaTime;
-        dashTimer -= Time.deltaTime;
-        dashCooldownTimer -= Time.deltaTime;
-        wallJumpLockTimer -= Time.deltaTime;
-        knockbackTimer -= Time.deltaTime;
+        _coyoteTimer -= Time.deltaTime;
+        _jumpBufferTimer -= Time.deltaTime;
+        _dashTimer -= Time.deltaTime;
+        _dashCooldownTimer -= Time.deltaTime;
+        _wallJumpLockTimer -= Time.deltaTime;
+        _knockbackTimer -= Time.deltaTime;
 
         if (!IsKnockedBack)
         {
-            if (moveInput.x > 0.1f) facing = 1;
-            else if (moveInput.x < -0.1f) facing = -1;
+            if (_moveInput.x > 0.1f) _facing = 1;
+            else if (_moveInput.x < -0.1f) _facing = -1;
         }
 
-        if (visual)
-            visual.localRotation = facing >= 0 ? Quaternion.identity : Quaternion.Euler(0f, 180f, 0f);
+        if (_visual)
+            _visual.localRotation = _facing >= 0 ? Quaternion.identity : Quaternion.Euler(0f, 180f, 0f);
 
         UpdateSprite();
     }
@@ -325,66 +325,66 @@ public class PlayerController : MonoBehaviour
         Probe();
 
         var ladder = QueryLadder();
-        if (!onLadder) TryGrabLadder(ladder);
+        if (!_onLadder) TryGrabLadder(ladder);
 
-        if (onLadder)
+        if (_onLadder)
         {
             TickLadder();
             return;
         }
 
-        if (isGrounded)
+        if (_isGrounded)
         {
-            coyoteTimer = coyoteTime;
-            dashJumpLock = false;
+            _coyoteTimer = _coyoteTime;
+            _dashJumpLock = false;
         }
 
-        if (jumpBufferTimer > 0f && TryJump())
-            jumpBufferTimer = 0f;
+        if (_jumpBufferTimer > 0f && TryJump())
+            _jumpBufferTimer = 0f;
 
         ApplyGravity();
 
-        if (!jumpHeld && velocity.y > 0f && !IsDashing)
-            velocity.y *= jumpCutMultiplier;
+        if (!_jumpHeld && _velocity.y > 0f && !IsDashing)
+            _velocity.y *= _jumpCutMultiplier;
 
         if (IsKnockedBack)
         {
             // velocity set by ApplyKnockback; let it ride. Gravity still applies.
         }
         else if (IsDashing)
-            velocity = new Vector2(dashDirection * dashSpeed, 0f);
-        else if (dashJumpLock)
-            velocity.x = dashDirection * dashSpeed;
-        else if (wallJumpLockTimer <= 0f)
+            _velocity = new Vector2(_dashDirection * _dashSpeed, 0f);
+        else if (_dashJumpLock)
+            _velocity.x = _dashDirection * _dashSpeed;
+        else if (_wallJumpLockTimer <= 0f)
             ApplyHorizontalInput();
 
-        if (WallSliding && !IsKnockedBack && !onLadder)
-            velocity.y = Mathf.Max(velocity.y, -wallSlideSpeed);
+        if (WallSliding && !IsKnockedBack && !_onLadder)
+            _velocity.y = Mathf.Max(_velocity.y, -_wallSlideSpeed);
 
-        Move(velocity * Time.fixedDeltaTime);
+        Move(_velocity * Time.fixedDeltaTime);
     }
 
     void ApplyHorizontalInput()
     {
-        float target = moveInput.x * moveSpeed;
-        float accel = isGrounded ? groundAcceleration : airAcceleration;
-        velocity.x = Mathf.MoveTowards(velocity.x, target, accel * Time.fixedDeltaTime);
+        float target = _moveInput.x * _moveSpeed;
+        float accel = _isGrounded ? _groundAcceleration : _airAcceleration;
+        _velocity.x = Mathf.MoveTowards(_velocity.x, target, accel * Time.fixedDeltaTime);
     }
 
     void ApplyGravity()
     {
         if (IsDashing) return;
-        float g = velocity.y < 0f ? gravity * fallGravityMultiplier : gravity;
-        velocity.y = Mathf.Max(velocity.y - g * Time.fixedDeltaTime, -maxFallSpeed);
+        float g = _velocity.y < 0f ? _gravity * _fallGravityMultiplier : _gravity;
+        _velocity.y = Mathf.Max(_velocity.y - g * Time.fixedDeltaTime, -_maxFallSpeed);
     }
 
     void Probe()
     {
-        int downCount = rb.Cast(Vector2.down, contactFilter, castHits, probeDistance);
-        isGrounded = downCount > 0 && velocity.y <= 0.0001f;
+        int downCount = _rb.Cast(Vector2.down, _contactFilter, _castHits, _probeDistance);
+        _isGrounded = downCount > 0 && _velocity.y <= 0.0001f;
 
-        int sideCount = rb.Cast(new Vector2(facing, 0f), contactFilter, castHits, probeDistance);
-        isTouchingWall = sideCount > 0 && moveInput.x * facing > 0.1f;
+        int sideCount = _rb.Cast(new Vector2(_facing, 0f), _contactFilter, _castHits, _probeDistance);
+        _isTouchingWall = sideCount > 0 && _moveInput.x * _facing > 0.1f;
     }
 
     void Move(Vector2 delta)
@@ -399,50 +399,50 @@ public class PlayerController : MonoBehaviour
         if (magnitude < 0.0001f) return;
         Vector2 dir = delta / magnitude;
 
-        int count = rb.Cast(dir, contactFilter, castHits, magnitude + skinWidth);
+        int count = _rb.Cast(dir, _contactFilter, _castHits, magnitude + _skinWidth);
         float travel = magnitude;
         for (int i = 0; i < count; i++)
         {
-            float d = castHits[i].distance - skinWidth;
+            float d = _castHits[i].distance - _skinWidth;
             if (d < travel) travel = Mathf.Max(0f, d);
         }
 
-        rb.position += dir * travel;
+        _rb.position += dir * travel;
 
         if (travel < magnitude - 0.0001f)
         {
-            if (axisX) velocity.x = 0f;
-            else velocity.y = 0f;
+            if (axisX) _velocity.x = 0f;
+            else _velocity.y = 0f;
         }
     }
 
     bool TryJump()
     {
-        if (IsKnockedBack || onLadder) return false;
+        if (IsKnockedBack || _onLadder) return false;
 
         if (IsDashing)
         {
-            velocity = new Vector2(dashDirection * dashSpeed, jumpSpeed);
-            dashTimer = 0f;
-            dashJumpLock = true;
-            coyoteTimer = 0f;
+            _velocity = new Vector2(_dashDirection * _dashSpeed, _jumpSpeed);
+            _dashTimer = 0f;
+            _dashJumpLock = true;
+            _coyoteTimer = 0f;
             return true;
         }
 
-        if (isTouchingWall && !isGrounded)
+        if (_isTouchingWall && !_isGrounded)
         {
-            velocity = new Vector2(-facing * wallJumpVelocity.x, wallJumpVelocity.y);
-            wallJumpLockTimer = wallJumpLockTime;
-            facing = -facing;
-            coyoteTimer = 0f;
-            dashJumpLock = false;
+            _velocity = new Vector2(-_facing * _wallJumpVelocity.x, _wallJumpVelocity.y);
+            _wallJumpLockTimer = _wallJumpLockTime;
+            _facing = -_facing;
+            _coyoteTimer = 0f;
+            _dashJumpLock = false;
             return true;
         }
 
-        if (coyoteTimer > 0f)
+        if (_coyoteTimer > 0f)
         {
-            velocity.y = jumpSpeed;
-            coyoteTimer = 0f;
+            _velocity.y = _jumpSpeed;
+            _coyoteTimer = 0f;
             return true;
         }
 
@@ -451,10 +451,10 @@ public class PlayerController : MonoBehaviour
 
     void TryStartDash()
     {
-        if (dashCooldownTimer > 0f || IsDashing || IsKnockedBack || onLadder) return;
-        dashTimer = dashDuration;
-        dashCooldownTimer = dashDuration + dashCooldown;
-        dashDirection = Mathf.Abs(moveInput.x) > 0.1f ? (int)Mathf.Sign(moveInput.x) : facing;
-        coyoteTimer = 0f;   // dashing off a ledge must not preserve coyote (SPEC.md §1.2)
+        if (_dashCooldownTimer > 0f || IsDashing || IsKnockedBack || _onLadder) return;
+        _dashTimer = _dashDuration;
+        _dashCooldownTimer = _dashDuration + _dashCooldown;
+        _dashDirection = Mathf.Abs(_moveInput.x) > 0.1f ? (int)Mathf.Sign(_moveInput.x) : _facing;
+        _coyoteTimer = 0f;   // dashing off a ledge must not preserve coyote (SPEC.md §1.2)
     }
 }

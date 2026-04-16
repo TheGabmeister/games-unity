@@ -4,22 +4,22 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 public class Enemy : MonoBehaviour
 {
-    Health health;
+    Health _health;
 
-    void Awake() => health = GetComponent<Health>();
+    void Awake() => _health = GetComponent<Health>();
 
     void OnEnable()
     {
-        if (!health)
-            health = GetComponent<Health>();
+        if (!_health)
+            _health = GetComponent<Health>();
 
-        health.Depleted += OnDepleted;
+        _health.Depleted += OnDepleted;
     }
 
     void OnDisable()
     {
-        if (health)
-            health.Depleted -= OnDepleted;
+        if (_health)
+            _health.Depleted -= OnDepleted;
     }
 
     void OnDepleted() => Destroy(gameObject);

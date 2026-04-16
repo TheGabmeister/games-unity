@@ -3,9 +3,9 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ContactDamage : MonoBehaviour
 {
-    [SerializeField] int damageAmount = 1;
+    [SerializeField] int _damageAmount = 1;
 
-    void OnValidate() => damageAmount = Mathf.Max(1, damageAmount);
+    void OnValidate() => _damageAmount = Mathf.Max(1, _damageAmount);
 
     void OnTriggerEnter2D(Collider2D other) => TryDamage(other);
 
@@ -28,6 +28,6 @@ public class ContactDamage : MonoBehaviour
         if (!health)
             return;
 
-        health.ApplyDamage(damageAmount, transform.position);
+        health.ApplyDamage(_damageAmount, transform.position);
     }
 }

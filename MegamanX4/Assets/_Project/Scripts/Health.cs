@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] int maxHealth = 3;
-    [SerializeField] float invulnerabilityDuration = 1f;
+    [SerializeField] int _maxHealth = 3;
+    [SerializeField] float _invulnerabilityDuration = 1f;
 
-    int currentHealth;
-    bool initialized;
-    float invulnerableUntil;
-    bool wasInvulnerable;
+    int _currentHealth;
+    bool _initialized;
+    float _invulnerableUntil;
+    bool _wasInvulnerable;
 
     public int MaxHealth
     {
         get
         {
             EnsureInitialized();
-            return maxHealth;
+            return _maxHealth;
         }
     }
 
@@ -25,13 +25,13 @@ public class Health : MonoBehaviour
         get
         {
             EnsureInitialized();
-            return currentHealth;
+            return _currentHealth;
         }
     }
 
     public bool IsDepleted => CurrentHealth <= 0;
-    public bool IsInvulnerable => Time.time < invulnerableUntil;
-    public float InvulnerabilityDuration => invulnerabilityDuration;
+    public bool IsInvulnerable => Time.time < _invulnerableUntil;
+    public float InvulnerabilityDuration => _invulnerabilityDuration;
 
     public event Action<int, Vector2> Damaged;
     public event Action<int> Healed;
@@ -43,21 +43,21 @@ public class Health : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        if (!initialized)
+        if (!_initialized)
             ResetHealth();
     }
 
     protected virtual void OnValidate()
     {
-        maxHealth = Mathf.Max(1, maxHealth);
-        invulnerabilityDuration = Mathf.Max(0f, invulnerabilityDuration);
+        _maxHealth = Mathf.Max(1, _maxHealth);
+        _invulnerabilityDuration = Mathf.Max(0f, _invulnerabilityDuration);
     }
 
     protected virtual void Update()
     {
         bool now = IsInvulnerable;
-        if (now == wasInvulnerable) return;
-        wasInvulnerable = now;
+        if (now == _wasInvulnerable) return;
+        _wasInvulnerable = now;
         InvulnerabilityChanged?.Invoke(now);
     }
 
@@ -67,70 +67,70 @@ public class Health : MonoBehaviour
     {
         EnsureInitialized();
 
-        if (IsInvulnerable || amount <= 0 || currentHealth <= 0)
+        if (IsInvulnerable || amount <= 0 || _currentHealth <= 0)
             return;
 
-        int previousHealth = currentHealth;
-        currentHealth = Mathf.Max(0, currentHealth - amount);
-        int appliedDamage = previousHealth - currentHealth;
+        int previousHealth = _currentHealth;
+        _currentHealth = Mathf.Max(0, _currentHealth - amount);
+        int appliedDamage = previousHealth - _currentHealth;
         if (appliedDamage <= 0)
             return;
 
         Damaged?.Invoke(appliedDamage, sourcePosition);
-        HealthChanged?.Invoke(currentHealth, maxHealth);
+        HealthChanged?.Invoke(_currentHealth, _maxHealth);
 
-        if (currentHealth == 0)
+        if (_currentHealth == 0)
         {
             HandleDepleted();
             return;
         }
 
-        if (invulnerabilityDuration > 0f)
-            invulnerableUntil = Time.time + invulnerabilityDuration;
+        if (_invulnerabilityDuration > 0f)
+            _invulnerableUntil = Time.time + _invulnerabilityDuration;
     }
 
     public virtual void Heal(int amount)
     {
         EnsureInitialized();
 
-        if (amount <= 0 || currentHealth >= maxHealth)
+        if (amount <= 0 || _currentHealth >= _maxHealth)
             return;
 
-        int previousHealth = currentHealth;
-        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
-        int restoredHealth = currentHealth - previousHealth;
+        int previousHealth = _currentHealth;
+        _currentHealth = Mathf.Min(_maxHealth, _currentHealth + amount);
+        int restoredHealth = _currentHealth - previousHealth;
         if (restoredHealth <= 0)
             return;
 
         Healed?.Invoke(restoredHealth);
-        HealthChanged?.Invoke(currentHealth, maxHealth);
+        HealthChanged?.Invoke(_currentHealth, _maxHealth);
     }
 
     public void RestoreFullHealth()
     {
         EnsureInitialized();
 
-        if (currentHealth >= maxHealth)
+        if (_currentHealth >= _maxHealth)
             return;
 
-        int restoredHealth = maxHealth - currentHealth;
-        currentHealth = maxHealth;
+        int restoredHealth = _maxHealth - _currentHealth;
+        _currentHealth = _maxHealth;
         Healed?.Invoke(restoredHealth);
-        HealthChanged?.Invoke(currentHealth, maxHealth);
+        HealthChanged?.Invoke(_currentHealth, _maxHealth);
     }
 
     protected virtual void HandleDepleted() => Depleted?.Invoke();
 
     void EnsureInitialized()
     {
-        if (!initialized)
+        if (!_initialized)
             ResetHealth();
     }
 
     void ResetHealth()
     {
-        maxHealth = Mathf.Max(1, maxHealth);
-        currentHealth = maxHealth;
-        initialized = true;
+        _maxHealth = Mathf.Max(1, _maxHealth);
+        _currentHealth = _maxHealth;
+        _initialized = true;
     }
 }
