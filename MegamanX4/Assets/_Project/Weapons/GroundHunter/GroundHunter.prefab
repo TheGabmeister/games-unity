@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4559569227036523729}
   - component: {fileID: -1999154112721836509}
   - component: {fileID: 2517036731380005356}
+  - component: {fileID: 2535031368983772675}
   m_Layer: 0
   m_Name: GroundHunter
   m_TagString: Untagged
@@ -166,3 +167,17 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2535031368983772675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956734191110312132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff5647dda17074942992fda974c67285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::Projectile
+  damage: 1
+  piercing: 0
