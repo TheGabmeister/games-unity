@@ -2,7 +2,7 @@
 
 Status: **Design note, unimplemented.**
 
-This document captures the current design direction for a Unity-side equivalent of an Unreal `GameMode` + `HUD` setup, plus the bootstrap infrastructure needed to load systems before gameplay content.
+This document captures the current design direction for a Unity-side equivalent of an Unreal `GameMode` + `HUD` setup, plus the bootstrap infrastructure used to load systems before gameplay content.
 
 It does **not** commit us to full framework code yet. The goal is to lock down ownership and data flow before we add:
 
@@ -25,7 +25,7 @@ This spec is a companion to:
 
 The project needs **two orchestration layers**:
 
-- a persistent `Bootstrapper` that loads systems and managers first
+- a code-driven `Bootstrapper` that ensures the persistent systems root exists before scene content starts running
 - a per-stage `GameplaySession` that owns the current player, HUD binding, and respawn rules
 
 The `GameplaySession` still plays the role Unreal's `GameMode` often plays:
@@ -96,55 +96,54 @@ So we should copy the **ownership pattern**, not Unreal's class naming 1:1.
 
 ## 4. Scene ownership
 
-Project direction from `AGENTS.md`:
+Current project state:
 
-- `Init.unity` is the bootstrap / persistent systems scene
-- `Gameplay.unity` and future stage scenes load additively
+- `Init.unity` has been removed
+- `Bootstrapper` is now code-driven
+- `Gameplay.unity` is currently the authored gameplay scene
 
 Recommended ownership split:
 
-### 4.1 Near-term
+### 4.1 Current model
 
-`Init.unity` should own the bootstrap layer.
+`Bootstrapper` is not scene-owned. It runs through:
 
-Recommended contents of `Init.unity`:
+- `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]`
 
-- `Bootstrapper`
-- persistent systems and managers
-- future run-level state if needed
+and ensures the persistent systems root exists by instantiating:
 
-`Gameplay.unity` and future stage scenes should own authored gameplay content.
+- `Assets/Resources/Systems.prefab`
 
-Recommended contents of gameplay scenes:
+The `Systems` prefab is marked by `SystemsRoot`, which:
+
+- acts as the persistent systems root
+- survives scene loads
+- destroys duplicate systems roots if another one appears
+
+`Gameplay.unity` and future stage scenes own authored gameplay content:
 
 - level geometry
 - enemies and hazards
 - `PlayerStart` marker object(s)
 - optional stage-local authored helpers
+- eventually a stage-local `GameplaySession` or a spawned equivalent
 
-For the current project state, the recommended model is:
+That is the current recommended model because:
 
-- open `Init.unity`
-- let `Bootstrapper` initialize systems/managers
-- let `Bootstrapper` load `Gameplay.unity` additively
-- resolve a `PlayerStart` in the loaded gameplay scene
-- spawn the player prefab automatically after systems are ready
-
-That is the simplest version because:
-
-- it follows the repo's bootstrap/persistent-scene direction
-- it guarantees managers exist before gameplay starts
-- it gives us one canonical player-spawn path
-- it extends naturally to future stages
+- it no longer depends on a dedicated bootstrap scene
+- it guarantees the systems root exists before scene content starts running
+- it gives us one canonical systems bootstrap path
+- it keeps authored scenes focused on gameplay content
 
 ### 4.2 Longer-term
 
-This same structure already scales well:
+This same structure can still scale to multiple stages:
 
-- persistent boot object in `Init.unity` owns manager lifetime
-- per-stage `GameplaySession` owns active player, checkpoint, boss bindings, and HUD for that stage
+- `Bootstrapper` continues to ensure the systems root exists before gameplay
+- each stage owns its own gameplay content and spawn markers
+- each stage has its own `GameplaySession` responsibilities for player/HUD/checkpoints
 
-If campaign-level state grows later, it can live alongside the Bootstrapper instead of replacing it.
+If campaign-level state grows later, it can live under the persistent systems root rather than requiring a separate bootstrap scene.
 
 ---
 
@@ -226,18 +225,18 @@ Use **Option B** once checkpoint, camera, HUD, boss intro flow, and pause system
 
 Recommended startup sequence:
 
-1. `Init.unity` opens first.
-2. `Bootstrapper` initializes persistent systems and managers.
-3. `Bootstrapper` loads the target gameplay scene additively.
-4. After the gameplay scene is loaded, `Bootstrapper` creates or resolves the stage `GameplaySession`.
-5. `GameplaySession` finds a `PlayerStart` in the loaded gameplay scene.
-6. `GameplaySession` spawns the player prefab at that `PlayerStart`.
-7. `GameplaySession` registers the player and binds the HUD.
+1. Unity begins loading the active scene.
+2. `Bootstrapper.Execute()` runs before scene load via `RuntimeInitializeOnLoadMethod`.
+3. `Bootstrapper` checks whether a `SystemsRoot` already exists.
+4. If not, it loads `Resources/Systems.prefab` and instantiates it.
+5. `SystemsRoot` claims persistence and rejects duplicates.
+6. Scene content then loads and starts.
+7. `GameplaySession` creates or resolves the current player/HUD flow for that stage.
 
 This guarantees:
 
-- managers exist before gameplay starts
-- the same flow works for different levels
+- the systems root exists before gameplay starts
+- the same bootstrap path works no matter which gameplay scene is entered
 - player spawning is driven by authored level markers instead of hand-placed runtime players
 
 ### 7.2 `PlayerStart`
@@ -260,13 +259,14 @@ The important point is that the runtime player prefab is spawned by code. The sc
 
 Recommended flow for gameplay startup:
 
-1. `GameplaySession` wakes up after bootstrap and scene load are complete.
-2. It resolves the active spawn point, initially from `PlayerStart`.
-3. It spawns the player prefab at that point.
-4. It stores that player as the current player.
-5. It creates or locates `GameplayHudController`.
-6. It tells the HUD to bind to the current player.
-7. HUD subscribes to `Health`, weapon energy, and later boss state.
+1. `Bootstrapper` ensures the persistent systems root exists before the scene starts.
+2. `GameplaySession` wakes up after scene load is complete.
+3. It resolves the active spawn point, initially from `PlayerStart`.
+4. It spawns the player prefab at that point.
+5. It stores that player as the current player.
+6. It creates or locates `GameplayHudController`.
+7. It tells the HUD to bind to the current player.
+8. HUD subscribes to `Health`, weapon energy, and later boss state.
 
 ### 7.4 Death / respawn
 
@@ -332,10 +332,10 @@ without teaching generic HUD code how bosses work internally.
 
 Good responsibilities:
 
-- initialize or load persistent managers before gameplay is entered
-- load gameplay scenes additively
-- ensure systems exist before gameplay content starts running
-- hand off to the stage `GameplaySession` once the target scene is loaded
+- ensure the persistent systems root exists before gameplay content starts running
+- instantiate `Resources/Systems.prefab` when needed
+- avoid duplicate systems-root creation
+- stay small and infrastructure-only
 
 ### 10.2 `GameplaySession`
 
@@ -378,8 +378,7 @@ Add:
 
 First-pass responsibilities:
 
-- initialize systems/managers from `Init.unity`
-- load `Gameplay.unity` additively
+- initialize systems/managers from the persistent `Systems` prefab
 - find `PlayerStart`
 - spawn the player prefab automatically
 - expose `CurrentPlayer`
@@ -404,10 +403,9 @@ Do **not** include these in the first pass unless they become necessary:
 Conceptually:
 
 ```csharp
-public class Bootstrapper : MonoBehaviour
+public static class Bootstrapper
 {
-    public void InitializeManagers() { ... }
-    public void LoadGameplayScene(string sceneName) { ... }
+    public static void Execute() { ... }
 }
 ```
 
@@ -449,7 +447,7 @@ This is enough structure for a good first implementation without overbuilding.
 
 These do not block the first HUD pass, but they will matter soon:
 
-- Should the HUD Canvas live in `Gameplay.unity` now, or in `Init.unity` once stage flow expands?
+- Should the HUD Canvas live in `Gameplay.unity`, or under the persistent `Systems` root once stage flow expands?
 - Should `GameplaySession` own checkpoint transforms directly, or should we add a `Checkpoint` component early?
 - When Zero lands, do we want one shared HUD controller with mode-specific panels, or separate X / Zero HUD panels?
 
@@ -466,9 +464,8 @@ Current recommendation:
 
 Current recommended decisions:
 
-- Use `Bootstrapper` in `Init.unity` to load persistent systems and managers before gameplay.
+- Use the new code-driven `Bootstrapper` to instantiate the persistent `Systems` prefab before scene content starts.
 - Use `GameplaySession` as the Unity-side GameMode analogue.
-- Load gameplay scenes additively after bootstrap is complete.
 - Spawn the player prefab automatically by resolving a `PlayerStart` GameObject in the loaded gameplay scene.
 - Let `GameplaySession` own the current player reference and respawn flow.
 - Let `GameplayHudController` own HUD rendering and subscriptions.

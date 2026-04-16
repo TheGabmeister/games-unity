@@ -107,20 +107,24 @@ public class Projectile : MonoBehaviour
 
 Moves in a fixed direction at constant speed. Covers: buster shots (all tiers), Twin Slasher blades, enemy bullets. No `Rigidbody2D` dependency — also usable for background scrolling, visual effects, or any object that needs constant-velocity linear motion.
 
+**No Initialize method.** Direction is fully determined by two prefab-baked values:
+
+- `angleDeg` — `[SerializeField]`, baked per prefab. 0 for horizontal, +30 for upward diagonal, etc.
+- `facing` — derived from `transform.lossyScale.x` at `Start`. The spawner flips `localScale.x` on the root to set direction. For composite prefabs (Twin Slasher), flipping the root flips all children.
+
 ```csharp
 public class StraightMovement : MonoBehaviour
 {
     [SerializeField] float speed = 18f;
+    [SerializeField] float angleDeg;
 
     Vector2 direction;
 
-    public void Initialize(int facing, float angleDeg = 0f)
+    void Start()
     {
+        int facing = (int)Mathf.Sign(transform.lossyScale.x);
         float rad = angleDeg * Mathf.Deg2Rad;
         direction = new Vector2(Mathf.Cos(rad) * facing, Mathf.Sin(rad));
-        var s = transform.localScale;
-        s.x = Mathf.Abs(s.x) * facing;
-        transform.localScale = s;
     }
 
     void Update()
@@ -132,14 +136,11 @@ public class StraightMovement : MonoBehaviour
 
 When used on a projectile prefab alongside `Projectile` (which requires `Rigidbody2D` + `Collider2D`), the kinematic body's collider follows the transform automatically — trigger callbacks fire as normal.
 
-**Initialize parameters:**
-
-- `facing`: +1 or -1 (from `PlayerController.Facing` or enemy facing).
-- `angleDeg`: 0 for horizontal, +30 for upward diagonal, -30 for downward. Default 0 for straight-line shots.
-
 ### 3.2 StationaryHazard
 
 Spawns in place, optionally rises/scales over a riseTime, persists for a duration, then despawns. Covers: Frost Tower, Lightning Web (if treated as zone). No `Rigidbody2D` dependency — the object doesn't translate, only scales.
+
+**No Initialize method.** Facing is derived from `transform.lossyScale.x` (set by the spawner flipping `localScale.x` on the root). All configuration is baked via `[SerializeField]`.
 
 ```csharp
 public class StationaryHazard : MonoBehaviour
@@ -149,14 +150,6 @@ public class StationaryHazard : MonoBehaviour
 
     Vector3 targetScale;
     float timer;
-
-    public void Initialize(int facing)
-    {
-        // facing can orient the hazard if needed (e.g., angled spike).
-        var s = transform.localScale;
-        s.x = Mathf.Abs(s.x) * facing;
-        transform.localScale = s;
-    }
 
     void Start()
     {
@@ -187,15 +180,13 @@ Lifetime and despawn are handled by `Projectile.lifetime` — StationaryHazard d
 
 ## 4. Behavior components — planned (not implemented)
 
-Specced here so future weapon specs can reference them by name. Each follows the same pattern: no `Rigidbody2D` dependency, `Initialize(...)` sets parameters, `Update` moves via `transform.position`.
+Specced here so future weapon specs can reference them by name. Each follows the same pattern: no `Rigidbody2D` dependency, no `Initialize` method, all config baked via `[SerializeField]`, facing derived from `transform.lossyScale.x` in `Start`, movement via `transform.position` in `Update`.
 
 ### 4.1 ArcMovement
 
 Moves forward with simulated gravity. Covers: Rising Fire, enemy lobbed shots.
 
-```
-Initialize(int facing, float launchAngle, float arcGravity)
-```
+SerializeFields: `float speed`, `float launchAngle`, `float arcGravity`.
 
 Maintains a velocity vector. Each Update: `velocity.y -= arcGravity * dt`, then `transform.position += velocity * dt`.
 
@@ -203,29 +194,23 @@ Maintains a velocity vector. Each Update: `velocity.y -= arcGravity * dt`, then 
 
 Moves horizontally, sticking to the ground surface below. Covers: Ground Hunter.
 
-```
-Initialize(int facing)
-```
+SerializeFields: `float speed`, `LayerMask groundLayers`.
 
-Each Update: cast downward to find ground, snap Y to surface, advance X at speed. Despawns if no ground found (ledge edge). Note: this behavior needs `Physics2D.Raycast` for ground detection, which works independently of whether the object has a `Rigidbody2D`.
+Each Update: `Physics2D.Raycast` downward to find ground, snap Y to surface, advance X at speed. Despawns if no ground found (ledge edge).
 
 ### 4.3 HomingMovement
 
 Tracks a target and steers toward it. Covers: Aiming Laser.
 
-```
-Initialize(Transform target, float turnSpeed)
-```
+SerializeFields: `float speed`, `float turnSpeed`. Target acquired at `Start` via nearest enemy query (or assigned by spawner via a public `Target` property — the one exception where a setter is needed, since the target can't be baked into a prefab).
 
-Each Update: rotate direction toward target, advance at speed. `turnSpeed` controls how aggressively it tracks.
+Each Update: rotate direction toward target, advance at speed.
 
 ### 4.4 OrbitalMovement
 
-Orbits around the player (or a point). Covers: Kuuenzan (Zero's spinning slash), Double Cyclone.
+Orbits around a point. Covers: Kuuenzan (Zero's spinning slash), Double Cyclone.
 
-```
-Initialize(Transform center, float radius, float angularSpeed)
-```
+SerializeFields: `float radius`, `float angularSpeed`. Center point set by spawner via a public `Center` property (can't be baked — needs the player's live transform).
 
 Each Update: advance angle, compute position on circle, set `transform.position`.
 
@@ -233,9 +218,7 @@ Each Update: advance angle, compute position on circle, set `transform.position`
 
 Moves outward, decelerates, reverses, returns to spawn point. Covers: potential future weapons.
 
-```
-Initialize(int facing, float outSpeed, float returnSpeed, float hangTime)
-```
+SerializeFields: `float outSpeed`, `float returnSpeed`, `float hangTime`.
 
 ---
 
@@ -246,7 +229,7 @@ Initialize(int facing, float outSpeed, float returnSpeed, float hangTime)
 | BusterShot responsibility | New owner |
 |---|---|
 | `Awake`: Kinematic + gravityScale | `Projectile.Awake` |
-| `Fire(direction)`: set scale + direction | `StraightMovement.Initialize(facing)` |
+| `Fire(direction)`: set scale + direction | Spawner flips `localScale.x`; `StraightMovement.Start` reads it |
 | `OnTriggerEnter2D`: layer check + damage + destroy | `Projectile.OnTriggerEnter2D` |
 | `Destroyed` event | `Projectile.Destroyed` |
 | `speed`, `lifetime`, `damage`, `hitLayers` fields | Split: `speed` on `StraightMovement`, rest on `Projectile` |
@@ -271,8 +254,9 @@ activeSmallShots.Add(shot);
 shot.Destroyed += () => activeSmallShots.Remove(shot);
 
 // After:
-var straight = go.GetComponent<StraightMovement>();
-straight.Initialize(facing);
+var s = go.transform.localScale;
+s.x = Mathf.Abs(s.x) * facing;
+go.transform.localScale = s;
 var projectile = go.GetComponent<Projectile>();
 activeSmallShots.Add(projectile);
 projectile.Destroyed += () => activeSmallShots.Remove(projectile);
@@ -284,14 +268,13 @@ projectile.Destroyed += () => activeSmallShots.Remove(projectile);
 
 ## 6. WeaponData spawn descriptor (updates SPEC_XWEAPONS)
 
-`WeaponData` gains a serialized array describing what to spawn per fire:
+`WeaponData` gains a serialized array describing what to spawn per fire. Angles and behavior config are baked into prefabs — `SpawnEntry` only carries the prefab reference and a position offset:
 
 ```csharp
 [System.Serializable]
 public struct SpawnEntry
 {
     public GameObject prefab;
-    public float angleDeg;
     public Vector2 positionOffset;   // relative to muzzle, in facing-local space
 }
 
@@ -306,36 +289,60 @@ public SpawnEntry[] chargedSpawnPattern;
 **Base Buster** (small lemon):
 
 ```
-spawnPattern: [{ prefab: SmallShot, angleDeg: 0, offset: (0,0) }]
+spawnPattern: [{ prefab: SmallShot, offset: (0,0) }]
 chargedSpawnPattern: null   // handled specially by PlayerBuster tiers
 ```
 
-**Twin Slasher** (uncharged):
+**Twin Slasher** (uncharged) — single composite prefab:
 
 ```
-spawnPattern: [
-    { prefab: TwinSlasherBlade, angleDeg: +30, offset: (0, 0.1) },
-    { prefab: TwinSlasherBlade, angleDeg: -30, offset: (0, -0.1) }
-]
+spawnPattern: [{ prefab: TwinSlasher, offset: (0,0) }]
 ```
 
-**Twin Slasher** (charged):
+The `TwinSlasher` prefab is a composite with two child blades (see §8):
 
 ```
-chargedSpawnPattern: [
-    { prefab: TwinSlasherBlade, angleDeg: +30, offset: (0, 0.1) },
-    { prefab: TwinSlasherBlade, angleDeg: -30, offset: (0, -0.1) },
-    { prefab: TwinSlasherBlade, angleDeg: +15, offset: (0, 0.05) },
-    { prefab: TwinSlasherBlade, angleDeg: -15, offset: (0, -0.05) }
-]
+TwinSlasher (root)
+├── DestroyWhenChildless     (cleans up root when all blades expire)
+├── Blade_Up (child)         angleDeg=+30 baked in StraightMovement
+│   ├── Projectile + StraightMovement + Rigidbody2D + Collider2D
+├── Blade_Down (child)       angleDeg=-30 baked in StraightMovement
+│   ├── Projectile + StraightMovement + Rigidbody2D + Collider2D
 ```
+
+**Twin Slasher** (charged) — composite with four blades:
+
+```
+chargedSpawnPattern: [{ prefab: TwinSlasherCharged, offset: (0,0) }]
+```
+
+Same structure, four children at ±30° and ±15°.
 
 **Frost Tower** (uncharged):
 
 ```
-spawnPattern: [{ prefab: FrostTower, angleDeg: 0, offset: (0, -0.5) }]
+spawnPattern: [{ prefab: FrostTower, offset: (0, -0.5) }]
 // offset.y negative = spawn at feet
 ```
+
+### DestroyWhenChildless
+
+Small utility for composite projectile prefabs. Cleans up the empty root after all children are destroyed:
+
+```csharp
+public class DestroyWhenChildless : MonoBehaviour
+{
+    bool started;
+
+    void Update()
+    {
+        if (!started && transform.childCount > 0) started = true;
+        if (started && transform.childCount == 0) Destroy(gameObject);
+    }
+}
+```
+
+Only needed on composite prefabs (Twin Slasher). Single-object prefabs (buster, Frost Tower) don't use it.
 
 ### WeaponInventory spawn loop
 
@@ -356,14 +363,13 @@ void SpawnWeaponShots(WeaponSlot slot, bool charged)
         Vector2 offset = new(entry.positionOffset.x * facing, entry.positionOffset.y);
         var go = Instantiate(entry.prefab, muzzle + offset, Quaternion.identity);
 
-        // Initialize behavior (StraightMovement, StationaryHazard, etc.)
-        if (go.TryGetComponent<StraightMovement>(out var straight))
-            straight.Initialize(facing, entry.angleDeg);
-        else if (go.TryGetComponent<StationaryHazard>(out var hazard))
-            hazard.Initialize(facing);
+        // Flip scale to set facing; behaviors read lossyScale.x in Start.
+        var s = go.transform.localScale;
+        s.x = Mathf.Abs(s.x) * facing;
+        go.transform.localScale = s;
 
-        // Track for on-screen cap
-        if (go.TryGetComponent<Projectile>(out var proj))
+        // Track for on-screen cap (check root and children for Projectile)
+        foreach (var proj in go.GetComponentsInChildren<Projectile>())
         {
             slot.liveShots.Add(go);
             proj.Destroyed += () => slot.liveShots.Remove(go);
@@ -372,7 +378,7 @@ void SpawnWeaponShots(WeaponSlot slot, bool charged)
 }
 ```
 
-The `TryGetComponent` cascade is intentionally explicit. An interface (`IProjectileBehavior`) was considered and rejected — it adds an abstraction layer with no current consumer beyond this one call site. If a fourth or fifth behavior type makes the cascade unwieldy, introduce the interface then.
+No behavior-specific initialization calls. The spawner's only job beyond `Instantiate` is flipping `localScale.x` for facing.
 
 ---
 
@@ -383,12 +389,14 @@ Enemies use the same `Projectile + Behavior` composition. The only difference is
 - Player projectile prefabs: `hitLayers` = Enemy layer.
 - Enemy projectile prefabs: `hitLayers` = Player layer.
 
-Enemy spawning follows the same pattern: instantiate prefab, call `behavior.Initialize(facing, ...)`. Enemy scripts call this directly — no `WeaponInventory` needed on the enemy side.
+Enemy spawning follows the same pattern: instantiate prefab, flip `localScale.x` for facing. Enemy scripts call this directly — no `WeaponInventory` needed on the enemy side.
 
 ```csharp
 // Example: enemy turret fires a straight shot
 var go = Instantiate(bulletPrefab, muzzle, Quaternion.identity);
-go.GetComponent<StraightMovement>().Initialize(facing);
+var s = go.transform.localScale;
+s.x = Mathf.Abs(s.x) * facing;
+go.transform.localScale = s;
 ```
 
 No changes to `Projectile` or behaviors. Layer configuration in the prefab handles friend/foe.
@@ -404,7 +412,8 @@ No changes to `Projectile` or behaviors. Layer configuration in the prefab handl
 | `MegamanX_Shot_Small` | Projectile + StraightMovement | Refactored from BusterShot. damage=1, speed=18, piercing=false |
 | `MegamanX_Shot_Semi` | Projectile + StraightMovement | damage=2, speed=18, piercing=false |
 | `MegamanX_Shot_Full` | Projectile + StraightMovement | damage=4, speed=14, piercing=true, lifetime=0.8 |
-| `TwinSlasherBlade` | Projectile + StraightMovement | damage=2, speed=10, piercing=true, lifetime=0.6 |
+| `TwinSlasher` | Root: DestroyWhenChildless. 2 children: Projectile + StraightMovement (±30°) | damage=2, speed=10, piercing=true, lifetime=0.6 |
+| `TwinSlasherCharged` | Root: DestroyWhenChildless. 4 children: Projectile + StraightMovement (±30°, ±15°) | damage=3, speed=10, piercing=true, lifetime=0.6 |
 | `FrostTower` | Projectile + StationaryHazard | damage=3, piercing=true, lifetime=1.5 |
 | `FrostTowerCharged` | Projectile + StationaryHazard | damage=5, piercing=true, lifetime=2.5, taller |
 
@@ -471,13 +480,14 @@ Manual QA:
 1. **Projectile.cs** — create the component per §2.
 2. **StraightMovement.cs** — create per §3.1.
 3. **StationaryHazard.cs** — create per §3.2.
-4. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + StraightMovement`. Update `PlayerBuster` (from SPEC_XWEAPONS) to use `Projectile` and `StraightMovement` references instead of `BusterShot`. Re-author the three shot prefabs.
-5. **Delete BusterShot.cs** — only after step 4 is verified.
-6. **Add SpawnEntry[] to WeaponData** — per §6.
-7. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop.
-8. **Author Twin Slasher prefab** — `Projectile + StraightMovement`, WeaponData asset with 2-entry spawn pattern.
-9. **Author Frost Tower prefab** — `Projectile + StationaryHazard`, WeaponData asset with 1-entry spawn pattern.
-10. Verify all buster + special weapon fire works end-to-end.
+4. **DestroyWhenChildless.cs** — create per §6.
+5. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
+6. **Delete BusterShot.cs** — only after step 5 is verified.
+7. **Add SpawnEntry[] to WeaponData** — per §6.
+8. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
+9. **Author Twin Slasher composite prefab** — root with `DestroyWhenChildless`, two children each with `Projectile + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
+10. **Author Frost Tower prefab** — `Projectile + StationaryHazard`, WeaponData asset with 1-entry spawn pattern.
+11. Verify all buster + special weapon fire works end-to-end.
 
 Steps 1–5 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
 
@@ -492,13 +502,14 @@ Steps 1–5 are the critical path. The projectile system must work with the exis
 | `Assets/_Project/Scripts/Projectile.cs` | MonoBehaviour |
 | `Assets/_Project/Scripts/StraightMovement.cs` | MonoBehaviour |
 | `Assets/_Project/Scripts/StationaryHazard.cs` | MonoBehaviour |
+| `Assets/_Project/Scripts/DestroyWhenChildless.cs` | MonoBehaviour (utility for composite prefabs) |
 
 ### Modified
 
 | File | Change |
 |---|---|
 | `WeaponData.cs` | Add `SpawnEntry` struct + `spawnPattern` / `chargedSpawnPattern` arrays |
-| `WeaponInventory.cs` | Use `SpawnWeaponShots` loop with behavior initialization |
+| `WeaponInventory.cs` | Use `SpawnWeaponShots` loop with scale-flip for facing |
 | `PlayerBuster.cs` | Track `List<Projectile>` instead of `List<BusterShot>` |
 
 ### Deleted
