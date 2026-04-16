@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 80" width="128" height="80">
+  <!--
+    Tonboroid S - dragonfly-type hovering enemy.
+    Authored facing left. Wide and short, wings spread horizontally.
+    Palette (metallic purple-red):
+      body-pale   #F8BBD0   body-light  #F06292   body-mid    #E91E63
+      body-deep   #AD1457   wing-light  #CE93D8   wing-mid    #AB47BC
+      wing-deep   #7B1FA2   eye         #FFEB3B   metal       #78909C
+  -->
+
+  <!-- Wings (behind body) -->
+  <!-- Left wing -->
+  <path d="M 56 38 L 8 20 L 4 28 L 16 36 L 52 42 Z"
+        fill="#CE93D8" stroke="#7B1FA2" stroke-width="0.8" opacity="0.85"/>
+  <path d="M 54 39 L 14 24 L 12 28 L 50 41 Z"
+        fill="#AB47BC" opacity="0.5"/>
+  <!-- Left lower wing -->
+  <path d="M 56 42 L 16 54 L 12 48 L 52 40 Z"
+        fill="#CE93D8" stroke="#7B1FA2" stroke-width="0.8" opacity="0.75"/>
+
+  <!-- Right wing -->
+  <path d="M 72 38 L 120 20 L 124 28 L 112 36 L 76 42 Z"
+        fill="#CE93D8" stroke="#7B1FA2" stroke-width="0.8" opacity="0.85"/>
+  <path d="M 74 39 L 114 24 L 116 28 L 78 41 Z"
+        fill="#AB47BC" opacity="0.5"/>
+  <!-- Right lower wing -->
+  <path d="M 72 42 L 112 54 L 116 48 L 76 40 Z"
+        fill="#CE93D8" stroke="#7B1FA2" stroke-width="0.8" opacity="0.75"/>
+
+  <!-- Tail segments -->
+  <ellipse cx="86" cy="42" rx="8" ry="5" fill="#E91E63" stroke="#AD1457" stroke-width="0.8"/>
+  <ellipse cx="98" cy="44" rx="6" ry="4" fill="#F06292" stroke="#AD1457" stroke-width="0.8"/>
+  <ellipse cx="108" cy="46" rx="5" ry="3" fill="#F06292" stroke="#AD1457" stroke-width="0.8"/>
+  <circle cx="114" cy="47" r="2" fill="#F8BBD0"/>
+
+  <!-- Body (central thorax) -->
+  <ellipse cx="64" cy="40" rx="16" ry="12" fill="#E91E63" stroke="#AD1457" stroke-width="1.2"/>
+  <ellipse cx="64" cy="38" rx="12" ry="8" fill="#F06292" opacity="0.7"/>
+  <ellipse cx="64" cy="36" rx="6" ry="4" fill="#F8BBD0" opacity="0.6"/>
+
+  <!-- Head -->
+  <ellipse cx="44" cy="38" rx="12" ry="10" fill="#E91E63" stroke="#AD1457" stroke-width="1"/>
+  <ellipse cx="44" cy="36" rx="8" ry="6" fill="#F06292" opacity="0.8"/>
+
+  <!-- Eyes (large compound eyes) -->
+  <ellipse cx="38" cy="34" rx="5" ry="6" fill="#FFEB3B" stroke="#F57F17" stroke-width="0.8"/>
+  <ellipse cx="37" cy="33" rx="2" ry="3" fill="#FFFFFF" opacity="0.6"/>
+  <ellipse cx="50" cy="34" rx="5" ry="6" fill="#FFEB3B" stroke="#F57F17" stroke-width="0.8"/>
+  <ellipse cx="49" cy="33" rx="2" ry="3" fill="#FFFFFF" opacity="0.6"/>
+
+  <!-- Mandibles -->
+  <path d="M 34 42 L 30 50 L 34 48 Z" fill="#78909C" stroke="#455A64" stroke-width="0.5"/>
+  <path d="M 38 44 L 36 52 L 40 48 Z" fill="#78909C" stroke="#455A64" stroke-width="0.5"/>
+
+  <!-- Legs (dangling) -->
+  <path d="M 56 50 L 52 64 L 54 66" fill="none" stroke="#78909C" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M 60 50 L 58 66 L 60 68" fill="none" stroke="#78909C" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M 68 50 L 70 66 L 68 68" fill="none" stroke="#78909C" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M 72 50 L 76 64 L 74 66" fill="none" stroke="#78909C" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

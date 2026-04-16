@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!--
+    Trap Blast - compact stationary turret/cannon.
+    Authored facing left (barrel points -X). Small, wall-mounted.
+    Palette (military gray-green):
+      hull-pale   #CFD8DC   hull-light  #90A4AE   hull-mid    #607D8B
+      hull-body   #455A64   hull-deep   #263238   barrel      #37474F
+      lens        #F44336   accent      #FFAB40
+  -->
+
+  <!-- Mount plate (back, attaches to wall) -->
+  <rect x="34" y="8" width="10" height="32" rx="2" fill="#455A64" stroke="#263238" stroke-width="1"/>
+  <rect x="36" y="10" width="6" height="28" rx="1" fill="#607D8B" opacity="0.6"/>
+
+  <!-- Main turret housing -->
+  <path d="M 14 10 L 36 8 L 36 40 L 14 38 Q 10 24, 14 10 Z"
+        fill="#455A64" stroke="#263238" stroke-width="1.2"/>
+  <path d="M 16 12 L 34 10 L 34 38 L 16 36 Q 13 24, 16 12 Z"
+        fill="#607D8B" opacity="0.7"/>
+
+  <!-- Highlight strip -->
+  <path d="M 18 14 L 32 12 L 32 18 L 18 20 Z" fill="#90A4AE" opacity="0.5"/>
+
+  <!-- Barrel -->
+  <rect x="2" y="20" width="16" height="8" rx="2" fill="#37474F" stroke="#263238" stroke-width="1"/>
+  <rect x="4" y="21" width="12" height="6" rx="1" fill="#455A64"/>
+  <!-- Muzzle ring -->
+  <rect x="2" y="19" width="4" height="10" rx="1" fill="#607D8B"/>
+
+  <!-- Sensor lens -->
+  <circle cx="24" cy="24" r="6" fill="#263238"/>
+  <circle cx="24" cy="24" r="4.5" fill="#F44336" opacity="0.9"/>
+  <circle cx="24" cy="24" r="2.5" fill="#FFAB40" opacity="0.8"/>
+  <circle cx="23" cy="23" r="1" fill="#FFFFFF" opacity="0.9"/>
+
+  <!-- Mounting bolts -->
+  <circle cx="38" cy="14" r="1.5" fill="#90A4AE"/>
+  <circle cx="38" cy="34" r="1.5" fill="#90A4AE"/>
+</svg>

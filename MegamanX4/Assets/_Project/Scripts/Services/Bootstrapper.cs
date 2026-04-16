@@ -8,10 +8,10 @@ public static class Bootstrapper
         if (Services.Instance || Object.FindFirstObjectByType<Services>())
             return;
 
-        var prefab = Resources.Load<GameObject>("Systems");
+        var prefab = Resources.Load<GameObject>("GameServices");
         if (!prefab)
         {
-            Debug.LogError("Missing Resources/Systems prefab.");
+            Debug.LogError("Missing Resources/GameServices prefab.");
             return;
         }
 
