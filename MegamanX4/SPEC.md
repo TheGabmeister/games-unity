@@ -128,23 +128,19 @@ if (IsDashing)
 
 ## 3. Ladder climb
 
-### 3.1 Data types
+### 3.1 Data representation
 
-New `LadderZone` MonoBehaviour on a trigger collider, one per authored ladder. Lives at `Assets/_Project/Scripts/LadderZone.cs`. Ladder colliders go on a new layer, `Ladder`, added in Tags & Layers.
+No script. A ladder is a `BoxCollider2D` with `isTrigger = true` on a new `Ladder` layer, added in Tags & Layers. One collider per authored ladder. A `Ladder.prefab` template is checked in so designers duplicate a known-good configuration (collider + layer + any visual) rather than hand-building each.
 
-```csharp
-[RequireComponent(typeof(BoxCollider2D))]
-public class LadderZone : MonoBehaviour
-{
-    public float CenterX => transform.position.x;   // ladder X axis
-    public float TopY    => col.bounds.max.y;       // auto-dismount threshold
-    public float BottomY => col.bounds.min.y;
-    BoxCollider2D col;
-    void Awake() => col = GetComponent<BoxCollider2D>();
-}
-```
+All values the player needs come from the collider's world-space bounds, read at query time:
 
-Ladder colliders are `isTrigger = true`. Player queries them with a short `Physics2D.OverlapBox` on the `Ladder` layer each FixedUpdate — does not use `rb.Cast` because that filter excludes triggers ([PlayerController.cs:106](Assets/_Project/Scripts/PlayerController.cs#L106)).
+- Center X: `col.bounds.center.x` (used for snap-to-center on grab). Preferred over `transform.position.x` so an offset `BoxCollider2D` or a nested parent transform doesn't break snap alignment.
+- Top Y: `col.bounds.max.y` (auto-dismount threshold).
+- Bottom Y: `col.bounds.min.y` (drop-off threshold).
+
+Player queries with a short `Physics2D.OverlapBox` on the `Ladder` layer each FixedUpdate — does not use `rb.Cast` because that filter excludes triggers ([PlayerController.cs:106](Assets/_Project/Scripts/PlayerController.cs#L106)).
+
+If per-ladder behavior is ever needed (climb-speed override, one-way ladders, on-attach events), add a `LadderZone` component later and `GetComponent<LadderZone>()` at the single query site in `PlayerController`. One-line change; defer until demanded.
 
 ### 3.2 Player state
 
@@ -155,7 +151,7 @@ Add to `PlayerController`:
 [SerializeField] LayerMask ladderLayer;
 [SerializeField] float climbSpeed = 5f;
 
-LadderZone currentLadder;
+Collider2D currentLadder;
 bool onLadder;
 bool climbingShootLock;   // shoot halts climb, locks facing
 float ladderShootLockUntil;
@@ -166,23 +162,23 @@ float ladderShootLockUntil;
 In `FixedUpdate`, after `Probe()`, before anything else — detect ladder overlap:
 
 ```csharp
-LadderZone zone = QueryLadder();   // OverlapBox on ladderLayer
+Collider2D ladder = QueryLadder();   // OverlapBox on ladderLayer
 bool pressingUp   = moveInput.y >  0.5f;
 bool pressingDown = moveInput.y < -0.5f;
 
-if (!onLadder && zone != null)
+if (!onLadder && ladder != null)
 {
-    bool grabFromAir   = pressingUp || (pressingDown && !isGrounded);
+    bool grabFromAir    = pressingUp || (pressingDown && !isGrounded);
     bool grabFromGround = pressingUp;   // Down at ground does nothing
-    bool grabFromTop   = pressingDown && isGrounded && AtLadderTop(zone);
-    if (grabFromAir || grabFromGround || grabFromTop) EnterLadder(zone);
+    bool grabFromTop    = pressingDown && isGrounded && AtLadderTop(ladder);
+    if (grabFromAir || grabFromGround || grabFromTop) EnterLadder(ladder);
 }
 ```
 
-`EnterLadder(zone)`:
+`EnterLadder(Collider2D ladder)`:
 
-- `currentLadder = zone; onLadder = true;`
-- Snap `rb.position.x = zone.CenterX` (Q3a). Instantaneous, no tween.
+- `currentLadder = ladder; onLadder = true;`
+- Snap `rb.position.x = ladder.bounds.center.x` (Q3a). Instantaneous, no tween.
 - `velocity = Vector2.zero`.
 - Clear `dashJumpLock`, `wallJumpLockTimer`, `coyoteTimer`.
 - Cancel any active dash (`dashTimer = 0f`).
@@ -206,11 +202,11 @@ While `onLadder`:
 | Trigger | Resulting state |
 |---|---|
 | Jump pressed | Exit ladder. `velocity.y = jumpSpeed`. `velocity.x = moveInput.x * moveSpeed` if held, else `0` (Q3d). No dash-jump from ladder. |
-| Reach top rung (`rb.position.y >= zone.TopY`) | Auto-dismount (Q3b). Snap `rb.position.y = zone.TopY + halfHeight`, clear ladder, set `velocity = Vector2.zero`. |
-| Pressing Down at bottom rung (`rb.position.y <= zone.BottomY` and `pressingDown`) | Release, fall with gravity. Standard airborne state. |
+| Reach top rung (`rb.position.y >= currentLadder.bounds.max.y`) | Auto-dismount (Q3b). Snap `rb.position.y = top + halfHeight`, clear ladder, set `velocity = Vector2.zero`. |
+| Pressing Down at bottom rung (`rb.position.y <= currentLadder.bounds.min.y` and `pressingDown`) | Release, fall with gravity. Standard airborne state. |
 | Pressing Left/Right while overlapping floor of the top rung (legacy climb-up alternative) | Dismount sideways. Matches user answer for "Left/Right at ladder top". |
 | Take damage (`Health.OnDamage`) | Release, brief i-frames, no horizontal knockback (Q3b). See §3.7. |
-| Overlap with `LadderZone` ends (design error / edge) | Release, fall. |
+| Overlap with ladder collider ends (design error / edge) | Release, fall. |
 | Shoot button | **Does not release.** Shoot triggers the climb halt + facing lock. Consistent with Q1a and Q5b. |
 
 ### 3.6 FixedUpdate early-return structure
@@ -221,12 +217,12 @@ Ladder state bypasses the normal physics branches:
 void FixedUpdate()
 {
     Probe();                                // still runs — keeps isGrounded accurate for dismount-on-jump
-    var zone = QueryLadder();
-    if (!onLadder) TryGrabLadder(zone);
+    var ladder = QueryLadder();
+    if (!onLadder) TryGrabLadder(ladder);
 
     if (onLadder)
     {
-        TickLadder(zone);
+        TickLadder();
         return;
     }
 
@@ -334,7 +330,7 @@ When the user signals "go," suggested order:
 
 1. Audit coyote/buffer values, add `TryStartDash` coyote clear, add comment. (Trivial.)
 2. `dashJumpLock` flag + `FixedUpdate` branch + dash-jump path in `TryJump`. (Small; ~20 LOC.)
-3. `LadderZone` component + `Ladder` layer. (Small.)
+3. Add `Ladder` layer + author `Ladder.prefab` (trigger `BoxCollider2D`, correct layer). (Trivial.)
 4. Ladder state + grab/tick/release in `PlayerController`. (Medium; ~80 LOC.)
 5. Climb / climb-shoot SVG assets + sprite swap branch.
 6. Health → PlayerController damage-on-ladder hook.
