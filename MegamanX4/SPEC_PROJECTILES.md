@@ -1,6 +1,6 @@
 # SPEC_PROJECTILES — Projectile System
 
-Status: **Design complete, unimplemented.**
+Status: **Core components implemented.** [Projectile.cs](Assets/_Project/Scripts/Projectile.cs), [Lifetime.cs](Assets/_Project/Scripts/Lifetime.cs), [MoveForward.cs](Assets/_Project/Scripts/MoveForward.cs), and [MoveVertical.cs](Assets/_Project/Scripts/MoveVertical.cs) are live in the codebase. Weapon prefabs (buster migration, Twin Slasher, Frost Tower) still pending per [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md).
 
 Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) with a composable projectile system used by both player and enemy weapons. A shared `Projectile` component handles damage, hit detection, and despawn. Separate small behavior components handle movement patterns. Prefabs compose the two.
 
@@ -17,10 +17,10 @@ Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) w
 Prefab: MegamanX_Shot_Small   (layer: PlayerProjectile)
 ├── Projectile           (damage, piercing)
 ├── Lifetime             (duration=0.6s)
-├── StraightMovement     (speed, direction — moves via transform.position)
+├── MoveForward          (speed — advances along transform.right)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
-└── SpriteRenderer
+└── SpriteRenderer       (SVG authored facing right, +X = leading edge)
 
 Prefab: FrostTower            (layer: PlayerProjectile)
 ├── Projectile           (damage, piercing=true)
@@ -128,44 +128,48 @@ On a projectile, `Destroy(gameObject)` triggers `Projectile.OnDestroy` → `Dest
 
 ## 3. Behavior components — implemented now
 
-### 3.1 StraightMovement
+### 3.1 MoveForward
 
-Moves in a fixed direction at constant speed. Covers: buster shots (all tiers), Twin Slasher blades, enemy bullets. No `Rigidbody2D` dependency — also usable for background scrolling, visual effects, or any object that needs constant-velocity linear motion.
+Moves along `transform.right` at constant speed. Covers: buster shots (all tiers), Twin Slasher blades, enemy bullets. No `Rigidbody2D` dependency — also usable for background scrolling, visual effects, or any object that needs constant-velocity linear motion.
 
-**No Initialize method.** Direction is fully determined by two prefab-baked values:
-
-- `angleDeg` — `[SerializeField]`, baked per prefab. 0 for horizontal, +30 for upward diagonal, etc.
-- `facing` — derived from `transform.lossyScale.x` at `Start`. The spawner flips `localScale.x` on the root to set direction. For composite prefabs (Twin Slasher), flipping the root flips all children.
+**No Initialize method, no angle or facing field.** Direction is entirely determined by the transform's world rotation, set by the spawner at `Instantiate`. The script itself has a single serialized field — `speed`.
 
 ```csharp
-public class StraightMovement : MonoBehaviour
+public class MoveForward : MonoBehaviour
 {
     [SerializeField] float speed = 18f;
-    [SerializeField] float angleDeg;
-
-    Vector2 direction;
-
-    void Start()
-    {
-        int facing = (int)Mathf.Sign(transform.lossyScale.x);
-        float rad = angleDeg * Mathf.Deg2Rad;
-        direction = new Vector2(Mathf.Cos(rad) * facing, Mathf.Sin(rad));
-    }
 
     void Update()
     {
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
+        transform.position += transform.right * (speed * Time.deltaTime);
     }
 }
 ```
 
+**Spawner rotates the transform** to set direction:
+
+- Fire right: `Quaternion.identity` (or Z = 0°). `transform.right` = world `+X`.
+- Fire left: `Quaternion.Euler(0, 0, 180)`. `transform.right` = world `−X`.
+- Angled spread (e.g., Twin Slasher blade at +30° upward while facing right): `Quaternion.Euler(0, 0, 30)`.
+- Same angle while facing left: `Quaternion.Euler(0, 0, 150)` (i.e., `180 − angle`).
+
+This replaces the older `localScale.x` flip convention — projectile roots are never scaled to flip direction. Projectile SVGs are authored facing right (+X leading edge), so the un-rotated prefab fires right and `transform.right` + SVG orientation stay in sync.
+
 When used on a projectile prefab alongside `Projectile` (which requires `Rigidbody2D` + `Collider2D`), the kinematic body's collider follows the transform automatically — trigger callbacks fire as normal.
+
+### 3.2 MoveVertical
+
+Moves along `±transform.up` at constant speed. Covers: Frost Tower ice shards, vertical enemy bullets, falling debris — anything that needs strictly vertical motion regardless of the transform's Z rotation.
+
+SerializeFields: `float speed`, `enum Direction { Up, Down }`. Each Update: `transform.position += ±transform.up * speed * dt`.
+
+Present in the codebase alongside `MoveForward`. Choose based on what "forward" means for the weapon — `MoveForward` aligns with transform rotation (rotate to aim), `MoveVertical` ignores horizontal facing entirely (always strictly up or down).
 
 ---
 
 ## 4. Behavior components — planned (not implemented)
 
-Specced here so future weapon specs can reference them by name. Each follows the same pattern: no `Rigidbody2D` dependency, no `Initialize` method, all config baked via `[SerializeField]`, facing derived from `transform.lossyScale.x` in `Start`, movement via `transform.position` in `Update`.
+Specced here so future weapon specs can reference them by name. Each follows the same pattern: no `Rigidbody2D` dependency, no `Initialize` method, all config baked via `[SerializeField]`, direction set by the spawner via transform rotation at `Instantiate` (matching `MoveForward` §3.1), movement via `transform.position` in `Update`.
 
 ### 4.1 ArcMovement
 
@@ -216,14 +220,13 @@ Enemies use the same `Projectile + Behavior` composition. The only difference is
 
 The Physics2D collision matrix handles the rest (see §2 "Hit filtering").
 
-Enemy spawning follows the same pattern: instantiate prefab, flip `localScale.x` for facing. Enemy scripts call this directly — no `WeaponInventory` needed on the enemy side.
+Enemy spawning follows the same pattern: instantiate prefab, rotate to set fire direction. Enemy scripts call this directly — no `WeaponInventory` needed on the enemy side.
 
 ```csharp
-// Example: enemy turret fires a straight shot
-var go = Instantiate(bulletPrefab, muzzle, Quaternion.identity);
-var s = go.transform.localScale;
-s.x = Mathf.Abs(s.x) * facing;
-go.transform.localScale = s;
+// Example: enemy turret fires a straight shot toward the player
+int facing = playerIsLeft ? -1 : +1;
+float zRot = facing >= 0 ? 0f : 180f;
+Instantiate(bulletPrefab, muzzle, Quaternion.Euler(0f, 0f, zRot));
 ```
 
 No changes to `Projectile` or behaviors. Layer configuration in the prefab handles friend/foe.
@@ -234,13 +237,15 @@ No changes to `Projectile` or behaviors. Layer configuration in the prefab handl
 
 ### Implemented in this spec
 
+Each row is a single leaf prefab. Multi-blade/multi-shot spreads (e.g., Twin Slasher's 2/4 blades) are produced by the spawner firing the leaf prefab multiple times with different rotations, per [SPEC_XWEAPONS.md §6](SPEC_XWEAPONS.md) — no composite-parent prefabs.
+
 | Prefab | Components | Notes |
 |---|---|---|
-| `MegamanX_Shot_Small` | Projectile + StraightMovement | damage=1, speed=18, piercing=false |
-| `MegamanX_Shot_Semi` | Projectile + StraightMovement | damage=2, speed=18, piercing=false |
-| `MegamanX_Shot_Full` | Projectile + StraightMovement | damage=4, speed=14, piercing=true, lifetime=0.8 |
-| `TwinSlasher` | Root: Lifetime. 2 children: Projectile + Lifetime + StraightMovement (±30°) | damage=2, speed=10, piercing=true, duration=0.6 |
-| `TwinSlasherCharged` | Root: Lifetime. 4 children: Projectile + Lifetime + StraightMovement (±30°, ±15°) | damage=3, speed=10, piercing=true, duration=0.6 |
+| `MegamanX_Shot_Small` | Projectile + Lifetime + MoveForward | damage=1, speed=18, piercing=false |
+| `MegamanX_Shot_Semi` | Projectile + Lifetime + MoveForward | damage=2, speed=18, piercing=false |
+| `MegamanX_Shot_Full` | Projectile + Lifetime + MoveForward | damage=4, speed=14, piercing=true, lifetime=0.8 |
+| `TwinSlasherBlade` | Projectile + Lifetime + MoveForward | damage=2, speed=10, piercing=true, duration=0.6. Spawner fires this twice (±30°) for uncharged. |
+| `TwinSlasherBladeCharged` | Projectile + Lifetime + MoveForward | damage=3, speed=10, piercing=true (layer: `PlayerProjectileNoClip`), duration=0.6. Spawner fires four times (±30°, ±15°). |
 | `FrostTower` | Projectile + Lifetime | damage=3, piercing=true, lifetime=1.5, stationary |
 | `FrostTowerCharged` | Projectile + Lifetime | damage=5, piercing=true, lifetime=2.5, stationary, taller |
 
@@ -250,10 +255,10 @@ No changes to `Projectile` or behaviors. Layer configuration in the prefab handl
 |---|---|---|
 | Lightning Web | Projectile + Lifetime or custom | Web zone persists on surface, stationary |
 | Aiming Laser | HomingMovement | Locks onto nearest enemy |
-| Double Cyclone | StraightMovement (angled) or OrbitalMovement | Two tornadoes, upward angle |
+| Double Cyclone | MoveForward (spawner rotates upward) or OrbitalMovement | Two tornadoes, upward angle |
 | Rising Fire | ArcMovement | Arcs upward with gravity |
 | Ground Hunter | GroundCrawlMovement | Surface-following |
-| Soul Body | StraightMovement | Clone travels forward, slow |
+| Soul Body | MoveForward | Clone travels forward, slow (layer: `PlayerProjectileNoClip`) |
 
 ---
 
@@ -278,9 +283,11 @@ EditMode tests (requires `.asmdef` setup from README §12):
 - **Lifetime**
   - Auto-destroys after `duration` seconds.
   - Triggers `Projectile.Destroyed` on the same GameObject.
-- **StraightMovement**
-  - Facing derived from `lossyScale.x` at `Start`.
-  - Update advances position by `direction * speed * dt`.
+- **MoveForward**
+  - Update advances position by `transform.right * speed * dt`.
+  - Rotating the transform (Z = 180°) reverses travel direction without any script-side facing logic.
+- **MoveVertical**
+  - Update advances position by `±transform.up * speed * dt` per `Direction` enum.
 
 Manual QA:
 - Drop a buster shot prefab in the scene → it moves, hits enemies, despawns on contact or lifetime.
@@ -291,9 +298,11 @@ Manual QA:
 
 ## 9. Implementation order
 
-1. **Projectile.cs** — create the component per §2.
-2. **Lifetime.cs** — create per §2.1.
-3. **StraightMovement.cs** — create per §3.1.
+Steps 1–3 are already done in the codebase. Step 4 (prefab composition) is the remaining work, driven by [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md).
+
+1. ~~**Projectile.cs** — create the component per §2.~~ Done.
+2. ~~**Lifetime.cs** — create per §2.1.~~ Done.
+3. ~~**MoveForward.cs** / **MoveVertical.cs** — create per §3.~~ Done.
 4. **Author prefabs** — compose components onto prefabs per §6. Drop in scene to verify.
 
 BusterShot migration (replacing `BusterShot.cs` with these components in the weapon pipeline) is covered in [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md).
@@ -302,10 +311,11 @@ BusterShot migration (replacing `BusterShot.cs` with these components in the wea
 
 ## 10. Files summary
 
-### New
+### Existing (already in the codebase)
 
 | File | Type |
 |---|---|
-| `Assets/_Project/Scripts/Projectile.cs` | MonoBehaviour |
-| `Assets/_Project/Scripts/Lifetime.cs` | MonoBehaviour (general-purpose auto-destroy timer) |
-| `Assets/_Project/Scripts/StraightMovement.cs` | MonoBehaviour |
+| [Assets/_Project/Scripts/Projectile.cs](Assets/_Project/Scripts/Projectile.cs) | MonoBehaviour |
+| [Assets/_Project/Scripts/Lifetime.cs](Assets/_Project/Scripts/Lifetime.cs) | MonoBehaviour (general-purpose auto-destroy timer) |
+| [Assets/_Project/Scripts/MoveForward.cs](Assets/_Project/Scripts/MoveForward.cs) | MonoBehaviour (advances along `transform.right`) |
+| [Assets/_Project/Scripts/MoveVertical.cs](Assets/_Project/Scripts/MoveVertical.cs) | MonoBehaviour (advances along `±transform.up`) |

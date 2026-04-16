@@ -181,8 +181,8 @@ MonoBehaviour:
     m_Bits: 64
   skinWidth: 0.02
   probeDistance: 0.05
-  smallShotPrefab: {fileID: 7717567935848934344, guid: 4f9be617af552b74da19a7b02056bd45, type: 3}
-  semiShotPrefab: {fileID: 1220017866557005652, guid: 58b7a795bc7be564eae5490c4833eda1, type: 3}
+  smallShotPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
+  semiShotPrefab: {fileID: 6249736849717060126, guid: 409cf0458ba1be540be4d8aa11f7549b, type: 3}
   fullShotPrefab: {fileID: 6249736849717060126, guid: d49d348e804ffa5438f612592f1aea8c, type: 3}
   muzzleAnchor: {fileID: 3947491078196069659}
   semiChargeTime: 0.4
