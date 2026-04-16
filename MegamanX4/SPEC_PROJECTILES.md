@@ -48,10 +48,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] LayerMask hitLayers = ~0;
     [SerializeField] bool piercing;
     [SerializeField] float lifetime = 0.6f;
-    [SerializeField] float offScreenMargin = 1f;
-
     float timer;
-    Renderer cachedRenderer;
 
     public event Action Destroyed;
 
@@ -60,15 +57,12 @@ public class Projectile : MonoBehaviour
         var rb = GetComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
-        cachedRenderer = GetComponentInChildren<Renderer>();
     }
 
     void Update()
     {
         timer += Time.deltaTime;
-        if (timer >= lifetime) { Destroy(gameObject); return; }
-        if (cachedRenderer && !cachedRenderer.isVisible && timer > 0.1f)
-            Destroy(gameObject);
+        if (timer >= lifetime) Destroy(gameObject);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -95,7 +89,7 @@ public class Projectile : MonoBehaviour
 | Hit filtering | `hitLayers` LayerMask. Player projectiles filter to Enemy layer; enemy projectiles filter to Player layer. Inspector-configured. |
 | Piercing | `bool piercing`. Twin Slasher = true (passes through enemies). Buster = false (destroys on first hit). |
 | Lifetime | Timer in `Update`. Auto-destroys after `lifetime` seconds. |
-| Off-screen despawn | After a 0.1 s grace period (prevents despawn on the spawn frame before the renderer registers as visible), checks `Renderer.isVisible`. Destroys if off-screen. |
+| Off-screen despawn | Deferred. Lifetime-only for now; off-screen cleanup addressed later. |
 | Despawn event | `event Action Destroyed` fired from `OnDestroy`. Same pattern as current BusterShot. Spawner subscribes at spawn time to track live-shot count. No metadata — spawner already knows which slot the shot belongs to. |
 | Kinematic enforcement | `Awake` forces Kinematic + gravityScale 0, same as BusterShot and PlayerController. |
 
@@ -467,7 +461,7 @@ Manual QA:
 - Fire buster → shot behaves identically to old BusterShot.
 - Equip Twin Slasher → fire → two blades at ±30°, pierce through enemies.
 - Equip Frost Tower → fire → pillar rises, persists, damages on contact, shatters at lifetime.
-- Fire into an empty screen → projectile despawns when off-camera.
+- Fire into an empty screen → projectile despawns after lifetime expires.
 - Enemy fires at player → same Projectile, hits Player layer.
 
 ---
