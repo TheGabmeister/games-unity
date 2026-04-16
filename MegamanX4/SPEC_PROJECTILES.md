@@ -322,11 +322,11 @@ The `TwinSlasher` prefab is a composite with two child blades (see §8):
 
 ```
 TwinSlasher (root)
-├── DestroyWhenChildless     (cleans up root when all blades expire)
-├── Blade_Up (child)         angleDeg=+30 baked in StraightMovement
-│   ├── Projectile + StraightMovement + Rigidbody2D + Collider2D
-├── Blade_Down (child)       angleDeg=-30 baked in StraightMovement
-│   ├── Projectile + StraightMovement + Rigidbody2D + Collider2D
+├── Lifetime             (duration >= children's; destroys entire hierarchy on expiry)
+├── Blade_Up (child)     angleDeg=+30 baked in StraightMovement
+│   ├── Projectile + Lifetime + StraightMovement + Rigidbody2D + Collider2D
+├── Blade_Down (child)   angleDeg=-30 baked in StraightMovement
+│   ├── Projectile + Lifetime + StraightMovement + Rigidbody2D + Collider2D
 ```
 
 **Twin Slasher** (charged) — composite with four blades:
@@ -343,25 +343,6 @@ Same structure, four children at ±30° and ±15°.
 spawnPattern: [{ prefab: FrostTower, offset: (0, -0.5) }]
 // offset.y negative = spawn at feet
 ```
-
-### DestroyWhenChildless
-
-Small utility for composite projectile prefabs. Cleans up the empty root after all children are destroyed:
-
-```csharp
-public class DestroyWhenChildless : MonoBehaviour
-{
-    bool started;
-
-    void Update()
-    {
-        if (!started && transform.childCount > 0) started = true;
-        if (started && transform.childCount == 0) Destroy(gameObject);
-    }
-}
-```
-
-Only needed on composite prefabs (Twin Slasher). Single-object prefabs (buster, Frost Tower) don't use it.
 
 ### WeaponInventory spawn loop
 
@@ -431,8 +412,8 @@ No changes to `Projectile` or behaviors. Layer configuration in the prefab handl
 | `MegamanX_Shot_Small` | Projectile + StraightMovement | Refactored from BusterShot. damage=1, speed=18, piercing=false |
 | `MegamanX_Shot_Semi` | Projectile + StraightMovement | damage=2, speed=18, piercing=false |
 | `MegamanX_Shot_Full` | Projectile + StraightMovement | damage=4, speed=14, piercing=true, lifetime=0.8 |
-| `TwinSlasher` | Root: DestroyWhenChildless. 2 children: Projectile + StraightMovement (±30°) | damage=2, speed=10, piercing=true, lifetime=0.6 |
-| `TwinSlasherCharged` | Root: DestroyWhenChildless. 4 children: Projectile + StraightMovement (±30°, ±15°) | damage=3, speed=10, piercing=true, lifetime=0.6 |
+| `TwinSlasher` | Root: Lifetime. 2 children: Projectile + Lifetime + StraightMovement (±30°) | damage=2, speed=10, piercing=true, duration=0.6 |
+| `TwinSlasherCharged` | Root: Lifetime. 4 children: Projectile + Lifetime + StraightMovement (±30°, ±15°) | damage=3, speed=10, piercing=true, duration=0.6 |
 | `FrostTower` | Projectile + StationaryHazard | damage=3, piercing=true, lifetime=1.5 |
 | `FrostTowerCharged` | Projectile + StationaryHazard | damage=5, piercing=true, lifetime=2.5, taller |
 
@@ -502,16 +483,15 @@ Manual QA:
 2. **Lifetime.cs** — create per §2.1.
 3. **StraightMovement.cs** — create per §3.1.
 4. **StationaryHazard.cs** — create per §3.2.
-5. **DestroyWhenChildless.cs** — create per §6.
-6. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + Lifetime + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
-7. **Delete BusterShot.cs** — only after step 6 is verified.
-8. **Add SpawnEntry[] to WeaponData** — per §6.
-9. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
-10. **Author Twin Slasher composite prefab** — root with `DestroyWhenChildless`, two children each with `Projectile + Lifetime + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
-11. **Author Frost Tower prefab** — `Projectile + Lifetime + StationaryHazard`, WeaponData asset with 1-entry spawn pattern.
-12. Verify all buster + special weapon fire works end-to-end.
+5. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + Lifetime + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
+6. **Delete BusterShot.cs** — only after step 5 is verified.
+7. **Add SpawnEntry[] to WeaponData** — per §6.
+8. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
+9. **Author Twin Slasher composite prefab** — root with `Lifetime`, two children each with `Projectile + Lifetime + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
+10. **Author Frost Tower prefab** — `Projectile + Lifetime + StationaryHazard`, WeaponData asset with 1-entry spawn pattern.
+11. Verify all buster + special weapon fire works end-to-end.
 
-Steps 1–7 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
+Steps 1–6 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
 
 ---
 
@@ -525,7 +505,6 @@ Steps 1–7 are the critical path. The projectile system must work with the exis
 | `Assets/_Project/Scripts/Lifetime.cs` | MonoBehaviour (general-purpose auto-destroy timer) |
 | `Assets/_Project/Scripts/StraightMovement.cs` | MonoBehaviour |
 | `Assets/_Project/Scripts/StationaryHazard.cs` | MonoBehaviour |
-| `Assets/_Project/Scripts/DestroyWhenChildless.cs` | MonoBehaviour (utility for composite prefabs) |
 
 ### Modified
 

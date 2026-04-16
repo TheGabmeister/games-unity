@@ -32,15 +32,23 @@ Assets/_Project/
 ├── Input/       InputSystem_Actions.inputactions
 ├── Scenes/      Init.unity, Gameplay.unity
 ├── Scripts/
-│   ├── PlayerController.cs       movement, input, sprite swap, charge shots
-│   ├── BusterShot.cs             projectile runtime (Kinematic + MovePosition)
+│   ├── PlayerController.cs       movement, input, sprite swap, knockback, ladder
+│   ├── Health.cs                 HP, damage with source position, i-frames
+│   ├── ContactDamage.cs          enemy-to-player contact damage trigger
+│   ├── DamageFlash.cs            SpriteRenderer blink during i-frames
+│   ├── Enemy.cs                  base enemy (Health + Depleted → Destroy)
+│   ├── BusterShot.cs             projectile runtime (to be replaced by Projectile system)
 │   ├── DashSilhouetteTrail.cs    LateUpdate-driven sprite afterimage trail
+│   ├── Bootstrapper.cs           [RuntimeInitializeOnLoadMethod] → loads Systems prefab
+│   ├── SystemsRoot.cs            singleton DontDestroyOnLoad root for persistent systems
+│   ├── Description.cs            editor-only annotation (TextArea on any GO)
 │   └── Editor/
 │       ├── FileExtensions.cs              Project-panel extension labels
 │       └── BusterShotPrefabGenerator.cs   Menu: Tools/MegamanX4/…
 ├── Player/
 │   ├── MegamanX.prefab                   player prefab (Rigidbody2D + Collider2D
-│   │                                     + PlayerInput + PlayerController + child Visual)
+│   │                                     + PlayerInput + PlayerController
+│   │                                     + Health + DamageFlash + child Visual)
 │   ├── Character/  MegamanX_{Idle,Jump,Fall,Dash}.svg
 │   └── Shots/      MegamanX_Shot_{Small,Semi,Full}.svg + Prefabs/
 └── Settings/    URP / Renderer2D / Volume profile assets
@@ -50,12 +58,15 @@ Assets/_Project/
 
 ### Player movement — Kinematic + swept cast
 
-[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, charge shots, sprite selection). Key choices that the next maintainer should not accidentally undo:
+[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic will be extracted into a `PlayerBuster` component per [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md). Key choices that the next maintainer should not accidentally undo:
 
 - **Rigidbody2D is `Kinematic` with `gravityScale = 0`**, forced in `Awake`. Don't rely on the inspector setting — the script enforces it.
 - The controller maintains its own `Vector2 velocity`, applies its own `gravity`, and resolves movement via **`Rigidbody2D.Cast` swept collision** in `MoveAxis` (one axis at a time, trim travel by `skinWidth`, zero velocity axis on contact). This is the Celeste/Hollow-Knight pattern — replacing it with physics-driven Dynamic body is a regression.
 - Ground + wall contact state comes from `Probe()` (short casts from the body) run at the **start** of FixedUpdate. `isGrounded` additionally gates on `velocity.y <= 0` so the first frame of a jump isn't still "grounded". `isTouchingWall` requires the player to be actively pressing into the wall.
 - `int facing` (±1) is the source of truth for direction. Never read direction back from a transform's scale — the `Visual` child's scale is a rendering detail that *follows* `facing`, not the other way around.
+- **Knockback** (`knockbackTimer`, `IsKnockedBack`) gates all input: `TryJump`, `TryStartDash`, `OnAttackStarted`, facing updates, `ApplyHorizontalInput`, wall-slide clamp. Triggered by `Health.Damaged` event via `ApplyKnockback(sourcePosition)`. Charge is canceled on hit.
+- **Ladder** (`onLadder`, `currentLadder`) — player snaps to ladder center X on grab, climbs via `moveInput.y * climbSpeed`. Detected via `Physics2D.OverlapBox` on a `Ladder` layer. Shoot-on-ladder halts climbing and locks facing briefly. Jump off ladder gives normal jump height + optional horizontal from stick. Damage on ladder → drop off, no knockback push.
+- **Dash-jump** (`dashJumpLock`) — jumping during an active dash preserves horizontal speed for the entire airtime. Cleared on ground contact, wall-jump, ladder grab, or knockback.
 
 ### Visual child / sprite flip
 
@@ -73,13 +84,28 @@ SVG sprites are **authored facing left** and wrapped in `<g transform="translate
 
 String lookups happen once at Awake. Don't switch to Send Messages for new features.
 
-### Projectile pattern (BusterShot)
+### Health / damage system
 
-[BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) is the canonical "straight-line bullet" reference:
+Three decoupled concerns:
+
+- **`Health`** — HP pool, `ApplyDamage(int amount, Vector2 sourcePosition)`, invulnerability timer (`invulnerabilityDuration`, `IsInvulnerable`), events: `Damaged(int, Vector2)`, `Healed(int)`, `HealthChanged(int, int)`, `Depleted`, `InvulnerabilityChanged(bool)`. Set `invulnerabilityDuration = 0` on entities that shouldn't have i-frames (regular enemies).
+- **`DamageFlash`** — subscribes to `Health.InvulnerabilityChanged`, toggles `SpriteRenderer.enabled` at 0.08 s cadence. Uses `.enabled` (not `.color`) so it coexists with weapon-tint and charge-flash color cycling.
+- **`ContactDamage`** — on enemies; calls `Health.ApplyDamage(amount, transform.position)` on Player-layer contacts.
+
+`PlayerController` subscribes to `Health.Damaged` and calls `ApplyKnockback(sourcePosition)` (or `ExitLadder` if on a ladder). Knockback is player-only; enemies don't flinch.
+
+### Bootstrapper / persistent systems
+
+`Bootstrapper` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to load a `Resources/Systems` prefab. `SystemsRoot` on that prefab is a singleton that calls `DontDestroyOnLoad`. This guarantees persistent systems exist regardless of which scene is loaded first (play-from-any-scene workflow).
+
+### Projectile pattern (BusterShot → Projectile system)
+
+[BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) is the current "straight-line bullet" but is scheduled for replacement by a composable `Projectile + Behavior` system per [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md). Until then:
 
 - Kinematic `Rigidbody2D`, `gravityScale = 0`, trigger `Collider2D`.
-- **`rb.linearVelocity` does nothing on a Kinematic body** — the physics engine only reads it for collision-response math, not translation. Move via `rb.MovePosition(rb.position + ...)` in `FixedUpdate`.
 - Exposes `public event Action Destroyed;` fired from `OnDestroy`, used by the player to track the 3-lemon cap without a scene scan.
+
+The planned replacement composes small, reusable components: `Projectile` (damage + hit detection + despawn event), `Lifetime` (auto-destroy timer), `StraightMovement` / `StationaryHazard` / etc. (movement behavior). Behaviors have no `Rigidbody2D` dependency — they move via `transform.position`, making them reusable for non-physics objects. Facing is derived from `transform.lossyScale.x` (spawner flips `localScale.x`), not via an Initialize method.
 
 ### Prefab generation (allowed)
 
@@ -90,7 +116,12 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 ## Authoring conventions (important)
 
 - **Do not script scene composition.** Content scenes, debug scenes, and test level fixtures are authored by hand in the Unity editor. Editor scripts that build scenes and save them to disk are banned — they layer C# → scene YAML on top of AssetDatabase GUID timing and have historically produced hard-to-diagnose serialization bugs. Prefab generators and ScriptableObject authoring utilities are fine and encouraged. The only exception is ephemeral PlayMode test fixtures built in-memory that are torn down at teardown — never saved.
-- **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. A `SPEC.md` at the project root is the expected home for such plans once one exists.
+- **Composition over inheritance.** Prefer component + ScriptableObject composition over class hierarchies for gameplay systems. `Health` + `ContactDamage` + `DamageFlash` as independent MonoBehaviours is the template, not `EnemyBase → FlyingEnemy → Bat`.
+- **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
+  - [SPEC.md](SPEC.md) — coyote time, dash-jump, ladder climb
+  - [SPEC2.md](SPEC2.md) — damage knockback + invincibility frames
+  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system, PlayerBuster extraction, WeaponData SO
+  - [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) — composable projectile system (Projectile + Lifetime + behaviors)
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.
 - **ScriptableObjects for game data** (enemy stats, weapon data, level metadata, palettes). Prefer SO-driven configuration over hard-coded constants for anything designers would tune.
 - **Additive scene loading.** Boot into `Init.unity`, load `Gameplay.unity` (and future per-stage scenes) additively; persistent systems live in the bootstrap scene.

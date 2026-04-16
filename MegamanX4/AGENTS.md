@@ -24,13 +24,16 @@ Key project content currently lives under `Assets/_Project/`.
 - `Input/`
   - `InputSystem_Actions.inputactions`
 - `Scenes/`
-  - `Init.unity`
   - `Gameplay.unity`
 - `Scripts/`
+  - `Bootstrapper.cs`
   - `PlayerController.cs`
   - `BusterShot.cs`
+  - `SystemsRoot.cs`
   - `Editor/FileExtensions.cs`
   - `Editor/BusterShotPrefabGenerator.cs`
+- `Resources/`
+  - `Systems.prefab`
 - `Player/`
   - `MegamanX.prefab`
   - `Character/` sprite assets
@@ -52,15 +55,19 @@ Ignore generated Unity folders like `Library/`, `Logs/`, and `Temp/` unless a ta
   - Use primitives, placeholder sprites, and stubbed systems where needed.
 - Prefer ScriptableObjects for tunable game data.
   - Examples: weapon stats, enemy data, stage metadata, palettes.
-- Preserve the additive scene-loading direction.
-  - `Init.unity` should act as bootstrap/persistent systems.
-  - `Gameplay.unity` and future stage scenes should load additively.
+- Preserve the code-driven bootstrap direction.
+  - `Bootstrapper` runs via `RuntimeInitializeOnLoadMethod` before scene load.
+  - `Assets/Resources/Systems.prefab` is the persistent systems root and is guarded by `SystemsRoot`.
+  - Authored gameplay scenes such as `Gameplay.unity` should contain stage content and spawn markers like `PlayerStart`, not duplicate persistent systems roots.
 
 ## Codebase-specific notes
 
 - The player currently uses a custom 2D kinematic controller in `Assets/_Project/Scripts/PlayerController.cs`.
 - Buster shots are implemented in `Assets/_Project/Scripts/BusterShot.cs` and instantiated from prefabs.
 - Shot prefabs currently live under `Assets/_Project/Player/Shots/Prefabs/`.
+- The project now bootstraps persistent systems from `Assets/Resources/Systems.prefab` through `Assets/_Project/Scripts/Bootstrapper.cs`.
+- `SystemsRoot` enforces that only one persistent systems root survives at runtime.
+- Stage entry should resolve a `PlayerStart` marker and spawn the runtime player prefab by code rather than relying on a hand-placed canonical player instance.
 - When changing gameplay code, keep inspector-facing tuning values serialized unless there is a clear reason to hard-code them.
 - Prefer extending the existing input actions asset instead of adding ad hoc polling or bespoke input glue.
 
