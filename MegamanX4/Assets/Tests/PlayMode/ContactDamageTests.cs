@@ -90,7 +90,7 @@ public class ContactDamageTests
         collider.size = new Vector2(0.8f, 1.4f);
 
         var health = player.AddComponent<Health>();
-        SetPrivateField(health, "maxHealth", 3);
+        SetPrivateField(health, "_maxHealth", 3);
 
         player.SetActive(true);
         return player;
@@ -106,7 +106,7 @@ public class ContactDamageTests
         collider.size = new Vector2(1f, 1f);
 
         var contactDamage = damager.AddComponent<ContactDamage>();
-        SetPrivateField(contactDamage, "damageAmount", 1);
+        SetPrivateField(contactDamage, "_damageAmount", 1);
         return damager;
     }
 

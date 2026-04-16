@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class Lifetime : MonoBehaviour
 {
-    [SerializeField] float duration = 1f;
+    [SerializeField] float _duration = 1f;
 
-    float timer;
+    float _timer;
 
     void Update()
     {
-        timer += Time.deltaTime;
-        if (timer >= duration) Destroy(gameObject);
+        _timer += Time.deltaTime;
+        if (_timer >= _duration) Destroy(gameObject);
     }
 }

@@ -5,35 +5,35 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class BusterShot : MonoBehaviour
 {
-    [SerializeField] float speed = 18f;
-    [SerializeField] float lifetime = 0.6f;
-    [SerializeField] int damage = 1;
-    [SerializeField] LayerMask hitLayers = ~0;
+    [SerializeField] float _speed = 18f;
+    [SerializeField] float _lifetime = 0.6f;
+    [SerializeField] int _damage = 1;
+    [SerializeField] LayerMask _hitLayers = ~0;
 
-    Rigidbody2D rb;
+    Rigidbody2D _rb;
 
     public event Action Destroyed;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Kinematic;
-        rb.gravityScale = 0f;
+        _rb = GetComponent<Rigidbody2D>();
+        _rb.bodyType = RigidbodyType2D.Kinematic;
+        _rb.gravityScale = 0f;
     }
 
     public void Fire()
     {
-        rb.linearVelocity = (Vector2)(transform.right * speed);
-        Destroy(gameObject, lifetime);
+        _rb.linearVelocity = (Vector2)(transform.right * _speed);
+        Destroy(gameObject, _lifetime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if ((hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
+        if ((_hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
 
         var targetHealth = other.GetComponentInParent<Health>();
         if (targetHealth)
-            targetHealth.ApplyDamage(damage);
+            targetHealth.ApplyDamage(_damage);
 
         Destroy(gameObject);
     }

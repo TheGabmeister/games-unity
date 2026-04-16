@@ -6,94 +6,94 @@ using UnityEngine;
 public class DashSilhouetteTrail : MonoBehaviour
 {
     [Header("Source")]
-    [SerializeField] SpriteRenderer sourceRenderer;
+    [SerializeField] SpriteRenderer _sourceRenderer;
 
     [Header("Trail")]
-    [SerializeField] Color silhouetteColor = new(0.3f, 0.7f, 1f, 0.75f);
-    [SerializeField] float spawnInterval = 0.04f;
-    [SerializeField] float silhouetteLifetime = 0.18f;
-    [SerializeField] int sortingOrderOffset = -1;
+    [SerializeField] Color _silhouetteColor = new(0.3f, 0.7f, 1f, 0.75f);
+    [SerializeField] float _spawnInterval = 0.04f;
+    [SerializeField] float _silhouetteLifetime = 0.18f;
+    [SerializeField] int _sortingOrderOffset = -1;
 
-    readonly List<Afterimage> activeAfterimages = new();
+    readonly List<Afterimage> _activeAfterimages = new();
 
-    PlayerController playerController;
-    float spawnTimer;
-    bool wasDashing;
+    PlayerController _playerController;
+    float _spawnTimer;
+    bool _wasDashing;
 
     void Reset()
     {
-        playerController = GetComponent<PlayerController>();
-        sourceRenderer = GetComponentInChildren<SpriteRenderer>();
+        _playerController = GetComponent<PlayerController>();
+        _sourceRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     void Awake()
     {
-        if (!playerController)
-            playerController = GetComponent<PlayerController>();
+        if (!_playerController)
+            _playerController = GetComponent<PlayerController>();
 
-        if (!sourceRenderer)
-            sourceRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (!_sourceRenderer)
+            _sourceRenderer = GetComponentInChildren<SpriteRenderer>();
 
-        spawnInterval = Mathf.Max(0.01f, spawnInterval);
-        silhouetteLifetime = Mathf.Max(0.01f, silhouetteLifetime);
+        _spawnInterval = Mathf.Max(0.01f, _spawnInterval);
+        _silhouetteLifetime = Mathf.Max(0.01f, _silhouetteLifetime);
     }
 
     void LateUpdate()
     {
         UpdateAfterimages();
 
-        if (!playerController || !sourceRenderer)
+        if (!_playerController || !_sourceRenderer)
             return;
 
-        if (playerController.IsDashing)
+        if (_playerController.IsDashing)
         {
-            if (!wasDashing)
-                spawnTimer = 0f;
+            if (!_wasDashing)
+                _spawnTimer = 0f;
 
-            spawnTimer -= Time.deltaTime;
-            while (spawnTimer <= 0f)
+            _spawnTimer -= Time.deltaTime;
+            while (_spawnTimer <= 0f)
             {
                 SpawnAfterimage();
-                spawnTimer += spawnInterval;
+                _spawnTimer += _spawnInterval;
             }
         }
         else
         {
-            spawnTimer = 0f;
+            _spawnTimer = 0f;
         }
 
-        wasDashing = playerController.IsDashing;
+        _wasDashing = _playerController.IsDashing;
     }
 
     void OnDisable()
     {
         ClearAfterimages();
-        wasDashing = false;
-        spawnTimer = 0f;
+        _wasDashing = false;
+        _spawnTimer = 0f;
     }
 
     void OnValidate()
     {
-        spawnInterval = Mathf.Max(0.01f, spawnInterval);
-        silhouetteLifetime = Mathf.Max(0.01f, silhouetteLifetime);
+        _spawnInterval = Mathf.Max(0.01f, _spawnInterval);
+        _silhouetteLifetime = Mathf.Max(0.01f, _silhouetteLifetime);
     }
 
     void UpdateAfterimages()
     {
-        for (int i = activeAfterimages.Count - 1; i >= 0; i--)
+        for (int i = _activeAfterimages.Count - 1; i >= 0; i--)
         {
-            var afterimage = activeAfterimages[i];
+            var afterimage = _activeAfterimages[i];
             afterimage.Age += Time.deltaTime;
 
-            if (!afterimage.Renderer || afterimage.Age >= silhouetteLifetime)
+            if (!afterimage.Renderer || afterimage.Age >= _silhouetteLifetime)
             {
                 DestroyAfterimage(afterimage);
-                activeAfterimages.RemoveAt(i);
+                _activeAfterimages.RemoveAt(i);
                 continue;
             }
 
-            float t = afterimage.Age / silhouetteLifetime;
-            var color = silhouetteColor;
+            float t = afterimage.Age / _silhouetteLifetime;
+            var color = _silhouetteColor;
             color.a *= 1f - t;
             afterimage.Renderer.color = color;
         }
@@ -101,32 +101,32 @@ public class DashSilhouetteTrail : MonoBehaviour
 
     void SpawnAfterimage()
     {
-        if (!sourceRenderer.sprite)
+        if (!_sourceRenderer.sprite)
             return;
 
         var afterimageObject = new GameObject("DashSilhouette");
-        afterimageObject.layer = sourceRenderer.gameObject.layer;
-        afterimageObject.transform.SetPositionAndRotation(sourceRenderer.transform.position, sourceRenderer.transform.rotation);
-        afterimageObject.transform.localScale = sourceRenderer.transform.lossyScale;
+        afterimageObject.layer = _sourceRenderer.gameObject.layer;
+        afterimageObject.transform.SetPositionAndRotation(_sourceRenderer.transform.position, _sourceRenderer.transform.rotation);
+        afterimageObject.transform.localScale = _sourceRenderer.transform.lossyScale;
 
         var renderer = afterimageObject.AddComponent<SpriteRenderer>();
-        renderer.sprite = sourceRenderer.sprite;
-        renderer.color = silhouetteColor;
-        renderer.sortingLayerID = sourceRenderer.sortingLayerID;
-        renderer.sortingOrder = sourceRenderer.sortingOrder + sortingOrderOffset;
-        renderer.maskInteraction = sourceRenderer.maskInteraction;
-        renderer.drawMode = sourceRenderer.drawMode;
-        renderer.size = sourceRenderer.size;
+        renderer.sprite = _sourceRenderer.sprite;
+        renderer.color = _silhouetteColor;
+        renderer.sortingLayerID = _sourceRenderer.sortingLayerID;
+        renderer.sortingOrder = _sourceRenderer.sortingOrder + _sortingOrderOffset;
+        renderer.maskInteraction = _sourceRenderer.maskInteraction;
+        renderer.drawMode = _sourceRenderer.drawMode;
+        renderer.size = _sourceRenderer.size;
 
-        activeAfterimages.Add(new Afterimage(afterimageObject, renderer));
+        _activeAfterimages.Add(new Afterimage(afterimageObject, renderer));
     }
 
     void ClearAfterimages()
     {
-        for (int i = 0; i < activeAfterimages.Count; i++)
-            DestroyAfterimage(activeAfterimages[i]);
+        for (int i = 0; i < _activeAfterimages.Count; i++)
+            DestroyAfterimage(_activeAfterimages[i]);
 
-        activeAfterimages.Clear();
+        _activeAfterimages.Clear();
     }
 
     static void DestroyAfterimage(Afterimage afterimage)

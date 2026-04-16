@@ -5,12 +5,12 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] int damage = 1;
-    [SerializeField] bool piercing;
+    [SerializeField] int _damage = 1;
+    [SerializeField] bool _piercing;
 
     public event Action Destroyed;
 
-    int environmentLayer;
+    int _environmentLayer;
 
     void Awake()
     {
@@ -18,12 +18,12 @@ public class Projectile : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
 
-        environmentLayer = LayerMask.NameToLayer("Environment");
+        _environmentLayer = LayerMask.NameToLayer("Environment");
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.layer == environmentLayer)
+        if (other.gameObject.layer == _environmentLayer)
         {
             Destroy(gameObject);   // walls stop all projectiles, including piercing
             return;
@@ -31,9 +31,9 @@ public class Projectile : MonoBehaviour
 
         var health = other.GetComponentInParent<Health>();
         if (health)
-            health.ApplyDamage(damage, transform.position);
+            health.ApplyDamage(_damage, transform.position);
 
-        if (!piercing)
+        if (!_piercing)
             Destroy(gameObject);
     }
 

@@ -75,10 +75,10 @@ public static class BusterShotPrefabGenerator
 
             var shot = go.AddComponent<BusterShot>();
             var so = new SerializedObject(shot);
-            so.FindProperty("speed").floatValue = v.Speed;
-            so.FindProperty("lifetime").floatValue = v.Lifetime;
-            so.FindProperty("damage").intValue = v.Damage;
-            so.FindProperty("hitLayers").intValue = EnvironmentAndEnemyMask;
+            so.FindProperty("_speed").floatValue = v.Speed;
+            so.FindProperty("_lifetime").floatValue = v.Lifetime;
+            so.FindProperty("_damage").intValue = v.Damage;
+            so.FindProperty("_hitLayers").intValue = EnvironmentAndEnemyMask;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             var path = $"{PrefabsFolder}/BusterShot_{v.Name}.prefab";

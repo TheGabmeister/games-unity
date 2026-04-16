@@ -17,21 +17,21 @@ public class PlayerBuster : MonoBehaviour
     [SerializeField] int _maxSmallShots = 3;
 
     [Header("Charge flash")]
-    [SerializeField] Color semiFlashColor = Color.white;
-    [SerializeField] Color fullFlashColor = new(0.4f, 1f, 1f);
-    [SerializeField] float flashPeriod = 0.08f;
+    [SerializeField] Color _semiFlashColor = Color.white;
+    [SerializeField] Color _fullFlashColor = new(0.4f, 1f, 1f);
+    [SerializeField] float _flashPeriod = 0.08f;
 
     PlayerController _controller;
-    SpriteRenderer spriteRenderer;
+    SpriteRenderer _spriteRenderer;
 
-    bool isCharging;
-    float chargeTimer;
-    Color baseSpriteColor = Color.white;
-    readonly List<BusterShot> activeSmallShots = new();
+    bool _isCharging;
+    float _chargeTimer;
+    Color _baseSpriteColor = Color.white;
+    readonly List<BusterShot> _activeSmallShots = new();
 
-    public bool IsCharging => isCharging;
-    public float ChargeTimer => chargeTimer;
-    public int ActiveSmallShotCount => activeSmallShots.Count;
+    public bool IsCharging => _isCharging;
+    public float ChargeTimer => _chargeTimer;
+    public int ActiveSmallShotCount => _activeSmallShots.Count;
 
     void Awake()
     {
@@ -40,45 +40,45 @@ public class PlayerBuster : MonoBehaviour
 
     public void Initialize(SpriteRenderer sr)
     {
-        spriteRenderer = sr;
-        if (spriteRenderer) baseSpriteColor = spriteRenderer.color;
+        _spriteRenderer = sr;
+        if (_spriteRenderer) _baseSpriteColor = _spriteRenderer.color;
     }
 
     public void StartCharge()
     {
         if (_controller.IsKnockedBack) return;
-        isCharging = true;
-        chargeTimer = 0f;
+        _isCharging = true;
+        _chargeTimer = 0f;
     }
 
     public bool ReleaseCharge()
     {
-        if (!isCharging) return false;
-        isCharging = false;
+        if (!_isCharging) return false;
+        _isCharging = false;
 
-        if (chargeTimer >= _fullChargeTime)
+        if (_chargeTimer >= _fullChargeTime)
             Spawn(_fullShotPrefab, isSmall: false);
-        else if (chargeTimer >= _semiChargeTime)
+        else if (_chargeTimer >= _semiChargeTime)
             Spawn(_semiShotPrefab, isSmall: false);
-        else if (activeSmallShots.Count < _maxSmallShots)
+        else if (_activeSmallShots.Count < _maxSmallShots)
             Spawn(_smallShotPrefab, isSmall: true);
 
-        chargeTimer = 0f;
+        _chargeTimer = 0f;
         RestoreColor();
         return true;
     }
 
     public void CancelCharge()
     {
-        if (!isCharging) return;
-        isCharging = false;
-        chargeTimer = 0f;
+        if (!_isCharging) return;
+        _isCharging = false;
+        _chargeTimer = 0f;
         RestoreColor();
     }
 
     void Update()
     {
-        if (isCharging) chargeTimer += Time.deltaTime;
+        if (_isCharging) _chargeTimer += Time.deltaTime;
         UpdateChargeFlash();
     }
 
@@ -91,39 +91,39 @@ public class PlayerBuster : MonoBehaviour
         shot.Fire();
         if (isSmall)
         {
-            activeSmallShots.Add(shot);
-            shot.Destroyed += () => activeSmallShots.Remove(shot);
+            _activeSmallShots.Add(shot);
+            shot.Destroyed += () => _activeSmallShots.Remove(shot);
         }
     }
 
     void UpdateChargeFlash()
     {
-        if (!spriteRenderer) return;
-        if (!isCharging)
+        if (!_spriteRenderer) return;
+        if (!_isCharging)
         {
-            spriteRenderer.color = baseSpriteColor;
+            _spriteRenderer.color = _baseSpriteColor;
             return;
         }
 
-        if (chargeTimer >= _fullChargeTime)
+        if (_chargeTimer >= _fullChargeTime)
         {
-            bool phase = Mathf.FloorToInt(chargeTimer / flashPeriod) % 2 == 0;
-            spriteRenderer.color = phase ? fullFlashColor : Color.white;
+            bool phase = Mathf.FloorToInt(_chargeTimer / _flashPeriod) % 2 == 0;
+            _spriteRenderer.color = phase ? _fullFlashColor : Color.white;
         }
-        else if (chargeTimer >= _semiChargeTime)
+        else if (_chargeTimer >= _semiChargeTime)
         {
-            bool phase = Mathf.FloorToInt(chargeTimer / flashPeriod) % 2 == 0;
-            spriteRenderer.color = phase ? semiFlashColor : baseSpriteColor;
+            bool phase = Mathf.FloorToInt(_chargeTimer / _flashPeriod) % 2 == 0;
+            _spriteRenderer.color = phase ? _semiFlashColor : _baseSpriteColor;
         }
         else
         {
-            spriteRenderer.color = baseSpriteColor;
+            _spriteRenderer.color = _baseSpriteColor;
         }
     }
 
     void RestoreColor()
     {
-        if (spriteRenderer) 
-            spriteRenderer.color = baseSpriteColor;
+        if (_spriteRenderer)
+            _spriteRenderer.color = _baseSpriteColor;
     }
 }

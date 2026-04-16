@@ -60,7 +60,7 @@ public class BusterShotEnemyDamageTests
         collider.size = new Vector2(0.8f, 1f);
 
         var health = enemy.AddComponent<Health>();
-        SetPrivateField(health, "maxHealth", maxHealth);
+        SetPrivateField(health, "_maxHealth", maxHealth);
         enemy.AddComponent<Enemy>();
 
         enemy.SetActive(true);
@@ -83,10 +83,10 @@ public class BusterShotEnemyDamageTests
         body.useFullKinematicContacts = true;
 
         var shot = shotObject.AddComponent<BusterShot>();
-        SetPrivateField(shot, "speed", 8f);
-        SetPrivateField(shot, "lifetime", 1f);
-        SetPrivateField(shot, "damage", damage);
-        SetPrivateField(shot, "hitLayers", LayerMask.GetMask("Enemy"));
+        SetPrivateField(shot, "_speed", 8f);
+        SetPrivateField(shot, "_lifetime", 1f);
+        SetPrivateField(shot, "_damage", damage);
+        SetPrivateField(shot, "_hitLayers", LayerMask.GetMask("Enemy"));
 
         shotObject.SetActive(true);
         shot.Fire();

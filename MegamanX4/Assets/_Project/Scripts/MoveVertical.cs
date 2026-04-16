@@ -1,4 +1,3 @@
-using System.Net;
 using UnityEngine;
 
 public class MoveVertical : MonoBehaviour
@@ -9,18 +8,18 @@ public class MoveVertical : MonoBehaviour
         Down
     }
 
-    [SerializeField] float speed = 10f;
-    [SerializeField] Direction direction = Direction.Up;
+    [SerializeField] float _speed = 10f;
+    [SerializeField] Direction _direction = Direction.Up;
 
     void Update()
     {
-        switch (direction)
+        switch (_direction)
         {
             case Direction.Up:
-                transform.position += transform.up * speed * Time.deltaTime;
+                transform.position += transform.up * _speed * Time.deltaTime;
                 break;
             case Direction.Down:
-                transform.position += -transform.up * speed * Time.deltaTime;
+                transform.position += -transform.up * _speed * Time.deltaTime;
                 break;
         }
     }
