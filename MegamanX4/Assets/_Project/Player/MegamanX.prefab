@@ -146,43 +146,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e8af419b3ec1b04e9fff57836e3c3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  visual: {fileID: 8897214914988302988}
-  idleSprite: {fileID: 3286163911610860551, guid: 099f5745563beae4a8630245cc67fb5b, type: 3}
-  jumpSprite: {fileID: 3286163911610860551, guid: e43fbbc97cad3ae45b93be5a8de5c022, type: 3}
-  fallSprite: {fileID: 3286163911610860551, guid: 43513281d30819d48b5f8febd1a1d790, type: 3}
-  dashSprite: {fileID: 3286163911610860551, guid: b38a4aa3180162842a616e2244eec0da, type: 3}
-  moveSpeed: 6
-  groundAcceleration: 60
-  airAcceleration: 30
-  jumpSpeed: 12
-  jumpCutMultiplier: 0.5
-  coyoteTime: 0.1
-  jumpBufferTime: 0.1
-  fallGravityMultiplier: 1.8
-  gravity: 40
-  maxFallSpeed: 20
-  dashSpeed: 14
-  dashDuration: 0.35
-  dashCooldown: 0.15
-  wallSlideSpeed: 2
-  wallJumpVelocity: {x: 8, y: 11}
-  wallJumpLockTime: 0.18
-  knockbackSpeedX: 5
-  knockbackSpeedY: 6
-  knockbackDuration: 0.35
-  ladderLayer:
+  _visual: {fileID: 8897214914988302988}
+  _idleSprite: {fileID: 3286163911610860551, guid: 099f5745563beae4a8630245cc67fb5b, type: 3}
+  _jumpSprite: {fileID: 3286163911610860551, guid: e43fbbc97cad3ae45b93be5a8de5c022, type: 3}
+  _fallSprite: {fileID: 3286163911610860551, guid: 43513281d30819d48b5f8febd1a1d790, type: 3}
+  _dashSprite: {fileID: 3286163911610860551, guid: b38a4aa3180162842a616e2244eec0da, type: 3}
+  _moveSpeed: 6
+  _groundAcceleration: 60
+  _airAcceleration: 30
+  _jumpSpeed: 12
+  _jumpCutMultiplier: 0.5
+  _coyoteTime: 0.1
+  _jumpBufferTime: 0.1
+  _fallGravityMultiplier: 1.8
+  _gravity: 40
+  _maxFallSpeed: 20
+  _dashSpeed: 14
+  _dashDuration: 0.35
+  _dashCooldown: 0.15
+  _wallSlideSpeed: 2
+  _wallJumpVelocity: {x: 8, y: 11}
+  _wallJumpLockTime: 0.18
+  _knockbackSpeedX: 5
+  _knockbackSpeedY: 6
+  _knockbackDuration: 0.35
+  _ladderLayer:
     serializedVersion: 2
-    m_Bits: 256
-  climbSpeed: 5
-  ladderShootLockTime: 0.2
-  climbSprite: {fileID: 0}
-  climbShootSprite: {fileID: 0}
-  environmentLayers:
+    m_Bits: 0
+  _climbSpeed: 5
+  _ladderShootLockTime: 0.2
+  _climbSprite: {fileID: 0}
+  _climbShootSprite: {fileID: 0}
+  _environmentLayers:
     serializedVersion: 2
-    m_Bits: 64
-  skinWidth: 0.02
-  probeDistance: 0.05
-  muzzleAnchor: {fileID: 3947491078196069659}
+    m_Bits: 4294967295
+  _skinWidth: 0.02
+  _probeDistance: 0.05
+  _muzzleAnchor: {fileID: 3947491078196069659}
 --- !u!114 &3099517297308019227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,11 +195,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d2f7b9e4d344d4b9a99d2f68b3f8a71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashSilhouetteTrail
-  sourceRenderer: {fileID: 8224132748615150196}
-  silhouetteColor: {r: 0.3, g: 0.7, b: 1, a: 0.75}
-  spawnInterval: 0.04
-  silhouetteLifetime: 0.18
-  sortingOrderOffset: -1
+  _sourceRenderer: {fileID: 0}
+  _silhouetteColor: {r: 0.3, g: 0.7, b: 1, a: 0.75}
+  _spawnInterval: 0.04
+  _silhouetteLifetime: 0.18
+  _sortingOrderOffset: -1
 --- !u!114 &2515517915452380801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,8 +212,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a21c21cfb144a8c8b793adff6f2f790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Health
-  maxHealth: 20
-  invulnerabilityDuration: 1
+  _maxHealth: 3
+  _invulnerabilityDuration: 1
 --- !u!114 &8700920407511137899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,8 +226,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ebb429a30f5eb14b9b00301345870d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::DamageFlash
-  target: {fileID: 8224132748615150196}
-  period: 0.08
+  _target: {fileID: 0}
+  _period: 0.08
 --- !u!114 &7398330388965074056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,15 +240,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9818a1a75c6653469975e2336530d1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::PlayerBuster
-  smallShotPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
-  semiShotPrefab: {fileID: 6249736849717060126, guid: 409cf0458ba1be540be4d8aa11f7549b, type: 3}
-  fullShotPrefab: {fileID: 6249736849717060126, guid: d49d348e804ffa5438f612592f1aea8c, type: 3}
-  semiChargeTime: 0.4
-  fullChargeTime: 1.2
-  maxSmallShots: 3
-  semiFlashColor: {r: 1, g: 1, b: 1, a: 1}
-  fullFlashColor: {r: 0.4, g: 1, b: 1, a: 1}
-  flashPeriod: 0.08
+  _smallShotPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
+  _semiShotPrefab: {fileID: 6249736849717060126, guid: 409cf0458ba1be540be4d8aa11f7549b, type: 3}
+  _fullShotPrefab: {fileID: 6249736849717060126, guid: d49d348e804ffa5438f612592f1aea8c, type: 3}
+  _semiChargeTime: 0.4
+  _fullChargeTime: 1.2
+  _maxSmallShots: 3
+  _semiFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  _fullFlashColor: {r: 0.4, g: 1, b: 1, a: 1}
+  _flashPeriod: 0.08
 --- !u!1 &4554798857488393429
 GameObject:
   m_ObjectHideFlags: 0
