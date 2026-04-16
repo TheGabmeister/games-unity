@@ -16,7 +16,7 @@ Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) w
 ```
 Prefab: MegamanX_Shot_Small
 ├── Projectile           (damage, hitLayers, piercing, lifetime, despawn)
-├── StraightMovement     (speed, direction \u2014 calls rb.MovePosition)
+├── StraightMovement     (speed, direction \u2014 moves via transform.position)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
 └── SpriteRenderer
@@ -31,7 +31,7 @@ Prefab: FrostTower
 
 **Projectile** is the shared core — every projectile has it. It never moves the object. It only detects hits, applies damage, and manages lifetime.
 
-**Behavior components** own movement. Each grabs `Rigidbody2D` in `Awake` and calls `rb.MovePosition` in its own `FixedUpdate`. Exactly one behavior per prefab.
+**Behavior components** own movement. Each moves via `transform.position` in `Update` (or `FixedUpdate` where physics-step alignment matters). No `Rigidbody2D` dependency — behaviors work on any GameObject, including non-physics objects like background elements or visual FX. Exactly one behavior per prefab.
 
 This is composition, not inheritance. No base class is shared between behaviors. They are independent MonoBehaviours.
 
@@ -111,35 +111,32 @@ public class Projectile : MonoBehaviour
 
 ### 3.1 StraightMovement
 
-Moves in a fixed direction at constant speed. Covers: buster shots (all tiers), Twin Slasher blades, enemy bullets.
+Moves in a fixed direction at constant speed. Covers: buster shots (all tiers), Twin Slasher blades, enemy bullets. No `Rigidbody2D` dependency — also usable for background scrolling, visual effects, or any object that needs constant-velocity linear motion.
 
 ```csharp
-[RequireComponent(typeof(Rigidbody2D))]
 public class StraightMovement : MonoBehaviour
 {
     [SerializeField] float speed = 18f;
 
-    Rigidbody2D rb;
     Vector2 direction;
-
-    void Awake() => rb = GetComponent<Rigidbody2D>();
 
     public void Initialize(int facing, float angleDeg = 0f)
     {
         float rad = angleDeg * Mathf.Deg2Rad;
         direction = new Vector2(Mathf.Cos(rad) * facing, Mathf.Sin(rad));
-        // Flip sprite to match direction.
         var s = transform.localScale;
         s.x = Mathf.Abs(s.x) * facing;
         transform.localScale = s;
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        rb.MovePosition(rb.position + direction * speed * Time.fixedDeltaTime);
+        transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
 }
 ```
+
+When used on a projectile prefab alongside `Projectile` (which requires `Rigidbody2D` + `Collider2D`), the kinematic body's collider follows the transform automatically — trigger callbacks fire as normal.
 
 **Initialize parameters:**
 
@@ -148,7 +145,7 @@ public class StraightMovement : MonoBehaviour
 
 ### 3.2 StationaryHazard
 
-Spawns in place, optionally rises/scales over a riseTime, persists for a duration, then despawns. Covers: Frost Tower, Lightning Web (if treated as zone). No `Rigidbody2D.MovePosition` — the object doesn't translate.
+Spawns in place, optionally rises/scales over a riseTime, persists for a duration, then despawns. Covers: Frost Tower, Lightning Web (if treated as zone). No `Rigidbody2D` dependency — the object doesn't translate, only scales.
 
 ```csharp
 public class StationaryHazard : MonoBehaviour
@@ -196,7 +193,7 @@ Lifetime and despawn are handled by `Projectile.lifetime` — StationaryHazard d
 
 ## 4. Behavior components — planned (not implemented)
 
-Specced here so future weapon specs can reference them by name. Each follows the same pattern: `[RequireComponent(typeof(Rigidbody2D))]`, grabs `rb` in `Awake`, `Initialize(...)` sets parameters, `FixedUpdate` calls `rb.MovePosition`.
+Specced here so future weapon specs can reference them by name. Each follows the same pattern: no `Rigidbody2D` dependency, `Initialize(...)` sets parameters, `Update` moves via `transform.position`.
 
 ### 4.1 ArcMovement
 
@@ -206,7 +203,7 @@ Moves forward with simulated gravity. Covers: Rising Fire, enemy lobbed shots.
 Initialize(int facing, float launchAngle, float arcGravity)
 ```
 
-Maintains a velocity vector. Each FixedUpdate: `velocity.y -= arcGravity * dt`, then `MovePosition(pos + velocity * dt)`.
+Maintains a velocity vector. Each Update: `velocity.y -= arcGravity * dt`, then `transform.position += velocity * dt`.
 
 ### 4.2 GroundCrawlMovement
 
@@ -216,7 +213,7 @@ Moves horizontally, sticking to the ground surface below. Covers: Ground Hunter.
 Initialize(int facing)
 ```
 
-Each FixedUpdate: cast downward to find ground, snap Y to surface, advance X at speed. Despawns if no ground found (ledge edge).
+Each Update: cast downward to find ground, snap Y to surface, advance X at speed. Despawns if no ground found (ledge edge). Note: this behavior needs `Physics2D.Raycast` for ground detection, which works independently of whether the object has a `Rigidbody2D`.
 
 ### 4.3 HomingMovement
 
@@ -226,7 +223,7 @@ Tracks a target and steers toward it. Covers: Aiming Laser.
 Initialize(Transform target, float turnSpeed)
 ```
 
-Each FixedUpdate: rotate direction toward target, advance at speed. `turnSpeed` controls how aggressively it tracks.
+Each Update: rotate direction toward target, advance at speed. `turnSpeed` controls how aggressively it tracks.
 
 ### 4.4 OrbitalMovement
 
@@ -236,7 +233,7 @@ Orbits around the player (or a point). Covers: Kuuenzan (Zero's spinning slash),
 Initialize(Transform center, float radius, float angularSpeed)
 ```
 
-Each FixedUpdate: advance angle, compute position on circle, `MovePosition`.
+Each Update: advance angle, compute position on circle, set `transform.position`.
 
 ### 4.5 BoomerangMovement
 
@@ -255,7 +252,7 @@ Initialize(int facing, float outSpeed, float returnSpeed, float hangTime)
 | BusterShot responsibility | New owner |
 |---|---|
 | `Awake`: Kinematic + gravityScale | `Projectile.Awake` |
-| `Fire(direction)`: set scale + velocity | `StraightMovement.Initialize(facing)` |
+| `Fire(direction)`: set scale + direction | `StraightMovement.Initialize(facing)` |
 | `OnTriggerEnter2D`: layer check + damage + destroy | `Projectile.OnTriggerEnter2D` |
 | `Destroyed` event | `Projectile.Destroyed` |
 | `speed`, `lifetime`, `damage`, `hitLayers` fields | Split: `speed` on `StraightMovement`, rest on `Projectile` |
@@ -462,7 +459,7 @@ EditMode tests (requires `.asmdef` setup from README §12):
   - Lifetime auto-destroy.
 - **StraightMovement**
   - `Initialize(1, 0f)` → direction = (1, 0). `Initialize(-1, 30f)` → correct angle.
-  - FixedUpdate advances position by `direction * speed * dt`.
+  - Update advances position by `direction * speed * dt`.
 - **StationaryHazard**
   - Scale starts at 0 (Y axis), reaches full after `riseTime`.
 
