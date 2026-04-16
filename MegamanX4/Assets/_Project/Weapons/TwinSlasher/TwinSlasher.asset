@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e0ea4b81843f84aa1e815d2202c82a, type: 3}
   m_Name: TwinSlasher
   m_EditorClassIdentifier: MegamanX4.Runtime::WeaponData
-  displayName: 
+  displayName: Twin Slasher
   tint: {r: 0.3647871, g: 0, b: 1, a: 1}
-  smallPrefab: {fileID: 0}
-  semiPrefab: {fileID: 0}
-  fullPrefab: {fileID: 0}
+  smallPrefab: {fileID: 2398225228531510040, guid: 5a70bd7db92edcb4583b814ad4d5077e, type: 3}
+  semiPrefab: {fileID: 2398225228531510040, guid: 5a70bd7db92edcb4583b814ad4d5077e, type: 3}
+  fullPrefab: {fileID: 2398225228531510040, guid: 5a70bd7db92edcb4583b814ad4d5077e, type: 3}
+  maxEnergy: 10
+  smallCost: 1
+  semiCost: 1
+  fullCost: 1

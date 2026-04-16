@@ -37,7 +37,7 @@ HP   Energy
 - Bar dimensions: ~8 px wide × 56 px tall in reference resolution. Spacing: ~4 px between the two bars, ~8 px from screen edge.
 - Outline: 1 px white border (MMX convention). Authored as a background `Image` sitting behind the fill, slightly inflated.
 - Fill: `Image` with `type = Filled`, `fillMethod = Vertical`, `fillOrigin = Bottom`. Drive via `Image.fillAmount = current / max`.
-- Reference resolution: 640×360 (CanvasScaler → Scale With Screen Size, match = 0.5).
+- Reference resolution: 1280×720 (CanvasScaler → Scale With Screen Size, match = 0.5).
 
 ### Colors
 

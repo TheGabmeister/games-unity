@@ -6,7 +6,6 @@ public class HUD : MonoBehaviour
     [SerializeField] Image _healthFill;
     [SerializeField] Image _energyFill;
     [SerializeField] GameObject _energyRoot;
-    [SerializeField] Color _healthColor = new(1f, 0.8f, 0.2f);
 
     Health _health;
     WeaponInventory _weapons;
@@ -24,8 +23,6 @@ public class HUD : MonoBehaviour
             _weapons.EnergyChanged += OnEnergyChanged;
             _weapons.ActiveWeaponChanged += OnActiveWeaponChanged;
         }
-
-        if (_healthFill) _healthFill.color = _healthColor;
 
         RefreshHealth();
         RefreshActiveWeapon();

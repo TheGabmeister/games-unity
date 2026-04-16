@@ -172,6 +172,19 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 - [ ] Ride Armor / Ride Chaser vehicle sections
 - [ ] Stage-select screen
 
+### Sky Lagoon enemy roster
+
+Opening-stage enemies currently tracked for Sky Lagoon:
+
+- Knot Beret B
+- Knot Beret G
+- Tonboroid S
+- Spike Marl
+- Mad Bull 97
+- Trap Blast
+- Kyunnbyunn
+- Eregion *(boss)*
+
 ## 9. Progression / meta
 
 - [ ] Character select (X vs Zero) at new game

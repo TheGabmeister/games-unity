@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e0ea4b81843f84aa1e815d2202c82a, type: 3}
   m_Name: LightningWeb
   m_EditorClassIdentifier: MegamanX4.Runtime::WeaponData
-  displayName: 
+  displayName: Lightning Web
   tint: {r: 1, g: 0.9882855, b: 0, a: 1}
-  smallPrefab: {fileID: 0}
-  semiPrefab: {fileID: 0}
-  fullPrefab: {fileID: 0}
-  maxEnergy: 0
-  smallCost: 0
-  semiCost: 0
-  fullCost: 0
+  smallPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
+  semiPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
+  fullPrefab: {fileID: 6249736849717060126, guid: 8d2104c0b2b7e3e49a968db4df520c8f, type: 3}
+  maxEnergy: 10
+  smallCost: 1
+  semiCost: 1
+  fullCost: 1

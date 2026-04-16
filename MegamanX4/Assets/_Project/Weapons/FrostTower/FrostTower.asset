@@ -17,3 +17,7 @@ MonoBehaviour:
   smallPrefab: {fileID: 7717567935848934344, guid: beaf784e4d6dfad4fa4b9887e338797f, type: 3}
   semiPrefab: {fileID: 7717567935848934344, guid: beaf784e4d6dfad4fa4b9887e338797f, type: 3}
   fullPrefab: {fileID: 7717567935848934344, guid: beaf784e4d6dfad4fa4b9887e338797f, type: 3}
+  maxEnergy: 10
+  smallCost: 1
+  semiCost: 1
+  fullCost: 1
