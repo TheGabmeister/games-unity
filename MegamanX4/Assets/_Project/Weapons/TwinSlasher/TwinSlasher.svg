@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 72" width="48" height="72">
+  <!--
+    Twin Slasher - single crescent energy blade.
+    Authored facing right: convex cutting edge on +X side, concave trailing side on -X.
+    This is the default orientation for all projectile SVGs in this project.
+    Each blade in the composite prefab is rotated to its spread angle
+    (uncharged: two at +/-30; charged: four at +/-30 and +/-15).
+    Spec: purple tint (0.7, 0.2, 0.9); piercing through enemies.
+    Palette:
+      plasma-pale  #F3E5F5   plasma-light #E1BEE7   plasma-mid   #CE93D8
+      plasma-body  #AB47BC   plasma-deep  #6A1B9A   white        #FFFFFF
+  -->
+
+  <!-- Trailing energy streaks (behind the blade, -X side) -->
+  <path d="M 4 22 L 16 22 M 2 36 L 14 36 M 4 50 L 16 50"
+        stroke="#CE93D8" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+  <path d="M 0 28 L 12 28 M 0 44 L 12 44"
+        stroke="#E1BEE7" stroke-width="0.8" stroke-linecap="round" opacity="0.4"/>
+
+  <!-- Outer glow aura (wider crescent envelope) -->
+  <path d="M 18 4 C 44 16, 44 56, 18 68 C 28 56, 28 16, 18 4 Z"
+        fill="#E1BEE7" opacity="0.4"/>
+
+  <!-- Main blade body (crescent: convex on +X, concave on -X) -->
+  <path d="M 20 6 C 40 18, 40 54, 20 66 C 28 54, 28 18, 20 6 Z"
+        fill="#AB47BC" stroke="#6A1B9A" stroke-width="1.2"/>
+
+  <!-- Inner brighter facet -->
+  <path d="M 22 10 C 36 20, 36 52, 22 62 C 28 52, 28 20, 22 10 Z"
+        fill="#CE93D8" opacity="0.9"/>
+
+  <!-- Sharp cutting edge (bright stripe along convex/right arc) -->
+  <path d="M 20 7 C 40 19, 40 53, 20 65"
+        fill="none" stroke="#F3E5F5" stroke-width="1.4" stroke-linecap="round" opacity="0.95"/>
+
+  <!-- White-hot core line -->
+  <path d="M 22 12 C 34 22, 34 50, 22 60"
+        fill="none" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round" opacity="0.95"/>
+
+  <!-- Leading-edge sparkles on the rightmost cutting points -->
+  <circle cx="40" cy="36" r="1.6" fill="#FFFFFF" opacity="0.95"/>
+  <circle cx="38" cy="26" r="0.7" fill="#FFFFFF" opacity="0.85"/>
+  <circle cx="38" cy="46" r="0.7" fill="#FFFFFF" opacity="0.85"/>
+</svg>
