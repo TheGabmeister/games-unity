@@ -88,6 +88,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8940116267780952671}
+  - component: {fileID: 3297613446565801127}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -111,3 +112,19 @@ Transform:
   - {fileID: 5764192501866092945}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3297613446565801127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739627175281945382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d758cc2d87404cb0d0f7d56f9ad5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::Description
+  descriptionText: Persistent systems root loaded by Bootstrapper before gameplay scenes
+    start. Use this prefab for always-on managers and shared services such as the
+    EventSystem. Avoid placing duplicate Systems roots in authored scenes unless
+    you are intentionally testing bootstrap behavior.
