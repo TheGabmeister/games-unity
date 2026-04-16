@@ -1,17 +1,22 @@
 using UnityEngine;
 
-public static class Bootstrapper {
+public static class Bootstrapper
+{
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Execute()
     {
+        if (SystemsRoot.Instance || Object.FindFirstObjectByType<SystemsRoot>())
+            return;
+
         var prefab = Resources.Load<GameObject>("Systems");
         if (!prefab)
         {
             Debug.LogError("Missing Resources/Systems prefab.");
             return;
         }
-        Object.DontDestroyOnLoad(Object.Instantiate(prefab));
-    } 
+
+        Object.Instantiate(prefab);
+    }
 }
 /*
 // The addressables version
