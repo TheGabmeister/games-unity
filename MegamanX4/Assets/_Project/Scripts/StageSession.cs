@@ -1,161 +1,64 @@
-using System;
-using System.Collections;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [DisallowMultipleComponent]
 public class StageSession : MonoBehaviour
 {
-    const string DefaultPlayerStartMarker = "PlayerStart";
+    [SerializeField] GameObject _playerPrefab;
 
-    [Header("Player")]
-    [SerializeField] PlayerController playerPrefab;
-    [SerializeField] bool spawnPlayerOnStart = true;
-    [SerializeField] float respawnDelay = 1f;
-
-    [Header("Spawn")]
-    [SerializeField] Transform playerStartOverride;
-    [SerializeField] string playerStartMarker = DefaultPlayerStartMarker;
-
-    Health currentPlayerHealth;
-    bool respawnInProgress;
-
-    public PlayerController CurrentPlayer { get; private set; }
-    public Transform CurrentSpawnPoint { get; private set; }
-
-    public event Action<PlayerController> PlayerChanged;
-
-    void Start() => InitializeStage();
-
-    void OnDisable() => UnsubscribeCurrentPlayerHealth();
-
-    void InitializeStage()
+    void Start()
     {
-        CurrentSpawnPoint = ResolvePlayerStart();
-
-        var existingPlayer = FindExistingScenePlayer();
-        if (existingPlayer)
-        {
-            RegisterPlayer(existingPlayer);
-
-            if (spawnPlayerOnStart && playerPrefab)
-                Debug.LogWarning("StageSession found an existing player in the scene and will not spawn another one.", this);
-
-            return;
-        }
-
-        if (spawnPlayerOnStart)
-            SpawnPlayerAt(CurrentSpawnPoint);
-    }
-
-    public Transform ResolvePlayerStart()
-    {
-        if (playerStartOverride)
-            return playerStartOverride;
-
-        if (string.IsNullOrWhiteSpace(playerStartMarker))
-            playerStartMarker = DefaultPlayerStartMarker;
-
-        foreach (var candidate in FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-        {
-            if (candidate.gameObject.scene != gameObject.scene)
-                continue;
-
-            if (candidate.name == playerStartMarker || candidate.tag == playerStartMarker)
-                return candidate;
-        }
-
-        Debug.LogWarning($"StageSession could not find a '{playerStartMarker}' marker. Falling back to the StageSession transform.", this);
-        return transform;
-    }
-
-    public void SetSpawnPoint(Transform spawnPoint)
-    {
-        if (!spawnPoint)
-            return;
-
-        CurrentSpawnPoint = spawnPoint;
-    }
-
-    public void SpawnPlayerAt(Transform spawnPoint)
-    {
-        if (!playerPrefab)
+        if (!_playerPrefab)
         {
             Debug.LogError("StageSession is missing a player prefab reference.", this);
             return;
         }
 
-        var targetSpawn = spawnPoint ? spawnPoint : ResolvePlayerStart();
-        CurrentSpawnPoint = targetSpawn;
-
-        var player = Instantiate(playerPrefab, targetSpawn.position, targetSpawn.rotation);
-        RegisterPlayer(player);
-    }
-
-    public void RegisterPlayer(PlayerController player)
-    {
-        if (!player || CurrentPlayer == player)
-            return;
-
-        UnsubscribeCurrentPlayerHealth();
-
-        CurrentPlayer = player;
-        currentPlayerHealth = player.GetComponent<Health>();
-
-        if (currentPlayerHealth)
-            currentPlayerHealth.Depleted += OnCurrentPlayerDepleted;
-
-        PlayerChanged?.Invoke(CurrentPlayer);
-    }
-
-    public void RespawnPlayer()
-    {
-        if (respawnInProgress)
-            return;
-
-        StartCoroutine(RespawnRoutine());
-    }
-
-    PlayerController FindExistingScenePlayer()
-    {
-        foreach (var player in FindObjectsByType<PlayerController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        var playerStart = FindPlayerStart();
+        if (playerStart)
         {
-            if (player.gameObject.scene == gameObject.scene)
-                return player;
+            Instantiate(_playerPrefab, playerStart.transform.position, playerStart.transform.rotation);
+            return;
         }
 
-        return null;
+        var spawnPosition = ResolveFallbackSpawnPosition();
+        Instantiate(_playerPrefab, spawnPosition, Quaternion.identity);
     }
 
-    void OnCurrentPlayerDepleted()
+    GameObject FindPlayerStart()
     {
-        if (!respawnInProgress)
-            RespawnPlayer();
+        try
+        {
+            return GameObject.FindGameObjectWithTag("PlayerStart");
+        }
+        catch (UnityException)
+        {
+            return null;
+        }
     }
 
-    IEnumerator RespawnRoutine()
+    Vector3 ResolveFallbackSpawnPosition()
     {
-        respawnInProgress = true;
+#if UNITY_EDITOR
+        var sceneView = SceneView.lastActiveSceneView;
+        var sceneCamera = sceneView ? sceneView.camera : null;
+        if (sceneCamera)
+        {
+            var forward = sceneCamera.transform.forward;
+            var distanceToPlane = Mathf.Abs(forward.z) > 0.0001f
+                ? -sceneCamera.transform.position.z / forward.z
+                : 10f;
 
-        var previousPlayer = CurrentPlayer;
-        UnsubscribeCurrentPlayerHealth();
-        CurrentPlayer = null;
-        PlayerChanged?.Invoke(null);
+            if (distanceToPlane < 0f)
+                distanceToPlane = 10f;
 
-        if (previousPlayer)
-            Destroy(previousPlayer.gameObject);
+            return sceneCamera.transform.position + forward * distanceToPlane;
+        }
+#endif
 
-        if (respawnDelay > 0f)
-            yield return new WaitForSeconds(respawnDelay);
-
-        SpawnPlayerAt(CurrentSpawnPoint ? CurrentSpawnPoint : ResolvePlayerStart());
-        respawnInProgress = false;
-    }
-
-    void UnsubscribeCurrentPlayerHealth()
-    {
-        if (currentPlayerHealth)
-            currentPlayerHealth.Depleted -= OnCurrentPlayerDepleted;
-
-        currentPlayerHealth = null;
+        Debug.LogWarning("StageSession could not find a PlayerStart tag or an active Scene view camera. Spawning at the StageSession position.", this);
+        return transform.position;
     }
 }
