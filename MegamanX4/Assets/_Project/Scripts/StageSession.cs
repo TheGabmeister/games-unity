@@ -34,11 +34,13 @@ public class StageSession : MonoBehaviour
         var health = player.GetComponent<Health>();
         var weapons = player.GetComponent<WeaponInventory>();
 
-        if (!_hudPrefab) return;
+        if (!_hudPrefab) 
+            return;
 
         var hudGo = Instantiate(_hudPrefab);
         var hud = hudGo.GetComponent<HUD>();
-        if (hud) hud.Bind(health, weapons);
+        if (hud) 
+            hud.Bind(health, weapons);
     }
 
     GameObject FindPlayerStart()
@@ -61,9 +63,11 @@ public class StageSession : MonoBehaviour
         if (sceneCamera)
         {
             var forward = sceneCamera.transform.forward;
-            var distanceToPlane = Mathf.Abs(forward.z) > 0.0001f
-                ? -sceneCamera.transform.position.z / forward.z
-                : 10f;
+            float distanceToPlane;
+            if (Mathf.Abs(forward.z) > 0.0001f)
+                distanceToPlane = -sceneCamera.transform.position.z / forward.z;
+            else
+                distanceToPlane = 10f;
 
             if (distanceToPlane < 0f)
                 distanceToPlane = 10f;
