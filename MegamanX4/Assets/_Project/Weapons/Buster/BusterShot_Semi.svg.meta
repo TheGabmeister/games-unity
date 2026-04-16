@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3f87d72c4bbb1ce4b8d035e11b81f3c1
+guid: 3c3c967f34cf565469b0b9ee6dc13d88
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -39,7 +39,7 @@ ScriptedImporter:
   useSVGPixelsPerUnit: 0
   spriteData:
     TessellationDetail: 0
-    SpriteName: MegamanX_Shot_SmallSprite
+    SpriteName: BusterShot_SemiSprite
     SpritePivot: {x: 0.5, y: 0.5}
     SpriteAlignment: 0
     SpriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -47,7 +47,7 @@ ScriptedImporter:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 25
-      height: 14
-    SpriteID: 360e3006c60f55c4583c5110e3824c7a
+      width: 61
+      height: 28
+    SpriteID: a5746871f1d4b054db693e6768e27d78
     PhysicsOutlines: []

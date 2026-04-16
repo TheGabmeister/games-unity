@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3c3c967f34cf565469b0b9ee6dc13d88
+guid: 93cbe3cfd77d342469abd0d10dc400a8
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -39,7 +39,7 @@ ScriptedImporter:
   useSVGPixelsPerUnit: 0
   spriteData:
     TessellationDetail: 0
-    SpriteName: MegamanX_Shot_SemiSprite
+    SpriteName: FrostTowerSprite
     SpritePivot: {x: 0.5, y: 0.5}
     SpriteAlignment: 0
     SpriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -47,7 +47,7 @@ ScriptedImporter:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 61
-      height: 28
-    SpriteID: a5746871f1d4b054db693e6768e27d78
+      width: 52
+      height: 134
+    SpriteID: 2f77693c1211ed84fb96031512a2476d
     PhysicsOutlines: []

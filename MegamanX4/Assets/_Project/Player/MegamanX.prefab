@@ -169,6 +169,13 @@ MonoBehaviour:
   knockbackSpeedX: 5
   knockbackSpeedY: 6
   knockbackDuration: 0.35
+  ladderLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  climbSpeed: 5
+  ladderShootLockTime: 0.2
+  climbSprite: {fileID: 0}
+  climbShootSprite: {fileID: 0}
   environmentLayers:
     serializedVersion: 2
     m_Bits: 64
