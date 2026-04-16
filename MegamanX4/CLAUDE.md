@@ -105,7 +105,7 @@ Three decoupled concerns:
 - Kinematic `Rigidbody2D`, `gravityScale = 0`, trigger `Collider2D`.
 - Exposes `public event Action Destroyed;` fired from `OnDestroy`, used by the player to track the 3-lemon cap without a scene scan.
 
-The planned replacement composes small, reusable components: `Projectile` (damage + hit detection + despawn event), `Lifetime` (auto-destroy timer), `StraightMovement` / `StationaryHazard` / etc. (movement behavior). Behaviors have no `Rigidbody2D` dependency — they move via `transform.position`, making them reusable for non-physics objects. Facing is derived from `transform.lossyScale.x` (spawner flips `localScale.x`), not via an Initialize method.
+The planned replacement composes small, reusable components: `Projectile` (damage + hit detection + despawn event), `Lifetime` (auto-destroy timer), `StraightMovement` / etc. (movement behavior). Stationary projectiles (Frost Tower, Lightning Web) use `Projectile + Lifetime` with no movement component — spawned at full scale. Behaviors have no `Rigidbody2D` dependency — they move via `transform.position`, making them reusable for non-physics objects. Facing is derived from `transform.lossyScale.x` (spawner flips `localScale.x`), not via an Initialize method.
 
 ### Prefab generation (allowed)
 

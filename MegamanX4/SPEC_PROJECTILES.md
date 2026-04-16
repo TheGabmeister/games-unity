@@ -6,7 +6,7 @@ Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) w
 
 **Relationship to other specs:**
 
-- [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — the weapon system spawns projectile prefabs. This spec defines what those prefabs are made of. `TwinSlasherProjectile.cs` and `FrostTowerProjectile.cs` from SPEC_XWEAPONS are superseded: Twin Slasher becomes `Projectile + StraightMovement`, Frost Tower becomes `Projectile + StationaryHazard`. `WeaponData` gains a `SpawnEntry[]` array (§6).
+- [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — the weapon system spawns projectile prefabs. This spec defines what those prefabs are made of. `TwinSlasherProjectile.cs` and `FrostTowerProjectile.cs` from SPEC_XWEAPONS are superseded: Twin Slasher becomes `Projectile + StraightMovement`, Frost Tower becomes `Projectile + Lifetime` (stationary, spawned at full scale). `WeaponData` gains a `SpawnEntry[]` array (§6).
 - [SPEC2.md](SPEC2.md) — `Projectile` calls `Health.ApplyDamage(damage, transform.position)` using the source-position overload added there.
 
 ---
@@ -25,7 +25,6 @@ Prefab: MegamanX_Shot_Small
 Prefab: FrostTower
 ├── Projectile           (damage, hitLayers, piercing=true)
 ├── Lifetime             (duration=1.5s)
-├── StationaryHazard     (riseTime, fullHeight)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
 └── SpriteRenderer
@@ -153,46 +152,6 @@ public class StraightMovement : MonoBehaviour
 ```
 
 When used on a projectile prefab alongside `Projectile` (which requires `Rigidbody2D` + `Collider2D`), the kinematic body's collider follows the transform automatically — trigger callbacks fire as normal.
-
-### 3.2 StationaryHazard
-
-Spawns in place, optionally rises/scales over a riseTime, persists for a duration, then despawns. Covers: Frost Tower, Lightning Web (if treated as zone). No `Rigidbody2D` dependency — the object doesn't translate, only scales.
-
-**No Initialize method.** Facing is derived from `transform.lossyScale.x` (set by the spawner flipping `localScale.x` on the root). All configuration is baked via `[SerializeField]`.
-
-```csharp
-public class StationaryHazard : MonoBehaviour
-{
-    [SerializeField] float riseTime = 0.15f;
-    [SerializeField] float riseAxis = 1f;   // 1 = Y (vertical rise), 0 = uniform
-
-    Vector3 targetScale;
-    float timer;
-
-    void Start()
-    {
-        targetScale = transform.localScale;
-        transform.localScale = new Vector3(
-            targetScale.x,
-            riseAxis > 0.5f ? 0f : targetScale.y,
-            targetScale.z);
-    }
-
-    void Update()
-    {
-        timer += Time.deltaTime;
-        if (timer <= riseTime)
-        {
-            float t = Mathf.Clamp01(timer / riseTime);
-            var s = targetScale;
-            if (riseAxis > 0.5f) s.y = targetScale.y * t;
-            transform.localScale = s;
-        }
-    }
-}
-```
-
-Lifetime and despawn are handled by the `Lifetime` component — StationaryHazard doesn't duplicate that logic.
 
 ---
 
@@ -414,14 +373,14 @@ No changes to `Projectile` or behaviors. Layer configuration in the prefab handl
 | `MegamanX_Shot_Full` | Projectile + StraightMovement | damage=4, speed=14, piercing=true, lifetime=0.8 |
 | `TwinSlasher` | Root: Lifetime. 2 children: Projectile + Lifetime + StraightMovement (±30°) | damage=2, speed=10, piercing=true, duration=0.6 |
 | `TwinSlasherCharged` | Root: Lifetime. 4 children: Projectile + Lifetime + StraightMovement (±30°, ±15°) | damage=3, speed=10, piercing=true, duration=0.6 |
-| `FrostTower` | Projectile + StationaryHazard | damage=3, piercing=true, lifetime=1.5 |
-| `FrostTowerCharged` | Projectile + StationaryHazard | damage=5, piercing=true, lifetime=2.5, taller |
+| `FrostTower` | Projectile + Lifetime | damage=3, piercing=true, lifetime=1.5, stationary |
+| `FrostTowerCharged` | Projectile + Lifetime | damage=5, piercing=true, lifetime=2.5, stationary, taller |
 
 ### Future (one prefab per weapon, added with their specs)
 
 | Weapon | Behavior | Notes |
 |---|---|---|
-| Lightning Web | StationaryHazard or custom | Web zone persists on surface |
+| Lightning Web | Projectile + Lifetime or custom | Web zone persists on surface, stationary |
 | Aiming Laser | HomingMovement | Locks onto nearest enemy |
 | Double Cyclone | StraightMovement (angled) or OrbitalMovement | Two tornadoes, upward angle |
 | Rising Fire | ArcMovement | Arcs upward with gravity |
@@ -465,13 +424,11 @@ EditMode tests (requires `.asmdef` setup from README §12):
 - **StraightMovement**
   - `Initialize(1, 0f)` → direction = (1, 0). `Initialize(-1, 30f)` → correct angle.
   - Update advances position by `direction * speed * dt`.
-- **StationaryHazard**
-  - Scale starts at 0 (Y axis), reaches full after `riseTime`.
 
 Manual QA:
 - Fire buster → shot behaves identically to old BusterShot.
 - Equip Twin Slasher → fire → two blades at ±30°, pierce through enemies.
-- Equip Frost Tower → fire → pillar rises, persists, damages on contact, shatters at lifetime.
+- Equip Frost Tower → fire → pillar spawns at full scale, persists, damages on contact, despawns at lifetime.
 - Fire into an empty screen → projectile despawns after lifetime expires.
 - Enemy fires at player → same Projectile, hits Player layer.
 
@@ -482,16 +439,15 @@ Manual QA:
 1. **Projectile.cs** — create the component per §2.
 2. **Lifetime.cs** — create per §2.1.
 3. **StraightMovement.cs** — create per §3.1.
-4. **StationaryHazard.cs** — create per §3.2.
-5. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + Lifetime + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
-6. **Delete BusterShot.cs** — only after step 5 is verified.
-7. **Add SpawnEntry[] to WeaponData** — per §6.
-8. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
-9. **Author Twin Slasher composite prefab** — root with `Lifetime`, two children each with `Projectile + Lifetime + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
-10. **Author Frost Tower prefab** — `Projectile + Lifetime + StationaryHazard`, WeaponData asset with 1-entry spawn pattern.
-11. Verify all buster + special weapon fire works end-to-end.
+4. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + Lifetime + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
+5. **Delete BusterShot.cs** — only after step 4 is verified.
+6. **Add SpawnEntry[] to WeaponData** — per §6.
+7. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
+8. **Author Twin Slasher composite prefab** — root with `Lifetime`, two children each with `Projectile + Lifetime + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
+9. **Author Frost Tower prefab** — `Projectile + Lifetime` (stationary, spawned at full scale), WeaponData asset with 1-entry spawn pattern.
+10. Verify all buster + special weapon fire works end-to-end.
 
-Steps 1–6 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
+Steps 1–5 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
 
 ---
 
@@ -504,7 +460,6 @@ Steps 1–6 are the critical path. The projectile system must work with the exis
 | `Assets/_Project/Scripts/Projectile.cs` | MonoBehaviour |
 | `Assets/_Project/Scripts/Lifetime.cs` | MonoBehaviour (general-purpose auto-destroy timer) |
 | `Assets/_Project/Scripts/StraightMovement.cs` | MonoBehaviour |
-| `Assets/_Project/Scripts/StationaryHazard.cs` | MonoBehaviour |
 
 ### Modified
 
