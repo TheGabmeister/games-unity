@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -1999154112721836509}
   - component: {fileID: 2517036731380005356}
   - component: {fileID: 2535031368983772675}
+  - component: {fileID: 3515527984591695915}
   m_Layer: 0
   m_Name: GroundHunter
   m_TagString: Untagged
@@ -179,5 +180,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff5647dda17074942992fda974c67285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Projectile
-  damage: 1
-  piercing: 0
+  _piercing: 0
+--- !u!114 &3515527984591695915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3956734191110312132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f6dd5373bee3d4f806d3d124419bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::HitBox
+  _damage: 1

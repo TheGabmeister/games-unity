@@ -140,7 +140,7 @@ Three decoupled concerns:
 
 Composable design: one shared `Projectile` component + a `Lifetime` timer + one movement behavior (currently `MoveForward`). Each piece has a single responsibility:
 
-- **`Projectile`** — damage, trigger-based hit detection, `Destroyed` event. Does not move the object. Enforces Kinematic + `gravityScale = 0` in Awake. `OnTriggerEnter2D` has an explicit Environment-layer branch: **walls destroy any projectile regardless of `piercing`**. Piercing means "pass through enemies," not "pass through walls."
+- **`Projectile`** — lifecycle only: `Destroyed` event, wall collision, piercing self-destruct. Does not deal damage itself — a sibling `HitBox` component handles that. Enforces Kinematic + `gravityScale = 0` in Awake. `OnTriggerEnter2D` has an explicit Environment-layer branch: **walls destroy any projectile regardless of `piercing`**. Piercing means "pass through enemies," not "pass through walls."
 - **`Lifetime`** — general-purpose auto-destroy timer. Usable on any GameObject (VFX, afterimages), not just projectiles.
 - **`MoveForward`** — advances along `transform.right` at a fixed speed. The spawner rotates the transform to set direction; the script reads no facing/angle fields.
 
@@ -153,7 +153,7 @@ Composable design: one shared `Projectile` component + a `Lifetime` timer + one 
 
 The `Projectile` script has no `hitLayers` / `hitTargets` field — the matrix is the single source of truth for layer filtering.
 
-The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}.prefab` assets compose `Projectile` + `Lifetime` + `MoveForward`, and [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) spawns them at `muzzle.position` / `muzzle.rotation` — direction flows from the muzzle's world rotation, which itself is driven by `Visual`'s Y-flip when facing changes. No `BusterShot.cs` component exists anymore; no facing parameter is passed to projectiles.
+The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}.prefab` assets compose `HitBox` + `Projectile` + `Lifetime` + `MoveForward`, and [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) spawns them at `muzzle.position` / `muzzle.rotation` — direction flows from the muzzle's world rotation, which itself is driven by `Visual`'s Y-flip when facing changes. No `BusterShot.cs` component exists anymore; no facing parameter is passed to projectiles.
 
 ### Prefab generation (allowed)
 

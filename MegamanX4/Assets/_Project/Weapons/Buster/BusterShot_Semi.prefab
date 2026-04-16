@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -2420068050858150765}
   - component: {fileID: 7203728959279093020}
   - component: {fileID: 6653391665175301198}
+  - component: {fileID: 8387739963179894866}
   m_Layer: 9
   m_Name: BusterShot_Semi
   m_TagString: Untagged
@@ -171,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2c60a4a9c598f049a0f2d174f4ca6b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::MoveForward
-  speed: 14
+  _speed: 18
 --- !u!114 &7203728959279093020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cfa0ff87213dea4cb5144610abc7289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Lifetime
-  duration: 1.2
+  _duration: 1
 --- !u!114 &6653391665175301198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,5 +198,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff5647dda17074942992fda974c67285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Projectile
-  damage: 2
-  piercing: 0
+  _piercing: 0
+--- !u!114 &8387739963179894866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6249736849717060126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f6dd5373bee3d4f806d3d124419bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::HitBox
+  _damage: 2

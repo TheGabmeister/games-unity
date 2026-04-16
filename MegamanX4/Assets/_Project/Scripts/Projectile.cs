@@ -5,7 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] int _damage = 1;
     [SerializeField] bool _piercing;
 
     public event Action Destroyed;
@@ -25,13 +24,9 @@ public class Projectile : MonoBehaviour
     {
         if (other.gameObject.layer == _environmentLayer)
         {
-            Destroy(gameObject);   // walls stop all projectiles, including piercing
+            Destroy(gameObject);
             return;
         }
-
-        var hurtBox = other.GetComponentInParent<HurtBox>();
-        if (hurtBox)
-            hurtBox.ReceiveHit(_damage, transform.position);
 
         if (!_piercing)
             Destroy(gameObject);
