@@ -1,15 +1,19 @@
 # SPEC_XWEAPONS — X Weapon System
 
-Status: **In progress — Phase 1 (weapon switching + universal charging).**
+Status: **In progress — Phase 1 (weapon switching + universal charging, unified inventory).**
 
 ## 1. Behavior
 
-- The player carries an ordered list of weapons. Slot 0 is always the buster.
+- The player carries an ordered list of weapons. Slot 0 is the buster (X's default arm cannon).
 - **Q** cycles to the previous weapon, **E** cycles to the next. Wraps around.
-- On switch, the player's sprite tints to the active weapon's color.
-- Hold **Attack** to charge, release to fire — same press/hold/release rhythm as the buster, regardless of equipped weapon.
-- Buster fires lemon / semi / full based on charge tier per its existing behavior in [PlayerBuster.cs](Assets/_Project/Scripts/PlayerBuster.cs).
-- Special weapons spawn `WeaponData.prefab` once at the muzzle on release. The charge flash plays during the hold; a fully-charged release fires the same prefab as a tapped release. (Charged variants are deferred — see §4.) No animation lock.
+- On switch, the player's sprite tints to the active weapon's color, and any in-progress charge is cancelled.
+- Hold **Attack** to charge, release to fire. Charge timing and charge-flash visuals are identical across every weapon.
+- On release, the active weapon fires one of three prefabs based on `_chargeTimer`:
+  - Full charge → `fullPrefab`
+  - Semi charge → `semiPrefab`
+  - Tap (or too-short hold) → `smallPrefab`
+- **Convention for special weapons:** they don't have a distinct semi tier. Authors set `semiPrefab = smallPrefab` in the inspector so a semi-charge release fires the same shot as a tap. `fullPrefab` can either match `smallPrefab` (no charged variant) or be a distinct charged shot — weapon author's call per asset.
+- No animation lock during firing.
 
 ## 2. New pieces
 
@@ -21,35 +25,44 @@ public class WeaponData : ScriptableObject
 {
     public string displayName;
     public Color tint = Color.white;
-    public GameObject prefab;   // null for the buster slot — buster uses PlayerBuster's own logic
+    public GameObject smallPrefab;
+    public GameObject semiPrefab;
+    public GameObject fullPrefab;
 }
 ```
 
-The user authors the projectile prefabs in the editor and drags them into the `prefab` field. This spec deliberately says nothing about prefab contents.
+Same shape for every weapon — buster included. The three prefab slots are the weapon's public interface; what's inside each prefab is an authoring concern and is out of scope here.
 
 ### WeaponInventory (MonoBehaviour, on the player)
 
+Owns both the inventory list and the charge state machine — absorbs what PlayerBuster currently does.
+
 - Serialized: ordered `List<WeaponData>` (slot 0 = buster).
-- Tracks `int _activeIndex`.
-- Subscribes to `WeaponNext` / `WeaponPrev` input actions in `OnEnable`, cycles `_activeIndex` on press, wraps with modulo.
-- On switch: writes `ActiveWeapon.tint` to the player's `SpriteRenderer.color`.
-- Exposes a public `WeaponData ActiveWeapon` and `bool IsBusterActive` so `PlayerBuster` can branch.
+- State: `int _activeIndex`, `bool _isCharging`, `float _chargeTimer`, `Color _baseSpriteColor`, `readonly List<Projectile> _activeSmallShots`.
+- Subscribes in `OnEnable` to `Attack` (started + canceled), `WeaponNext.started`, `WeaponPrev.started`.
+- Drives charge flash in `Update` (ticks `_chargeTimer` while `_isCharging`, cycles `SpriteRenderer.color` during semi/full thresholds, restores to `ActiveWeapon.tint` when idle).
+- **On Attack press:** if not knocked back, `_isCharging = true`, reset timer.
+- **On Attack release:** picks the tier prefab from `ActiveWeapon` by `_chargeTimer`, instantiates it once at `MuzzleAnchor.position` / `MuzzleAnchor.rotation`. For the small tier, enforces the 3-on-screen cap by tracking `Projectile.Destroyed`. Resets timer and color.
+- **On weapon swap (Q/E):** cancels any in-progress charge, advances `_activeIndex`, writes `ActiveWeapon.tint` to the player's `SpriteRenderer.color`.
+- **On knockback:** PlayerController calls `CancelCharge()` (same hook it uses today).
+- Exposes `public WeaponData ActiveWeapon` and `public bool IsKnockedBack` pass-through if PlayerController needs it.
 
 ## 3. Integration
 
-- **Input actions:** add `WeaponNext` (Keyboard E, Gamepad RB) and `WeaponPrev` (Keyboard Q, Gamepad LB) to [InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_Actions.inputactions). No existing bindings change.
-- **PlayerBuster** keeps the existing `StartCharge` → tick → `ReleaseCharge` state machine for *every* weapon. The charge timer and charge-flash visuals run regardless of which slot is active.
-- On `ReleaseCharge`, PlayerBuster branches on `WeaponInventory.IsBusterActive`:
-  - True → existing buster fire (lemon / semi / full based on `_chargeTimer`).
-  - False → instantiate `WeaponInventory.ActiveWeapon.prefab` once at `MuzzleAnchor.position` / `MuzzleAnchor.rotation`. Ignore the charge tier — the same prefab fires whether the player tapped or held to full.
-- **PlayerController** is untouched — it still owns input subscription and delegates to PlayerBuster as today.
-- **Color tint and `DamageFlash`:** `DamageFlash` toggles `SpriteRenderer.enabled`, not `.color`, so they coexist. Charge-flash temporarily overrides color and is restored to the active weapon's tint (not white) on release — small adjustment in `PlayerBuster.RestoreColor`.
+- **PlayerBuster is deleted.** All of its state and methods fold into WeaponInventory. Call sites in [PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) are renamed:
+  - `_buster = GetComponent<PlayerBuster>()` → `_inventory = GetComponent<WeaponInventory>()`
+  - `_buster.Initialize(_spriteRenderer)` → `_inventory.Initialize(_spriteRenderer)`
+  - `_buster.StartCharge()` in `OnAttackStarted` → `_inventory.StartCharge()`
+  - `_buster.ReleaseCharge()` in `OnAttackCanceled` → `_inventory.ReleaseCharge()`
+  - `_buster.CancelCharge()` in `ApplyKnockback` → `_inventory.CancelCharge()`
+  - `[RequireComponent(typeof(PlayerBuster))]` → `[RequireComponent(typeof(WeaponInventory))]`
+- **PlayerController** otherwise unchanged — it still owns input subscription for `Attack` and still handles ladder shoot-lock inline in `OnAttackCanceled`.
+- **Input actions:** add `WeaponNext` (Keyboard E, Gamepad RB) and `WeaponPrev` (Keyboard Q, Gamepad LB) to [InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_Actions.inputactions). `WeaponInventory` subscribes to these directly.
+- **Color tint and `DamageFlash`:** `DamageFlash` toggles `SpriteRenderer.enabled`, not `.color`, so they coexist. Charge-flash temporarily overrides color and is restored to the active weapon's tint (not white) when charge ends.
 
 ## 4. Out of scope (for this phase)
 
-
 - Per-weapon energy pools and depletion-driven auto-switch.
-- Charged variants.
 - Animation locks during firing.
-- On-screen shot caps for special weapons.
+- On-screen shot caps for special weapons (only the buster's 3-lemon cap carries over).
 - HUD.
