@@ -26,9 +26,9 @@ This spec is a companion to:
 The project needs **two orchestration layers**:
 
 - a code-driven `Bootstrapper` that ensures the persistent systems root exists before scene content starts running
-- a per-stage `GameplaySession` that owns the current player, HUD binding, and respawn rules
+- a per-stage `StageSession` that owns the current player, HUD binding, and respawn rules
 
-The `GameplaySession` still plays the role Unreal's `GameMode` often plays:
+The `StageSession` still plays the role Unreal's `GameMode` often plays:
 
 - identify or spawn the current player
 - track the active checkpoint / spawn point
@@ -39,7 +39,7 @@ The `GameplaySession` still plays the role Unreal's `GameMode` often plays:
 Recommended Unity names:
 
 - `Bootstrapper`
-- `GameplaySession`
+- `StageSession`
 
 That naming fits Unity better than forcing Unreal class names directly, while keeping the same mental model.
 
@@ -56,10 +56,10 @@ That naming fits Unity better than forcing Unreal class names directly, while ke
 | Enemy death response | `Enemy` |
 | Player movement / actions | `PlayerController` |
 | Boot order / persistent manager lifetime | `Bootstrapper` |
-| Current player instance | `GameplaySession` or a `PlayerRegistry` it owns |
-| HUD lifetime + binding | `GameplaySession` |
+| Current player instance | `StageSession` or a `PlayerRegistry` it owns |
+| HUD lifetime + binding | `StageSession` |
 | HUD rendering | `GameplayHudController` |
-| Checkpoint / respawn selection | `GameplaySession` |
+| Checkpoint / respawn selection | `StageSession` |
 
 ### 2.2 What should *not* own the HUD
 
@@ -81,7 +81,7 @@ Closest mapping:
 | Unreal concept | Unity concept in this project |
 |---|---|
 | persistent boot layer / startup orchestration | `Bootstrapper` |
-| `GameMode` | `GameplaySession` |
+| `GameMode` | `StageSession` |
 | `Pawn` | Player prefab / player GameObject |
 | `HUD` | `GameplayHudController` on a Canvas |
 | `PlayerController` | partly Unity `PlayerInput`, partly our existing `PlayerController` |
@@ -126,7 +126,7 @@ The `Systems` prefab is marked by `SystemsRoot`, which:
 - enemies and hazards
 - `PlayerStart` marker object(s)
 - optional stage-local authored helpers
-- eventually a stage-local `GameplaySession` or a spawned equivalent
+- eventually a stage-local `StageSession` or a spawned equivalent
 
 That is the current recommended model because:
 
@@ -141,7 +141,7 @@ This same structure can still scale to multiple stages:
 
 - `Bootstrapper` continues to ensure the systems root exists before gameplay
 - each stage owns its own gameplay content and spawn markers
-- each stage has its own `GameplaySession` responsibilities for player/HUD/checkpoints
+- each stage has its own `StageSession` responsibilities for player/HUD/checkpoints
 
 If campaign-level state grows later, it can live under the persistent systems root rather than requiring a separate bootstrap scene.
 
@@ -153,7 +153,7 @@ If campaign-level state grows later, it can live under the persistent systems ro
 
 The HUD should be a dedicated presentation system:
 
-- `GameplaySession` owns HUD lifetime and tells it who the current player is
+- `StageSession` owns HUD lifetime and tells it who the current player is
 - `GameplayHudController` owns screen widgets and subscriptions
 - `GameplayHudController` binds to the current player's `Health` and other runtime components
 
@@ -169,8 +169,8 @@ The HUD should not hold a permanent serialized reference straight to one player 
 
 Instead:
 
-- `GameplaySession` knows the current player
-- HUD asks `GameplaySession` for the current player, or listens for a player-registration event
+- `StageSession` knows the current player
+- HUD asks `StageSession` for the current player, or listens for a player-registration event
 - on respawn, HUD rebinds to the new player automatically
 
 This keeps the HUD resilient to:
@@ -188,7 +188,7 @@ Recommended pattern:
 
 ### Option A - direct session ownership
 
-`GameplaySession` exposes:
+`StageSession` exposes:
 
 ```csharp
 public PlayerController CurrentPlayer { get; private set; }
@@ -205,7 +205,7 @@ Introduce:
 
 Then:
 
-- `GameplaySession` owns a `PlayerRegistry`
+- `StageSession` owns a `PlayerRegistry`
 - player spawn / respawn code registers the active player
 - HUD listens to `PlayerRegistry`
 
@@ -231,7 +231,7 @@ Recommended startup sequence:
 4. If not, it loads `Resources/Systems.prefab` and instantiates it.
 5. `SystemsRoot` claims persistence and rejects duplicates.
 6. Scene content then loads and starts.
-7. `GameplaySession` creates or resolves the current player/HUD flow for that stage.
+7. `StageSession` creates or resolves the current player/HUD flow for that stage.
 
 This guarantees:
 
@@ -260,7 +260,7 @@ The important point is that the runtime player prefab is spawned by code. The sc
 Recommended flow for gameplay startup:
 
 1. `Bootstrapper` ensures the persistent systems root exists before the scene starts.
-2. `GameplaySession` wakes up after scene load is complete.
+2. `StageSession` wakes up after scene load is complete.
 3. It resolves the active spawn point, initially from `PlayerStart`.
 4. It spawns the player prefab at that point.
 5. It stores that player as the current player.
@@ -271,18 +271,18 @@ Recommended flow for gameplay startup:
 ### 7.4 Death / respawn
 
 1. Player `Health` depletes.
-2. `GameplaySession` receives the death signal, directly or through a player-side component.
-3. `GameplaySession` runs death / respawn flow.
+2. `StageSession` receives the death signal, directly or through a player-side component.
+3. `StageSession` runs death / respawn flow.
 4. Old player instance is cleaned up or disabled.
 5. New player instance is spawned at the active checkpoint.
-6. `GameplaySession` updates `CurrentPlayer`.
+6. `StageSession` updates `CurrentPlayer`.
 7. HUD rebinds automatically.
 
 ---
 
 ## 8. Checkpoint ownership
 
-Checkpoint state should belong to `GameplaySession`, not to the player.
+Checkpoint state should belong to `StageSession`, not to the player.
 
 Reason:
 
@@ -313,7 +313,7 @@ Boss HUD should still be owned by the same gameplay HUD layer, but the data sour
 Recommended rule:
 
 - boss owns boss health
-- `GameplaySession` decides which boss is currently relevant to the HUD
+- `StageSession` decides which boss is currently relevant to the HUD
 - `BossHudPanel` binds to that boss's `Health`
 
 This lets us support:
@@ -337,7 +337,7 @@ Good responsibilities:
 - avoid duplicate systems-root creation
 - stay small and infrastructure-only
 
-### 10.2 `GameplaySession`
+### 10.2 `StageSession`
 
 Good responsibilities:
 
@@ -349,9 +349,9 @@ Good responsibilities:
 - trigger respawn
 - optionally coordinate boss registration and pause flow later
 
-### 10.3 What `GameplaySession` should avoid
+### 10.3 What `StageSession` should avoid
 
-`GameplaySession` should not become a god-object that directly owns:
+`StageSession` should not become a god-object that directly owns:
 
 - player movement logic
 - damage calculations
@@ -373,7 +373,7 @@ When we start implementing this, keep the first pass intentionally small, but in
 Add:
 
 - `Bootstrapper`
-- `GameplaySession`
+- `StageSession`
 - `GameplayHudController`
 
 First-pass responsibilities:
@@ -410,7 +410,7 @@ public static class Bootstrapper
 ```
 
 ```csharp
-public class GameplaySession : MonoBehaviour
+public class StageSession : MonoBehaviour
 {
     public PlayerController CurrentPlayer { get; private set; }
     public event Action<PlayerController> PlayerChanged;
@@ -425,7 +425,7 @@ public class GameplaySession : MonoBehaviour
 ```csharp
 public class GameplayHudController : MonoBehaviour
 {
-    [SerializeField] GameplaySession session;
+    [SerializeField] StageSession session;
 
     void OnEnable() { ... }
     void BindPlayer(PlayerController player) { ... }
@@ -448,7 +448,7 @@ This is enough structure for a good first implementation without overbuilding.
 These do not block the first HUD pass, but they will matter soon:
 
 - Should the HUD Canvas live in `Gameplay.unity`, or under the persistent `Systems` root once stage flow expands?
-- Should `GameplaySession` own checkpoint transforms directly, or should we add a `Checkpoint` component early?
+- Should `StageSession` own checkpoint transforms directly, or should we add a `Checkpoint` component early?
 - When Zero lands, do we want one shared HUD controller with mode-specific panels, or separate X / Zero HUD panels?
 
 Current recommendation:
@@ -465,9 +465,9 @@ Current recommendation:
 Current recommended decisions:
 
 - Use the new code-driven `Bootstrapper` to instantiate the persistent `Systems` prefab before scene content starts.
-- Use `GameplaySession` as the Unity-side GameMode analogue.
+- Use `StageSession` as the Unity-side GameMode analogue.
 - Spawn the player prefab automatically by resolving a `PlayerStart` GameObject in the loaded gameplay scene.
-- Let `GameplaySession` own the current player reference and respawn flow.
+- Let `StageSession` own the current player reference and respawn flow.
 - Let `GameplayHudController` own HUD rendering and subscriptions.
 - Bind HUD to player state through the session, not by hard-linking HUD to one scene player object.
 - Keep gameplay state in gameplay components (`Health`, weapon systems, boss systems), not in the HUD.

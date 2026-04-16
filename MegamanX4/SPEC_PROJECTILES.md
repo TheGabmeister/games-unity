@@ -15,21 +15,25 @@ Replaces the standalone [BusterShot.cs](Assets/_Project/Scripts/BusterShot.cs) w
 
 ```
 Prefab: MegamanX_Shot_Small
-├── Projectile           (damage, hitLayers, piercing, lifetime, despawn)
+├── Projectile           (damage, hitLayers, piercing)
+├── Lifetime             (duration=0.6s)
 ├── StraightMovement     (speed, direction \u2014 moves via transform.position)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
 └── SpriteRenderer
 
 Prefab: FrostTower
-├── Projectile           (damage, hitLayers, piercing=true, lifetime=1.5s)
+├── Projectile           (damage, hitLayers, piercing=true)
+├── Lifetime             (duration=1.5s)
 ├── StationaryHazard     (riseTime, fullHeight)
 ├── Rigidbody2D          (Kinematic, gravityScale=0)
 ├── Collider2D           (isTrigger=true)
 └── SpriteRenderer
 ```
 
-**Projectile** is the shared core — every projectile has it. It never moves the object. It only detects hits, applies damage, and manages lifetime.
+**Projectile** is the shared core — every projectile has it. It never moves the object. It only detects hits, applies damage, and fires the `Destroyed` event.
+
+**Lifetime** is a general-purpose auto-destroy timer. Usable on any GameObject — projectiles, VFX, dash afterimages, temporary spawns. When duration expires, it calls `Destroy(gameObject)`. On a projectile, this triggers `Projectile.OnDestroy` → `Destroyed` event.
 
 **Behavior components** own movement. Each moves via `transform.position` in `Update` (or `FixedUpdate` where physics-step alignment matters). No `Rigidbody2D` dependency — behaviors work on any GameObject, including non-physics objects like background elements or visual FX. Exactly one behavior per prefab.
 
@@ -47,8 +51,6 @@ public class Projectile : MonoBehaviour
     [SerializeField] int damage = 1;
     [SerializeField] LayerMask hitLayers = ~0;
     [SerializeField] bool piercing;
-    [SerializeField] float lifetime = 0.6f;
-    float timer;
 
     public event Action Destroyed;
 
@@ -57,12 +59,6 @@ public class Projectile : MonoBehaviour
         var rb = GetComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
-    }
-
-    void Update()
-    {
-        timer += Time.deltaTime;
-        if (timer >= lifetime) Destroy(gameObject);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -88,16 +84,38 @@ public class Projectile : MonoBehaviour
 | Damage amount | `[SerializeField]` on Projectile. Baked per prefab. WeaponData does not carry damage — the prefab is the source of truth for what it does. |
 | Hit filtering | `hitLayers` LayerMask. Player projectiles filter to Enemy layer; enemy projectiles filter to Player layer. Inspector-configured. |
 | Piercing | `bool piercing`. Twin Slasher = true (passes through enemies). Buster = false (destroys on first hit). |
-| Lifetime | Timer in `Update`. Auto-destroys after `lifetime` seconds. |
+| Lifetime | Extracted into a separate `Lifetime` component (§2.1). Projectile does not handle its own timer. |
 | Off-screen despawn | Deferred. Lifetime-only for now; off-screen cleanup addressed later. |
 | Despawn event | `event Action Destroyed` fired from `OnDestroy`. Same pattern as current BusterShot. Spawner subscribes at spawn time to track live-shot count. No metadata — spawner already knows which slot the shot belongs to. |
 | Kinematic enforcement | `Awake` forces Kinematic + gravityScale 0, same as BusterShot and PlayerController. |
 
 ### What Projectile does NOT do
 
+- **Lifetime.** No timer. A separate `Lifetime` component handles auto-destroy (§2.1).
 - **Movement.** No `FixedUpdate`, no `MovePosition`, no velocity. Behavior components handle this.
 - **Spawn logic.** Projectile doesn't know about WeaponData, spawn patterns, or facing. It's a runtime component on a live instance.
 - **Visual effects.** No particles, no trail. Those are separate components or child objects on the prefab.
+
+### 2.1 Lifetime component
+
+General-purpose auto-destroy timer. Not projectile-specific — usable on any GameObject (VFX, dash afterimages, temporary spawns, debris).
+
+```csharp
+public class Lifetime : MonoBehaviour
+{
+    [SerializeField] float duration = 1f;
+
+    float timer;
+
+    void Update()
+    {
+        timer += Time.deltaTime;
+        if (timer >= duration) Destroy(gameObject);
+    }
+}
+```
+
+On a projectile, `Destroy(gameObject)` triggers `Projectile.OnDestroy` → `Destroyed` event. The two components are fully decoupled — `Lifetime` doesn't know about `Projectile`, and `Projectile` doesn't know about `Lifetime`.
 
 ---
 
@@ -174,7 +192,7 @@ public class StationaryHazard : MonoBehaviour
 }
 ```
 
-Lifetime and despawn are handled by `Projectile.lifetime` — StationaryHazard doesn't duplicate that logic.
+Lifetime and despawn are handled by the `Lifetime` component — StationaryHazard doesn't duplicate that logic.
 
 ---
 
@@ -232,15 +250,16 @@ SerializeFields: `float outSpeed`, `float returnSpeed`, `float hangTime`.
 | `Fire(direction)`: set scale + direction | Spawner flips `localScale.x`; `StraightMovement.Start` reads it |
 | `OnTriggerEnter2D`: layer check + damage + destroy | `Projectile.OnTriggerEnter2D` |
 | `Destroyed` event | `Projectile.Destroyed` |
-| `speed`, `lifetime`, `damage`, `hitLayers` fields | Split: `speed` on `StraightMovement`, rest on `Projectile` |
+| `speed`, `lifetime`, `damage`, `hitLayers` fields | Split: `speed` on `StraightMovement`, `lifetime` on `Lifetime`, `damage`/`hitLayers` on `Projectile` |
 
 ### Prefab updates
 
 The three buster shot prefabs (`MegamanX_Shot_{Small,Semi,Full}`) are re-authored:
 
 - Remove `BusterShot` component.
-- Add `Projectile` component (configure damage, hitLayers, lifetime, piercing=false).
-- Add `StraightMovement` component (configure speed).
+- Add `Projectile` component (configure damage, hitLayers, piercing=false).
+- Add `Lifetime` component (configure duration).
+- Add `StraightMovement` component (configure speed, angleDeg=0).
 
 ### PlayerBuster / WeaponInventory impact
 
@@ -459,7 +478,9 @@ EditMode tests (requires `.asmdef` setup from README §12):
   - `piercing = false` → destroy on first trigger hit.
   - `piercing = true` → survives trigger hit.
   - `Destroyed` event fires on destroy.
-  - Lifetime auto-destroy.
+- **Lifetime**
+  - Auto-destroys after `duration` seconds.
+  - Triggers `Projectile.Destroyed` on the same GameObject.
 - **StraightMovement**
   - `Initialize(1, 0f)` → direction = (1, 0). `Initialize(-1, 30f)` → correct angle.
   - Update advances position by `direction * speed * dt`.
@@ -478,18 +499,19 @@ Manual QA:
 ## 11. Implementation order
 
 1. **Projectile.cs** — create the component per §2.
-2. **StraightMovement.cs** — create per §3.1.
-3. **StationaryHazard.cs** — create per §3.2.
-4. **DestroyWhenChildless.cs** — create per §6.
-5. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
-6. **Delete BusterShot.cs** — only after step 5 is verified.
-7. **Add SpawnEntry[] to WeaponData** — per §6.
-8. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
-9. **Author Twin Slasher composite prefab** — root with `DestroyWhenChildless`, two children each with `Projectile + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
-10. **Author Frost Tower prefab** — `Projectile + StationaryHazard`, WeaponData asset with 1-entry spawn pattern.
-11. Verify all buster + special weapon fire works end-to-end.
+2. **Lifetime.cs** — create per §2.1.
+3. **StraightMovement.cs** — create per §3.1.
+4. **StationaryHazard.cs** — create per §3.2.
+5. **DestroyWhenChildless.cs** — create per §6.
+6. **Refactor buster prefabs** — remove `BusterShot`, add `Projectile + Lifetime + StraightMovement` (`angleDeg=0`). Update `PlayerBuster` (from SPEC_XWEAPONS) to flip `localScale.x` and track `List<Projectile>` instead of `List<BusterShot>`. Re-author the three shot prefabs.
+7. **Delete BusterShot.cs** — only after step 6 is verified.
+8. **Add SpawnEntry[] to WeaponData** — per §6.
+9. **Update WeaponInventory.SpawnWeaponShots** — per §6 spawn loop (scale-flip, no Initialize calls).
+10. **Author Twin Slasher composite prefab** — root with `DestroyWhenChildless`, two children each with `Projectile + Lifetime + StraightMovement` (±30° baked). WeaponData asset with 1-entry spawn pattern.
+11. **Author Frost Tower prefab** — `Projectile + Lifetime + StationaryHazard`, WeaponData asset with 1-entry spawn pattern.
+12. Verify all buster + special weapon fire works end-to-end.
 
-Steps 1–5 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
+Steps 1–7 are the critical path. The projectile system must work with the existing buster before any specials are added. If buster behavior regresses, fix before proceeding.
 
 ---
 
@@ -500,6 +522,7 @@ Steps 1–5 are the critical path. The projectile system must work with the exis
 | File | Type |
 |---|---|
 | `Assets/_Project/Scripts/Projectile.cs` | MonoBehaviour |
+| `Assets/_Project/Scripts/Lifetime.cs` | MonoBehaviour (general-purpose auto-destroy timer) |
 | `Assets/_Project/Scripts/StraightMovement.cs` | MonoBehaviour |
 | `Assets/_Project/Scripts/StationaryHazard.cs` | MonoBehaviour |
 | `Assets/_Project/Scripts/DestroyWhenChildless.cs` | MonoBehaviour (utility for composite prefabs) |
