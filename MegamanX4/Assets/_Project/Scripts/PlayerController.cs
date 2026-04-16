@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(Health))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Visuals")]
@@ -41,6 +42,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float wallSlideSpeed = 2f;
     [SerializeField] Vector2 wallJumpVelocity = new(8f, 11f);
     [SerializeField] float wallJumpLockTime = 0.18f;
+
+    [Header("Knockback")]
+    [SerializeField] float knockbackSpeedX = 5f;
+    [SerializeField] float knockbackSpeedY = 6f;
+    [SerializeField] float knockbackDuration = 0.35f;
 
     [Header("Collision")]
     [SerializeField] LayerMask environmentLayers = ~0;
@@ -90,6 +96,10 @@ public class PlayerController : MonoBehaviour
     float dashCooldownTimer;
     int dashDirection;
     float wallJumpLockTimer;
+    float knockbackTimer;
+    bool IsKnockedBack => knockbackTimer > 0f;
+
+    Health health;
 
     void Awake()
     {
@@ -102,6 +112,8 @@ public class PlayerController : MonoBehaviour
         jumpAction = playerInput.actions["Jump"];
         sprintAction = playerInput.actions["Sprint"];
         attackAction = playerInput.actions["Attack"];
+
+        health = GetComponent<Health>();
 
         contactFilter = new ContactFilter2D { useLayerMask = true, useTriggers = false };
         contactFilter.SetLayerMask(environmentLayers);
@@ -127,6 +139,7 @@ public class PlayerController : MonoBehaviour
         sprintAction.started += OnSprintStarted;
         attackAction.started += OnAttackStarted;
         attackAction.canceled += OnAttackCanceled;
+        health.Damaged += OnHealthDamaged;
     }
 
     void OnDisable()
@@ -136,6 +149,34 @@ public class PlayerController : MonoBehaviour
         sprintAction.started -= OnSprintStarted;
         attackAction.started -= OnAttackStarted;
         attackAction.canceled -= OnAttackCanceled;
+        health.Damaged -= OnHealthDamaged;
+    }
+
+    void OnHealthDamaged(int amount, Vector2 sourcePosition) => ApplyKnockback(sourcePosition);
+
+    public void ApplyKnockback(Vector2 sourcePosition)
+    {
+        int dir;
+        if (WallSliding)
+            dir = -facing;
+        else
+            dir = rb.position.x >= sourcePosition.x ? 1 : -1;
+
+        velocity = new Vector2(dir * knockbackSpeedX, knockbackSpeedY);
+        knockbackTimer = knockbackDuration;
+
+        dashTimer = 0f;
+        wallJumpLockTimer = 0f;
+        jumpBufferTimer = 0f;
+
+        if (isCharging)
+        {
+            isCharging = false;
+            chargeTimer = 0f;
+            if (spriteRenderer) spriteRenderer.color = baseSpriteColor;
+        }
+
+        facing = -dir;
     }
 
     void OnJumpStarted(InputAction.CallbackContext _)
@@ -150,6 +191,7 @@ public class PlayerController : MonoBehaviour
 
     void OnAttackStarted(InputAction.CallbackContext _)
     {
+        if (IsKnockedBack) return;
         isCharging = true;
         chargeTimer = 0f;
     }
@@ -218,9 +260,13 @@ public class PlayerController : MonoBehaviour
         dashTimer -= Time.deltaTime;
         dashCooldownTimer -= Time.deltaTime;
         wallJumpLockTimer -= Time.deltaTime;
+        knockbackTimer -= Time.deltaTime;
 
-        if (moveInput.x > 0.1f) facing = 1;
-        else if (moveInput.x < -0.1f) facing = -1;
+        if (!IsKnockedBack)
+        {
+            if (moveInput.x > 0.1f) facing = 1;
+            else if (moveInput.x < -0.1f) facing = -1;
+        }
 
         if (visual)
         {
@@ -248,12 +294,16 @@ public class PlayerController : MonoBehaviour
         if (!jumpHeld && velocity.y > 0f && !IsDashing)
             velocity.y *= jumpCutMultiplier;
 
-        if (IsDashing)
+        if (IsKnockedBack)
+        {
+            // velocity set by ApplyKnockback; let it ride. Gravity still applies.
+        }
+        else if (IsDashing)
             velocity = new Vector2(dashDirection * dashSpeed, 0f);
         else if (wallJumpLockTimer <= 0f)
             ApplyHorizontalInput();
 
-        if (WallSliding)
+        if (WallSliding && !IsKnockedBack)
             velocity.y = Mathf.Max(velocity.y, -wallSlideSpeed);
 
         Move(velocity * Time.fixedDeltaTime);
@@ -313,6 +363,8 @@ public class PlayerController : MonoBehaviour
 
     bool TryJump()
     {
+        if (IsKnockedBack) return false;
+
         if (isTouchingWall && !isGrounded)
         {
             velocity = new Vector2(-facing * wallJumpVelocity.x, wallJumpVelocity.y);
@@ -334,7 +386,7 @@ public class PlayerController : MonoBehaviour
 
     void TryStartDash()
     {
-        if (dashCooldownTimer > 0f || IsDashing) return;
+        if (dashCooldownTimer > 0f || IsDashing || IsKnockedBack) return;
         dashTimer = dashDuration;
         dashCooldownTimer = dashDuration + dashCooldown;
         dashDirection = Mathf.Abs(moveInput.x) > 0.1f ? (int)Mathf.Sign(moveInput.x) : facing;

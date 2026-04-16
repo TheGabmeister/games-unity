@@ -28,6 +28,6 @@ public class ContactDamage : MonoBehaviour
         if (!health)
             return;
 
-        health.ApplyDamage(damageAmount);
+        health.ApplyDamage(damageAmount, transform.position);
     }
 }

@@ -4,9 +4,12 @@ using UnityEngine;
 public class Health : MonoBehaviour
 {
     [SerializeField] int maxHealth = 3;
+    [SerializeField] float invulnerabilityDuration = 1f;
 
     int currentHealth;
     bool initialized;
+    float invulnerableUntil;
+    bool wasInvulnerable;
 
     public int MaxHealth
     {
@@ -27,11 +30,14 @@ public class Health : MonoBehaviour
     }
 
     public bool IsDepleted => CurrentHealth <= 0;
+    public bool IsInvulnerable => Time.time < invulnerableUntil;
+    public float InvulnerabilityDuration => invulnerabilityDuration;
 
-    public event Action<int> Damaged;
+    public event Action<int, Vector2> Damaged;
     public event Action<int> Healed;
     public event Action<int, int> HealthChanged;
     public event Action Depleted;
+    public event Action<bool> InvulnerabilityChanged;
 
     protected virtual void Awake() => ResetHealth();
 
@@ -41,13 +47,27 @@ public class Health : MonoBehaviour
             ResetHealth();
     }
 
-    protected virtual void OnValidate() => maxHealth = Mathf.Max(1, maxHealth);
+    protected virtual void OnValidate()
+    {
+        maxHealth = Mathf.Max(1, maxHealth);
+        invulnerabilityDuration = Mathf.Max(0f, invulnerabilityDuration);
+    }
 
-    public virtual void ApplyDamage(int amount)
+    protected virtual void Update()
+    {
+        bool now = IsInvulnerable;
+        if (now == wasInvulnerable) return;
+        wasInvulnerable = now;
+        InvulnerabilityChanged?.Invoke(now);
+    }
+
+    public void ApplyDamage(int amount) => ApplyDamage(amount, transform.position);
+
+    public virtual void ApplyDamage(int amount, Vector2 sourcePosition)
     {
         EnsureInitialized();
 
-        if (amount <= 0 || currentHealth <= 0)
+        if (IsInvulnerable || amount <= 0 || currentHealth <= 0)
             return;
 
         int previousHealth = currentHealth;
@@ -56,11 +76,17 @@ public class Health : MonoBehaviour
         if (appliedDamage <= 0)
             return;
 
-        Damaged?.Invoke(appliedDamage);
+        Damaged?.Invoke(appliedDamage, sourcePosition);
         HealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (currentHealth == 0)
+        {
             HandleDepleted();
+            return;
+        }
+
+        if (invulnerabilityDuration > 0f)
+            invulnerableUntil = Time.time + invulnerabilityDuration;
     }
 
     public virtual void Heal(int amount)
