@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] int _maxHealth = 3;
+    [SerializeField] int _maxHealth = 10;
     [SerializeField] float _invulnerabilityDuration = 1f;
 
     int _currentHealth;

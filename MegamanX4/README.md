@@ -199,19 +199,15 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 
 - [ ] Kill Fisher
 - [ ] Metal Gabyoall
-- [ ] Blast Raster
 - [ ] King Poseidon
 - [ ] Obiiru
 - [ ] Mega Nest
-- [ ] Kyunnbyunn
 - [ ] Spider Core
 - [ ] Web Spider *(boss)*
 
 ### Cyber Space enemy roster
 
-- [ ] Hover Gunner
 - [ ] Miru Toraeru
-- [ ] Spike Marl
 - [ ] TriScan
 - [ ] Protecton
 - [ ] Cyber Peacock *(boss)*
@@ -219,37 +215,23 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 ### Air Force enemy roster
 
 - [ ] Beam Cannon
-- [ ] Giga Death
 - [ ] Metal Hawk
-- [ ] Plasma Cannon
 - [ ] Walk Shooter
 - [ ] Generaid Core *(sub-boss)*
 - [ ] Storm Owl *(boss)*
 
 ### Volcano enemy roster
 
-- [ ] Batton Bone B81
-- [ ] Mettaur D2
-- [ ] Spiky Mk-II
-- [ ] Giga Death
-- [ ] Raiden
 - [ ] Prominence
 - [ ] Magma Dragoon *(boss)*
 
 ### Marine Base enemy roster
 
 - [ ] Hornet
-- [ ] Hover Gunner
 - [ ] Jet Stingray *(boss / stage attacker)*
 
 ### Military Train enemy roster
 
-- [ ] Mettaur D2
-- [ ] Plasma Cannon
-- [ ] Knot Beret B
-- [ ] Batton Bone B81
-- [ ] Knot Beret G
-- [ ] Raiden
 - [ ] DG-42L *(sub-boss)*
 - [ ] Slash Beast *(boss)*
 
@@ -259,7 +241,6 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 - [ ] Yukidarubon
 - [ ] Knot Beret S
 - [ ] Fly Gunner
-- [ ] Mettaur D2
 - [ ] Ice Wing
 - [ ] Eyezard *(sub-boss)*
 - [ ] Frost Walrus *(boss)*
@@ -268,14 +249,10 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 
 - [ ] Tentoroid RS
 - [ ] Tentoroid BS
-- [ ] Blast Raster
 - [ ] Togerics
 - [ ] Dejira
-- [ ] Batton Bone B81
-- [ ] Hover Gunner
 - [ ] Guardian
 - [ ] Death Guardian
-- [ ] Spiky Mk-II
 - [ ] Tentoroid *(sub-boss)*
 - [ ] Split Mushroom *(boss)*
 
