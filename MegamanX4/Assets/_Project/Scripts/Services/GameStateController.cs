@@ -11,6 +11,7 @@ public enum GameState
 public class GameStateController : MonoBehaviour
 {
     const string TitleSceneName = "Title";
+    const string LevelSelectSceneName = "LevelSelect";
 
     [SerializeField] GameState _currentState = GameState.Title;
 
@@ -25,16 +26,19 @@ public class GameStateController : MonoBehaviour
 
         if (_currentState == GameState.Title)
             LoadTitleScene();
+        else if (_currentState == GameState.LevelSelect)
+            LoadLevelSelectScene();
     }
 
     void LoadTitleScene()
     {
-        if (!Services.TryGet<ISceneLoader>(out var sceneLoader) || sceneLoader == null)
-        {
-            Debug.LogWarning("GameStateController could not find a SceneLoader when switching to Title.", this);
-            return;
-        }
-
+        var sceneLoader = Services.Instance.Get<ISceneLoader>();
         sceneLoader.LoadSceneByName(TitleSceneName);
+    }
+
+    void LoadLevelSelectScene()
+    {
+        var sceneLoader = Services.Instance.Get<ISceneLoader>();
+        sceneLoader.LoadSceneByName(LevelSelectSceneName);
     }
 }
