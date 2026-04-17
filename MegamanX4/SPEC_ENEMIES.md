@@ -115,7 +115,7 @@ Note: While attached, HP invulnerability prevents the player from destroying it.
 
 | Stat | Value |
 |------|-------|
-| HP | 4 |
+| HP | 10 |
 | Contact damage | 4 |
 | Charge speed | ~10 u/s |
 
@@ -155,7 +155,7 @@ Note: Spawned facing the player's direction by the stage layout (hand-placed or 
 
 | Stat | Value |
 |------|-------|
-| HP | 1 |
+| HP | 10 |
 | Contact damage | 2 |
 | Fly speed | ~6 u/s horizontal |
 | Wave amplitude | ~1.5 units |
