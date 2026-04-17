@@ -399,6 +399,7 @@ Transform:
   - {fileID: 7454357205354041279}
   - {fileID: 5764192501866092945}
   - {fileID: 2743031532629523778}
+  - {fileID: 9041161841379654321}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2307293878091307021
@@ -558,3 +559,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 194f661950b2445fb066c54848db94c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::CheckpointService
+--- !u!1 &9041161841379654320
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9041161841379654321}
+  - component: {fileID: 9041161841379654322}
+  m_Layer: 0
+  m_Name: GameStateController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9041161841379654321
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041161841379654320}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8940116267780952671}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9041161841379654322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041161841379654320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e73896e15f0e47f48d3e2eb3d1d5d4bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::GameStateController
+  _currentState: 0
