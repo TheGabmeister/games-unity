@@ -33,20 +33,19 @@ Responsibilities:
 
 ### `CheckpointService`
 
-`CheckpointService` lives on the persistent `GameServices` root and carries checkpoint metadata across a retry reload.
+`CheckpointService` lives on the persistent `GameServices` root and carries checkpoint state across a retry reload.
 
 State tracked:
 
-- current scene name
-- active checkpoint id
-- default spawn position for the current scene
-- pending-respawn scene name
+- active respawn position
+- default spawn position
+- pending-respawn flag
 
 Behavior:
 
 - Entering a scene normally clears the active checkpoint.
-- Entering the same scene during a pending respawn preserves the active checkpoint id.
-- Reloading a scene without a matching checkpoint falls back to the default spawn and clears the stale checkpoint id.
+- Entering a scene during a pending respawn preserves the active checkpoint position.
+- If no checkpoint was activated, respawn falls back to the default spawn.
 
 ## Components
 
@@ -56,14 +55,13 @@ Author checkpoints as hand-placed scene objects.
 
 Serialized fields:
 
-- `_checkpointId`
 - optional `_respawnPoint`
 
 Behavior:
 
 - Requires a `Collider2D`.
 - Forces the collider to be a trigger.
-- On player trigger enter, reports the checkpoint id to `CheckpointService`.
+- On player trigger enter, reports the respawn position to `CheckpointService`.
 - Uses `_respawnPoint.position` when assigned; otherwise uses its own transform position.
 
 ### `Health`
@@ -100,7 +98,7 @@ No dedicated death animation pipeline is included in this pass.
 
 Spawn priority:
 
-1. active checkpoint id in the current scene
+1. active checkpoint respawn position
 2. `PlayerStart` tag
 3. `StageSession` fallback position
 

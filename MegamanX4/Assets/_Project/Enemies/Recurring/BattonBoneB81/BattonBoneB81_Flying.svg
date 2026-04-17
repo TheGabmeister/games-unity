@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Batton Bone B81 - flying pose, wings spread horizontally, head right-side-up.
+    Authored facing right: body oriented with head/fangs forward (toward +X).
+    Same palette as the hanging pose.
+  -->
+
+  <!-- Wing spreads (left = back, right = forward for facing-right pose) -->
+  <path d="M 14 28 L 2 10 L 6 30 L 14 34 Z"
+        fill="#7B1FA2" stroke="#4A148C" stroke-width="0.8"/>
+  <path d="M 14 36 L 2 54 L 6 34 L 14 32 Z"
+        fill="#7B1FA2" stroke="#4A148C" stroke-width="0.8"/>
+  <path d="M 16 28 L 6 14 L 10 28 Z" fill="#AB47BC" opacity="0.7"/>
+  <path d="M 16 36 L 6 50 L 10 36 Z" fill="#AB47BC" opacity="0.7"/>
+
+  <!-- Body (horizontal oval) -->
+  <ellipse cx="34" cy="32" rx="16" ry="10" fill="#7B1FA2" stroke="#4A148C" stroke-width="1"/>
+  <ellipse cx="32" cy="30" rx="12" ry="7" fill="#AB47BC" opacity="0.75"/>
+
+  <!-- Head (front/right) -->
+  <ellipse cx="48" cy="32" rx="10" ry="8" fill="#CE93D8" stroke="#4A148C" stroke-width="0.8"/>
+
+  <!-- Ears on top of head -->
+  <path d="M 42 24 L 44 18 L 46 24 Z" fill="#7B1FA2" stroke="#4A148C" stroke-width="0.6"/>
+  <path d="M 50 24 L 52 18 L 54 24 Z" fill="#7B1FA2" stroke="#4A148C" stroke-width="0.6"/>
+
+  <!-- Eye (glowing) -->
+  <circle cx="50" cy="30" r="2.4" fill="#FF1744" stroke="#4A148C" stroke-width="0.5"/>
+  <circle cx="50.5" cy="29.5" r="0.9" fill="#FFFFFF"/>
+
+  <!-- Fangs at the mouth (forward) -->
+  <path d="M 56 34 L 58 38 L 54 36 Z" fill="#F5F5F5"/>
+  <path d="M 53 35 L 55 38 L 51 36 Z" fill="#F5F5F5"/>
+</svg>

@@ -18,13 +18,12 @@ public class CheckpointAndServicesTests
             Assert.That(Services.TryGet<ICheckpointService>(out var checkpointService), Is.True);
             Assert.That(Services.Instance.Get<CheckpointService>(), Is.SameAs(servicesRoot.GetComponent<CheckpointService>()));
 
-            checkpointService.RegisterCheckpoint("Gameplay", "cp_a", new Vector3(8f, 2f, 0f));
-            checkpointService.EnterScene("Gameplay", new Vector3(1f, 2f, 0f));
-            checkpointService.ActivateCheckpoint("Gameplay", "cp_a");
-            checkpointService.MarkPendingRespawn("Gameplay");
-            checkpointService.EnterScene("Gameplay", new Vector3(1f, 2f, 0f));
+            checkpointService.EnterScene(new Vector3(1f, 2f, 0f));
+            checkpointService.ActivateCheckpoint(new Vector3(8f, 2f, 0f));
+            checkpointService.MarkPendingRespawn();
+            checkpointService.EnterScene(new Vector3(1f, 2f, 0f));
 
-            Assert.That(checkpointService.TryGetRespawnPosition("Gameplay", out var respawnPosition), Is.True);
+            Assert.That(checkpointService.TryGetRespawnPosition(out var respawnPosition), Is.True);
             Assert.That(respawnPosition, Is.EqualTo(new Vector3(8f, 2f, 0f)));
         }
         finally
@@ -47,14 +46,39 @@ public class CheckpointAndServicesTests
             Assert.That(Services.TryGet<ICheckpointService>(out var checkpointService), Is.True);
 
             Vector3 defaultSpawn = new(2f, 3f, 0f);
-            checkpointService.RegisterCheckpoint("Gameplay", "cp_stale", new Vector3(9f, 9f, 0f));
-            checkpointService.EnterScene("Gameplay", defaultSpawn);
-            checkpointService.ActivateCheckpoint("Gameplay", "cp_stale");
-            checkpointService.MarkPendingRespawn("Gameplay");
-            checkpointService.UnregisterCheckpoint("Gameplay", "cp_stale");
-            checkpointService.EnterScene("Gameplay", defaultSpawn);
+            checkpointService.EnterScene(defaultSpawn);
+            checkpointService.ActivateCheckpoint(new Vector3(9f, 9f, 0f));
+            checkpointService.MarkPendingRespawn();
+            checkpointService.EnterScene(defaultSpawn);
 
-            Assert.That(checkpointService.TryGetRespawnPosition("Gameplay", out var respawnPosition), Is.True);
+            Assert.That(checkpointService.TryGetRespawnPosition(out var respawnPosition), Is.True);
+            Assert.That(respawnPosition, Is.EqualTo(new Vector3(9f, 9f, 0f)));
+        }
+        finally
+        {
+            Object.DestroyImmediate(servicesRoot);
+        }
+    }
+
+    [Test]
+    public void CheckpointService_ClearsCheckpoint_OnNormalSceneEntry()
+    {
+        var servicesRoot = new GameObject("ServicesRoot");
+        servicesRoot.SetActive(false);
+        servicesRoot.AddComponent<Services>();
+        servicesRoot.AddComponent<CheckpointService>();
+
+        try
+        {
+            servicesRoot.SetActive(true);
+            Assert.That(Services.TryGet<ICheckpointService>(out var checkpointService), Is.True);
+
+            Vector3 defaultSpawn = new(2f, 3f, 0f);
+            checkpointService.EnterScene(defaultSpawn);
+            checkpointService.ActivateCheckpoint(new Vector3(9f, 9f, 0f));
+            checkpointService.EnterScene(defaultSpawn);
+
+            Assert.That(checkpointService.TryGetRespawnPosition(out var respawnPosition), Is.True);
             Assert.That(respawnPosition, Is.EqualTo(defaultSpawn));
         }
         finally

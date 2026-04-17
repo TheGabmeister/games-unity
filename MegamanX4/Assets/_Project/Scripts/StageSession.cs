@@ -30,10 +30,9 @@ public class StageSession : MonoBehaviour
         Services.TryGet(out _checkpointService);
         if (_checkpointService != null)
         {
-            string sceneName = SceneManager.GetActiveScene().name;
-            _checkpointService.EnterScene(sceneName, defaultSpawnPosition);
+            _checkpointService.EnterScene(defaultSpawnPosition);
 
-            if (_checkpointService.TryGetRespawnPosition(sceneName, out var respawnPosition))
+            if (_checkpointService.TryGetRespawnPosition(out var respawnPosition))
             {
                 SpawnPlayer(respawnPosition);
                 return;
@@ -78,7 +77,7 @@ public class StageSession : MonoBehaviour
         if (_playerController)
             _playerController.Died -= OnPlayerDepleted;
 
-        _checkpointService?.MarkPendingRespawn(SceneManager.GetActiveScene().name);
+        _checkpointService?.MarkPendingRespawn();
 
         StartCoroutine(ReloadSceneAfterDelay());
     }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Mettaur D2 - classic construction-helmet enemy. Authored facing right.
+    Hat covers the body (invulnerable hide pose); eyes peek forward.
+    Palette (yellow hardhat):
+      hat-pale    #FFEB3B   hat-light   #FFC107   hat-mid  #FFA000
+      hat-deep    #FF6F00   body        #FFCC80   body-sh  #E65100
+      eye-white   #FFFFFF   eye-pupil   #212121   boots    #424242
+  -->
+
+  <!-- Small body under the hat -->
+  <ellipse cx="32" cy="48" rx="14" ry="10" fill="#FFCC80" stroke="#E65100" stroke-width="0.8"/>
+
+  <!-- Feet peeking out (front + back) -->
+  <rect x="22" y="54" width="8" height="6" rx="1.5" fill="#424242"/>
+  <rect x="34" y="54" width="8" height="6" rx="1.5" fill="#424242"/>
+
+  <!-- Hat brim -->
+  <path d="M 6 40 L 58 40 L 54 46 L 10 46 Z"
+        fill="#FFA000" stroke="#FF6F00" stroke-width="1"/>
+  <path d="M 6 40 L 58 40 L 56 41 L 8 41 Z" fill="#FFC107"/>
+
+  <!-- Main hat dome -->
+  <path d="M 10 42 Q 10 12, 32 10 Q 54 12, 54 42 Z"
+        fill="#FFC107" stroke="#FF6F00" stroke-width="1.2"/>
+  <path d="M 14 38 Q 14 18, 32 16 Q 50 18, 50 38"
+        fill="#FFEB3B" opacity="0.8"/>
+
+  <!-- Center ridge -->
+  <rect x="30" y="12" width="4" height="32" fill="#FFA000"/>
+  <rect x="31" y="12" width="2" height="32" fill="#FF6F00"/>
+
+  <!-- Eye slit area (peek window, forward) -->
+  <rect x="16" y="34" width="32" height="8" rx="1" fill="#212121"/>
+
+  <!-- Eyes -->
+  <ellipse cx="24" cy="38" rx="3" ry="2.4" fill="#FFFFFF"/>
+  <ellipse cx="40" cy="38" rx="3" ry="2.4" fill="#FFFFFF"/>
+  <circle cx="25" cy="38" r="1.4" fill="#212121"/>
+  <circle cx="41" cy="38" r="1.4" fill="#212121"/>
+</svg>

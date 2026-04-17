@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MoveVertical : MonoBehaviour
 {
-    enum Direction
+    public enum Direction
     {
         Up,
         Down

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Batton Bone B81 - bat hanging upside-down from ceiling, wings folded.
+    Default sprite (sleeping pose). Symmetric; no facing required.
+    Palette (bone-bat gray-purple):
+      body-pale   #CE93D8   body-light  #AB47BC   body-mid  #7B1FA2
+      body-deep   #4A148C   bone        #F5F5F5   eye       #FF1744
+      claw        #424242
+  -->
+
+  <!-- Ceiling hooks / claws at top -->
+  <rect x="26" y="2"  width="3" height="8" fill="#424242"/>
+  <rect x="35" y="2"  width="3" height="8" fill="#424242"/>
+
+  <!-- Folded wing flaps (mirrored either side of body) -->
+  <path d="M 18 14 L 6 40 L 14 38 L 22 32 L 24 18 Z"
+        fill="#7B1FA2" stroke="#4A148C" stroke-width="0.8"/>
+  <path d="M 46 14 L 58 40 L 50 38 L 42 32 L 40 18 Z"
+        fill="#7B1FA2" stroke="#4A148C" stroke-width="0.8"/>
+  <path d="M 20 16 L 10 36 L 22 30 Z" fill="#AB47BC" opacity="0.7"/>
+  <path d="M 44 16 L 54 36 L 42 30 Z" fill="#AB47BC" opacity="0.7"/>
+
+  <!-- Body (rounded, head at bottom since hanging upside-down) -->
+  <ellipse cx="32" cy="30" rx="12" ry="16" fill="#7B1FA2" stroke="#4A148C" stroke-width="1"/>
+  <ellipse cx="32" cy="28" rx="9" ry="12" fill="#AB47BC" opacity="0.75"/>
+
+  <!-- Skull-like face at bottom (fanged head down) -->
+  <ellipse cx="32" cy="46" rx="10" ry="8" fill="#CE93D8"/>
+  <ellipse cx="32" cy="46" rx="10" ry="8" fill="none" stroke="#4A148C" stroke-width="0.8"/>
+
+  <!-- Eyes (glowing, closed lids) -->
+  <ellipse cx="27" cy="46" rx="2.2" ry="1" fill="#FF1744"/>
+  <ellipse cx="37" cy="46" rx="2.2" ry="1" fill="#FF1744"/>
+
+  <!-- Fangs pointing down -->
+  <path d="M 28 52 L 29 56 L 30 52 Z" fill="#F5F5F5"/>
+  <path d="M 34 52 L 35 56 L 36 52 Z" fill="#F5F5F5"/>
+</svg>

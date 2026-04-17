@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Spiky Mk-II - spiked ball that rolls along floor. Symmetric.
+    Palette (iron gray):
+      ball-pale   #ECEFF1   ball-light  #B0BEC5   ball-mid  #607D8B
+      ball-deep   #263238   spike-pale  #CFD8DC   spike-hi  #FFFFFF
+      eye         #E53935
+  -->
+
+  <!-- Spikes radiating (8 points) -->
+  <g fill="#455A64" stroke="#263238" stroke-width="0.8">
+    <polygon points="32,2  28,14  36,14"/>
+    <polygon points="32,62 28,50 36,50"/>
+    <polygon points="2,32  14,28  14,36"/>
+    <polygon points="62,32 50,28 50,36"/>
+    <polygon points="11,11 17,20 20,17"/>
+    <polygon points="53,11 47,20 44,17"/>
+    <polygon points="11,53 17,44 20,47"/>
+    <polygon points="53,53 47,44 44,47"/>
+  </g>
+
+  <!-- Main ball -->
+  <circle cx="32" cy="32" r="20" fill="#607D8B" stroke="#263238" stroke-width="1.5"/>
+  <circle cx="32" cy="32" r="17" fill="#B0BEC5" opacity="0.6"/>
+
+  <!-- Highlight -->
+  <ellipse cx="26" cy="26" rx="6" ry="4" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- Plate seam -->
+  <circle cx="32" cy="32" r="20" fill="none" stroke="#263238" stroke-width="0.6" stroke-dasharray="3 2"/>
+
+  <!-- Center rivet -->
+  <circle cx="32" cy="32" r="4" fill="#263238"/>
+  <circle cx="32" cy="32" r="2" fill="#E53935"/>
+  <circle cx="31" cy="31" r="0.8" fill="#FFFFFF" opacity="0.9"/>
+</svg>

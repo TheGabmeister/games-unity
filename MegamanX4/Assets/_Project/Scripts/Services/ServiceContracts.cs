@@ -17,10 +17,8 @@ public interface IScreenFaderService
 
 public interface ICheckpointService
 {
-    void EnterScene(string sceneName, Vector3 defaultSpawnPosition);
-    void MarkPendingRespawn(string sceneName);
-    void RegisterCheckpoint(string sceneName, string checkpointId, Vector3 respawnPosition);
-    void UnregisterCheckpoint(string sceneName, string checkpointId);
-    void ActivateCheckpoint(string sceneName, string checkpointId);
-    bool TryGetRespawnPosition(string sceneName, out Vector3 respawnPosition);
+    void EnterScene(Vector3 defaultSpawnPosition);
+    void MarkPendingRespawn();
+    void ActivateCheckpoint(Vector3 respawnPosition);
+    bool TryGetRespawnPosition(out Vector3 respawnPosition);
 }

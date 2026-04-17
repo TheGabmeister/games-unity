@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128" width="160" height="128">
+  <!--
+    Giga Death - heavy floating turret with downward cannon.
+    Authored facing right; fire cone aims down, cannon barrel is symmetric bottom-center.
+    Palette (gunmetal + bronze):
+      armor-pale  #B0BEC5   armor-light #78909C   armor-mid  #546E7A
+      armor-deep  #263238   trim        #FFAB00   trim-deep  #C67C00
+      eye-core    #FF3D00   eye-hot     #FFEB3B
+  -->
+
+  <!-- Shadow base under body -->
+  <ellipse cx="80" cy="98" rx="54" ry="6" fill="#263238" opacity="0.3"/>
+
+  <!-- Outer shell (dome) -->
+  <path d="M 20 70 Q 20 18, 80 14 Q 140 18, 140 70 L 130 88 L 30 88 Z"
+        fill="#546E7A" stroke="#263238" stroke-width="1.5"/>
+  <path d="M 28 66 Q 28 26, 80 22 Q 132 26, 132 66 L 124 82 L 36 82 Z"
+        fill="#78909C" opacity="0.85"/>
+  <path d="M 40 50 Q 44 30, 80 28 Q 104 30, 110 46"
+        fill="none" stroke="#B0BEC5" stroke-width="4" opacity="0.5"/>
+
+  <!-- Top antenna / sensor -->
+  <rect x="76" y="4" width="8" height="14" fill="#263238"/>
+  <circle cx="80" cy="6" r="3" fill="#FF3D00" stroke="#B71C1C" stroke-width="0.6"/>
+
+  <!-- Trim ring around middle -->
+  <rect x="24" y="62" width="112" height="4" fill="#FFAB00"/>
+  <rect x="24" y="62" width="112" height="1" fill="#FFEB3B" opacity="0.8"/>
+
+  <!-- Rivets on trim -->
+  <g fill="#C67C00">
+    <circle cx="34" cy="64" r="1.8"/>
+    <circle cx="56" cy="64" r="1.8"/>
+    <circle cx="80" cy="64" r="1.8"/>
+    <circle cx="104" cy="64" r="1.8"/>
+    <circle cx="126" cy="64" r="1.8"/>
+  </g>
+
+  <!-- Cannon housing -->
+  <rect x="62" y="80" width="36" height="20" rx="3" fill="#263238" stroke="#000000" stroke-width="1"/>
+  <rect x="66" y="82" width="28" height="4" fill="#546E7A"/>
+
+  <!-- Cannon barrel, pointing down -->
+  <rect x="70" y="98" width="20" height="26" rx="2" fill="#37474F" stroke="#000000" stroke-width="1"/>
+  <rect x="74" y="120" width="12" height="6" fill="#263238"/>
+  <rect x="76" y="100" width="8" height="4" fill="#FFAB00" opacity="0.6"/>
+
+  <!-- Eye / glowing aperture in dome -->
+  <ellipse cx="80" cy="50" rx="22" ry="10" fill="#263238"/>
+  <ellipse cx="80" cy="50" rx="18" ry="7" fill="#FF3D00"/>
+  <ellipse cx="80" cy="48" rx="12" ry="3" fill="#FFEB3B" opacity="0.8"/>
+  <circle cx="86" cy="48" r="2" fill="#FFFFFF" opacity="0.9"/>
+</svg>

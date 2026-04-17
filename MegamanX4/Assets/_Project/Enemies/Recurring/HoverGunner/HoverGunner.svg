@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 80" width="96" height="80">
+  <!--
+    Hover Gunner - helicopter drone with downward-forward cannon.
+    Authored facing right: rotor on top, cannon angled down-right.
+    Palette (olive-drab military):
+      shell-pale  #AED581   shell-light #8BC34A   shell-mid  #689F38
+      shell-deep  #33691E   metal       #37474F   metal-hi   #78909C
+      glass       #4FC3F7   accent      #FFAB00
+  -->
+
+  <!-- Rotor (top) -->
+  <rect x="42" y="6" width="12" height="4" rx="1" fill="#37474F"/>
+  <rect x="8" y="7" width="80" height="2" rx="1" fill="#78909C" opacity="0.8"/>
+  <rect x="10" y="7" width="76" height="1" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- Rotor hub -->
+  <circle cx="48" cy="8" r="3" fill="#37474F" stroke="#263238" stroke-width="0.6"/>
+
+  <!-- Main fuselage body -->
+  <ellipse cx="48" cy="38" rx="34" ry="18" fill="#689F38" stroke="#33691E" stroke-width="1.2"/>
+  <ellipse cx="46" cy="34" rx="28" ry="12" fill="#8BC34A" opacity="0.8"/>
+  <ellipse cx="42" cy="30" rx="16" ry="5" fill="#AED581" opacity="0.6"/>
+
+  <!-- Cockpit glass (right side, front) -->
+  <ellipse cx="70" cy="36" rx="10" ry="8" fill="#4FC3F7" stroke="#0277BD" stroke-width="0.8"/>
+  <ellipse cx="68" cy="34" rx="5" ry="3" fill="#FFFFFF" opacity="0.6"/>
+
+  <!-- Tail (left side) -->
+  <path d="M 14 36 L 6 40 L 6 42 L 14 42 Z" fill="#689F38" stroke="#33691E" stroke-width="0.8"/>
+  <rect x="4" y="38" width="6" height="6" fill="#37474F"/>
+
+  <!-- Cannon, angled down-forward (right) -->
+  <rect x="64" y="50" width="20" height="6" rx="1" fill="#37474F" stroke="#263238" stroke-width="0.8" transform="rotate(25 74 53)"/>
+  <rect x="80" y="54" width="6" height="10" rx="1" fill="#263238" transform="rotate(25 83 59)"/>
+
+  <!-- Landing skid hint -->
+  <rect x="30" y="54" width="34" height="2" fill="#37474F"/>
+  <rect x="30" y="54" width="2" height="6" fill="#37474F"/>
+  <rect x="62" y="54" width="2" height="6" fill="#37474F"/>
+
+  <!-- Accent stripe -->
+  <rect x="20" y="42" width="24" height="2" fill="#FFAB00"/>
+</svg>
