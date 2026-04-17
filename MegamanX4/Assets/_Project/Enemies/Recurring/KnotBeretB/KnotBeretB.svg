@@ -2,13 +2,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 128" width="96" height="128">
   <!--
     Knot Beret B - blue humanoid soldier with rifle.
-    Authored facing left (toward +X-entering player).
+    Source drawn facing left; flip-wrapped below so it renders facing right (project convention).
     Similar height to X but slimmer.
     Palette (military blue):
       armor-pale  #90CAF9   armor-light #42A5F5   armor-mid   #1E88E5
       armor-body  #1565C0   armor-deep  #0D47A1   skin        #FFCC80
       visor       #F44336   metal       #455A64   metal-hi    #90A4AE
   -->
+
+  <g transform="translate(96 0) scale(-1 1)">
 
   <!-- Boots -->
   <rect x="28" y="108" width="18" height="20" rx="3" fill="#1565C0" stroke="#0D47A1" stroke-width="1"/>
@@ -57,4 +59,6 @@
   <!-- Visor -->
   <rect x="32" y="28" width="20" height="6" rx="2" fill="#F44336" opacity="0.9"/>
   <rect x="34" y="29" width="8" height="4" rx="1" fill="#FFFFFF" opacity="0.5"/>
+
+  </g>
 </svg>

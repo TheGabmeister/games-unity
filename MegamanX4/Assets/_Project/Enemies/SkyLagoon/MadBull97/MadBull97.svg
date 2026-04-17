@@ -2,12 +2,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 128" width="160" height="128">
   <!--
     Mad Bull 97 - large armored charging mech.
-    Authored facing left (charges toward player). Bigger than X.
+    Source drawn facing left; flip-wrapped below so it renders facing right (project convention). Bigger than X.
     Palette (heavy armor brown-red):
       armor-pale  #FFCCBC   armor-light #FF8A65   armor-mid   #F4511E
       armor-body  #BF360C   armor-deep  #7F0000   metal       #455A64
       metal-hi    #90A4AE   eye         #F44336   exhaust     #FFAB40
   -->
+
+  <g transform="translate(160 0) scale(-1 1)">
 
   <!-- Rear exhaust pipes -->
   <rect x="130" y="36" width="14" height="8" rx="2" fill="#455A64" stroke="#263238" stroke-width="0.8"/>
@@ -67,4 +69,6 @@
   <rect x="64" y="24" width="16" height="8" rx="2" fill="#37474F"/>
   <circle cx="72" cy="28" r="3" fill="#F44336" opacity="0.7"/>
   <circle cx="72" cy="28" r="1.5" fill="#FFEB3B" opacity="0.9"/>
+
+  </g>
 </svg>

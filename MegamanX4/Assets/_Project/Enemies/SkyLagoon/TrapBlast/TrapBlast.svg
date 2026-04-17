@@ -2,12 +2,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
   <!--
     Trap Blast - compact stationary turret/cannon.
-    Authored facing left (barrel points -X). Small, wall-mounted.
+    Source drawn facing left; flip-wrapped below so it renders facing right (project convention). Small, wall-mounted.
     Palette (military gray-green):
       hull-pale   #CFD8DC   hull-light  #90A4AE   hull-mid    #607D8B
       hull-body   #455A64   hull-deep   #263238   barrel      #37474F
       lens        #F44336   accent      #FFAB40
   -->
+
+  <g transform="translate(48 0) scale(-1 1)">
 
   <!-- Mount plate (back, attaches to wall) -->
   <rect x="34" y="8" width="10" height="32" rx="2" fill="#455A64" stroke="#263238" stroke-width="1"/>
@@ -37,4 +39,6 @@
   <!-- Mounting bolts -->
   <circle cx="38" cy="14" r="1.5" fill="#90A4AE"/>
   <circle cx="38" cy="34" r="1.5" fill="#90A4AE"/>
+
+  </g>
 </svg>

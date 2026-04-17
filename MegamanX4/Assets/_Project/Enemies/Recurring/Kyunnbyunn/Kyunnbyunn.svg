@@ -2,12 +2,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 48" width="64" height="48">
   <!--
     Kyunnbyunn - small swooping bird enemy.
-    Authored facing left (flies toward player). Small relative to X.
+    Source drawn facing left; flip-wrapped below so it renders facing right (project convention). Small relative to X.
     Palette (dark teal-gray, mechanical bird):
       body-pale   #B2DFDB   body-light  #4DB6AC   body-mid    #00897B
       body-deep   #004D40   wing-light  #80CBC4   wing-deep   #00695C
       eye         #F44336   beak        #FFAB40
   -->
+
+  <g transform="translate(64 0) scale(-1 1)">
 
   <!-- Tail feathers -->
   <path d="M 52 22 L 62 16 L 60 24 Z" fill="#00897B" stroke="#004D40" stroke-width="0.6"/>
@@ -45,4 +47,6 @@
   <!-- Crest -->
   <path d="M 14 16 L 10 10 L 16 14 Z" fill="#4DB6AC" stroke="#004D40" stroke-width="0.5"/>
   <path d="M 18 16 L 16 8 L 20 14 Z" fill="#4DB6AC" stroke="#004D40" stroke-width="0.5"/>
+
+  </g>
 </svg>
