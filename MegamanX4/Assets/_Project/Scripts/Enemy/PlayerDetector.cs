@@ -6,8 +6,6 @@ public class PlayerDetector : MonoBehaviour
     [SerializeField] float _range = 8f;
     [SerializeField] bool _requireLineOfSight = true;
 
-    int _playerLayer;
-    int _environmentLayer;
     bool _canSeePlayer;
     Transform _playerTransform;
 
@@ -25,12 +23,6 @@ public class PlayerDetector : MonoBehaviour
     public event Action PlayerDetected;
     public event Action PlayerLost;
 
-    void Awake()
-    {
-        _playerLayer = LayerMask.NameToLayer("Player");
-        _environmentLayer = LayerMask.NameToLayer("Environment");
-    }
-
     void FixedUpdate()
     {
         bool wasVisible = _canSeePlayer;
@@ -44,7 +36,7 @@ public class PlayerDetector : MonoBehaviour
 
     bool CheckForPlayer()
     {
-        var collider = Physics2D.OverlapCircle(transform.position, _range, 1 << _playerLayer);
+        var collider = Physics2D.OverlapCircle(transform.position, _range, 1 << Layers.Player);
         if (!collider) return false;
 
         if (collider.attachedRigidbody)
@@ -59,7 +51,7 @@ public class PlayerDetector : MonoBehaviour
         Vector2 direction = target - origin;
         float distance = direction.magnitude;
 
-        var hit = Physics2D.Raycast(origin, direction, distance, 1 << _environmentLayer);
+        var hit = Physics2D.Raycast(origin, direction, distance, 1 << Layers.Environment);
         return !hit.collider;
     }
 }

@@ -12,20 +12,16 @@ public class Projectile : MonoBehaviour
 
     public event Action Destroyed;
 
-    int _environmentLayer;
-
     void Awake()
     {
         var rb = GetComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0f;
-
-        _environmentLayer = LayerMask.NameToLayer("Environment");
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.layer == _environmentLayer)
+        if (other.gameObject.layer == Layers.Environment)
         {
             Destroy(gameObject);
             return;
