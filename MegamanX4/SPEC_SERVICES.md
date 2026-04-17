@@ -49,7 +49,7 @@ Turn `Services` into a lightweight runtime registry plus typed facade.
 High-level shape:
 
 - `Services` remains a `MonoBehaviour` on the persistent root.
-- Child service components register themselves with `Services` during `Awake` or `OnEnable`.
+- `Services` registers known service components from its own object and child hierarchy during `Awake`.
 - Callers resolve services through `Services.Instance.Get<T>()` or `Services.TryGet<T>(out var service)`.
 - Services are registered against an interface or service contract where that adds value.
 
@@ -92,27 +92,22 @@ This is enough for the project's current scale and keeps the implementation read
 
 ### Preferred pattern
 
-Each global service registers itself with `Services` in its own lifecycle method.
+`Services` registers known persistent services from the `GameServices` root hierarchy in its own `Awake`.
 
 Recommended base pattern:
 
-- `Services.Instance.Register<IMusicService>(this);`
-- `Services.Instance.Unregister<IMusicService>(this);`
+- `RegisterService<MusicManager, IMusicService>(GetComponentInChildren<MusicManager>(true));`
+- `RegisterService<CheckpointService, ICheckpointService>(GetComponent<CheckpointService>());`
 
-This keeps ownership local to each service and avoids hard-coding every child service inside `Services`.
+This keeps ordering centralized on the root object and avoids child services depending on script execution order to self-register.
 
-### Optional helper base class
+### Optional helper method
 
-If several services follow the same pattern, add a small helper such as:
+If the repeated registration lines get noisy inside `Services`, use a tiny helper such as:
 
-- `ServiceBehaviour<TContract> : MonoBehaviour`
+- `RegisterService<TConcrete, TContract>(TConcrete service)`
 
-Responsibilities:
-
-- register with `Services` on `Awake` or `OnEnable`
-- unregister on `OnDestroy` or `OnDisable`
-
-This is optional. If the generic base starts to feel magical, keep registration explicit in each manager.
+This keeps the registration explicit without spreading service-locator wiring across individual managers.
 
 ## Service contracts
 
@@ -191,13 +186,13 @@ Bad examples:
 - `DontDestroyOnLoad`
 - storing the registry
 
-Individual service components should remain responsible for self-registration.
+`Services` should also register its known persistent service components after it becomes the active singleton.
 
 This separation keeps startup predictable:
 
 1. `Bootstrapper` instantiates `GameServices`
 2. `Services` becomes the active root singleton
-3. child services register themselves
+3. `Services` registers its persistent service components
 4. gameplay scenes start using typed service lookup
 
 ## Failure policy

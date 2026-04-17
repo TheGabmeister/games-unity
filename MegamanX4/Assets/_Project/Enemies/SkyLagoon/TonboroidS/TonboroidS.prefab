@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8836351434650392680}
   - component: {fileID: 1316117442737048737}
   - component: {fileID: 2552582036266041611}
+  - component: {fileID: 2599288913764178674}
   - component: {fileID: 8624167716525102088}
   - component: {fileID: 3299780229033395721}
   - component: {fileID: 3049879981731718777}
@@ -185,7 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a21c21cfb144a8c8b793adff6f2f790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Health
-  _maxHealth: 10
+  _maxHealth: 1
   _invulnerabilityDuration: 0
 --- !u!114 &8836351434650392680
 MonoBehaviour:
@@ -223,7 +224,22 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 240c725d611c447f95b634e4362c4824, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: MegamanX4.Runtime::Enemy
+  m_EditorClassIdentifier: MegamanX4.Runtime::DestroyOnDepleted
+--- !u!114 &2599288913764178674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7917647719387426657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ebb429a30f5eb14b9b00301345870d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::DamageFlash
+  _target: {fileID: 8408756118558581043}
+  _flashColor: {r: 1, g: 0, b: 0, a: 1}
+  _flashDuration: 0.1
 --- !u!114 &8624167716525102088
 MonoBehaviour:
   m_ObjectHideFlags: 0

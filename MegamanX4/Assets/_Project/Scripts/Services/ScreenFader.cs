@@ -19,26 +19,6 @@ public class ScreenFader : MonoBehaviour, IScreenFaderService
         _startColor = _image.color;
     }
 
-    void OnEnable()
-    {
-        var services = ResolveServices();
-        if (!services)
-            return;
-
-        services.Register<ScreenFader>(this);
-        services.Register<IScreenFaderService>(this);
-    }
-
-    void OnDisable()
-    {
-        var services = Services.Instance;
-        if (!services)
-            return;
-
-        services.Unregister<IScreenFaderService>(this);
-        services.Unregister<ScreenFader>(this);
-    }
-
     public void FadeToColor(Color color, float duration)
     {
         _duration = duration;
@@ -61,10 +41,5 @@ public class ScreenFader : MonoBehaviour, IScreenFaderService
                 _lerpTime = 0;
             }
         }
-    }
-
-    static Services ResolveServices()
-    {
-        return Services.Instance ? Services.Instance : Object.FindFirstObjectByType<Services>();
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[DefaultExecutionOrder(-1000)]
 [DisallowMultipleComponent]
 public class Services : MonoBehaviour
 {
@@ -21,6 +20,7 @@ public class Services : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        RegisterKnownServices();
     }
 
     public bool Has<T>() where T : class => _services.ContainsKey(typeof(T));
@@ -103,5 +103,25 @@ public class Services : MonoBehaviour
 
         service = null;
         return false;
+    }
+
+    void RegisterKnownServices()
+    {
+        RegisterService<CheckpointService, ICheckpointService>(GetComponent<CheckpointService>());
+        RegisterService<MusicManager, IMusicService>(GetComponentInChildren<MusicManager>(true));
+        RegisterService<SfxManager, ISfxService>(GetComponentInChildren<SfxManager>(true));
+        RegisterService<ScreenFader, IScreenFaderService>(GetComponentInChildren<ScreenFader>(true));
+        RegisterService<SceneLoader, SceneLoader>(GetComponentInChildren<SceneLoader>(true));
+    }
+
+    void RegisterService<TConcrete, TContract>(TConcrete service)
+        where TConcrete : class, TContract
+        where TContract : class
+    {
+        if (service == null)
+            return;
+
+        Register<TConcrete>(service);
+        Register<TContract>(service);
     }
 }

@@ -9,29 +9,6 @@ public class CheckpointService : MonoBehaviour, ICheckpointService
     bool _hasDefaultSpawnPosition;
     bool _pendingRespawn;
 
-    void OnEnable()
-    {
-        var services = ResolveServices();
-        if (!services)
-        {
-            Debug.LogError("CheckpointService could not find an active Services root.", this);
-            return;
-        }
-
-        services.Register<CheckpointService>(this);
-        services.Register<ICheckpointService>(this);
-    }
-
-    void OnDestroy()
-    {
-        var services = Services.Instance;
-        if (!services)
-            return;
-
-        services.Unregister<ICheckpointService>(this);
-        services.Unregister<CheckpointService>(this);
-    }
-
     public void EnterScene(Vector3 defaultSpawnPosition)
     {
         _defaultSpawnPosition = defaultSpawnPosition;
@@ -70,10 +47,5 @@ public class CheckpointService : MonoBehaviour, ICheckpointService
 
         respawnPosition = default;
         return false;
-    }
-
-    static Services ResolveServices()
-    {
-        return Services.Instance ? Services.Instance : Object.FindFirstObjectByType<Services>();
     }
 }
