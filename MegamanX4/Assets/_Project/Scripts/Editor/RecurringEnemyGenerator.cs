@@ -194,7 +194,7 @@ public static class RecurringEnemyGenerator
     {
         var beam = new GameObject("Beam");
         beam.transform.SetParent(parent.transform, false);
-        beam.transform.localPosition = new Vector3(-5f, 0f, 0f);
+        beam.transform.localPosition = new Vector3(-6.6f, 0f, 0f);
         beam.layer = parent.layer;
 
         var sr = beam.AddComponent<SpriteRenderer>();

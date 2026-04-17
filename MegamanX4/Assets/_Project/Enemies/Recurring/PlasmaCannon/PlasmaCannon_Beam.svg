@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 32" width="320" height="32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 32" width="640" height="32">
   <!--
     Plasma Cannon beam sprite - long horizontal beam, facing left (projects from cannon barrel leftward).
-    The PlasmaCannon prefab parents this at local X = -5 so the beam extends from the barrel.
+    The PlasmaCannon prefab parents this at local X = -6.6 so the beam's near end stays at the barrel.
     Palette matches the charge socket:
       core-hot   #E1BEE7   core-deep #7B1FA2   rim  #4A148C
   -->
 
   <!-- Outer glow -->
-  <rect x="0" y="4" width="320" height="24" fill="#7B1FA2" opacity="0.45"/>
+  <rect x="0" y="4" width="640" height="24" fill="#7B1FA2" opacity="0.45"/>
   <!-- Mid beam -->
-  <rect x="0" y="8" width="320" height="16" fill="#AB47BC" opacity="0.85"/>
+  <rect x="0" y="8" width="640" height="16" fill="#AB47BC" opacity="0.85"/>
   <!-- Hot core -->
-  <rect x="0" y="12" width="320" height="8" fill="#E1BEE7"/>
-  <rect x="0" y="14" width="320" height="4" fill="#FFFFFF" opacity="0.9"/>
+  <rect x="0" y="12" width="640" height="8" fill="#E1BEE7"/>
+  <rect x="0" y="14" width="640" height="4" fill="#FFFFFF" opacity="0.9"/>
 
   <!-- Leading-edge flare (left end) -->
   <circle cx="8" cy="16" r="14" fill="#E1BEE7" opacity="0.7"/>
