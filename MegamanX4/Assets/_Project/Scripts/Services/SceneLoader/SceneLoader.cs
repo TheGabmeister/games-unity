@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using PrimeTween;
 
-public class SceneLoader : MonoBehaviour
+public class SceneLoader : MonoBehaviour, ISceneLoader
 {
     string _currentScene;
     string _nextScene;

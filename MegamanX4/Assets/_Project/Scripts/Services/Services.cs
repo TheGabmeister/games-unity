@@ -111,7 +111,7 @@ public class Services : MonoBehaviour
         RegisterService<MusicManager, IMusicService>(GetComponentInChildren<MusicManager>(true));
         RegisterService<SfxManager, ISfxService>(GetComponentInChildren<SfxManager>(true));
         RegisterService<ScreenFader, IScreenFaderService>(GetComponentInChildren<ScreenFader>(true));
-        RegisterService<SceneLoader, SceneLoader>(GetComponentInChildren<SceneLoader>(true));
+        RegisterService<SceneLoader, ISceneLoader>(GetComponentInChildren<SceneLoader>(true));
     }
 
     void RegisterService<TConcrete, TContract>(TConcrete service)

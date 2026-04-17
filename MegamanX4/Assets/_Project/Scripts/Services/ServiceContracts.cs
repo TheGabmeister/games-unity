@@ -22,3 +22,10 @@ public interface ICheckpointService
     void ActivateCheckpoint(Vector3 respawnPosition);
     bool TryGetRespawnPosition(out Vector3 respawnPosition);
 }
+
+public interface ISceneLoader
+{
+    void SwitchScene(string sceneName);
+    void LoadSceneByIndex(int index, System.Action onComplete = null);
+    void LoadSceneByName(string sceneName);
+}
