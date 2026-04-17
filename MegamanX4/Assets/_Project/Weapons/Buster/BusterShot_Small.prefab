@@ -198,4 +198,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4f6dd5373bee3d4f806d3d124419bd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::HitBox
-  _damage: 1
+  _damage: 3
