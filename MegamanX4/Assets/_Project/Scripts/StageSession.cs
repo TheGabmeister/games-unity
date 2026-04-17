@@ -76,9 +76,6 @@ public class StageSession : MonoBehaviour
         if (_playerHealth)
             _playerHealth.Depleted -= OnPlayerDepleted;
 
-        if (_playerInstance)
-            _playerInstance.SetActive(false);
-
         _checkpointService?.MarkPendingRespawn(SceneManager.GetActiveScene().name);
 
         StartCoroutine(ReloadSceneAfterDelay());

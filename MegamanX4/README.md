@@ -271,7 +271,7 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 - [ ] Batton Bone B81 *(Volcano, Military Train, Bio Laboratory)*
 - [ ] Mettaur D2 *(Volcano, Military Train, Snow Base)*
 - [ ] Spiky Mk-II *(Volcano, Bio Laboratory)*
-- [ ] Raiden *(Volcano, Military Train)*
+- [ ] Raiden *(Volcano, Military Train — AI-piloted Ride Armor; deferred pending Ride Armor subsystem)*
 
 ### Sky Lagoon enemy roster
 

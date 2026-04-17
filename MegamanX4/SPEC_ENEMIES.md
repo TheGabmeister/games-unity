@@ -8,7 +8,7 @@ Phase 1 (Sky Lagoon, 7 enemies) is already implemented. This spec treats those a
 
 **Scope exclusions:** all bosses (Eregion, Web Spider, Cyber Peacock, Storm Owl, Magma Dragoon, Jet Stingray, Slash Beast, Frost Walrus, Split Mushroom) and all sub-bosses (Generaid Core, DG-42L, Eyezard, Tentoroid). These are set-piece encounters and don't share the component-composition pattern used for regular enemies.
 
-**Deferred:** King Poseidon (needs a water system that doesn't exist yet). Metal Gabyoall's full wall/ceiling crawl (shipped as floor-only `PatrolWalk` for now; revisit later if stage layout demands surface crawling).
+**Deferred:** King Poseidon (needs a water system that doesn't exist yet). Metal Gabyoall's full wall/ceiling crawl (shipped as floor-only `PatrolWalk` for now; revisit later if stage layout demands surface crawling). Raiden — an AI-piloted Ride Armor (same chassis as the player-controlled Ride Armor) — depends on the Ride Armor subsystem, so it ships alongside that work, not in the regular enemy roster.
 
 ## Stat scale reference
 
@@ -133,7 +133,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Shot damage | 8 |
 | Fire interval | ~2.5 s |
 
-**Composition:** (core) + `HoverSine` (low amplitude) + `RadialShoot` *(new reusable)*.
+**Composition:** (core) + `HoverSine` (low amplitude) + `BlastRaster.cs` *(single-use — periodic 4- or 8-way radial fire from a private `FireRadial(n)` method)*.
 
 ### 6. Hover Gunner *(Cyber Space, Marine Base, Bio Laboratory)*
 
@@ -159,7 +159,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Shot damage | 20 |
 | Fire interval | ~3 s |
 
-**Composition:** (core) + `MoveVertical` (slow down) + `TrackPlayer` (X-axis, slow) + `AutoShoot` (aimed muzzle).
+**Composition:** (core) + `MoveVertical` (slow down) + `TrackPlayer` (X-axis, slow) + `AutoShoot` (fixed downward muzzle — the drift makes shots feel aimed without actual aim logic).
 
 ### 8. Plasma Cannon *(Air Force, Military Train)*
 
@@ -172,7 +172,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Beam damage | 20 (per tick) |
 | Cycle | ~3 s |
 
-**Composition:** `HitBox` + `PlasmaCannon.cs` *(single-use script — charge/fire/cooldown state machine + beam collider toggle)*. No `DestroyOnDepleted`/`Health`.
+**Composition:** `HitBox` + `PlasmaCannon.cs` *(single-use — charge/fire/cooldown state machine; beam is a stretched SVG with a toggled `BoxCollider2D` child that activates during the active window)*. No `DestroyOnDepleted`/`Health`.
 
 ### 9. Batton Bone B81 *(Volcano, Military Train, Bio Laboratory)*
 
@@ -198,7 +198,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Shot damage | 8 |
 | Hide/peek cycle | ~2 s |
 
-**Composition:** (core) + `Mettaur.cs` *(single-use — hide/peek state machine, toggles sibling `HurtBox.enabled`, triggers fire)* + `SpreadShoot` (3-way).
+**Composition:** (core) + `Mettaur.cs` *(single-use — hide/peek state machine, toggles sibling `HurtBox.enabled`, plus a private `FireSpread(3)` method for the 3-way shot)*.
 
 ### 11. Spiky Mk-II *(Volcano, Bio Laboratory)*
 
@@ -212,18 +212,9 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 
 **Composition:** (core) + `Gravity` + `PatrolWalk`.
 
-### 12. Raiden *(Volcano, Military Train)* — *uncertain, verify during review*
+### 12. Raiden *(Volcano, Military Train)* — **DEFERRED**
 
-**Behavior:** Lightning-themed cannon. Fires a vertical or angled lightning bolt at regular intervals. Likely mounted on ceiling or wall.
-
-| Stat | Value |
-|------|-------|
-| HP | 25 |
-| Contact damage | 15 |
-| Beam damage | 15 |
-| Fire interval | ~2.5 s |
-
-**Composition:** (core) + `Raiden.cs` *(single-use — lightning telegraph + beam spawn)*.
+An AI-piloted **Ride Armor** (same chassis as the player-controlled Ride Armor the player can board in Volcano and Military Train — saber combos, charged lance thrust, walk/jump locomotion, tanky HP). Behavior = "pilot the mech at the player" rather than a dedicated enemy script. Depends on the Ride Armor subsystem existing. Revisit after the player-side Ride Armor lands; an `AIRidePilot` script then drives the existing chassis. Not part of the regular enemy roster.
 
 ---
 
@@ -362,7 +353,7 @@ Needs a water system (buoyancy, drag, water-layer physics, entry/exit transition
 | Beam damage | 15 |
 | Sweep period | ~3 s |
 
-**Composition:** (core) + `HoverSine` (small) + `RadialShoot` (3-way).
+**Composition:** (core) + `HoverSine` (small) + `TriScan.cs` *(single-use — rotating 3-way beam sweep driven by a private `FireRadial(3)` method)*.
 
 ### 24. Protecton
 
@@ -390,7 +381,7 @@ Needs a water system (buoyancy, drag, water-layer physics, entry/exit transition
 | Beam damage | 25 |
 | Cycle | ~4 s |
 
-**Composition:** `HitBox` + `BeamCannon.cs` *(single-use — wider/longer beam variant of PlasmaCannon. Extract a shared `BeamProjectile` helper once the three beam enemies have concrete implementations.)*.
+**Composition:** `HitBox` + `BeamCannon.cs` *(single-use — wider/longer beam variant of PlasmaCannon; same stretched-SVG + toggled `BoxCollider2D` approach. Inspect for shared shape once both beams exist; extract a `BeamProjectile` helper only if clean.)*.
 
 ### 26. Metal Hawk
 
@@ -594,17 +585,17 @@ Needs a water system (buoyancy, drag, water-layer physics, entry/exit transition
 
 ---
 
-## New reusable components *(3 items)*
+## New reusable components *(1 item)*
 
-Genuinely shared behavior used by 2+ enemies. Lives in [Assets/_Project/Scripts/Enemy/](Assets/_Project/Scripts/Enemy/) (or `Behavior/` for non-enemy-specific items).
+Genuinely shared behavior used by 3+ enemies. Lives in [Assets/_Project/Scripts/Enemy/](Assets/_Project/Scripts/Enemy/) (or `Behavior/` for non-enemy-specific items).
 
 | Component | Used by | Responsibility |
 |-----------|---------|----------------|
-| `TrackPlayer` | Hover Gunner, Giga Death, Dejira, Fly Gunner | Match player's X (or Y) with speed cap; axis + max speed configurable |
-| `SpreadShoot` | Mettaur D2 (internal), *(Blast Raster variant possible)* | Fire N projectiles in a cone/fan around muzzle direction |
-| `RadialShoot` | Blast Raster, TriScan | Fire N projectiles evenly around 360° (or a partial arc) |
+| `TrackPlayer` | Hover Gunner, Giga Death, Dejira, Fly Gunner | Match player's X (or Y) with speed cap; axis + max speed configurable. Finds the player via `Physics2D.OverlapCircle` on the Player layer (same pattern as `PlayerDetector`). |
 
-## New single-use enemy AI scripts *(13 items)*
+**Deferred as components:** `SpreadShoot` (1 user: Mettaur) and `RadialShoot` (2 users: Blast Raster, TriScan) start as private methods inside their AI scripts. If a third caller ever appears with the same shape, extract then.
+
+## New single-use enemy AI scripts *(14 items)*
 
 One script per enemy, encapsulating its signature choreography as a small state machine or behavior. Each is ~30–80 lines, composes existing infrastructure for shared parts (`Health`, `HurtBox`, `HitBox`, `DamageFlash`, `PlayerDetector`, etc.), and reads as a single file you can navigate top-to-bottom.
 
@@ -612,21 +603,22 @@ Lives in **[Assets/_Project/Scripts/Enemy/AI/](Assets/_Project/Scripts/Enemy/AI/
 
 | Script | Enemy | What it does |
 |--------|-------|--------------|
-| `Mettaur.cs` | Mettaur D2 | Hide/peek/fire state machine; toggles sibling `HurtBox.enabled`; delegates fire to `SpreadShoot` |
+| `Mettaur.cs` | Mettaur D2 | Hide/peek/fire state machine; toggles sibling `HurtBox.enabled`; private `FireSpread(3)` method for the 3-way shot |
 | `BattonBone.cs` | Batton Bone B81 | Sleep on ceiling → drop briefly → fly in sine-wave toward player |
+| `BlastRaster.cs` | Blast Raster | Periodic radial fire via private `FireRadial(n)` (4 or 8 directions) |
 | `MegaNest.cs` | Mega Nest | Periodic spawn with active-count cap (tracks children via `OnDestroy` callback) |
 | `Yukidarubon.cs` | Yukidarubon | On `Health.Depleted`, instantiates N child prefabs before destroy |
 | `Togerics.cs` | Togerics | Leap-toward-player with arc, cooldown on land |
 | `Protecton.cs` | Protecton | Front-angle hit filter via `Health.Damaged` source position vs. facing — toggles `HurtBox.enabled` per-hit |
 | `Obiiru.cs` | Obiiru | Pendulum swing around anchor point *(uncertain behavior — verify)* |
+| `TriScan.cs` | TriScan | Rotating 3-way beam sweep via private `FireRadial(3)` |
 | `MiruToraeru.cs` | Miru Toraeru | Teleport + attack cycle *(uncertain behavior — verify)* |
 | `KillFisher.cs` | Kill Fisher | Hook dangle/retract cycle + child `HitBox` on the hook |
 | `Prominence.cs` | Prominence | Active/inactive hazard cycle (toggles sprite + collider on timer) |
-| `PlasmaCannon.cs` | Plasma Cannon | Charge telegraph → sustained beam for duration → cooldown |
-| `Raiden.cs` | Raiden | Lightning bolt on interval *(uncertain behavior — verify)* |
-| `BeamCannon.cs` | Beam Cannon | Wider/longer sustained beam |
+| `PlasmaCannon.cs` | Plasma Cannon | Charge telegraph → sustained beam for duration → cooldown; beam is a stretched SVG + toggled `BoxCollider2D` |
+| `BeamCannon.cs` | Beam Cannon | Wider/longer sustained beam; same stretched-SVG + toggled-collider approach |
 
-**Beam architecture note:** The three beam enemies (`PlasmaCannon`, `Raiden`, `BeamCannon`) each ship as their own script first. Once all three have concrete implementations, inspect for shared shape and extract a `BeamProjectile` helper only if the extraction is clean. Don't design the shared helper upfront; let it emerge (or not) from the three concrete cases.
+**Beam architecture note:** The two beam enemies (`PlasmaCannon`, `BeamCannon`) each ship as their own script first. Once both have concrete implementations, inspect for shared shape and extract a `BeamProjectile` helper only if the extraction is clean. Don't design the shared helper upfront; let it emerge (or not) from the two concrete cases.
 
 ---
 
@@ -634,7 +626,6 @@ Lives in **[Assets/_Project/Scripts/Enemy/AI/](Assets/_Project/Scripts/Enemy/AI/
 
 Minor, additive changes to existing components. No breaking changes.
 
-- **`EnemyShoot`** — Extract muzzle aim and projectile spawn into `protected` methods (`AimMuzzleAt(Vector2)`, `FireProjectile()`) so `SpreadShoot` and `RadialShoot` can reuse the aim logic instead of duplicating. Optional — if `SpreadShoot`/`RadialShoot` don't inherit, skip.
 - **`PlayerDetector`** — Add optional `_coneAngle` (0 = radial, >0 = directional cone in facing direction) so patrolling shooters stop detecting the player behind them. Default 0 preserves current behavior.
 - **`SwoopAttack`** — Add optional `_returnTarget` (Transform or Vector2 override) so Spider Core can anchor return to a fixed ceiling point rather than its spawn position. Default preserves current behavior (return to spawn).
 
@@ -644,13 +635,13 @@ That's it. The scope-heavy revisions from the earlier draft (`Gravity` direction
 
 ## Scalability review
 
-The 18-component base + 3 new reusable components + 13 single-use AI scripts scales cleanly to 40 enemies. The key insight: **the composition-vs-single-use decision is itself a scalability lever**. Apply it consistently and the component library stays small, the enemy scripts stay readable, and effort estimates stop lying.
+The 18-component base + 1 new reusable component + 14 single-use AI scripts scales cleanly to 40 enemies (minus Raiden, deferred to the Ride Armor subsystem). The key insight: **the composition-vs-single-use decision is itself a scalability lever**. Apply it consistently and the component library stays small, the enemy scripts stay readable, and effort estimates stop lying.
 
 ### 1. Rule of three for components
 
-New code becomes a reusable component only when **3+ enemies genuinely need it**. Below that threshold: write a single-use enemy script that composes existing components. This is why the new-component count dropped from 14 to 3 in this revision.
+New code becomes a reusable component only when **3+ enemies genuinely need it**. Below that threshold: write a single-use enemy script that composes existing components, and put the shared-looking behavior behind a private method. This is why the new-component count is 1, not 3+ — only `TrackPlayer` clears the bar.
 
-Why it matters: single-use components masquerading as reusable abstractions bloat the library, spread choreography logic across event-coupled files, and hide day-scale work in hours-scale table rows. A single-file `Mettaur.cs` is easier to understand, debug, and rewrite than `HideShell + SpreadShoot + glue` communicating via events.
+Why it matters: single-use components masquerading as reusable abstractions bloat the library, spread choreography logic across event-coupled files, and hide day-scale work in hours-scale table rows. A single-file `Mettaur.cs` is easier to understand, debug, and rewrite than `HideShell + SpreadShoot + glue` communicating via events. If a private `FireSpread`/`FireRadial` method shows up in three AI scripts with the same shape, *then* extract.
 
 ### 2. Folder separation
 
@@ -702,12 +693,11 @@ Sky Lagoon (7 enemies). Components: `PlayerDetector`, `AutoShoot`, `DestroyOnWal
 
 Build before any Maverick stage so the bestiary backbone is solid.
 
-- **Reusable components:** `TrackPlayer`, `SpreadShoot`, `RadialShoot`.
-- **Revisions:** `EnemyShoot` (extract protected methods — only if SpreadShoot/RadialShoot inherit).
-- **AI scripts:** `Mettaur.cs`, `BattonBone.cs`, `PlasmaCannon.cs`, `Raiden.cs`.
+- **Reusable components:** `TrackPlayer`.
+- **AI scripts:** `Mettaur.cs`, `BattonBone.cs`, `BlastRaster.cs`, `PlasmaCannon.cs`.
 - **Generator split refactor** (Scalability §3) happens before Phase 3.
 
-Enemies shipped: Blast Raster, Hover Gunner, Giga Death, Plasma Cannon, Batton Bone B81, Mettaur D2, Spiky Mk-II, Raiden.
+Enemies shipped: Blast Raster, Hover Gunner, Giga Death, Plasma Cannon, Batton Bone B81, Mettaur D2, Spiky Mk-II. Raiden deferred (Ride Armor subsystem dependency).
 
 ### Phase 3 — Jungle
 
@@ -719,14 +709,14 @@ Enemies shipped: Kill Fisher, Metal Gabyoall (simplified), Obiiru, Mega Nest, Sp
 
 ### Phase 4 — Cyber Space
 
-- **AI scripts:** `MiruToraeru.cs`, `Protecton.cs`.
+- **AI scripts:** `MiruToraeru.cs`, `TriScan.cs`, `Protecton.cs`.
 - **Revisions:** `PlayerDetector` cone angle (for Protecton + any future directional shooter).
 
 Enemies shipped: Miru Toraeru, TriScan, Protecton.
 
 ### Phase 5 — Air Force
 
-- **AI scripts:** `BeamCannon.cs`. At this point all three beam enemies exist — inspect for shared shape, extract `BeamProjectile` helper if clean.
+- **AI scripts:** `BeamCannon.cs`. At this point both beam enemies (Plasma Cannon + Beam Cannon) exist — inspect for shared shape, extract `BeamProjectile` helper if clean.
 - **Prefab variants:** Metal Hawk (from Tonboroid), Walk Shooter (from Knot Beret B).
 
 Enemies shipped: Beam Cannon, Metal Hawk, Walk Shooter.
@@ -762,7 +752,7 @@ Per-enemy audio hooks, spawn volumes, stage-specific palettes, prefab variant cl
 
 Existing SVGs (✅ already authored): Knot Beret B, G; Spike Marl; Kyunnbyunn; Tonboroid S; Mad Bull 97; Trap Blast.
 
-New authored SVGs needed (32 — King Poseidon deferred):
+New authored SVGs needed (31 — King Poseidon and Raiden deferred). Authored per-phase alongside their enemies, not upfront:
 
 | Enemy | Dimensions | Notes |
 |-------|-----------|-------|
@@ -773,7 +763,6 @@ New authored SVGs needed (32 — King Poseidon deferred):
 | Batton Bone B81 | ~32×32 | Bat: wings-folded "hanging" pose; separate open-wing pose for flight (swap) |
 | Mettaur D2 | ~32×32 | Classic dome with eyes |
 | Spiky Mk-II | ~32×32 | Spiked ball, symmetric |
-| Raiden | ~48×48 | Lightning-themed cannon / orb |
 | Kill Fisher | ~32×40 + hook | Tree-hanging fisher + separate hook-line sprite |
 | Metal Gabyoall | ~32×24 | Spiked slab, symmetric |
 | Obiiru | ~32×48 | Swinging jungle creature |
