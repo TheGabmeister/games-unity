@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
@@ -8,6 +9,8 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(WeaponInventory))]
 public class PlayerController : MonoBehaviour
 {
+    public event Action Died;
+
     [Header("Visuals")]
     [SerializeField] Transform _visual;
     [SerializeField] Sprite _idleSprite;
@@ -170,6 +173,7 @@ public class PlayerController : MonoBehaviour
 
     void OnHealthDepleted()
     {
+        Died?.Invoke();
         Destroy(gameObject);
     }
 

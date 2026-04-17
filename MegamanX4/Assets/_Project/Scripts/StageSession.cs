@@ -13,6 +13,7 @@ public class StageSession : MonoBehaviour
 
     GameObject _playerInstance;
     Health _playerHealth;
+    PlayerController _playerController;
     bool _isReloading;
     ICheckpointService _checkpointService;
 
@@ -46,10 +47,11 @@ public class StageSession : MonoBehaviour
     {
         _playerInstance = Instantiate(_playerPrefab, position, Quaternion.identity);
         _playerHealth = _playerInstance.GetComponent<Health>();
+        _playerController = _playerInstance.GetComponent<PlayerController>();
         var weapons = _playerInstance.GetComponent<WeaponInventory>();
 
-        if (_playerHealth)
-            _playerHealth.Depleted += OnPlayerDepleted;
+        if (_playerController)
+            _playerController.Died += OnPlayerDepleted;
 
         if (!_hudPrefab) 
             return;
@@ -62,8 +64,8 @@ public class StageSession : MonoBehaviour
 
     void OnDestroy()
     {
-        if (_playerHealth)
-            _playerHealth.Depleted -= OnPlayerDepleted;
+        if (_playerController)
+            _playerController.Died -= OnPlayerDepleted;
     }
 
     void OnPlayerDepleted()
@@ -73,8 +75,8 @@ public class StageSession : MonoBehaviour
 
         _isReloading = true;
 
-        if (_playerHealth)
-            _playerHealth.Depleted -= OnPlayerDepleted;
+        if (_playerController)
+            _playerController.Died -= OnPlayerDepleted;
 
         _checkpointService?.MarkPendingRespawn(SceneManager.GetActiveScene().name);
 
