@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a21c21cfb144a8c8b793adff6f2f790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Health
-  _maxHealth: 10
+  _maxHealth: 100
   _invulnerabilityDuration: 1
 --- !u!114 &6975209517903228683
 MonoBehaviour:

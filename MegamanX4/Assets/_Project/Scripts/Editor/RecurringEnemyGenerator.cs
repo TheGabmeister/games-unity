@@ -268,7 +268,7 @@ public static class RecurringEnemyGenerator
 
     static void GenerateSpikyMkII()
     {
-        var go = NewEnemyRoot(BasePath, "SpikyMkII", hp: 20, contactDamage: 20, isTrigger: false);
+        var go = NewEnemyRoot(BasePath, "SpikyMkII", hp: 20, contactDamage: 20, isTrigger: true);
 
         AddGravity(go);
 
