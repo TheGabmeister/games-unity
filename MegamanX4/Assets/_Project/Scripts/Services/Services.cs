@@ -122,6 +122,8 @@ public class Services : MonoBehaviour
             return;
 
         Register<TConcrete>(service);
-        Register<TContract>(service);
+
+        if (typeof(TConcrete) != typeof(TContract))
+            Register<TContract>(service);
     }
 }
