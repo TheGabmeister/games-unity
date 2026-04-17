@@ -97,6 +97,10 @@ Ignore generated Unity folders like `Library/`, `Logs/`, and `Temp/` unless a ta
 - Prefer narrow edits when refreshing instructions or specs.
   - Update `AGENTS.md` to reflect the current codebase, not aspirational architecture.
   - If a spec and the code disagree, verify the code before changing repo guidance.
+- Treat retracted or corrected requests as a hard stop.
+  - If the user says to stop, says a prior request was incorrect, or redirects away from in-flight work, do not continue the superseded implementation.
+  - Do not "finish up" or carry forward partial architectural changes from a retracted request.
+  - Realign to the newest request first, even if the previous direction seemed technically reasonable.
 
 ## Codebase-specific notes
 

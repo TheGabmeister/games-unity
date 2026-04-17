@@ -31,7 +31,7 @@ End-state after Phase 2 + Phase 3. The frozen stage renders underneath; the over
  +----------------------------------------------------------+
 ```
 
-Cells: `BS` = Buster (slot 0, always authored), `LW` = Lightning Web, `AL` = Aiming Laser, `DC` = Double Cyclone, `RF` = Rising Fire, `GH` = Ground Hunter, `TS` = Twin Slasher, `FT` = Frost Tower, `SB` = Soul Body. Unauthored weapons render as `· ·` and are skipped by the cursor. The brackets around `[FT]` mark the current cursor position; the name + energy bar on the right update as the cursor moves. The HP column on the left reflects the live `Health` state captured the moment pause opened.
+Cells: `BS` = Buster (slot 0, always authored), `LW` = Lightning Web, `AL` = Aiming Laser, `DC` = Double Cyclone, `RF` = Rising Fire, `GH` = Ground Hunter, `TS` = Twin Slasher, `FT` = Frost Tower, `SB` = Soul Body. Cell visual state is one of three: *unauthored* (null slot — `· ·`, non-selectable), *empty-energy* (dimmed, non-selectable), *available* (full tint, selectable). The brackets around `[FT]` mark the current cursor position; the name + energy bar on the right update as the cursor moves. The HP column is event-driven on `Health.HealthChanged` — it reads live state, which happens to stay stable during pause because nothing damages at `timeScale=0`.
 
 Phase 1 is just the bordered `P A U S E D` label in the center — no HP column, no grid, no energy column.
 
@@ -61,39 +61,81 @@ This is the foundation every later phase builds on. It stays.
 
 ## Ownership
 
-Introduce a **`PauseMenu`** component that lives on `GameplayHUD.prefab` (the same prefab `StageSession` already instantiates and wires via [HUD.Bind](Assets/_Project/Scripts/HUD.cs#L18)). It is a peer of `HUD`, not a subclass.
+**No new component.** The existing `HUD` on `GameplayHUD.prefab` absorbs the pause-overlay role; the overlay is a new child subtree on the same Canvas, toggled on `SetPaused(bool)`.
 
-Responsibilities:
+A separate `PauseMenu` would share every reference (`Health`, `WeaponInventory`), share the same lifecycle (spawned with the player in `StageSession.SpawnPlayer`, destroyed on scene reload), and share the same prefab. The only thing it would "own" is menu input, and that gates cleanly inside existing callbacks via `if (!_isPaused) return;`. Not worth the duplicated `Bind`/subscribe/unsubscribe plumbing.
 
-- Own the pause-overlay UI subtree (grid, cursor, labels).
-- Subscribe to gameplay data it displays: `WeaponInventory.EnergyChanged`, `WeaponInventory.ActiveWeaponChanged`, `Health.HealthChanged`. Mirror the event-driven HUD pattern — **no `Update` polling**.
-- Show / hide on `SetPaused(bool)` (called by `StageSession` alongside the existing `HUD.SetPaused`).
-- Handle menu input via the `UI` action map; commit selections by writing to `WeaponInventory.SetActiveIndex(i)` (new method, see Phase 2).
+`HUD` responsibilities grow to:
 
-`StageSession` gains a single extra call in `SpawnPlayer`:
+- **Existing:** render HP fill, energy fill, active-weapon tint; subscribe to `Health.HealthChanged` and `WeaponInventory.EnergyChanged` / `ActiveWeaponChanged`.
+- **New (Phase 2+):** show / hide the `Overlay` child subtree on `SetPaused`. Render the weapon grid + cursor. Subscribe to the `UI` action map's `Navigate` / `Submit` / `Cancel` and early-return the callbacks unless `_isPaused`.
 
-```csharp
-_pauseMenu = hudGo.GetComponent<PauseMenu>();
-if (_pauseMenu) _pauseMenu.Bind(_playerHealth, weapons);
-```
-
-…and an additional `_pauseMenu.SetPaused(paused)` in `SetPaused`. `HUD` itself stays as-is — its "PAUSED" `OnGUI` label is replaced by the new overlay being visible, and the OnGUI code is removed.
+`StageSession` changes: **none beyond what exists today**. Its existing `_hud.SetPaused(paused)` already flows through `HUD`, which now drives the overlay. The `OnGUI` "PAUSED" label and `CreatePauseLabelStyle` are deleted once Phase 2 lands.
 
 ---
 
 ## Input switching
 
-On pause enter / exit, `StageSession` switches `PlayerInput.SwitchCurrentActionMap`:
+Gameplay input must stop during pause, menu input must start, and `Pause` itself must remain responsive in both states.
 
-- `Gameplay → Paused` on enter: switch to the `UI` action map. Player prefab's gameplay actions stop firing; the held Jump / Attack bindings naturally cancel (standard Input System behavior).
-- `Paused → Gameplay` on exit: switch back to the `Player` action map.
+### Held-input policy
 
-The `Pause` action needs to fire in **both** maps, so either:
+Held buttons at the moment of pause are **consumed**. On resume, the player must re-press to re-trigger any gameplay action (jump, attack, dash). This matches the Input System's native behavior after `action.Disable()` and sidesteps the held-carry-over problem entirely — no snapshot / restore plumbing needed.
 
-1. Duplicate the `Pause` binding into the `UI` map (simplest), or
-2. Keep `Pause` only on `Player` and bypass the action-map switch for just that action by reading it from the asset rather than the active map.
+Rationale: MMX-style gameplay favors intentional re-presses after menu work; silently re-triggering a held jump on resume is worse UX than the one extra tap, and also dodges the state-desync trap where `PlayerController`'s `canceled` callbacks fire on pause but `started` never re-fires on resume.
 
-Go with option 1. One binding per map, both bound to the same `Start` / `Esc` physical inputs.
+### Map enable/disable, not `SwitchCurrentActionMap`
+
+Do **not** use `PlayerInput.SwitchCurrentActionMap`. Instead, `Enable()` / `Disable()` the two maps individually in `StageSession.SetPaused`:
+
+- On pause enter: `Player.Disable()`, then `UI.Enable()`.
+- On pause exit: `UI.Disable()`, then `Player.Enable()`.
+
+Both maps off-by-default for the one not in use — avoids cross-map binding collisions (e.g. Left-Stick double-firing `Move` and `Navigate`).
+
+### Pause action moves to a `Meta` action map
+
+Move the `Pause` action from the `Player` map to a new **`Meta`** action map in [InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_Actions.inputactions). `Meta` stays enabled for the lifetime of the gameplay session; it is **never** disabled by the pause / resume toggles.
+
+```csharp
+// StageSession.Start, in place of the current BindPauseAction binding on "Player":
+_metaMap = _playerInput.actions.FindActionMap("Meta");
+_metaMap.Enable();
+_pauseAction = _metaMap.FindAction("Pause");
+_pauseAction.performed += OnPausePerformed;
+```
+
+Why a separate map instead of `_pauseAction.Enable()` on the `Player` map: `Player.Disable()` does disable individually-enabled actions on that map too, so an always-on solution via individual `Enable()` would require re-enabling `Pause` after every `Player.Disable()`. A dedicated `Meta` map avoids that runtime bookkeeping — a one-line asset edit beats recurring runtime state management.
+
+`Cancel` on the `UI` map also closes pause (both paths route through `StageSession.SetPaused(false)`).
+
+---
+
+## Overlay UI architecture
+
+The overlay is a subtree on the same Screen-Space-Overlay `Canvas` that already hosts the live HUD. Hierarchy under `GameplayHUD.prefab`:
+
+```
+GameplayHUD (prefab root)
+└── Canvas (Screen Space - Overlay, existing)
+    ├── HealthBar           (existing)
+    ├── EnergyBar           (existing)
+    └── Overlay             (new — SetActive(_isPaused))
+        ├── Backdrop        (full-screen Image, black, alpha ≈ 0.65, raycastTarget=false)
+        ├── PausedLabel     (TextMeshProUGUI, centered top)
+        ├── HpColumn        (vertical fill + numeric label)
+        ├── WeaponGrid      (GridLayoutGroup, one cell per WeaponData slot)
+        │   └── Cursor      (Image, re-parented to the selected cell)
+        └── EnergyColumn    (vertical fill + numeric label, tracks the cursor slot)
+```
+
+Key choices:
+
+- **Single Canvas.** `Overlay` is the last child, so it draws on top of `HealthBar` / `EnergyBar` without a second Canvas or sort-order fiddling.
+- **Dim via alpha, not post-processing.** A black `Image` at ~0.65 alpha is enough; keeps the overlay a part of the HUD (no camera override, no URP volume change).
+- **`raycastTarget = false` on Backdrop.** This game drives menu nav through the Input System's `UI` action map, not pointer clicks — so nothing in the overlay needs to block raycasts.
+- **Cursor movement via re-parent.** Moving the cursor re-parents its `RectTransform` under the selected cell and sets `localPosition = Vector3.zero`. GridLayoutGroup handles the world placement; no per-frame `Update` tween.
+- **Procedural visuals.** Cell backgrounds are flat `Image` with `color = WeaponData.tint` (× 0.3 alpha for empty-energy, dots-placeholder for unauthored). TMP default font everywhere. Icon SVGs slot in later without spec changes.
 
 ---
 
@@ -103,18 +145,20 @@ The core of the MMX-style pause menu. Picks a new active weapon.
 
 ### UI layout
 
-- Centered grid. Slot count = `WeaponInventory._weapons.Count` (serialized list, grows as weapons ship).
-- Each slot shows the weapon's icon (tinted flat color from `WeaponData.tint` until icon SVGs exist) and its energy as a short vertical bar. Slots with `maxEnergy == 0` (buster) show infinity or no bar.
-- Unauthored slots (null entries in `_weapons`) are drawn greyed-out and non-selectable.
-- A selection cursor renders behind the currently-highlighted slot.
+- Centered `GridLayoutGroup` under `Overlay/WeaponGrid`. Slot count = `WeaponInventory._weapons.Count` (serialized list, grows as weapons ship).
+- Each cell's visual state is one of three:
+  - **Unauthored** — `_weapons[i] == null`. Rendered as a `· ·` placeholder, non-selectable.
+  - **Empty-energy** — non-null with `maxEnergy > 0 && GetEnergy(i) == 0`. Rendered dimmed (tint × 0.3 alpha), non-selectable. Rationale: selecting a drained slot would flash `ActiveWeaponChanged` and then auto-switch back to buster on first fire attempt — worse UX than greying it out in the menu.
+  - **Available** — otherwise. Full-alpha `WeaponData.tint`, selectable. Buster (slot 0) is always Available; its `maxEnergy == 0` renders `∞` in place of a bar.
+- Cells carry a short vertical energy fill bar; the cursor `Image` renders behind the currently-highlighted cell.
 
 ### Interaction
 
-- Opening pause highlights the current `ActiveIndex`.
-- `Navigate` (left / right / up / down) moves the cursor; unauthored slots are skipped.
-- `Submit` commits: calls `WeaponInventory.SetActiveIndex(cursorIndex)`, which fires `ActiveWeaponChanged` as usual, then closes pause.
-- `Cancel` closes pause without changing the selection.
-- `Pause` (Start) also closes pause without changing the selection (same as Cancel).
+- Opening pause places the cursor on the current `ActiveIndex` — always Available (it was firing a moment ago).
+- `Navigate` (left / right / up / down) moves the cursor one cell at a time, skipping Unauthored and Empty-energy cells. If no selectable cell exists in that direction, **the cursor holds** — no wrap, no row-jump. The grid is small (3×3 at full roster), so wrap-around adds confusion without payoff.
+- `Submit` commits: calls `WeaponInventory.SetActiveIndex(cursorIndex)`, then closes pause. `ActiveWeaponChanged` fires during the pause, tint writes synchronously, becomes visible on the first rendered frame after resume.
+- `Cancel` closes pause, no changes.
+- `Pause` (always-on) also closes pause, same semantics as Cancel.
 
 ### `WeaponInventory` additions
 
@@ -124,7 +168,7 @@ The core of the MMX-style pause menu. Picks a new active weapon.
 public void SetActiveIndex(int index);
 ```
 
-Validates bounds, no-ops on invalid / unauthored / empty-energy slots, runs the same swap side-effects as Q/E (cancel charge, refresh sprite tint, fire `ActiveWeaponChanged`).
+Validates bounds, no-ops on invalid / null / empty-energy indices (defense-in-depth — the UI should already prevent those commits, but the runtime guard prevents drift if another caller is added later). On a valid swap, runs the same side-effects as Q/E: cancel charge, write tint to player `SpriteRenderer`, fire `ActiveWeaponChanged`.
 
 ### Out of scope for Phase 2
 
@@ -138,10 +182,10 @@ Validates bounds, no-ops on invalid / unauthored / empty-energy slots, runs the 
 
 Numeric / bar readouts of current stats, flanking the weapon grid.
 
-- **HP column:** shows `Health.CurrentHealth` / `Health.MaxHealth` as a vertical bar (mirrors the MMX HUD column) plus the numeric value.
-- **Active weapon energy column:** current energy of the highlighted slot (updates as the cursor moves). Buster shows infinity.
+- **HP column:** shows `Health.CurrentHealth` / `Health.MaxHealth` as a vertical bar plus the numeric value. Event-driven on `Health.HealthChanged`. During pause the value happens to be static because enemies can't damage at `timeScale=0` — that's not an implementation feature, just a side effect.
+- **Active weapon energy column:** current energy of the **cursor-highlighted** slot (not the active slot). Re-reads from `WeaponInventory.GetEnergy(cursorIndex)` on every cursor move; also subscribes to `WeaponInventory.EnergyChanged` so capsule pickups / sub-tank refills (future) propagate without an extra hook. Buster (`maxEnergy == 0`) shows `∞`.
 
-Subscribes to `Health.HealthChanged` and `WeaponInventory.EnergyChanged`. No `Update` polling.
+No `Update` polling.
 
 ### Out of scope for Phase 3
 
@@ -180,9 +224,9 @@ Until LevelSelect exists, the pause menu's only exit is Resume / Cancel, which i
 
 - **Pause cannot open during a pending scene reload.** `StageSession._isReloading` already gates `TogglePause`; preserve that.
 - **Pause cannot open during player death animation.** Same gate — `Died` flips `_isReloading`.
-- **`Time.timeScale == 0` applies to all `Update` / `FixedUpdate` consumers.** `PauseMenu` must use `WaitForSecondsRealtime` / `Time.unscaledDeltaTime` if it ever needs a timer (e.g. cursor-repeat). Avoid timers entirely where possible.
-- **Coroutines running on enemies / projectiles freeze during pause.** This is desired; the overlay is a true freeze.
-- **`OnGUI` "PAUSED" label is removed** once Phase 2 lands. The visible overlay replaces it.
+- **`Time.timeScale == 0` applies to all `Update` / `FixedUpdate` consumers.** `HUD` must use `Time.unscaledDeltaTime` if it ever needs a timer (e.g. cursor auto-repeat on held `Navigate`). Avoid timers entirely where possible — Unity's `EventSystem` already handles initial repeat naturally via `Navigate` `performed` callbacks.
+- **Coroutines running on enemies / projectiles freeze during pause** (provided they use `WaitForSeconds`, not `WaitForSecondsRealtime`). This is the intended behavior — a true freeze.
+- **`OnGUI` "PAUSED" label in [HUD.cs](Assets/_Project/Scripts/HUD.cs) is deleted once Phase 2 lands**, along with `CreatePauseLabelStyle` and the `PauseLabel` / `PauseLabelFontSize` constants. The visible `Overlay` subtree replaces them.
 
 ---
 
@@ -190,17 +234,17 @@ Until LevelSelect exists, the pause menu's only exit is Resume / Cancel, which i
 
 ### Phase 2
 
-- Opening pause highlights the active slot.
-- Navigate skips null / unauthored slots.
-- Submit on a different slot swaps weapon (tint updates on resume, `ActiveWeaponChanged` fires exactly once).
-- Cancel / Pause close without touching `ActiveIndex`.
-- While paused, the player does not move / jump / fire.
-- Resuming restores gameplay input cleanly (held Jump doesn't auto-fire a jump after resume).
+- Opening pause places the cursor on the current active slot.
+- `Navigate` skips Unauthored and Empty-energy cells; holds at the edge when no selectable neighbor exists in that direction.
+- `Submit` on a different slot: `ActiveWeaponChanged` fires exactly once during pause; sprite tint is correct on the first rendered frame after resume.
+- `Cancel` / `Pause` close without changing `ActiveIndex`, with no event emissions.
+- While paused, movement / jump / attack / weapon-cycle inputs all no-op on the player.
+- On resume, held inputs do **not** auto-trigger (per the consumed-on-pause policy): holding Jump across pause then releasing produces no jump on resume; the next jump requires a fresh press.
 
 ### Phase 3
 
-- HP bar updates when `Health.HealthChanged` fires (test: open pause, use editor to call `ApplyDamage`, close pause — bar matches on next open).
-- Energy column tracks the cursor, not the active weapon.
+- HP bar matches `Health.CurrentHealth` / `MaxHealth` on every pause open. Verify by damaging the player, opening pause, and checking the bar / numeric value.
+- Energy column tracks the cursor, not the active weapon. Verify by selecting a non-active weapon slot with `Navigate` and watching the energy readout switch without Submit.
 
 ---
 
