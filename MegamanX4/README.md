@@ -292,9 +292,9 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 
 ### Cyber Space enemy roster
 
-- [ ] Miru Toraeru
-- [ ] TriScan
-- [ ] Protecton
+- [x] Miru Toraeru
+- [x] TriScan
+- [x] Protecton
 - [ ] Cyber Peacock *(boss)*
 
 ### Air Force enemy roster
@@ -363,7 +363,7 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 
 ## 11. UI / HUD / front-end
 
-- [ ] Pause menu
+- [x] Pause menu
 - [ ] Title screen
 - [ ] Boot flow (`Init` → `Gameplay` additive load)
 - [ ] In-game HUD: life bar, weapon bar, sub-tank, boss bar

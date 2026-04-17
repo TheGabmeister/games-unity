@@ -88,6 +88,12 @@ Ignore generated Unity folders like `Library/`, `Logs/`, and `Temp/` unless a ta
   - `Assets/Resources/GameServices.prefab` is the persistent services root loaded by `Bootstrapper`.
   - `Services` enforces that only one persistent services root survives at runtime.
   - Authored gameplay scenes such as `Gameplay.unity` should contain stage content and spawn markers like `PlayerStart`, not duplicate the persistent services root.
+- Prefer minimum viable architecture.
+  - Default to the smallest design that solves the current implemented need.
+  - Do not add new services, managers, state layers, abstractions, interfaces, or systems unless the current codebase concretely needs them now.
+  - Do not future-proof by default; if something only supports a possible future case, leave it out.
+  - Before introducing a new architectural concept, justify it against the current repo state. If the justification is weak, do not add it.
+  - Prefer extending an existing class or flow over creating a new one when the current scope is still small.
 - Prefer narrow edits when refreshing instructions or specs.
   - Update `AGENTS.md` to reflect the current codebase, not aspirational architecture.
   - If a spec and the code disagree, verify the code before changing repo guidance.

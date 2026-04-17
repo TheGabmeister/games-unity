@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 16" width="384" height="16">
+  <!--
+    TriScan emitter beam - long horizontal beam extending from an emitter node.
+    Authored facing right: near end (emitter attachment) at x=0, sweeps rightward.
+    Thinner and shorter than PlasmaCannon_Beam since TriScan has three beams at once.
+    Palette matches TriScan core:
+      core-hot   #E1F5FE   core-mid  #536DFE   rim  #1A237E
+  -->
+
+  <!-- Outer glow -->
+  <rect x="0" y="2" width="384" height="12" fill="#1A237E" opacity="0.4"/>
+  <!-- Mid beam -->
+  <rect x="0" y="4" width="384" height="8" fill="#3949AB" opacity="0.85"/>
+  <!-- Hot core -->
+  <rect x="0" y="6" width="384" height="4" fill="#536DFE"/>
+  <rect x="0" y="7" width="384" height="2" fill="#E1F5FE"/>
+
+  <!-- Near-end flare (emitter side, x=0) -->
+  <circle cx="4" cy="8" r="7" fill="#E1F5FE" opacity="0.75"/>
+  <circle cx="4" cy="8" r="4" fill="#FFFFFF" opacity="0.85"/>
+
+  <!-- Far-end taper -->
+  <circle cx="380" cy="8" r="4" fill="#E1F5FE" opacity="0.5"/>
+</svg>

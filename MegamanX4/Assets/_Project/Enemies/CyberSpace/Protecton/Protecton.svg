@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" width="80" height="96">
+  <!--
+    Protecton - cyber soldier with forward-facing energy shield. Authored facing right.
+    Body centered around x=32; shield occupies +X side (x=54..74). Hits from the +X front
+    cone are blocked by the shield; hits from above or behind hit the body directly.
+    Palette:
+      armor-dark  #1B263B   armor-mid  #2E4A6F   armor-light #4A77A6
+      joint       #0E1726   visor-hot  #18FFFF   visor-dim   #00ACC1
+      shield-edge #00E5FF   shield-mid #01579B   shield-pale #B3E5FC
+      trim-red    #FF1744
+  -->
+
+  <!-- === Body (centered in left half) === -->
+
+  <!-- Legs / boots -->
+  <rect x="20" y="74" width="10" height="16" fill="#1B263B" stroke="#0E1726" stroke-width="1"/>
+  <rect x="32" y="74" width="10" height="16" fill="#1B263B" stroke="#0E1726" stroke-width="1"/>
+  <rect x="18" y="86" width="14" height="6" fill="#0E1726"/>
+  <rect x="32" y="86" width="14" height="6" fill="#0E1726"/>
+
+  <!-- Torso -->
+  <rect x="18" y="40" width="28" height="36" fill="#2E4A6F" stroke="#0E1726" stroke-width="1.2"/>
+  <!-- Chestplate accent -->
+  <rect x="22" y="44" width="20" height="18" fill="#4A77A6"/>
+  <rect x="28" y="48" width="8" height="10" fill="#FF1744"/>
+
+  <!-- Belt -->
+  <rect x="18" y="66" width="28" height="5" fill="#0E1726"/>
+
+  <!-- Head / helmet -->
+  <rect x="22" y="22" width="20" height="20" fill="#2E4A6F" stroke="#0E1726" stroke-width="1.2"/>
+  <rect x="20" y="20" width="24" height="6" fill="#4A77A6"/>
+  <!-- Visor slit (facing +X, leans forward) -->
+  <rect x="30" y="28" width="12" height="4" fill="#18FFFF"/>
+  <rect x="32" y="29" width="8" height="2" fill="#FFFFFF" opacity="0.7"/>
+
+  <!-- Back arm (carries shield - but arm is behind shield in render order) -->
+  <rect x="44" y="44" width="8" height="22" fill="#1B263B" stroke="#0E1726" stroke-width="1"/>
+  <rect x="44" y="62" width="8" height="6" fill="#4A77A6"/>
+
+  <!-- === Shield (front, +X side) === -->
+
+  <!-- Shield outer frame -->
+  <rect x="54" y="24" width="20" height="60" fill="#01579B" stroke="#0E1726" stroke-width="1.5" rx="3"/>
+
+  <!-- Shield inner plate -->
+  <rect x="57" y="28" width="14" height="52" fill="#00ACC1" rx="2"/>
+
+  <!-- Energy field shimmer -->
+  <rect x="58" y="29" width="12" height="50" fill="#B3E5FC" opacity="0.45" rx="2"/>
+
+  <!-- Shield emblem -->
+  <circle cx="64" cy="54" r="5" fill="#01579B"/>
+  <circle cx="64" cy="54" r="3" fill="#18FFFF"/>
+  <circle cx="64" cy="54" r="1" fill="#FFFFFF"/>
+
+  <!-- Shield edge glow (front-facing, +X) -->
+  <rect x="73" y="26" width="2" height="56" fill="#00E5FF" opacity="0.8"/>
+  <rect x="75" y="30" width="1" height="48" fill="#B3E5FC" opacity="0.5"/>
+
+  <!-- Shield top/bottom caps -->
+  <rect x="52" y="22" width="24" height="3" fill="#4A77A6"/>
+  <rect x="52" y="84" width="24" height="3" fill="#4A77A6"/>
+
+  <!-- Shoulder attachment point (connects arm to shield) -->
+  <rect x="50" y="44" width="6" height="8" fill="#0E1726"/>
+</svg>

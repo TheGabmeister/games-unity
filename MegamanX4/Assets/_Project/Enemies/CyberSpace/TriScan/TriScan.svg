@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <!--
+    TriScan - triangular scanner drone with 3 emitter nodes at the vertices.
+    Rotationally symmetric: authoring orientation is one vertex at +X (right),
+    the other two at 120 deg and 240 deg around the center.
+    Beams are separate child sprites (TriScan_Beam.svg), not drawn here.
+    Palette:
+      hull-dark   #263238   hull-mid    #455A64   hull-light  #78909C
+      core-deep   #1A237E   core-mid    #3949AB   core-hot    #536DFE
+      emit-hot    #E1F5FE   emit-flare  #FFFFFF   warn-red    #FF1744
+  -->
+
+  <!-- Outer triangle hull (vertex at +X, apex rightward).
+       Vertices at (86, 48), (27, 82), (27, 14) - equilateral centered on (48, 48) with ~40 radius. -->
+  <polygon points="86,48 27,82 27,14" fill="#263238" stroke="#1A237E" stroke-width="1.8"/>
+
+  <!-- Inner triangle (shell layer) -->
+  <polygon points="78,48 32,74 32,22" fill="#455A64" opacity="0.9"/>
+
+  <!-- Hull paneling: lines from center to each vertex -->
+  <g stroke="#1A237E" stroke-width="1.2" fill="none">
+    <line x1="48" y1="48" x2="86" y2="48"/>
+    <line x1="48" y1="48" x2="27" y2="82"/>
+    <line x1="48" y1="48" x2="27" y2="14"/>
+  </g>
+
+  <!-- Core ring -->
+  <circle cx="48" cy="48" r="12" fill="#1A237E" stroke="#3949AB" stroke-width="1.4"/>
+  <circle cx="48" cy="48" r="8" fill="#3949AB"/>
+  <circle cx="48" cy="48" r="4" fill="#536DFE"/>
+  <circle cx="48" cy="48" r="1.6" fill="#E1F5FE"/>
+
+  <!-- Emitter node at +X vertex -->
+  <g>
+    <circle cx="86" cy="48" r="5" fill="#78909C" stroke="#1A237E" stroke-width="1"/>
+    <circle cx="86" cy="48" r="3" fill="#536DFE"/>
+    <circle cx="86" cy="48" r="1.5" fill="#E1F5FE"/>
+  </g>
+
+  <!-- Emitter node at 240 deg (bottom-left vertex) -->
+  <g>
+    <circle cx="27" cy="82" r="5" fill="#78909C" stroke="#1A237E" stroke-width="1"/>
+    <circle cx="27" cy="82" r="3" fill="#536DFE"/>
+    <circle cx="27" cy="82" r="1.5" fill="#E1F5FE"/>
+  </g>
+
+  <!-- Emitter node at 120 deg (top-left vertex) -->
+  <g>
+    <circle cx="27" cy="14" r="5" fill="#78909C" stroke="#1A237E" stroke-width="1"/>
+    <circle cx="27" cy="14" r="3" fill="#536DFE"/>
+    <circle cx="27" cy="14" r="1.5" fill="#E1F5FE"/>
+  </g>
+
+  <!-- Warning indicator dots on hull edges -->
+  <g fill="#FF1744">
+    <circle cx="56" cy="48" r="1.2"/>
+    <circle cx="37" cy="64" r="1.2"/>
+    <circle cx="37" cy="32" r="1.2"/>
+  </g>
+</svg>

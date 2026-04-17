@@ -714,6 +714,11 @@ Enemies shipped: Kill Fisher, Metal Gabyoall (simplified), Obiiru, Mega Nest, Sp
 
 Enemies shipped: Miru Toraeru, TriScan, Protecton.
 
+**Notes:**
+- `Protecton` shields front hits via the `Health.Damaged` event + `Heal(amount)` (source-position angle check against facing). No separate shield collider — the damage is applied then immediately refunded, letting the standard `DamageFlash` still play as "shield tank" feedback.
+- `TriScan` hosts three beam children under a rotating `EmitterRoot`. Each beam is placed at `(EmitterDistance + halfBeam)` world units from root along its per-beam angle (0°/120°/240°) with `localRotation = Euler(0,0,angle)`. Root `.Rotate(Z)` during firing sweeps all three together.
+- `MiruToraeru` owns its own fade (writes `SpriteRenderer.color.a`) and toggles sibling `HurtBox.enabled` per state. Teleport picks a random ±X offset around the player each cycle via direct `OverlapCircle` (no `PlayerDetector`).
+
 ### Phase 5 — Air Force
 
 - **AI scripts:** `BeamCannon.cs`. At this point both beam enemies (Plasma Cannon + Beam Cannon) exist — inspect for shared shape, extract `BeamProjectile` helper if clean.
