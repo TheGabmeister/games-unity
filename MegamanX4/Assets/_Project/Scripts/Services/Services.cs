@@ -107,7 +107,7 @@ public class Services : MonoBehaviour
 
     void RegisterKnownServices()
     {
-        RegisterService<CheckpointService, ICheckpointService>(GetComponent<CheckpointService>());
+        RegisterService<CheckpointService, ICheckpointService>(GetComponentInChildren<CheckpointService>());
         RegisterService<MusicManager, IMusicService>(GetComponentInChildren<MusicManager>(true));
         RegisterService<SfxManager, ISfxService>(GetComponentInChildren<SfxManager>(true));
         RegisterService<ScreenFader, IScreenFaderService>(GetComponentInChildren<ScreenFader>(true));
