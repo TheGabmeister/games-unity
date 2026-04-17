@@ -173,16 +173,111 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 - [ ] Ride Armor / Ride Chaser vehicle sections
 - [ ] Stage-select screen
 
+### Recurring Enemies
+
+- [x] Knot Beret B *(Sky Lagoon, Military Train)*
+- [x] Knot Beret G *(Sky Lagoon, Military Train)*
+- [x] Spike Marl *(Sky Lagoon, Cyber Space)*
+- [x] Kyunnbyunn *(Sky Lagoon, Jungle)*
+- [ ] Blast Raster *(Jungle, Bio Laboratory)*
+- [ ] Hover Gunner *(Cyber Space, Marine Base, Bio Laboratory)*
+- [ ] Giga Death *(Air Force, Volcano)*
+- [ ] Plasma Cannon *(Air Force, Military Train)*
+- [ ] Batton Bone B81 *(Volcano, Military Train, Bio Laboratory)*
+- [ ] Mettaur D2 *(Volcano, Military Train, Snow Base)*
+- [ ] Spiky Mk-II *(Volcano, Bio Laboratory)*
+- [ ] Raiden *(Volcano, Military Train)*
+
 ### Sky Lagoon enemy roster
 
-- [ ] Knot Beret B
-- [ ] Knot Beret G
-- [ ] Tonboroid S
-- [ ] Spike Marl
-- [ ] Mad Bull 97
-- [ ] Trap Blast
-- [ ] Kyunnbyunn
+- [x] Tonboroid S
+- [x] Mad Bull 97
+- [x] Trap Blast
 - [ ] Eregion *(boss)*
+
+### Jungle enemy roster
+
+- [ ] Kill Fisher
+- [ ] Metal Gabyoall
+- [ ] Blast Raster
+- [ ] King Poseidon
+- [ ] Obiiru
+- [ ] Mega Nest
+- [ ] Kyunnbyunn
+- [ ] Spider Core
+- [ ] Web Spider *(boss)*
+
+### Cyber Space enemy roster
+
+- [ ] Hover Gunner
+- [ ] Miru Toraeru
+- [ ] Spike Marl
+- [ ] TriScan
+- [ ] Protecton
+- [ ] Cyber Peacock *(boss)*
+
+### Air Force enemy roster
+
+- [ ] Beam Cannon
+- [ ] Giga Death
+- [ ] Metal Hawk
+- [ ] Plasma Cannon
+- [ ] Walk Shooter
+- [ ] Generaid Core *(sub-boss)*
+- [ ] Storm Owl *(boss)*
+
+### Volcano enemy roster
+
+- [ ] Batton Bone B81
+- [ ] Mettaur D2
+- [ ] Spiky Mk-II
+- [ ] Giga Death
+- [ ] Raiden
+- [ ] Prominence
+- [ ] Magma Dragoon *(boss)*
+
+### Marine Base enemy roster
+
+- [ ] Hornet
+- [ ] Hover Gunner
+- [ ] Jet Stingray *(boss / stage attacker)*
+
+### Military Train enemy roster
+
+- [ ] Mettaur D2
+- [ ] Plasma Cannon
+- [ ] Knot Beret B
+- [ ] Batton Bone B81
+- [ ] Knot Beret G
+- [ ] Raiden
+- [ ] DG-42L *(sub-boss)*
+- [ ] Slash Beast *(boss)*
+
+### Snow Base enemy roster
+
+- [ ] E-AT
+- [ ] Yukidarubon
+- [ ] Knot Beret S
+- [ ] Fly Gunner
+- [ ] Mettaur D2
+- [ ] Ice Wing
+- [ ] Eyezard *(sub-boss)*
+- [ ] Frost Walrus *(boss)*
+
+### Bio Laboratory enemy roster
+
+- [ ] Tentoroid RS
+- [ ] Tentoroid BS
+- [ ] Blast Raster
+- [ ] Togerics
+- [ ] Dejira
+- [ ] Batton Bone B81
+- [ ] Hover Gunner
+- [ ] Guardian
+- [ ] Death Guardian
+- [ ] Spiky Mk-II
+- [ ] Tentoroid *(sub-boss)*
+- [ ] Split Mushroom *(boss)*
 
 ## 9. Progression / meta
 
