@@ -9,6 +9,7 @@ public class HurtBox : MonoBehaviour
 
     public void ReceiveHit(int damage, Vector2 sourcePosition)
     {
+        if (!enabled) return;
         if (!_health) return;
         _health.ApplyDamage(damage, sourcePosition);
     }

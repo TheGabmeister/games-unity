@@ -9,7 +9,7 @@ public class Gravity : MonoBehaviour
 
     float _verticalSpeed;
 
-    void Update()
+    void FixedUpdate()
     {
         if (IsGrounded() && _verticalSpeed <= 0f)
         {
@@ -17,8 +17,8 @@ public class Gravity : MonoBehaviour
             return;
         }
 
-        _verticalSpeed = Mathf.Max(_verticalSpeed - _gravity * Time.deltaTime, -_maxFallSpeed);
-        transform.position += Vector3.up * (_verticalSpeed * Time.deltaTime);
+        _verticalSpeed = Mathf.Max(_verticalSpeed - _gravity * Time.fixedDeltaTime, -_maxFallSpeed);
+        transform.position += Vector3.up * (_verticalSpeed * Time.fixedDeltaTime);
     }
 
     bool IsGrounded()
