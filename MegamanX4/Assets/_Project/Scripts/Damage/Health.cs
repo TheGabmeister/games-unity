@@ -63,6 +63,24 @@ public class Health : MonoBehaviour
 
     public void ApplyDamage(int amount) => ApplyDamage(amount, transform.position);
 
+    public void Kill() => Kill(transform.position);
+
+    public void Kill(Vector2 sourcePosition)
+    {
+        EnsureInitialized();
+
+        if (_currentHealth <= 0)
+            return;
+
+        int appliedDamage = _currentHealth;
+        _currentHealth = 0;
+        _invulnerableUntil = 0f;
+
+        Damaged?.Invoke(appliedDamage, sourcePosition);
+        HealthChanged?.Invoke(_currentHealth, _maxHealth);
+        HandleDepleted();
+    }
+
     public virtual void ApplyDamage(int amount, Vector2 sourcePosition)
     {
         EnsureInitialized();

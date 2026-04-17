@@ -124,6 +124,7 @@ Recommended first contracts:
 - `IMusicService`
 - `ISceneLoaderService`
 - `IScreenFaderService`
+- `ICheckpointService` for retry state that must survive scene reloads
 
 ### Why interfaces
 
@@ -144,6 +145,7 @@ Recommended initial registrations:
 - `MusicManager`
 - `SfxManager`
 - `ScreenFader`
+- `CheckpointService`
 - `SceneLoader` once it is actually placed on the services root or intentionally moved there
 
 Do not register:

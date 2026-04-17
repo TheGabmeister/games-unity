@@ -4,7 +4,7 @@ using UnityEngine.UI;
 // A simple black screen fader 
 
 [RequireComponent(typeof(Image))]
-public class ScreenFader : MonoBehaviour
+public class ScreenFader : MonoBehaviour, IScreenFaderService
 {
     float _duration = 1;
     private float _lerpTime = 0f;
@@ -17,6 +17,26 @@ public class ScreenFader : MonoBehaviour
     {
         _image = GetComponent<Image>();
         _startColor = _image.color;
+    }
+
+    void OnEnable()
+    {
+        var services = ResolveServices();
+        if (!services)
+            return;
+
+        services.Register<ScreenFader>(this);
+        services.Register<IScreenFaderService>(this);
+    }
+
+    void OnDisable()
+    {
+        var services = Services.Instance;
+        if (!services)
+            return;
+
+        services.Unregister<IScreenFaderService>(this);
+        services.Unregister<ScreenFader>(this);
     }
 
     public void FadeToColor(Color color, float duration)
@@ -41,5 +61,10 @@ public class ScreenFader : MonoBehaviour
                 _lerpTime = 0;
             }
         }
+    }
+
+    static Services ResolveServices()
+    {
+        return Services.Instance ? Services.Instance : Object.FindFirstObjectByType<Services>();
     }
 }

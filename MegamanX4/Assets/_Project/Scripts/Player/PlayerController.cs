@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour
 
     Collider2D _playerCollider;
     Health _health;
+    bool _isDead;
 
     void Awake()
     {
@@ -148,6 +149,7 @@ public class PlayerController : MonoBehaviour
         _attackAction.started += OnAttackStarted;
         _attackAction.canceled += OnAttackCanceled;
         _health.Damaged += OnHealthDamaged;
+        _health.Depleted += OnHealthDepleted;
     }
 
     void OnDisable()
@@ -158,12 +160,38 @@ public class PlayerController : MonoBehaviour
         _attackAction.started -= OnAttackStarted;
         _attackAction.canceled -= OnAttackCanceled;
         _health.Damaged -= OnHealthDamaged;
+        _health.Depleted -= OnHealthDepleted;
     }
 
     void OnHealthDamaged(int amount, Vector2 sourcePosition)
     {
         if (_onLadder) { ExitLadder(fall: true); return; }
         ApplyKnockback(sourcePosition);
+    }
+
+    void OnHealthDepleted()
+    {
+        _isDead = true;
+        _moveInput = Vector2.zero;
+        _velocity = Vector2.zero;
+        _jumpHeld = false;
+        _jumpBufferTimer = 0f;
+        _coyoteTimer = 0f;
+        _dashTimer = 0f;
+        _dashCooldownTimer = 0f;
+        _wallJumpLockTimer = 0f;
+        _knockbackTimer = 0f;
+        _dashJumpLock = false;
+        _climbingShootLock = false;
+        _ladderShootLockUntil = 0f;
+
+        if (_onLadder)
+            ExitLadder(fall: true);
+
+        _inventory.CancelCharge();
+
+        if (_playerInput)
+            _playerInput.enabled = false;
     }
 
     Collider2D QueryLadder()
@@ -299,6 +327,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (_isDead)
+            return;
+
         _moveInput = _moveAction.ReadValue<Vector2>();
 
         _coyoteTimer -= Time.deltaTime;
@@ -322,6 +353,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (_isDead)
+            return;
+
         Probe();
 
         var ladder = QueryLadder();

@@ -14,6 +14,7 @@ public class StageSession : MonoBehaviour
     GameObject _playerInstance;
     Health _playerHealth;
     bool _isReloading;
+    ICheckpointService _checkpointService;
 
     void Start()
     {
@@ -23,15 +24,22 @@ public class StageSession : MonoBehaviour
             return;
         }
 
-        var playerStart = FindPlayerStart();
-        if (playerStart)
+        Vector3 defaultSpawnPosition = ResolveDefaultSpawnPosition();
+
+        Services.TryGet(out _checkpointService);
+        if (_checkpointService != null)
         {
-            SpawnPlayer(playerStart.transform.position);
-            return;
+            string sceneName = SceneManager.GetActiveScene().name;
+            _checkpointService.EnterScene(sceneName, defaultSpawnPosition);
+
+            if (_checkpointService.TryGetRespawnPosition(sceneName, out var respawnPosition))
+            {
+                SpawnPlayer(respawnPosition);
+                return;
+            }
         }
 
-        var spawnPosition = ResolveFallbackSpawnPosition();
-        SpawnPlayer(spawnPosition);
+        SpawnPlayer(defaultSpawnPosition);
     }
 
     void SpawnPlayer(Vector3 position)
@@ -71,6 +79,8 @@ public class StageSession : MonoBehaviour
         if (_playerInstance)
             _playerInstance.SetActive(false);
 
+        _checkpointService?.MarkPendingRespawn(SceneManager.GetActiveScene().name);
+
         StartCoroutine(ReloadSceneAfterDelay());
     }
 
@@ -78,6 +88,15 @@ public class StageSession : MonoBehaviour
     {
         yield return new WaitForSeconds(_deathReloadDelay);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+    }
+
+    Vector3 ResolveDefaultSpawnPosition()
+    {
+        var playerStart = FindPlayerStart();
+        if (playerStart)
+            return playerStart.transform.position;
+
+        return ResolveFallbackSpawnPosition();
     }
 
     GameObject FindPlayerStart()
