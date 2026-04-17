@@ -54,7 +54,8 @@ Player X has 100 HP. Buster: tap ~5 dmg, semi-charge ~15, full-charge ~30. Speci
 | `Health` | HP pool, i-frames, `Damaged`/`Depleted`/`HealthChanged`/`InvulnerabilityChanged` events |
 | `HitBox` | On contact (trigger or collision) calls `HurtBox.ReceiveHit` with `_damage` |
 | `HurtBox` | Routes hits to parent `Health.ApplyDamage` |
-| `DamageFlash` | Blinks `SpriteRenderer.enabled` during i-frames |
+| `InvulnerabilityBlinker` | Blinks `SpriteRenderer.enabled` during i-frames (player-style hit gating) |
+| `DamageFlash` | On `Health.Damaged`, briefly sets `SpriteRenderer.color` to white and restores; independent of i-frames |
 
 Layers (see [Layers.cs](Assets/_Project/Scripts/Layers.cs)): `Player`, `Environment`, `Enemy`, `Ladder`, `PlayerProjectile`, `PlayerProjectileNoClip`, `EnemyProjectile`. Physics2D matrix already routes `EnemyProjectile ↔ Player, Environment` and `PlayerProjectile ↔ Enemy, Environment`.
 
@@ -798,7 +799,7 @@ New authored SVGs needed (33):
 | Guardian | — | Prefab variant of Knot Beret G (lab palette) |
 | Death Guardian | — | Prefab variant of Guardian |
 
-**Authoring convention:** SVG facing right (natural) OR authored facing left + flip-wrapper (`<g transform="translate(W 0) scale(-1 1)">`). Existing enemies follow the latter. Either is fine; consistency within a family is what matters.
+**Authoring convention:** SVGs are authored facing right — same invariant as projectiles and the player. Positive X = forward = canonical render direction. Enemies that should face left in a scene are flipped at the prefab/scene level via `localScale.x = -1` (or `PatrolWalk._initialFacing = -1`), not by re-authoring the SVG. Existing left-authored enemies (Knot Beret B/G, Kyunnbyunn, Mad Bull 97, Tonboroid S, Trap Blast) use a flip-wrapper (`<g transform="translate(W 0) scale(-1 1)">`) to render right — preserved for GUID stability, but new SVGs should be drawn right directly.
 
 ---
 
@@ -806,7 +807,7 @@ New authored SVGs needed (33):
 
 Per enemy, place in `Gameplay.unity` and confirm:
 
-- Takes damage from player projectiles; `DamageFlash` blinks during i-frames; destroyed at 0 HP (or never, for invulnerable hazards).
+- Takes damage from player projectiles; `DamageFlash` white-flashes on every hit; destroyed at 0 HP (or never, for invulnerable hazards).
 - Deals listed contact/shot damage; player knockback + i-frames trigger.
 - Unique behavior matches description: patrol turns at edges; detection triggers attack; swoop dives + returns; mine drops; charger self-destructs on wall; turret/cannon fires on interval; bird follows wave pattern; beam telegraphs before firing; hide/peek cycle; spawner respects cap; on-destroy splits into children; directional shield blocks front hits only.
 - Projectiles on `EnemyProjectile` layer; hit player, not other enemies.

@@ -36,14 +36,15 @@ Assets/_Project/
 ├── Player/
 │   ├── Character/ MegamanX_{Idle,Jump,Fall,Dash}.svg
 │   └── MegamanX.prefab   (Rigidbody2D + Collider2D + PlayerInput + PlayerController
-│                          + Health + DamageFlash + child Visual)
+│                          + Health + InvulnerabilityBlinker + child Visual)
 ├── Scenes/        Gameplay.unity
 ├── Scripts/
 │   ├── PlayerController.cs       movement, input, sprite swap, knockback, ladder
 │   ├── Health.cs                 HP, damage with source position, i-frames
 │   ├── HitBox.cs                  deals damage on contact (trigger/collision → HurtBox)
 │   ├── HurtBox.cs                 receives hits, routes to Health.ApplyDamage
-│   ├── DamageFlash.cs            SpriteRenderer blink during i-frames
+│   ├── InvulnerabilityBlinker.cs SpriteRenderer blink during i-frames (player-style hit gating)
+│   ├── DamageFlash.cs            SpriteRenderer white-flash on hit (enemies / destructibles)
 │   ├── Enemy.cs                  base enemy (Health + Depleted → Destroy)
 │   ├── WeaponInventory.cs        weapon list + charge state machine + Q/E switch + tint
 │   ├── WeaponData.cs             ScriptableObject: displayName, tint, small/semi/full prefab
@@ -131,7 +132,8 @@ Actions in [InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_
 Three decoupled concerns:
 
 - **`Health`** — HP pool, `ApplyDamage(int amount, Vector2 sourcePosition)`, invulnerability timer (`invulnerabilityDuration`, `IsInvulnerable`), events: `Damaged(int, Vector2)`, `Healed(int)`, `HealthChanged(int, int)`, `Depleted`, `InvulnerabilityChanged(bool)`. Set `invulnerabilityDuration = 0` on entities that shouldn't have i-frames (regular enemies).
-- **`DamageFlash`** — subscribes to `Health.InvulnerabilityChanged`, toggles `SpriteRenderer.enabled` at 0.08 s cadence. Uses `.enabled` (not `.color`) so it coexists with weapon-tint and charge-flash color cycling.
+- **`InvulnerabilityBlinker`** — subscribes to `Health.InvulnerabilityChanged`, toggles `SpriteRenderer.enabled` at 0.08 s cadence. Uses `.enabled` (not `.color`) so it coexists with weapon-tint and charge-flash color cycling. Used on the player (i-frame visibility gating); not on enemies.
+- **`DamageFlash`** — subscribes to `Health.Damaged`, briefly overrides `SpriteRenderer.color` to white (default `_flashDuration = 0.1f`), then restores the prior color. Used on enemies and destructibles so hits read visually even without i-frames. Don't put on the player — it would fight the weapon tint and charge-flash color cycling.
 - **`HitBox`** — on enemies or any damage source; on trigger/collision overlap, finds `HurtBox` on the other collider and calls `hurtBox.ReceiveHit(damage, transform.position)`. No hardcoded layer checks — the Physics2D collision matrix controls which pairs interact.
 - **`HurtBox`** — on any entity that can receive damage (player, enemies). Caches `Health` via `GetComponentInParent<Health>()` in Awake. `ReceiveHit(int damage, Vector2 sourcePosition)` forwards to `Health.ApplyDamage`.
 
@@ -173,7 +175,7 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 ## Authoring conventions (important)
 
 - **Do not script scene composition.** Content scenes, debug scenes, and test level fixtures are authored by hand in the Unity editor. Editor scripts that build scenes and save them to disk are banned — they layer C# → scene YAML on top of AssetDatabase GUID timing and have historically produced hard-to-diagnose serialization bugs. Prefab generators and ScriptableObject authoring utilities are fine and encouraged. The only exception is ephemeral PlayMode test fixtures built in-memory that are torn down at teardown — never saved.
-- **Composition over inheritance.** Prefer component + ScriptableObject composition over class hierarchies for gameplay systems. `Health` + `HurtBox` + `HitBox` + `DamageFlash` as independent MonoBehaviours is the template, not `EnemyBase → FlyingEnemy → Bat`.
+- **Composition over inheritance.** Prefer component + ScriptableObject composition over class hierarchies for gameplay systems. `Health` + `HurtBox` + `HitBox` + `DamageFlash` + `InvulnerabilityBlinker` as independent MonoBehaviours is the template, not `EnemyBase → FlyingEnemy → Bat`.
 - **Private field naming: underscore prefix.** Class-level private fields use `_camelCase` (including `[SerializeField]` fields): `_rb`, `_facing`, `[SerializeField] int _maxHealth`. Public properties and methods stay PascalCase (`IsKnockedBack`, `ApplyKnockback`). `const` and `static readonly` stay PascalCase too. Local variables and parameters stay plain (no underscore). When editing an existing file that doesn't yet follow this, rename its private fields to match while you're there.
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
   - [SPEC_HUD.md](SPEC_HUD.md) — HP + active-weapon-energy bars, event-driven view, `Bind`-injected

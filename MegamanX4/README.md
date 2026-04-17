@@ -52,7 +52,7 @@ Use this list to track implementation progress. Tick a box when a feature is pla
 - [x] Wall jump (diagonal kick off wall, consumes wall contact)
 - [x] Ladder climb / top-of-ladder dismount
 - [x] Damage knockback / invincibility frames
-- [ ] Death + respawn at checkpoint
+- [x] Death + respawn *(simple scene reload; checkpoints later)*
 
 ## 2. Mega Man X — combat
 

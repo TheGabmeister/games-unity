@@ -4,33 +4,43 @@ using UnityEngine;
 public class DamageFlash : MonoBehaviour
 {
     [SerializeField] SpriteRenderer _target;
-    [SerializeField] float _period = 0.08f;
+    [SerializeField] Color _flashColor = Color.red;
+    [SerializeField] float _flashDuration = 0.1f;
 
     Health _health;
+    Color _originalColor;
+    float _flashEndTime;
     bool _flashing;
-    float _flashStart;
 
-    void Awake() => _health = GetComponent<Health>();
+    void Awake()
+    {
+        _health = GetComponent<Health>();
+        if (!_target) _target = GetComponent<SpriteRenderer>();
+    }
 
-    void OnEnable() => _health.InvulnerabilityChanged += OnInvulnerabilityChanged;
+    void OnEnable() => _health.Damaged += OnDamaged;
 
     void OnDisable()
     {
-        _health.InvulnerabilityChanged -= OnInvulnerabilityChanged;
-        if (_target) _target.enabled = true;
+        _health.Damaged -= OnDamaged;
+        if (_flashing && _target) _target.color = _originalColor;
+        _flashing = false;
     }
 
-    void OnInvulnerabilityChanged(bool on)
+    void OnDamaged(int amount, Vector2 sourcePosition)
     {
-        _flashing = on;
-        _flashStart = Time.time;
-        if (!_flashing && _target) _target.enabled = true;
+        if (!_target) return;
+        if (!_flashing) _originalColor = _target.color;
+        _target.color = _flashColor;
+        _flashing = true;
+        _flashEndTime = Time.time + _flashDuration;
     }
 
     void Update()
     {
-        if (!_flashing || !_target) return;
-        bool phase = Mathf.FloorToInt((Time.time - _flashStart) / _period) % 2 == 0;
-        _target.enabled = phase;
+        if (!_flashing) return;
+        if (Time.time < _flashEndTime) return;
+        if (_target) _target.color = _originalColor;
+        _flashing = false;
     }
 }

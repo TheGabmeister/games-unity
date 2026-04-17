@@ -51,6 +51,7 @@ GameObject:
   - component: {fileID: 3110984844898100602}
   - component: {fileID: 8239623192231806607}
   - component: {fileID: 1758947151743959775}
+  - component: {fileID: 6920641164270183243}
   m_Layer: 7
   m_Name: KnotBeretB
   m_TagString: Untagged
@@ -321,3 +322,18 @@ MonoBehaviour:
   _burstCount: 3
   _burstInterval: 0.12
   _cooldown: 2
+--- !u!114 &6920641164270183243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8196006686408406298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ebb429a30f5eb14b9b00301345870d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::DamageFlash
+  _target: {fileID: 8452912660760288593}
+  _flashColor: {r: 1, g: 0, b: 0, a: 1}
+  _flashDuration: 0.1

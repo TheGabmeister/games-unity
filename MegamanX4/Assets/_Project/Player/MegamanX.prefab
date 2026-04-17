@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 8700920407511137899}
   - component: {fileID: 6975209517903228683}
   - component: {fileID: -2158787016898588623}
+  - component: {fileID: 8699892431021400602}
   m_Layer: 3
   m_Name: MegamanX
   m_TagString: Untagged
@@ -228,7 +229,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::DamageFlash
   _target: {fileID: 8224132748615150196}
-  _period: 0.08
+  _flashColor: {r: 1, g: 0, b: 0, a: 1}
+  _flashDuration: 0.1
 --- !u!114 &6975209517903228683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,6 +271,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dc59d597cb7bc04ba27c0c61cfdd25d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::HurtBox
+--- !u!114 &8699892431021400602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827737925019994148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8137f736404b7394282fae9af96f270a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::InvulnerabilityBlinker
+  _target: {fileID: 8224132748615150196}
+  _period: 0.08
 --- !u!1 &4554798857488393429
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -8,6 +9,11 @@ public class StageSession : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
     [SerializeField] GameObject _hudPrefab;
+    [SerializeField] float _deathReloadDelay = 1f;
+
+    GameObject _playerInstance;
+    Health _playerHealth;
+    bool _isReloading;
 
     void Start()
     {
@@ -30,9 +36,12 @@ public class StageSession : MonoBehaviour
 
     void SpawnPlayer(Vector3 position)
     {
-        var player = Instantiate(_playerPrefab, position, Quaternion.identity);
-        var health = player.GetComponent<Health>();
-        var weapons = player.GetComponent<WeaponInventory>();
+        _playerInstance = Instantiate(_playerPrefab, position, Quaternion.identity);
+        _playerHealth = _playerInstance.GetComponent<Health>();
+        var weapons = _playerInstance.GetComponent<WeaponInventory>();
+
+        if (_playerHealth)
+            _playerHealth.Depleted += OnPlayerDepleted;
 
         if (!_hudPrefab) 
             return;
@@ -40,7 +49,35 @@ public class StageSession : MonoBehaviour
         var hudGo = Instantiate(_hudPrefab);
         var hud = hudGo.GetComponent<HUD>();
         if (hud) 
-            hud.Bind(health, weapons);
+            hud.Bind(_playerHealth, weapons);
+    }
+
+    void OnDestroy()
+    {
+        if (_playerHealth)
+            _playerHealth.Depleted -= OnPlayerDepleted;
+    }
+
+    void OnPlayerDepleted()
+    {
+        if (_isReloading)
+            return;
+
+        _isReloading = true;
+
+        if (_playerHealth)
+            _playerHealth.Depleted -= OnPlayerDepleted;
+
+        if (_playerInstance)
+            _playerInstance.SetActive(false);
+
+        StartCoroutine(ReloadSceneAfterDelay());
+    }
+
+    System.Collections.IEnumerator ReloadSceneAfterDelay()
+    {
+        yield return new WaitForSeconds(Mathf.Max(0f, _deathReloadDelay));
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
     GameObject FindPlayerStart()
