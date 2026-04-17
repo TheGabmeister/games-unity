@@ -3,12 +3,17 @@ using UnityEngine.UI;
 
 public class HUD : MonoBehaviour
 {
+    const string PauseLabel = "PAUSED";
+    const int PauseLabelFontSize = 48;
+
     [SerializeField] Image _healthFill;
     [SerializeField] Image _energyFill;
     [SerializeField] GameObject _energyRoot;
 
     Health _health;
     WeaponInventory _weapons;
+    bool _isPaused;
+    GUIStyle _pauseLabelStyle;
 
     public void Bind(Health health, WeaponInventory weapons)
     {
@@ -35,6 +40,11 @@ public class HUD : MonoBehaviour
     }
 
     void OnDestroy() => Unbind();
+
+    public void SetPaused(bool paused)
+    {
+        _isPaused = paused;
+    }
 
     void Unbind()
     {
@@ -97,5 +107,26 @@ public class HUD : MonoBehaviour
             return;
         }
         _energyFill.fillAmount = (float)cur / max;
+    }
+
+    void OnGUI()
+    {
+        if (!_isPaused)
+            return;
+
+        _pauseLabelStyle ??= CreatePauseLabelStyle();
+        GUI.Label(new Rect(0f, 0f, Screen.width, Screen.height), PauseLabel, _pauseLabelStyle);
+    }
+
+    static GUIStyle CreatePauseLabelStyle()
+    {
+        var style = new GUIStyle(GUI.skin.label)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontSize = PauseLabelFontSize,
+            fontStyle = FontStyle.Bold
+        };
+        style.normal.textColor = Color.white;
+        return style;
     }
 }

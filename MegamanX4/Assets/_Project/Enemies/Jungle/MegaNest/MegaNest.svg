@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 96" width="128" height="96">
+  <!--
+    Mega Nest - stationary spawner mounted on a branch/wall. Wide hive-like silhouette.
+    Authored facing right: opening on the right side where hatchlings emerge.
+    Palette (paper wasp gray + warning):
+      nest-pale   #EFEBE9   nest-light  #D7CCC8   nest-mid  #8D6E63
+      nest-deep   #4E342E   warn        #FF6D00   warn-hot  #FFAB00
+      opening     #1B1B1B   bee-body    #FFEB3B
+  -->
+
+  <!-- Attach point / branch at top-left -->
+  <rect x="0" y="6" width="28" height="10" rx="2" fill="#5D4037" stroke="#3E2723" stroke-width="0.6"/>
+  <rect x="0" y="6" width="28" height="2" fill="#8D6E63"/>
+
+  <!-- Nest body (layered hive) -->
+  <ellipse cx="64" cy="52" rx="58" ry="38" fill="#8D6E63" stroke="#4E342E" stroke-width="1.4"/>
+  <ellipse cx="62" cy="48" rx="50" ry="30" fill="#D7CCC8" opacity="0.85"/>
+  <ellipse cx="60" cy="44" rx="40" ry="22" fill="#EFEBE9" opacity="0.6"/>
+
+  <!-- Hive layer ridges -->
+  <g fill="none" stroke="#8D6E63" stroke-width="1">
+    <path d="M 14 50 Q 64 36, 114 50"/>
+    <path d="M 16 60 Q 64 48, 112 60"/>
+    <path d="M 20 72 Q 64 62, 108 72"/>
+    <path d="M 12 38 Q 64 28, 116 38"/>
+  </g>
+
+  <!-- Opening on the right (spawn mouth) -->
+  <ellipse cx="108" cy="52" rx="10" ry="8" fill="#1B1B1B"/>
+  <ellipse cx="108" cy="52" rx="7" ry="5" fill="#3E2723"/>
+
+  <!-- Warning band around opening -->
+  <ellipse cx="108" cy="52" rx="12" ry="10" fill="none" stroke="#FF6D00" stroke-width="2"/>
+  <ellipse cx="108" cy="52" rx="12" ry="10" fill="none" stroke="#FFAB00" stroke-width="0.6" stroke-dasharray="3 2"/>
+
+  <!-- A peek of eyes inside the opening -->
+  <circle cx="106" cy="50" r="1" fill="#FFEB3B"/>
+  <circle cx="110" cy="51" r="1" fill="#FFEB3B"/>
+</svg>

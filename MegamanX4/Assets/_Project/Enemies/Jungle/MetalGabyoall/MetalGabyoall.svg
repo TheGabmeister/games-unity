@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 48" width="64" height="48">
+  <!--
+    Metal Gabyoall - invulnerable spiked slab that crawls along the floor.
+    Symmetric top-to-bottom; wider than tall; classic Mega Man spike nuisance.
+    Palette (iron gray + warning yellow):
+      plate-pale  #B0BEC5   plate-light #78909C   plate-mid  #455A64
+      plate-deep  #263238   spike       #263238   spike-hi   #607D8B
+      warn        #FFD600   warn-deep   #F57F17
+  -->
+
+  <!-- Bottom spikes -->
+  <g fill="#455A64" stroke="#263238" stroke-width="0.6">
+    <polygon points="4,32 8,44 12,32"/>
+    <polygon points="14,32 18,44 22,32"/>
+    <polygon points="24,32 28,44 32,32"/>
+    <polygon points="34,32 38,44 42,32"/>
+    <polygon points="44,32 48,44 52,32"/>
+    <polygon points="54,32 58,44 60,32"/>
+  </g>
+
+  <!-- Top spikes -->
+  <g fill="#455A64" stroke="#263238" stroke-width="0.6">
+    <polygon points="4,16 8,4 12,16"/>
+    <polygon points="14,16 18,4 22,16"/>
+    <polygon points="24,16 28,4 32,16"/>
+    <polygon points="34,16 38,4 42,16"/>
+    <polygon points="44,16 48,4 52,16"/>
+    <polygon points="54,16 58,4 60,16"/>
+  </g>
+
+  <!-- Main slab body -->
+  <rect x="2" y="14" width="60" height="20" rx="2" fill="#78909C" stroke="#263238" stroke-width="1.2"/>
+  <rect x="4" y="16" width="56" height="4" fill="#B0BEC5" opacity="0.7"/>
+
+  <!-- Warning stripe -->
+  <rect x="4" y="22" width="56" height="4" fill="#FFD600"/>
+  <rect x="4" y="23" width="56" height="1" fill="#F57F17" opacity="0.7"/>
+
+  <!-- Single central eye -->
+  <rect x="28" y="26" width="8" height="4" rx="1" fill="#263238"/>
+  <rect x="30" y="27" width="4" height="2" fill="#FF3D00"/>
+</svg>

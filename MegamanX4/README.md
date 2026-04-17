@@ -264,13 +264,13 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 - [x] Knot Beret G *(Sky Lagoon, Military Train)*
 - [x] Spike Marl *(Sky Lagoon, Cyber Space)*
 - [x] Kyunnbyunn *(Sky Lagoon, Jungle)*
-- [ ] Blast Raster *(Jungle, Bio Laboratory)*
-- [ ] Hover Gunner *(Cyber Space, Marine Base, Bio Laboratory)*
-- [ ] Giga Death *(Air Force, Volcano)*
-- [ ] Plasma Cannon *(Air Force, Military Train)*
-- [ ] Batton Bone B81 *(Volcano, Military Train, Bio Laboratory)*
-- [ ] Mettaur D2 *(Volcano, Military Train, Snow Base)*
-- [ ] Spiky Mk-II *(Volcano, Bio Laboratory)*
+- [x] Blast Raster *(Jungle, Bio Laboratory)*
+- [x] Hover Gunner *(Cyber Space, Marine Base, Bio Laboratory)*
+- [x] Giga Death *(Air Force, Volcano)*
+- [x] Plasma Cannon *(Air Force, Military Train)*
+- [x] Batton Bone B81 *(Volcano, Military Train, Bio Laboratory)*
+- [x] Mettaur D2 *(Volcano, Military Train, Snow Base)*
+- [x] Spiky Mk-II *(Volcano, Bio Laboratory)*
 - [ ] Raiden *(Volcano, Military Train — AI-piloted Ride Armor; deferred pending Ride Armor subsystem)*
 
 ### Sky Lagoon enemy roster
@@ -282,12 +282,12 @@ Eight Mavericks plus bosses of the Final Weapon and Sigma stages.
 
 ### Jungle enemy roster
 
-- [ ] Kill Fisher
-- [ ] Metal Gabyoall
-- [ ] King Poseidon
-- [ ] Obiiru
-- [ ] Mega Nest
-- [ ] Spider Core
+- [x] Kill Fisher
+- [x] Metal Gabyoall *(floor-only; surface-crawl deferred)*
+- [ ] King Poseidon *(deferred pending water system)*
+- [x] Obiiru
+- [x] Mega Nest
+- [x] Spider Core
 - [ ] Web Spider *(boss)*
 
 ### Cyber Space enemy roster

@@ -8,6 +8,7 @@ public static class AllEnemiesGenerator
     {
         SkyLagoonEnemyGenerator.Generate();
         RecurringEnemyGenerator.Generate();
+        JungleEnemyGenerator.Generate();
         Debug.Log("All enemies generated.");
     }
 }

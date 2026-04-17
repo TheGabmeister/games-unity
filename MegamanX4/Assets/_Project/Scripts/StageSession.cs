@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -14,8 +15,14 @@ public class StageSession : MonoBehaviour
     GameObject _playerInstance;
     Health _playerHealth;
     PlayerController _playerController;
+    PlayerInput _playerInput;
+    InputAction _pauseAction;
+    HUD _hud;
     bool _isReloading;
+    bool _isPaused;
     ICheckpointService _checkpointService;
+
+    public bool IsPaused => _isPaused;
 
     void Start()
     {
@@ -47,24 +54,35 @@ public class StageSession : MonoBehaviour
         _playerInstance = Instantiate(_playerPrefab, position, Quaternion.identity);
         _playerHealth = _playerInstance.GetComponent<Health>();
         _playerController = _playerInstance.GetComponent<PlayerController>();
+        _playerInput = _playerInstance.GetComponent<PlayerInput>();
         var weapons = _playerInstance.GetComponent<WeaponInventory>();
 
         if (_playerController)
             _playerController.Died += OnPlayerDepleted;
 
-        if (!_hudPrefab) 
+        BindPauseAction();
+
+        if (!_hudPrefab)
             return;
 
         var hudGo = Instantiate(_hudPrefab);
-        var hud = hudGo.GetComponent<HUD>();
-        if (hud) 
-            hud.Bind(_playerHealth, weapons);
+        _hud = hudGo.GetComponent<HUD>();
+        if (_hud)
+        {
+            _hud.Bind(_playerHealth, weapons);
+            _hud.SetPaused(_isPaused);
+        }
     }
 
     void OnDestroy()
     {
+        UnbindPauseAction();
+
         if (_playerController)
             _playerController.Died -= OnPlayerDepleted;
+
+        if (_isPaused)
+            SetPaused(false);
     }
 
     void OnPlayerDepleted()
@@ -74,8 +92,13 @@ public class StageSession : MonoBehaviour
 
         _isReloading = true;
 
+        if (_isPaused)
+            SetPaused(false);
+
         if (_playerController)
             _playerController.Died -= OnPlayerDepleted;
+
+        UnbindPauseAction();
 
         _checkpointService?.MarkPendingRespawn();
 
@@ -132,5 +155,56 @@ public class StageSession : MonoBehaviour
 
         Debug.LogWarning("StageSession could not find a PlayerStart tag or an active Scene view camera. Spawning at the StageSession position.", this);
         return transform.position;
+    }
+
+    public void TogglePause()
+    {
+        if (_isReloading)
+            return;
+
+        SetPaused(!_isPaused);
+    }
+
+    void BindPauseAction()
+    {
+        UnbindPauseAction();
+
+        if (_playerInput == null)
+            return;
+
+        _pauseAction = _playerInput.actions["Pause"];
+        if (_pauseAction == null)
+        {
+            Debug.LogWarning("StageSession could not find a Pause action on the player input actions asset.", this);
+            return;
+        }
+
+        _pauseAction.performed += OnPausePerformed;
+    }
+
+    void UnbindPauseAction()
+    {
+        if (_pauseAction == null)
+            return;
+
+        _pauseAction.performed -= OnPausePerformed;
+        _pauseAction = null;
+    }
+
+    void OnPausePerformed(InputAction.CallbackContext _)
+    {
+        if (_playerInstance == null)
+            return;
+
+        TogglePause();
+    }
+
+    void SetPaused(bool paused)
+    {
+        _isPaused = paused;
+        Time.timeScale = paused ? 0f : 1f;
+
+        if (_hud)
+            _hud.SetPaused(paused);
     }
 }

@@ -9,6 +9,7 @@ public class SwoopAttack : MonoBehaviour
     [SerializeField] float _returnSpeed = 6f;
     [SerializeField] float _cooldown = 3f;
     [SerializeField] float _arrivalDistance = 0.5f;
+    [SerializeField] Transform _returnAnchor;
 
     PlayerDetector _detector;
     HoverSine _hover;
@@ -39,7 +40,7 @@ public class SwoopAttack : MonoBehaviour
     void TryStartDive()
     {
         if (!_detector.CanSeePlayer) return;
-        _returnTarget = transform.position;
+        _returnTarget = _returnAnchor ? (Vector2)_returnAnchor.position : (Vector2)transform.position;
         _diveTarget = _detector.PlayerPosition;
         if (_hover) _hover.Pause();
         _state = State.Diving;
