@@ -30,6 +30,7 @@ Generator utilities are exposed as editor menu items under **Tools/MegamanX4/** 
 ```
 Assets/_Project/
 ├── Enemies/       TargetDummy.prefab
+│   └── SkyLagoon/ {KnotBeretB, KnotBeretG, TonboroidS, SpikeMarl, MadBull97, TrapBlast, Kyunnbyunn}/ (SVG + prefab per enemy)
 ├── Input/         InputSystem_Actions.inputactions
 ├── Interactables/ Ladder.prefab
 ├── Player/
@@ -46,17 +47,19 @@ Assets/_Project/
 │   ├── Enemy.cs                  base enemy (Health + Depleted → Destroy)
 │   ├── WeaponInventory.cs        weapon list + charge state machine + Q/E switch + tint
 │   ├── WeaponData.cs             ScriptableObject: displayName, tint, small/semi/full prefab
-│   ├── Projectile.cs             composable projectile: damage + hit detection + Destroyed event
+│   ├── Projectile.cs             lifecycle only: wall collision, piercing, Destroyed event (no damage; HitBox sibling deals it)
 │   ├── Lifetime.cs               general-purpose auto-destroy timer
 │   ├── MoveForward.cs            movement behavior: advances along transform.right
 │   ├── MoveVertical.cs           movement behavior: advances along ±transform.up
 │   ├── DashSilhouetteTrail.cs    LateUpdate-driven sprite afterimage trail
-│   ├── HUD.cs                    in-scene gameplay HUD root
-│   ├── StageSession.cs           per-stage runtime state
+│   ├── Layers.cs                 compile-time layer index constants (mirror of TagManager.asset layers)
+│   ├── HUD.cs                    event-driven gameplay HUD (HP + energy bars), wired via Bind(Health, WeaponInventory)
+│   ├── StageSession.cs           spawns player + HUD, calls HUD.Bind, owns PlayerStart fallback
 │   ├── Bootstrapper.cs           [RuntimeInitializeOnLoadMethod] → loads Resources/Systems
 │   ├── SystemsRoot.cs            singleton DontDestroyOnLoad root for persistent systems
 │   ├── Description.cs            editor-only annotation (TextArea on any GO)
 │   ├── Systems/                  GameManager, MusicManager, SfxManager, ScreenFader, SceneLoader/
+│   ├── Enemy/                    PlayerDetector, AutoShoot, DestroyOnWallContact (reusable enemy behaviors)
 │   ├── Editor/
 │   │   ├── FileExtensions.cs     Project-panel extension labels
 │   │   └── MegamanX4.Editor.asmdef
@@ -77,7 +80,7 @@ Assets/_Project/
 
 ### Player movement — Kinematic + swept cast
 
-[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic + weapon switching live in [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) — the controller delegates `OnAttackStarted`/`OnAttackCanceled` to it and calls `_inventory.CancelCharge()` from `ApplyKnockback`. Per-weapon data lives in [WeaponData.cs](Assets/_Project/Scripts/WeaponData.cs) ScriptableObject assets. See [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) for the weapon-system roadmap. Key choices that the next maintainer should not accidentally undo:
+[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic + weapon switching live in [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) — the controller delegates `OnAttackStarted`/`OnAttackCanceled` to it and calls `_inventory.CancelCharge()` from `ApplyKnockback`. Per-weapon data lives in [WeaponData.cs](Assets/_Project/Scripts/WeaponData.cs) ScriptableObject assets. Key choices that the next maintainer should not accidentally undo:
 
 - **Rigidbody2D is `Kinematic` with `gravityScale = 0`**, forced in `Awake`. Don't rely on the inspector setting — the script enforces it.
 - The controller maintains its own `Vector2 velocity`, applies its own `gravity`, and resolves movement via **`Rigidbody2D.Cast` swept collision** in `MoveAxis` (one axis at a time, trim travel by `skinWidth`, zero velocity axis on contact). This is the Celeste/Hollow-Knight pattern — replacing it with physics-driven Dynamic body is a regression.
@@ -118,8 +121,10 @@ Actions in [InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_
 - Hold-Attack/release-Attack works for every weapon. `_chargeTimer` ticks while `_isCharging`, charge-flash visuals play during semi/full thresholds, and `RestoreColor` returns the sprite to `ActiveWeapon.tint` (not white) on release.
 - On `ReleaseCharge`, the spawner picks from `ActiveWeapon.fullPrefab` / `semiPrefab` / `smallPrefab` based on charge timer. Instantiation is one call: `Instantiate(prefab, muzzle.position, muzzle.rotation)`. Direction flows entirely from the muzzle transform.
 - The 3-lemon on-screen cap (`_activeSmallShots` tracked via `Projectile.Destroyed`) only applies to the buster slot (`_activeIndex == 0`). Special weapons currently have no cap.
+- **Per-weapon energy pools + depletion auto-switch.** `WeaponInventory` owns an `int[] _energy` array parallel to `_weapons`, seeded from each `WeaponData.maxEnergy` in Awake (so fresh-instantiate = refill). On fire, non-buster weapons debit their tier cost (`smallCost` / `semiCost` / `fullCost`); if the pool empties, `_activeIndex` snaps back to 0 (buster) and `ActiveWeaponChanged` fires. `maxEnergy == 0` = infinite (buster, or any unauthored non-buster weapon).
+- Events exposed: `EnergyChanged` (after debit), `ActiveWeaponChanged` (on Q/E swap or auto-switch). Getters: `ActiveIndex`, `GetEnergy(i)`, `GetMaxEnergy(i)`. HUD subscribes to these.
 
-`WeaponData` (ScriptableObject) shape: `displayName`, `tint`, `smallPrefab`, `semiPrefab`, `fullPrefab`. All three prefab slots are used by every weapon. **Convention for special weapons:** set `semiPrefab = smallPrefab` so a semi-charge release fires the same projectile as a tap (specials don't have a middle tier). `fullPrefab` can either match `smallPrefab` (no charged variant) or be distinct (charged variant for that weapon) — author's call per asset.
+`WeaponData` (ScriptableObject) shape: `displayName`, `tint`, `smallPrefab`/`semiPrefab`/`fullPrefab`, plus energy block (`maxEnergy`, `smallCost`, `semiCost`, `fullCost`). **Convention for special weapons:** set `semiPrefab = smallPrefab` so a semi-charge release fires the same projectile as a tap (specials don't have a middle tier). `fullPrefab` can either match `smallPrefab` (no charged variant) or be distinct (charged variant for that weapon) — author's call per asset.
 
 ### Health / damage system
 
@@ -131,6 +136,10 @@ Three decoupled concerns:
 - **`HurtBox`** — on any entity that can receive damage (player, enemies). Caches `Health` via `GetComponentInParent<Health>()` in Awake. `ReceiveHit(int damage, Vector2 sourcePosition)` forwards to `Health.ApplyDamage`.
 
 `PlayerController` subscribes to `Health.Damaged` and calls `ApplyKnockback(sourcePosition)` (or `ExitLadder` if on a ladder). Knockback is player-only; enemies don't flinch.
+
+### HUD — pure view, event-driven, Bind-injected
+
+[HUD.cs](Assets/_Project/Scripts/HUD.cs) is a view-only component on `GameplayHUD.prefab`. It subscribes to `Health.HealthChanged` and to `WeaponInventory.EnergyChanged` / `ActiveWeaponChanged`; no `Update` polling. [StageSession.SpawnPlayer](Assets/_Project/Scripts/StageSession.cs) instantiates the player + HUD prefabs, then calls `hud.Bind(health, weaponInventory)` to wire references. This avoids `GameObject.Find` and keeps the HUD decoupled from any singleton. If either component is missing on the player, `Bind` logs a warning and silently renders nothing for that bar. The Energy bar GameObject is toggled off whenever `ActiveWeapon.maxEnergy == 0` (buster has infinite energy → no bar shown).
 
 ### Bootstrapper / persistent systems
 
@@ -167,12 +176,20 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 - **Composition over inheritance.** Prefer component + ScriptableObject composition over class hierarchies for gameplay systems. `Health` + `HurtBox` + `HitBox` + `DamageFlash` as independent MonoBehaviours is the template, not `EnemyBase → FlyingEnemy → Bat`.
 - **Private field naming: underscore prefix.** Class-level private fields use `_camelCase` (including `[SerializeField]` fields): `_rb`, `_facing`, `[SerializeField] int _maxHealth`. Public properties and methods stay PascalCase (`IsKnockedBack`, `ApplyKnockback`). `const` and `static readonly` stay PascalCase too. Local variables and parameters stay plain (no underscore). When editing an existing file that doesn't yet follow this, rename its private fields to match while you're there.
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
-  - [SPEC.md](SPEC.md) — coyote time, dash-jump, ladder climb
-  - [SPEC2.md](SPEC2.md) — damage knockback + invincibility frames
-  - [SPEC_XWEAPONS.md](SPEC_XWEAPONS.md) — X weapon system. Phase 1 (weapon switching + universal charging + unified inventory) is specced and scaffolded; code runtime exists but needs `WeaponData` assets authored in the editor and the `WeaponInventory` component added to the `MegamanX` prefab before playtest.
-  - [SPEC_PROJECTILES.md](SPEC_PROJECTILES.md) — composable projectile system, layer-based filtering, environment-destroys-on-contact
+  - [SPEC_HUD.md](SPEC_HUD.md) — HP + active-weapon-energy bars, event-driven view, `Bind`-injected
+  - [SPEC_SKYLAGOON_ENEMIES.md](SPEC_SKYLAGOON_ENEMIES.md) — intro-stage enemies (Knot Beret B/G, Tonboroid S, Spike Marl, Mad Bull 97, Trap Blast, Kyunnbyunn). Phase 1 (`PlayerDetector`, `AutoShoot`, `DestroyOnWallContact`) is implemented; Phase 2+ components (`PatrolWalk`, `EnemyShoot`, `HoverSine`, `SwoopAttack`, `DropTrigger`) are still to build.
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.
 - **ScriptableObjects for game data** (enemy stats, weapon data, level metadata, palettes). Prefer SO-driven configuration over hard-coded constants for anything designers would tune.
+
+## Physics collision gotchas
+
+When debugging "X collides with Y unexpectedly" or "X doesn't damage Y", check in this order:
+
+1. **`PlayerController._environmentLayers` (serialized `LayerMask`) overrides the physics matrix for the player's movement.** The player doesn't use the Physics2D layer matrix for its own swept cast — it uses `Rigidbody2D.Cast` with a `ContactFilter2D` whose mask is `_environmentLayers`. Default `~0` (all layers) causes the player to physically collide with projectiles/enemies/everything. Keep this narrow (`Environment` only, optionally `Ladder`).
+2. **Rigidbody2D is required for trigger/collision callbacks.** A projectile prefab with `MoveForward` but no `Rigidbody2D` silently fires no `OnTriggerEnter2D` / `OnCollisionEnter2D` — Unity treats it as a static collider being teleported. Always add `Rigidbody2D` (Kinematic, gravity 0) to anything that moves and needs to trigger damage. `Projectile` enforces this in `Awake` but only if the component is on the prefab.
+3. **Trigger vs non-trigger is per-use-case, not per-component.** `HitBox` handles both `OnTriggerEnter2D` and `OnCollisionEnter2D`. Trigger = other object passes through (projectiles). Non-trigger = physical interaction (Frost Tower ice pillar, which physically blocks enemies *and* gets blocked by walls).
+4. **Layer index access goes through [Layers.cs](Assets/_Project/Scripts/Layers.cs)**, a hand-written mirror of `ProjectSettings/TagManager.asset`. Do not use `LayerMask.NameToLayer("…")` — it fails silently on typos. If you reorder layers in the TagManager, update `Layers.cs` to match (the compiler won't catch drift since the values are just `int`).
+5. **Physics2D Layer Collision Matrix** (Edit → Project Settings → Physics 2D) governs which pairs *can* interact at all. Key enabled pairs: `Player ↔ Enemy`, `Player ↔ Environment`, `PlayerProjectile ↔ Enemy/Environment`, `EnemyProjectile ↔ Player/Environment`. `Player ↔ PlayerProjectile*` must be disabled.
 
 ## Small gotchas worth remembering
 
