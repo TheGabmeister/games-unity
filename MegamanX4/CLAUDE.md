@@ -72,9 +72,11 @@ Three decoupled concerns:
 - **`InvulnerabilityBlinker`** — subscribes to `Health.InvulnerabilityChanged`, toggles `SpriteRenderer.enabled` at 0.08 s cadence. Uses `.enabled` (not `.color`) so it coexists with weapon-tint and charge-flash color cycling. Used on the player (i-frame visibility gating); not on enemies.
 - **`DamageFlash`** — subscribes to `Health.Damaged`, briefly overrides `SpriteRenderer.color` to white (default `_flashDuration = 0.1f`), then restores the prior color. Used on enemies and destructibles so hits read visually even without i-frames. Don't put on the player — it would fight the weapon tint and charge-flash color cycling.
 - **`HitBox`** — on enemies or any damage source; on trigger/collision overlap, finds `HurtBox` on the other collider and calls `hurtBox.ReceiveHit(damage, transform.position)`. No hardcoded layer checks — the Physics2D collision matrix controls which pairs interact.
-- **`HurtBox`** — on any entity that can receive damage (player, enemies). Caches `Health` via `GetComponentInParent<Health>()` in Awake. `ReceiveHit(int damage, Vector2 sourcePosition)` forwards to `Health.ApplyDamage`. **`enabled = false` short-circuits `ReceiveHit`** — that's the single knob for conditional invulnerability (e.g. Mettaur hiding under its helmet, Protecton blocking from the front). Disabling the component without the guard would do nothing because `ReceiveHit` is a direct method call from `HitBox`, not a Unity message.
+- **`HurtBox`** — on any entity that can receive damage (player, enemies). Caches `Health` via `GetComponentInParent<Health>()` in Awake. `ReceiveHit(int damage, Vector2 sourcePosition)` forwards to `Health.ApplyDamage`. **`enabled = false` short-circuits `ReceiveHit`** — that's the single knob for conditional invulnerability (e.g. Mettaur hiding under its helmet, Miru Toraeru while cloaked/fleeing). Disabling the component without the guard would do nothing because `ReceiveHit` is a direct method call from `HitBox`, not a Unity message.
 
 `PlayerController` subscribes to `Health.Damaged` and calls `ApplyKnockback(sourcePosition)` (or `ExitLadder` if on a ladder). Knockback is player-only; enemies don't flinch.
+
+**Directional damage filtering** (shield / armor enemies) uses a different pattern: subscribe to `Health.Damaged`, inspect `sourcePosition` against facing, and call `Health.Heal(amount)` to refund hits from the wrong side. Protecton uses this for its front shield — no second collider, no `HurtBox.enabled` toggling. `DamageFlash` still fires during a blocked hit (desired — "shield tank" feedback), but HP returns to full on the same frame.
 
 ### HUD — pure view, event-driven, Bind-injected
 
@@ -82,7 +84,11 @@ Three decoupled concerns:
 
 ### Bootstrapper / persistent systems
 
-`Bootstrapper` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to instantiate `Resources/Systems`. `SystemsRoot` on that prefab is a singleton that calls `DontDestroyOnLoad`. This guarantees persistent systems exist regardless of which scene is loaded first (play-from-any-scene workflow). Per-stage gameplay lives in `Gameplay.unity`.
+`Bootstrapper` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to instantiate `Resources/GameServices`. The `GameServices` prefab hosts the persistent singletons (`GameStateController`, `SceneLoader`, `SfxManager`, `MusicManager`, `ScreenFader`, `CheckpointService`, plus the shared `EventSystem` for menu input) and calls `DontDestroyOnLoad`. This guarantees persistent systems exist regardless of which scene is loaded first (play-from-any-scene workflow).
+
+Scene layout: `Title.unity` → `LevelSelect.unity` → `Gameplay.unity`, transitioned via `GameStateController.RequestTransition(GameState)` → `SceneLoader.LoadScene`. See [SPEC_GAMESTATE.md](SPEC_GAMESTATE.md) for the ownership rules; scene-local UI only sends intent, never loads scenes directly.
+
+Service lookup goes through a static `Services.TryGet<T>(out var svc)`. Components that optionally depend on a service (e.g. `StageSession` and `CheckpointService`) null-check the result and degrade gracefully — don't hard-require services from gameplay code.
 
 ### Projectile system
 
@@ -109,7 +115,7 @@ Enemies are **composition-first**: no inheritance hierarchy. Every enemy is a pr
 
 **Standard composition core** (shorthand `(core)` in the spec): `DestroyOnDepleted` + `Health` + `HurtBox` + `HitBox` + `DamageFlash`. Add gravity + ground-walk via `Gravity` + `PatrolWalk`. Add flying/hovering via `HoverSine` + optionally `SwoopAttack` (with `PlayerDetector`). Add shooting via `EnemyShoot` (aimed, detection-gated) or `AutoShoot` (fire-and-forget, unaimed).
 
-**`PlayerDetector`** is radial by default (`Physics2D.OverlapCircle` on the Player layer in `FixedUpdate`), with an optional LoS raycast against Environment. Fires edge-triggered `PlayerDetected`/`PlayerLost` *and* exposes `CanSeePlayer`/`PlayerPosition` for polling — consumers like `EnemyShoot` and `SwoopAttack` poll so they can re-trigger after cooldowns instead of being one-shot on the edge event.
+**`PlayerDetector`** is radial by default (`Physics2D.OverlapCircle` on the Player layer in `FixedUpdate`), with an optional LoS raycast against Environment. Fires edge-triggered `PlayerDetected`/`PlayerLost` *and* exposes `CanSeePlayer`/`PlayerPosition` for polling — consumers like `EnemyShoot` and `SwoopAttack` poll so they can re-trigger after cooldowns instead of being one-shot on the edge event. Optional `_coneAngle` (default 360° = off) filters detection to a forward cone measured against `transform.right * sign(lossyScale.x)` — used by directional shooters like Protecton (120° front cone) so they only fire at players standing in front.
 
 **Direction**: `PatrolWalk` flips the enemy's root `localScale.x = facing` to mirror the sprite. This is acceptable for enemies (unlike the player, they don't use swept-cast movement, and their colliders are symmetric around center). Muzzle direction still flows from `muzzle.rotation`, not scale — so spawners pass `muzzle.position, muzzle.rotation` to `Instantiate` exactly like the player's weapon system.
 
@@ -118,8 +124,9 @@ Enemies are **composition-first**: no inheritance hierarchy. Every enemy is a pr
 **Generators**: split by classification, all under `Tools/MegamanX4/`. Shared helpers in [EnemyGeneratorCore.cs](Assets/_Project/Scripts/Editor/EnemyGeneratorCore.cs): `NewEnemyRoot(basePath, name, hp, contact, isTrigger)` builds the standard core; `AddMuzzle`, `AddGravity`, `SavePrefab`, `LoadPrefab`/`Sprite`/`Material`, and a typed `SetField` that uses `SerializedObject.FindProperty` so private `[SerializeField]` fields stay private (includes an enum case). Per-classification generators each own their `basePath` and a `Generate *` menu item:
 
 - [SkyLagoonEnemyGenerator.cs](Assets/_Project/Scripts/Editor/SkyLagoonEnemyGenerator.cs) — Sky Lagoon unique
-- [RecurringEnemyGenerator.cs](Assets/_Project/Scripts/Editor/RecurringEnemyGenerator.cs) — recurring roster (KnotBeret B/G, Kyunnbyunn, SpikeMarl + Phase 2 additions)
-- [JungleEnemyGenerator.cs](Assets/_Project/Scripts/Editor/JungleEnemyGenerator.cs) — Jungle unique
+- [RecurringEnemyGenerator.cs](Assets/_Project/Scripts/Editor/RecurringEnemyGenerator.cs) — recurring roster (KnotBeret B/G, Kyunnbyunn, SpikeMarl, BlastRaster, HoverGunner, GigaDeath, PlasmaCannon, BattonBoneB81, MettaurD2, SpikyMkII)
+- [JungleEnemyGenerator.cs](Assets/_Project/Scripts/Editor/JungleEnemyGenerator.cs) — Jungle unique (KillFisher, MetalGabyoall, Obiiru, MegaNest, SpiderCore)
+- [CyberSpaceEnemyGenerator.cs](Assets/_Project/Scripts/Editor/CyberSpaceEnemyGenerator.cs) — Cyber Space unique (MiruToraeru, TriScan, Protecton)
 - [AllEnemiesGenerator.cs](Assets/_Project/Scripts/Editor/AllEnemiesGenerator.cs) — meta-menu calling every per-classification generator
 
 Invariant for generated SpriteRenderers: `Packages/com.unity.vectorgraphics/Runtime/Materials/Unlit_Vector.mat` is assigned so SVG tessellation renders correctly.
@@ -138,10 +145,9 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 - **Composition over inheritance.** Prefer component + ScriptableObject composition over class hierarchies for gameplay systems. `Health` + `HurtBox` + `HitBox` + `DamageFlash` + `InvulnerabilityBlinker` as independent MonoBehaviours is the template, not `EnemyBase → FlyingEnemy → Bat`.
 - **Private field naming: underscore prefix.** Class-level private fields use `_camelCase` (including `[SerializeField]` fields): `_rb`, `_facing`, `[SerializeField] int _maxHealth`. Public properties and methods stay PascalCase (`IsKnockedBack`, `ApplyKnockback`). `const` and `static readonly` stay PascalCase too. Local variables and parameters stay plain (no underscore). When editing an existing file that doesn't yet follow this, rename its private fields to match while you're there.
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
-  - [SPEC_HUD.md](SPEC_HUD.md) — HP + active-weapon-energy bars, event-driven view, `Bind`-injected
-  - [SPEC_GAMESTATE.md](SPEC_GAMESTATE.md) — top-level `Title → LevelSelect → Gameplay` flow; `GameStateController` owns transitions, `SceneLoader` loads
-  - [SPEC_PAUSEMENU.md](SPEC_PAUSEMENU.md) — modal Gameplay-local pause; `StageSession` owns the toggle; phased roadmap toward MMX-style weapon-select overlay (current: `Time.timeScale` freeze + "PAUSED" label)
-  - [SPEC_ENEMIES.md](SPEC_ENEMIES.md) — full-campaign enemy roster (40 non-boss enemies across Sky Lagoon + 8 Maverick stages). Phases 1–3 implemented (Sky Lagoon + recurring backbone + Jungle). Later phases use the two-tier rule (reusable component vs single-use AI script) to keep the component library small. Deferred: King Poseidon (water system), Metal Gabyoall wall-crawl (floor-only for now), Raiden (AI-piloted Ride Armor, depends on Ride Armor subsystem). Single-use AI scripts live in [Assets/_Project/Scripts/Enemy/AI/](Assets/_Project/Scripts/Enemy/AI/).
+  - [SPEC_GAMESTATE.md](SPEC_GAMESTATE.md) — top-level `Title → LevelSelect → Gameplay` flow; `GameStateController` owns transitions, `SceneLoader` loads.
+  - [SPEC_PAUSEMENU.md](SPEC_PAUSEMENU.md) — modal Gameplay-local pause; `StageSession` owns the toggle; phased roadmap toward MMX-style weapon-select overlay merged into `HUD` (current: `Time.timeScale` freeze + "PAUSED" `OnGUI` label).
+  - [SPEC_ENEMIES.md](SPEC_ENEMIES.md) — full-campaign enemy roster (40 non-boss enemies across Sky Lagoon + 8 Maverick stages). Phases 1–4 implemented (Sky Lagoon + recurring backbone + Jungle + Cyber Space). Later phases use the two-tier rule (reusable component vs single-use AI script) to keep the component library small. Deferred: King Poseidon (water system), Metal Gabyoall wall-crawl (floor-only for now), Raiden (AI-piloted Ride Armor, depends on Ride Armor subsystem). Single-use AI scripts live in [Assets/_Project/Scripts/Enemy/AI/](Assets/_Project/Scripts/Enemy/AI/).
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.
 - **ScriptableObjects for game data** (enemy stats, weapon data, level metadata, palettes). Prefer SO-driven configuration over hard-coded constants for anything designers would tune.
 
