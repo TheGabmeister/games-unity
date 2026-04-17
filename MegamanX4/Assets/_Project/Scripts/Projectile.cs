@@ -6,6 +6,9 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] bool _piercing;
+    [SerializeField] float _lifetime = 1f;
+
+    float _timer;
 
     public event Action Destroyed;
 
@@ -33,4 +36,10 @@ public class Projectile : MonoBehaviour
     }
 
     void OnDestroy() => Destroyed?.Invoke();
+
+    void Update()
+    {
+        _timer += Time.deltaTime;
+        if (_timer >= _lifetime) Destroy(gameObject);
+    }
 }

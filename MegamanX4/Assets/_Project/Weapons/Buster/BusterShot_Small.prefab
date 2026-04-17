@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3979718300038439222}
   - component: {fileID: 1624431595153797360}
   - component: {fileID: -2420068050858150765}
-  - component: {fileID: 7203728959279093020}
   - component: {fileID: 6653391665175301198}
   - component: {fileID: -3434758302999432758}
   m_Layer: 9
@@ -173,19 +172,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::MoveForward
   _speed: 18
---- !u!114 &7203728959279093020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6249736849717060126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cfa0ff87213dea4cb5144610abc7289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: MegamanX4.Runtime::Lifetime
-  _duration: 1
 --- !u!114 &6653391665175301198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,6 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Projectile
   _piercing: 0
+  _lifetime: 1
 --- !u!114 &-3434758302999432758
 MonoBehaviour:
   m_ObjectHideFlags: 0
