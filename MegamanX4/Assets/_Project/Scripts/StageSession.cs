@@ -9,7 +9,7 @@ public class StageSession : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
     [SerializeField] GameObject _hudPrefab;
-    [SerializeField] float _deathReloadDelay = 1f;
+    [SerializeField, Min(0f)] float _deathReloadDelay = 1f;
 
     GameObject _playerInstance;
     Health _playerHealth;
@@ -76,7 +76,7 @@ public class StageSession : MonoBehaviour
 
     System.Collections.IEnumerator ReloadSceneAfterDelay()
     {
-        yield return new WaitForSeconds(Mathf.Max(0f, _deathReloadDelay));
+        yield return new WaitForSeconds(_deathReloadDelay);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 

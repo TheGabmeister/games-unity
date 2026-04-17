@@ -31,9 +31,9 @@ Responsibilities:
 - Mark the current scene as a pending respawn in persistent state.
 - Reload the current scene in `LoadSceneMode.Single`.
 
-### `CheckpointStateService`
+### `CheckpointService`
 
-`CheckpointStateService` lives on the persistent `GameServices` root and carries checkpoint metadata across a retry reload.
+`CheckpointService` lives on the persistent `GameServices` root and carries checkpoint metadata across a retry reload.
 
 State tracked:
 
@@ -63,7 +63,7 @@ Behavior:
 
 - Requires a `Collider2D`.
 - Forces the collider to be a trigger.
-- On player trigger enter, reports the checkpoint id to `CheckpointStateService`.
+- On player trigger enter, reports the checkpoint id to `CheckpointService`.
 - Uses `_respawnPoint.position` when assigned; otherwise uses its own transform position.
 
 ### `Health`

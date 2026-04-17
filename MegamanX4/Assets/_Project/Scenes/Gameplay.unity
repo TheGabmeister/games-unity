@@ -537,6 +537,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: MegamanX4.Runtime::StageSession
   _playerPrefab: {fileID: 2827737925019994148, guid: 7ee168a479297614d8e51fe20de66ad5, type: 3}
   _hudPrefab: {fileID: 245438493424925052, guid: b60632e9e28a31f45b0a6da0f3c4b307, type: 3}
+  _deathReloadDelay: 1
 --- !u!4 &865987159
 Transform:
   m_ObjectHideFlags: 0

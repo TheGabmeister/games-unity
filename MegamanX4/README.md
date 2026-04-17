@@ -27,7 +27,92 @@ Each Maverick drops a new weapon (X) or learned technique (Zero). The game culmi
 - Hand-authored scenes; no scripted scene composition saved to disk.
 - Composition over inheritance.
 
-See [CLAUDE.md](CLAUDE.md) for contributor conventions.
+See [CLAUDE.md](CLAUDE.md) for contributor conventions and architecture notes.
+
+## Tooling
+
+- **Unity 6000.3.12f1** (URP 17.3, URP 2D Renderer). See [ProjectSettings/ProjectVersion.txt](ProjectSettings/ProjectVersion.txt).
+- **Packages of note** ([Packages/manifest.json](Packages/manifest.json)):
+  - `com.unity.inputsystem` — new Input System; action asset at [Assets/_Project/Input/InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_Actions.inputactions).
+  - `com.unity.vectorgraphics` — SVG importer; all visual assets are `.svg` and tessellate to sprites at import.
+  - `com.kyrylokuzyk.primetween` — tweening lib (via npm scoped registry); prefer it over DOTween or coroutines for tweens.
+  - `com.unity.feature.2d`, `com.unity.2d.aseprite`, `com.unity.2d.spriteshape`, `com.unity.2d.tilemap.extras`.
+  - `com.unity.test-framework` — EditMode/PlayMode tests.
+- **Solution:** `MegamanX4.slnx`. Two assemblies: `MegamanX4.Runtime` (refs `Unity.InputSystem`, `PrimeTween.Runtime`) and `MegamanX4.Editor`.
+
+## Build / test
+
+Unity project — no CLI build script is checked in. Open the project in the Unity Editor (`Unity 6000.3.12f1`) to play/build. Tests are run from **Window → General → Test Runner** (EditMode and PlayMode). For a CI-style run: `Unity.exe -batchmode -projectPath <path> -runTests -testPlatform {EditMode|PlayMode}`.
+
+Generator utilities are exposed as editor menu items under **Tools/MegamanX4/** (e.g. `Generate Sky Lagoon Enemies`). Run them from the menu bar; they are idempotent and overwrite existing output. Canonical example: [SkyLagoonEnemyGenerator.cs](Assets/_Project/Scripts/Editor/SkyLagoonEnemyGenerator.cs).
+
+## Layout
+
+```
+Assets/_Project/
+├── Defaults/            TargetDummy.prefab, ProjectileDefault.prefab (enemy-shot reference)
+├── Enemies/
+│   ├── Recurring/       KnotBeretB, KnotBeretG, Kyunnbyunn, SpikeMarl (SVG + prefab per enemy)
+│   ├── SkyLagoon/       MadBull97, TonboroidS, TrapBlast (SVG + prefab per enemy)
+│   └── AirForce/, BioLaboratory/, CyberSpace/, Jungle/, MarineBase/, MilitaryTrain/, SnowBase/, Volcano/
+│                        (one folder per stage; populated per SPEC_ENEMIES.md phased roadmap)
+├── Input/               InputSystem_Actions.inputactions
+├── Interactables/       Ladder.prefab
+├── Player/
+│   ├── Character/       MegamanX_{Idle,Jump,Fall,Dash}.svg
+│   └── MegamanX.prefab  (Rigidbody2D + Collider2D + PlayerInput + PlayerController
+│                         + Health + InvulnerabilityBlinker + child Visual)
+├── Scenes/              Gameplay.unity
+├── Scripts/
+│   ├── Behavior/                  reusable movement/lifecycle components
+│   │   ├── Gravity.cs             kinematic gravity with ground raycast + max fall speed
+│   │   ├── HoverSine.cs           sine Y oscillation around a recorded center; pausable
+│   │   ├── Lifetime.cs            auto-destroy timer
+│   │   ├── MoveForward.cs         translate along transform.right
+│   │   └── MoveVertical.cs        translate along ±transform.up
+│   ├── Damage/
+│   │   ├── Health.cs              HP, damage with source position, i-frames, event bus
+│   │   ├── HitBox.cs              deals damage on contact (trigger/collision → HurtBox)
+│   │   ├── HurtBox.cs             receives hits, routes to Health.ApplyDamage
+│   │   ├── InvulnerabilityBlinker.cs  SpriteRenderer blink during i-frames (player-style)
+│   │   └── DamageFlash.cs         SpriteRenderer white-flash on hit (enemies / destructibles)
+│   ├── Editor/
+│   │   ├── FileExtensions.cs      Project-panel extension labels
+│   │   ├── SkyLagoonEnemyGenerator.cs  prefab generator menu; canonical composition pattern
+│   │   └── MegamanX4.Editor.asmdef
+│   ├── Enemy/                     enemy behaviors (composition-ready components)
+│   │   ├── Enemy.cs               lifecycle: Health.Depleted → Destroy
+│   │   ├── PlayerDetector.cs      radial OverlapCircle + optional LoS raycast
+│   │   ├── PatrolWalk.cs          walk + wall/ledge raycast flip, pausable
+│   │   ├── EnemyShoot.cs          polls CanSeePlayer, aims muzzle, fires burst with cooldown
+│   │   ├── AutoShoot.cs           fire-and-forget projectile spawn at interval
+│   │   ├── SwoopAttack.cs         Idle/Diving/Returning/Cooldown state machine
+│   │   ├── DropTrigger.cs         overlap-below detection → enable Dynamic RB + gravity
+│   │   └── DestroyOnWallContact.cs  self-destruct on Environment collision
+│   ├── Player/
+│   │   ├── PlayerController.cs    movement, input, sprite swap, knockback, ladder
+│   │   ├── WeaponInventory.cs     weapon list + charge state machine + Q/E switch + tint
+│   │   ├── WeaponData.cs          ScriptableObject: displayName, tint, small/semi/full prefab, energy block
+│   │   └── DashSilhouetteTrail.cs LateUpdate-driven sprite afterimage trail
+│   ├── Services/                  persistent systems (Bootstrapper, SfxManager,
+│   │                              MusicManager, ScreenFader, SceneLoader/)
+│   ├── Description.cs             editor-only TextArea annotation on any GO
+│   ├── HUD.cs                     event-driven gameplay HUD (HP + energy), wired via Bind()
+│   ├── Layers.cs                  compile-time layer index constants (mirror of TagManager.asset)
+│   ├── Projectile.cs              lifecycle only: wall collision, piercing, Destroyed event
+│   ├── StageSession.cs            spawns player + HUD, calls HUD.Bind, owns PlayerStart fallback
+│   └── MegamanX4.Runtime.asmdef
+├── Settings/              URP / Renderer2D / Volume profile assets
+├── UI/                    GameplayHUD.prefab
+└── Weapons/
+    ├── Buster/        BusterShot_{Small,Semi,Full}.{svg,prefab}
+    ├── DoubleCyclone/ (placeholder)
+    ├── FrostTower/    FrostTower.svg
+    ├── GroundHunter/  (placeholder)
+    ├── RisingFire/    (placeholder)
+    ├── SoulBody/      (placeholder)
+    └── TwinSlasher/   TwinSlasher.svg
+```
 
 ---
 

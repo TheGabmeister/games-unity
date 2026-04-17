@@ -8,80 +8,13 @@ Unity 6 recreation of **Mega Man X4** (PlayStation / Saturn, 1997). Follows the 
 
 The Claude workspace is scoped to `MegamanX4/` — `.claude/settings.json` denies reads/writes outside this folder. Do not traverse up into sibling projects.
 
-## Tooling
-
-- **Unity 6000.3.12f1** (URP 17.3, URP 2D Renderer). See [ProjectSettings/ProjectVersion.txt](ProjectSettings/ProjectVersion.txt).
-- **Packages of note** ([Packages/manifest.json](Packages/manifest.json)):
-  - `com.unity.inputsystem` — new Input System; action asset at [Assets/_Project/Input/InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_Actions.inputactions).
-  - `com.unity.vectorgraphics` — SVG importer; all visual assets are `.svg` and tessellate to sprites at import.
-  - `com.kyrylokuzyk.primetween` — tweening lib (via npm scoped registry); prefer it over DOTween or coroutines for tweens.
-  - `com.unity.feature.2d`, `com.unity.2d.aseprite`, `com.unity.2d.spriteshape`, `com.unity.2d.tilemap.extras`.
-  - `com.unity.test-framework` — EditMode/PlayMode tests.
-- **Solution:** `MegamanX4.slnx`. Two assemblies: `MegamanX4.Runtime` (refs `Unity.InputSystem`, `PrimeTween.Runtime`) and `MegamanX4.Editor`.
-
-## Build / test
-
-Unity project — no CLI build script is checked in. Open the project in the Unity Editor (`Unity 6000.3.12f1`) to play/build. Tests are run from **Window → General → Test Runner** (EditMode and PlayMode). For a CI-style run: `Unity.exe -batchmode -projectPath <path> -runTests -testPlatform {EditMode|PlayMode}`.
-
-Generator utilities are exposed as editor menu items under **Tools/MegamanX4/** (e.g. `Generate Buster Shot Prefabs`). Run them from the menu bar; they are idempotent and overwrite existing output.
-
-## Layout
-
-```
-Assets/_Project/
-├── Enemies/       TargetDummy.prefab
-│   └── SkyLagoon/ {KnotBeretB, KnotBeretG, TonboroidS, SpikeMarl, MadBull97, TrapBlast, Kyunnbyunn}/ (SVG + prefab per enemy)
-├── Input/         InputSystem_Actions.inputactions
-├── Interactables/ Ladder.prefab
-├── Player/
-│   ├── Character/ MegamanX_{Idle,Jump,Fall,Dash}.svg
-│   └── MegamanX.prefab   (Rigidbody2D + Collider2D + PlayerInput + PlayerController
-│                          + Health + InvulnerabilityBlinker + child Visual)
-├── Scenes/        Gameplay.unity
-├── Scripts/
-│   ├── PlayerController.cs       movement, input, sprite swap, knockback, ladder
-│   ├── Health.cs                 HP, damage with source position, i-frames
-│   ├── HitBox.cs                  deals damage on contact (trigger/collision → HurtBox)
-│   ├── HurtBox.cs                 receives hits, routes to Health.ApplyDamage
-│   ├── InvulnerabilityBlinker.cs SpriteRenderer blink during i-frames (player-style hit gating)
-│   ├── DamageFlash.cs            SpriteRenderer white-flash on hit (enemies / destructibles)
-│   ├── Enemy.cs                  base enemy (Health + Depleted → Destroy)
-│   ├── WeaponInventory.cs        weapon list + charge state machine + Q/E switch + tint
-│   ├── WeaponData.cs             ScriptableObject: displayName, tint, small/semi/full prefab
-│   ├── Projectile.cs             lifecycle only: wall collision, piercing, Destroyed event (no damage; HitBox sibling deals it)
-│   ├── Lifetime.cs               general-purpose auto-destroy timer
-│   ├── MoveForward.cs            movement behavior: advances along transform.right
-│   ├── MoveVertical.cs           movement behavior: advances along ±transform.up
-│   ├── DashSilhouetteTrail.cs    LateUpdate-driven sprite afterimage trail
-│   ├── Layers.cs                 compile-time layer index constants (mirror of TagManager.asset layers)
-│   ├── HUD.cs                    event-driven gameplay HUD (HP + energy bars), wired via Bind(Health, WeaponInventory)
-│   ├── StageSession.cs           spawns player + HUD, calls HUD.Bind, owns PlayerStart fallback
-│   ├── Bootstrapper.cs           [RuntimeInitializeOnLoadMethod] → loads Resources/Systems
-│   ├── SystemsRoot.cs            singleton DontDestroyOnLoad root for persistent systems
-│   ├── Description.cs            editor-only annotation (TextArea on any GO)
-│   ├── Systems/                  GameManager, MusicManager, SfxManager, ScreenFader, SceneLoader/
-│   ├── Enemy/                    PlayerDetector, AutoShoot, DestroyOnWallContact (reusable enemy behaviors)
-│   ├── Editor/
-│   │   ├── FileExtensions.cs     Project-panel extension labels
-│   │   └── MegamanX4.Editor.asmdef
-│   └── MegamanX4.Runtime.asmdef
-├── Settings/      URP / Renderer2D / Volume profile assets
-├── UI/            GameplayHUD.prefab
-└── Weapons/
-    ├── Buster/        BusterShot_{Small,Semi,Full}.{svg,prefab}
-    ├── DoubleCyclone/ (placeholder)
-    ├── FrostTower/    FrostTower.svg
-    ├── GroundHunter/  (placeholder)
-    ├── RisingFire/    (placeholder)
-    ├── SoulBody/      (placeholder)
-    └── TwinSlasher/   TwinSlasher.svg
-```
+See [README.md](README.md) for tooling, build / test instructions, and the `Assets/_Project/` layout.
 
 ## Architecture notes
 
 ### Player movement — Kinematic + swept cast
 
-[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic + weapon switching live in [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) — the controller delegates `OnAttackStarted`/`OnAttackCanceled` to it and calls `_inventory.CancelCharge()` from `ApplyKnockback`. Per-weapon data lives in [WeaponData.cs](Assets/_Project/Scripts/WeaponData.cs) ScriptableObject assets. Key choices that the next maintainer should not accidentally undo:
+[PlayerController.cs](Assets/_Project/Scripts/Player/PlayerController.cs) is the one source of truth for player state (movement, jumping, dashing, wall slide/jump, knockback, ladder climb, dash-jump, sprite selection). Charge/shot logic + weapon switching live in [WeaponInventory.cs](Assets/_Project/Scripts/Player/WeaponInventory.cs) — the controller delegates `OnAttackStarted`/`OnAttackCanceled` to it and calls `_inventory.CancelCharge()` from `ApplyKnockback`. Per-weapon data lives in [WeaponData.cs](Assets/_Project/Scripts/Player/WeaponData.cs) ScriptableObject assets. Key choices that the next maintainer should not accidentally undo:
 
 - **Rigidbody2D is `Kinematic` with `gravityScale = 0`**, forced in `Awake`. Don't rely on the inspector setting — the script enforces it.
 - The controller maintains its own `Vector2 velocity`, applies its own `gravity`, and resolves movement via **`Rigidbody2D.Cast` swept collision** in `MoveAxis` (one axis at a time, trim travel by `skinWidth`, zero velocity axis on contact). This is the Celeste/Hollow-Knight pattern — replacing it with physics-driven Dynamic body is a regression.
@@ -101,6 +34,10 @@ The root GameObject never flips. Sprites live on a child `Visual` GameObject (dr
 
 Projectile SVGs (buster shots, Twin Slasher blade, Frost Tower pillar, etc.) are authored facing right directly — **no** flip-wrapper. "Facing right" means the leading/cutting edge is on +X: pellet head on +X with tail wisps on -X; crescent blade with convex cutting edge on +X and concave trailing side on -X. The weapon spawner sets direction by rotating the transform (not by scaling), so the canonical sprite must be in its natural right-facing form. For symmetric verticals (Frost Tower), facing doesn't matter.
 
+### Enemy SVGs — same invariant (facing right)
+
+Enemy SVGs follow the projectile rule: positive X = canonical render direction. This keeps `_facing`, `localScale.x`, `transform.right`, and muzzle orientation all pointing the same way across every moving entity. The first batch of enemies (Knot Beret B/G, Kyunnbyunn, Mad Bull 97, Tonboroid S, Trap Blast) were originally authored facing left and are grandfathered via a `<g transform="translate(W 0) scale(-1 1)">` flip-wrapper for GUID stability — **new enemy SVGs should be drawn facing right directly**, no wrapper. Enemies that should face left in a scene are flipped at prefab/scene level via `localScale.x = -1` (or `PatrolWalk._initialFacing = -1`), not by re-authoring the SVG.
+
 ### Input — PlayerInput with Invoke C# Events
 
 `PlayerInput` component on the prefab is set to **Invoke C Sharp Events** (not Send Messages / Unity Events). Pattern used throughout:
@@ -115,7 +52,7 @@ Actions in [InputSystem_Actions.inputactions](Assets/_Project/Input/InputSystem_
 
 ### Weapon system
 
-[WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) owns both the weapon list and the universal charge state machine (previously split across a separate `PlayerBuster` component that has been absorbed). Shape:
+[WeaponInventory.cs](Assets/_Project/Scripts/Player/WeaponInventory.cs) owns both the weapon list and the universal charge state machine (previously split across a separate `PlayerBuster` component that has been absorbed). Shape:
 
 - Serialized `List<WeaponData> _weapons` — slot 0 is the buster.
 - `_activeIndex` cycles with Q/E. On swap: `CancelCharge()` zeroes any in-progress charge, then `ActiveWeapon.tint` is written to the player's `SpriteRenderer.color`.
@@ -164,7 +101,23 @@ Composable design: one shared `Projectile` component + a `Lifetime` timer + one 
 
 The `Projectile` script has no `hitLayers` / `hitTargets` field — the matrix is the single source of truth for layer filtering.
 
-The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}.prefab` assets compose `HitBox` + `Projectile` + `Lifetime` + `MoveForward`, and [WeaponInventory.cs](Assets/_Project/Scripts/WeaponInventory.cs) spawns them at `muzzle.position` / `muzzle.rotation` — direction flows from the muzzle's world rotation, which itself is driven by `Visual`'s Y-flip when facing changes. No `BusterShot.cs` component exists anymore; no facing parameter is passed to projectiles.
+The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}.prefab` assets compose `HitBox` + `Projectile` + `Lifetime` + `MoveForward`, and [WeaponInventory.cs](Assets/_Project/Scripts/Player/WeaponInventory.cs) spawns them at `muzzle.position` / `muzzle.rotation` — direction flows from the muzzle's world rotation, which itself is driven by `Visual`'s Y-flip when facing changes. No `BusterShot.cs` component exists anymore; no facing parameter is passed to projectiles.
+
+### Enemy system — composition + generator
+
+Enemies are **composition-first**: no inheritance hierarchy. Every enemy is a prefab combining small single-responsibility components from [Assets/_Project/Scripts/Enemy/](Assets/_Project/Scripts/Enemy/), [Assets/_Project/Scripts/Behavior/](Assets/_Project/Scripts/Behavior/), and [Assets/_Project/Scripts/Damage/](Assets/_Project/Scripts/Damage/). The full roster and roadmap lives in [SPEC_ENEMIES.md](SPEC_ENEMIES.md).
+
+**Standard composition core** (shorthand `(core)` in the spec): `Enemy` + `Health` + `HurtBox` + `HitBox` + `DamageFlash`. Add gravity + ground-walk via `Gravity` + `PatrolWalk`. Add flying/hovering via `HoverSine` + optionally `SwoopAttack` (with `PlayerDetector`). Add shooting via `EnemyShoot` (aimed, detection-gated) or `AutoShoot` (fire-and-forget, unaimed).
+
+**`PlayerDetector`** is radial by default (`Physics2D.OverlapCircle` on the Player layer in `FixedUpdate`), with an optional LoS raycast against Environment. Fires edge-triggered `PlayerDetected`/`PlayerLost` *and* exposes `CanSeePlayer`/`PlayerPosition` for polling — consumers like `EnemyShoot` and `SwoopAttack` poll so they can re-trigger after cooldowns instead of being one-shot on the edge event.
+
+**Direction**: `PatrolWalk` flips the enemy's root `localScale.x = facing` to mirror the sprite. This is acceptable for enemies (unlike the player, they don't use swept-cast movement, and their colliders are symmetric around center). Muzzle direction still flows from `muzzle.rotation`, not scale — so spawners pass `muzzle.position, muzzle.rotation` to `Instantiate` exactly like the player's weapon system.
+
+**Two-tier rule** (per [SPEC_ENEMIES.md](SPEC_ENEMIES.md) scalability review): new behavior becomes a reusable component only at **3+ genuine uses**. Below that threshold, write a single-use AI script named after the enemy (e.g. `Mettaur.cs`, `BattonBone.cs`) that lives in `Assets/_Project/Scripts/Enemy/AI/`. A single-file state machine per enemy beats event-coupled micro-components that each serve one caller.
+
+**Generator**: [SkyLagoonEnemyGenerator.cs](Assets/_Project/Scripts/Editor/SkyLagoonEnemyGenerator.cs) is the canonical example. It exposes `Tools/MegamanX4/Generate Sky Lagoon Enemies`. Pattern: `NewEnemyRoot(name, hp, contact, isTrigger)` builds the standard core; each per-enemy `GenerateX()` method adds enemy-specific behaviors via `go.AddComponent<T>() + SetField(c, "_fieldName", value)`. `SetField` uses `SerializedObject.FindProperty` so private `[SerializeField]` fields stay private. SVG sprites load via `AssetDatabase.LoadAssetAtPath<Sprite>(...)`. Material: `Packages/com.unity.vectorgraphics/Runtime/Materials/Unlit_Vector.mat` is assigned to every `SpriteRenderer` so SVG tessellation renders correctly.
+
+As the roster grows, split the monolithic generator into per-stage files + a shared `EnemyGeneratorCore.cs` (see spec §Scalability).
 
 ### Prefab generation (allowed)
 
@@ -179,7 +132,7 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 - **Private field naming: underscore prefix.** Class-level private fields use `_camelCase` (including `[SerializeField]` fields): `_rb`, `_facing`, `[SerializeField] int _maxHealth`. Public properties and methods stay PascalCase (`IsKnockedBack`, `ApplyKnockback`). `const` and `static readonly` stay PascalCase too. Local variables and parameters stay plain (no underscore). When editing an existing file that doesn't yet follow this, rename its private fields to match while you're there.
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
   - [SPEC_HUD.md](SPEC_HUD.md) — HP + active-weapon-energy bars, event-driven view, `Bind`-injected
-  - [SPEC_SKYLAGOON_ENEMIES.md](SPEC_SKYLAGOON_ENEMIES.md) — intro-stage enemies (Knot Beret B/G, Tonboroid S, Spike Marl, Mad Bull 97, Trap Blast, Kyunnbyunn). Phase 1 (`PlayerDetector`, `AutoShoot`, `DestroyOnWallContact`) is implemented; Phase 2+ components (`PatrolWalk`, `EnemyShoot`, `HoverSine`, `SwoopAttack`, `DropTrigger`) are still to build.
+  - [SPEC_ENEMIES.md](SPEC_ENEMIES.md) — full-campaign enemy roster (40 non-boss enemies across Sky Lagoon + 8 Maverick stages). Phase 1 (Sky Lagoon, 7 enemies) is implemented. Later phases use the two-tier rule (reusable component vs single-use AI script) to keep the component library small. King Poseidon deferred pending a water system; Metal Gabyoall shipped as floor-only until surface-crawl is revisited.
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.
 - **ScriptableObjects for game data** (enemy stats, weapon data, level metadata, palettes). Prefer SO-driven configuration over hard-coded constants for anything designers would tune.
 
@@ -200,4 +153,4 @@ When debugging "X collides with Y unexpectedly" or "X doesn't damage Y", check i
 - When spawning projectiles, pass the position to `Instantiate(prefab, pos, rot)` directly — not via a setter after. Colliders activate in `Awake` before any post-instantiate method runs, so a wrong initial position can fire bogus trigger events.
 - New projectile prefabs go on layer `PlayerProjectile` (default), `PlayerProjectileNoClip` (wall-piercers like Soul Body or charged Twin Slasher), or `EnemyProjectile`. The `Projectile` script carries no `LayerMask` field — the Physics2D collision matrix gates which pairs ever fire `OnTriggerEnter2D`.
 - Environment collisions destroy any projectile in the matrix-allowed set, regardless of `piercing`. To truly pass through walls, put the projectile on `PlayerProjectileNoClip` — the matrix disables the pair, so the callback never fires.
-- Projectile SVGs face right by default (leading/cutting edge on +X). Character SVGs use the opposite convention (authored facing left, flip-wrapped). Don't mix them up.
+- **SVG facing rule**: projectiles and (new) enemies authored facing right directly. Character SVGs (MegamanX_*) are authored facing left and flip-wrapped via `<g transform="translate(128 0) scale(-2 2)">` so they render right at 2× size. The first batch of enemies (Knot Beret B/G, Kyunnbyunn, Mad Bull 97, Tonboroid S, Trap Blast) are grandfathered as flip-wrapped too — but new enemy SVGs should be drawn right directly, no wrapper. Don't mix conventions in new work.
