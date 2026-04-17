@@ -81,7 +81,7 @@ Assets/_Project/
 │   │   ├── SkyLagoonEnemyGenerator.cs  prefab generator menu; canonical composition pattern
 │   │   └── MegamanX4.Editor.asmdef
 │   ├── Enemy/                     enemy behaviors (composition-ready components)
-│   │   ├── Enemy.cs               lifecycle: Health.Depleted → Destroy
+│   │   ├── DestroyOnDepleted.cs   lifecycle: Health.Depleted → Destroy (reusable: enemies, destructibles)
 │   │   ├── PlayerDetector.cs      radial OverlapCircle + optional LoS raycast
 │   │   ├── PatrolWalk.cs          walk + wall/ledge raycast flip, pausable
 │   │   ├── EnemyShoot.cs          polls CanSeePlayer, aims muzzle, fires burst with cooldown

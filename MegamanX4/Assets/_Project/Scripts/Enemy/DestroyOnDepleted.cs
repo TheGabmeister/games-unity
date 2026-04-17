@@ -2,7 +2,7 @@ using UnityEngine;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Health))]
-public class Enemy : MonoBehaviour
+public class DestroyOnDepleted : MonoBehaviour
 {
     Health _health;
 

@@ -39,7 +39,7 @@ Key project content currently lives under `Assets/_Project/`.
     - `HurtBox.cs`
     - `DamageFlash.cs`
   - `Enemy/`
-    - `Enemy.cs`
+    - `DestroyOnDepleted.cs`
     - `AutoShoot.cs`
     - `DestroyOnWallContact.cs`
     - `DropTrigger.cs`

@@ -30,7 +30,7 @@ Player X has 100 HP. Buster: tap ~5 dmg, semi-charge ~15, full-charge ~30. Speci
 
 | Component | Role |
 |-----------|------|
-| `Enemy` | Lifecycle: subscribes to `Health.Depleted` → destroys GameObject |
+| `DestroyOnDepleted` | Lifecycle: subscribes to `Health.Depleted` → destroys GameObject (reusable across enemies + destructibles) |
 | `PlayerDetector` | Range-based player detection (radial `OverlapCircle`) with optional LoS raycast; fires `PlayerDetected`/`PlayerLost`; exposes `CanSeePlayer`, `PlayerPosition` |
 | `PatrolWalk` | Walk at `_speed`, flip on wall/ledge raycast, pausable, flips root `localScale.x` to face |
 | `EnemyShoot` | Polls `CanSeePlayer`, aims muzzle, fires burst with cooldown; pauses sibling `PatrolWalk` during burst |
@@ -61,7 +61,7 @@ Player X has 100 HP. Buster: tap ~5 dmg, semi-charge ~15, full-charge ~30. Speci
 
 Layers (see [Layers.cs](Assets/_Project/Scripts/Layers.cs)): `Player`, `Environment`, `Enemy`, `Ladder`, `PlayerProjectile`, `PlayerProjectileNoClip`, `EnemyProjectile`. Physics2D matrix already routes `EnemyProjectile ↔ Player, Environment` and `PlayerProjectile ↔ Enemy, Environment`.
 
-**Conventions** (see [CLAUDE.md](CLAUDE.md)): SVGs authored facing right, either natively or via flip-wrapper for grandfathered assets; all rotations flow from the root/muzzle `transform`, never from `localScale.x` flips for direction math; gravity is custom for AI-driven enemies (via `Gravity`), physics-driven only for pure hazards (Spike Marl post-drop). Standard enemy composition core: `Enemy` + `Health` + `HurtBox` + `HitBox` + `DamageFlash` — shorthand `(core)` below.
+**Conventions** (see [CLAUDE.md](CLAUDE.md)): SVGs authored facing right, either natively or via flip-wrapper for grandfathered assets; all rotations flow from the root/muzzle `transform`, never from `localScale.x` flips for direction math; gravity is custom for AI-driven enemies (via `Gravity`), physics-driven only for pure hazards (Spike Marl post-drop). Standard enemy composition core: `DestroyOnDepleted` + `Health` + `HurtBox` + `HitBox` + `DamageFlash` — shorthand `(core)` below.
 
 ---
 
@@ -106,7 +106,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Contact damage | 30 |
 | Trigger range below | ~2 units × 20 |
 
-**Composition:** `Enemy` + `Health` + `HurtBox` (disabled until drop) + `HitBox` + `DamageFlash` + `DropTrigger`. Post-drop: `Rigidbody2D` switches to Dynamic, `gravityScale = 3`.
+**Composition:** `DestroyOnDepleted` + `Health` + `HurtBox` (disabled until drop) + `HitBox` + `DamageFlash` + `DropTrigger`. Post-drop: `Rigidbody2D` switches to Dynamic, `gravityScale = 3`.
 
 ### 4. Kyunnbyunn (swooping bird) *(Sky Lagoon, Jungle)*
 
@@ -172,7 +172,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Beam damage | 20 (per tick) |
 | Cycle | ~3 s |
 
-**Composition:** `HitBox` + `PlasmaCannon.cs` *(single-use script — charge/fire/cooldown state machine + beam collider toggle)*. No `Enemy`/`Health`.
+**Composition:** `HitBox` + `PlasmaCannon.cs` *(single-use script — charge/fire/cooldown state machine + beam collider toggle)*. No `DestroyOnDepleted`/`Health`.
 
 ### 9. Batton Bone B81 *(Volcano, Military Train, Bio Laboratory)*
 
@@ -264,7 +264,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Shot damage | 10 |
 | Fire interval | ~2 s |
 
-**Composition:** `HitBox` + `AutoShoot`. No `Enemy`/`Health`/`DamageFlash` (invulnerable turret — no hit feedback needed).
+**Composition:** `HitBox` + `AutoShoot`. No `DestroyOnDepleted`/`Health`/`DamageFlash` (invulnerable turret — no hit feedback needed).
 
 ---
 
@@ -292,7 +292,7 @@ Enemies that appear in multiple stages. Listed first because they form the backb
 | Contact damage | 20 |
 | Crawl speed | ~1.5 u/s |
 
-**Composition:** `HitBox` + `PatrolWalk` + `Gravity`. No `Enemy`/`Health` if fully invulnerable.
+**Composition:** `HitBox` + `PatrolWalk` + `Gravity`. No `DestroyOnDepleted`/`Health` if fully invulnerable.
 
 ### 18. King Poseidon — **DEFERRED**
 
@@ -686,7 +686,7 @@ Not needed yet. 40 enemies × 5 stats = 200 values; still fine to edit in code d
 - **Component composition model** — proven.
 - **Physics matrix + layer routing** — no new layers needed.
 - **Editor generator pattern** — `SerializedObject.FindProperty` + `PrefabUtility.SaveAsPrefabAsset` scales to any number of prefabs.
-- **Base `Enemy` lifecycle** — stays `Depleted → Destroy`.
+- **`DestroyOnDepleted` lifecycle** — stays `Depleted → Destroy`.
 
 ---
 

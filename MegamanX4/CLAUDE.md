@@ -107,7 +107,7 @@ The basic lemon has migrated onto this system: the `BusterShot_{Small,Semi,Full}
 
 Enemies are **composition-first**: no inheritance hierarchy. Every enemy is a prefab combining small single-responsibility components from [Assets/_Project/Scripts/Enemy/](Assets/_Project/Scripts/Enemy/), [Assets/_Project/Scripts/Behavior/](Assets/_Project/Scripts/Behavior/), and [Assets/_Project/Scripts/Damage/](Assets/_Project/Scripts/Damage/). The full roster and roadmap lives in [SPEC_ENEMIES.md](SPEC_ENEMIES.md).
 
-**Standard composition core** (shorthand `(core)` in the spec): `Enemy` + `Health` + `HurtBox` + `HitBox` + `DamageFlash`. Add gravity + ground-walk via `Gravity` + `PatrolWalk`. Add flying/hovering via `HoverSine` + optionally `SwoopAttack` (with `PlayerDetector`). Add shooting via `EnemyShoot` (aimed, detection-gated) or `AutoShoot` (fire-and-forget, unaimed).
+**Standard composition core** (shorthand `(core)` in the spec): `DestroyOnDepleted` + `Health` + `HurtBox` + `HitBox` + `DamageFlash`. Add gravity + ground-walk via `Gravity` + `PatrolWalk`. Add flying/hovering via `HoverSine` + optionally `SwoopAttack` (with `PlayerDetector`). Add shooting via `EnemyShoot` (aimed, detection-gated) or `AutoShoot` (fire-and-forget, unaimed).
 
 **`PlayerDetector`** is radial by default (`Physics2D.OverlapCircle` on the Player layer in `FixedUpdate`), with an optional LoS raycast against Environment. Fires edge-triggered `PlayerDetected`/`PlayerLost` *and* exposes `CanSeePlayer`/`PlayerPosition` for polling — consumers like `EnemyShoot` and `SwoopAttack` poll so they can re-trigger after cooldowns instead of being one-shot on the edge event.
 
