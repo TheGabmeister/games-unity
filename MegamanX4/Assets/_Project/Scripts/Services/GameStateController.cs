@@ -23,6 +23,7 @@ public class GameStateController : MonoBehaviour
     [SerializeField] LoadingScreen _loading;
 
     public GameState CurrentState => _currentState;
+    public ScreenFader Fader => _fader;
 
     void Awake()
     {

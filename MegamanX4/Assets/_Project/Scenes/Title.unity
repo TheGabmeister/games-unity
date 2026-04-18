@@ -818,6 +818,7 @@ GameObject:
   - component: {fileID: 1726861160}
   - component: {fileID: 1726861164}
   - component: {fileID: 1726861165}
+  - component: {fileID: 1726861166}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -923,12 +924,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: MegamanX4.Runtime::MainMenuController
   _pressStartRoot: {fileID: 167705739}
   _menuRoot: {fileID: 1986186638}
-  _menuLabels:
-  - {fileID: 1604072340}
-  - {fileID: 1328107670}
-  - {fileID: 1487503359}
-  _selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _normalColor: {r: 1, g: 1, b: 1, a: 1}
+  _menuNav: {fileID: 1726861166}
+  _fadeDuration: 0.3
 --- !u!114 &1726861165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -959,6 +956,24 @@ MonoBehaviour:
   m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1726861166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726861159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fd765a644f0b374b932820fba194ff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::MenuNavigator
+  _labels:
+  - {fileID: 1604072340}
+  - {fileID: 1328107670}
+  - {fileID: 1487503359}
+  _selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _normalColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1986186638
 GameObject:
   m_ObjectHideFlags: 0

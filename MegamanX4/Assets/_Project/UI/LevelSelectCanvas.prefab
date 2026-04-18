@@ -1031,6 +1031,7 @@ GameObject:
   - component: {fileID: 2302941303432477798}
   - component: {fileID: 4813395095101731284}
   - component: {fileID: 1577947762652244023}
+  - component: {fileID: 7676428460629557499}
   - component: {fileID: 2090343317490703753}
   m_Layer: 5
   m_Name: LevelSelectCanvas
@@ -1152,6 +1153,29 @@ MonoBehaviour:
   m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &7676428460629557499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6020335022917943381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fd765a644f0b374b932820fba194ff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MegamanX4.Runtime::MenuNavigator
+  _labels:
+  - {fileID: 6769007991253421902}
+  - {fileID: 4230953693716186877}
+  - {fileID: 7647347059995905160}
+  - {fileID: 3278934143611364722}
+  - {fileID: 3923885869688931904}
+  - {fileID: 7819683231695187243}
+  - {fileID: 8287034245494363340}
+  - {fileID: 3281956232691380891}
+  _selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _normalColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2090343317490703753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1164,25 +1188,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0daa42641d6eac4f9e4eae861eb5f13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::LevelSelectController
-  _stages:
-  - label: {fileID: 6769007991253421902}
-    sceneName: AirForce
-  - label: {fileID: 4230953693716186877}
-    sceneName: BioLaboratory
-  - label: {fileID: 7647347059995905160}
-    sceneName: CyberSpace
-  - label: {fileID: 3278934143611364722}
-    sceneName: Jungle
-  - label: {fileID: 3923885869688931904}
-    sceneName: MarineBase
-  - label: {fileID: 7819683231695187243}
-    sceneName: MilitaryTrain
-  - label: {fileID: 8287034245494363340}
-    sceneName: SnowBase
-  - label: {fileID: 3281956232691380891}
-    sceneName: Volcano
-  _selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _normalColor: {r: 1, g: 1, b: 1, a: 1}
+  _menu: {fileID: 7676428460629557499}
+  _sceneNames:
+  - AirForce
+  - BioLaboratory
+  - CyberSpace
+  - Jungle
+  - MarineBase
+  - MilitaryTrain
+  - SnowBase
+  - Volcano
 --- !u!1 &7384140019859171122
 GameObject:
   m_ObjectHideFlags: 0

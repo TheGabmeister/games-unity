@@ -1,4 +1,4 @@
-using TMPro;
+using PrimeTween;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,64 +9,60 @@ public class TitleSceneController : MonoBehaviour
 
     [SerializeField] GameObject _pressStartRoot;
     [SerializeField] GameObject _menuRoot;
-    [SerializeField] TMP_Text[] _menuLabels;
-    [SerializeField] Color _selectedColor = Color.yellow;
-    [SerializeField] Color _normalColor = Color.white;
+    [SerializeField] MenuNavigator _menuNav;
+    [SerializeField] float _fadeDuration = 0.3f;
 
     PlayerInput _playerInput;
     InputAction _submitAction;
-    InputAction _navigateAction;
+    ScreenFader _fader;
 
     Phase _phase;
-    int _selectedIndex;
+    bool _transitioning;
 
     void Awake()
     {
         _playerInput = GetComponent<PlayerInput>();
         _submitAction = _playerInput.actions["Submit"];
-        _navigateAction = _playerInput.actions["Navigate"];
+
+        if (Services.TryGet<GameStateController>(out var gs))
+            _fader = gs.Fader;
+
         ShowPressStart();
     }
 
     void OnEnable()
     {
         _submitAction.started += OnSubmit;
-        _navigateAction.performed += OnNavigate;
+        if (_menuNav)
+            _menuNav.Confirmed += OnMenuConfirm;
     }
 
     void OnDisable()
     {
         _submitAction.started -= OnSubmit;
-        _navigateAction.performed -= OnNavigate;
+        if (_menuNav)
+            _menuNav.Confirmed -= OnMenuConfirm;
     }
 
     void OnSubmit(InputAction.CallbackContext ctx)
     {
+        if (_transitioning)
+            return;
         if (_phase == Phase.PressStart)
             ShowMenu();
-        else
-            ConfirmSelection();
     }
 
-    void OnNavigate(InputAction.CallbackContext ctx)
+    void OnMenuConfirm(int index)
     {
-        if (_phase != Phase.Menu)
+        if (_transitioning || _phase != Phase.Menu)
             return;
 
-        float y = ctx.ReadValue<Vector2>().y;
-        if (y > 0.5f)
-            MoveSelection(-1);
-        else if (y < -0.5f)
-            MoveSelection(1);
-    }
-
-    void MoveSelection(int delta)
-    {
-        int count = _menuLabels.Length;
-        if (count == 0)
-            return;
-        _selectedIndex = (_selectedIndex + delta + count) % count;
-        RepaintMenu();
+        if (index == 0)
+            StartNewGame();
+        else if (index == 1)
+            Continue();
+        else if (index == 2)
+            OpenOptions();
     }
 
     void ShowPressStart()
@@ -76,34 +72,18 @@ public class TitleSceneController : MonoBehaviour
         _menuRoot.SetActive(false);
     }
 
-    void ShowMenu()
+    async void ShowMenu()
     {
+        _transitioning = true;
+        await _fader.FadeToColor(Color.black, _fadeDuration);
+
         _phase = Phase.Menu;
-        _selectedIndex = 0;
         _pressStartRoot.SetActive(false);
         _menuRoot.SetActive(true);
-        RepaintMenu();
-    }
+        _menuNav.ResetSelection();
 
-    void RepaintMenu()
-    {
-        for (int i = 0; i < _menuLabels.Length; i++)
-        {
-            if (i == _selectedIndex)
-                _menuLabels[i].color = _selectedColor;
-            else
-                _menuLabels[i].color = _normalColor;
-        }
-    }
-
-    void ConfirmSelection()
-    {
-        if (_selectedIndex == 0)
-            StartNewGame();
-        else if (_selectedIndex == 1)
-            Continue();
-        else if (_selectedIndex == 2)
-            OpenOptions();
+        await _fader.FadeToColor(Color.clear, _fadeDuration);
+        _transitioning = false;
     }
 
     void StartNewGame()
