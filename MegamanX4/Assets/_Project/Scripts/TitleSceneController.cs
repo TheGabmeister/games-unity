@@ -89,7 +89,7 @@ public class TitleSceneController : MonoBehaviour
     void StartNewGame()
     {
         if (Services.TryGet<GameStateController>(out var gameState))
-            gameState.SetState(GameState.LevelSelect);
+            gameState.GoToCharacterSelect();
     }
 
     void Continue()
