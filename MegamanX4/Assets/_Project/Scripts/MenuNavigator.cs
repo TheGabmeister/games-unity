@@ -1,7 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class MenuNavigator : MonoBehaviour
 {
@@ -14,32 +13,14 @@ public class MenuNavigator : MonoBehaviour
 
     public event Action<int> Confirmed;
 
-    PlayerInput _playerInput;
-    InputAction _submitAction;
-    InputAction _navigateAction;
     int _selectedIndex;
 
     public int SelectedIndex => _selectedIndex;
     public int ItemCount => _labels.Length;
 
-    void Awake()
-    {
-        _playerInput = GetComponentInParent<PlayerInput>(true);
-        _submitAction = _playerInput.actions["Submit"];
-        _navigateAction = _playerInput.actions["Navigate"];
-        Repaint();
-    }
-
     void OnEnable()
     {
-        _submitAction.started += OnSubmit;
-        _navigateAction.performed += OnNavigate;
-    }
-
-    void OnDisable()
-    {
-        _submitAction.started -= OnSubmit;
-        _navigateAction.performed -= OnNavigate;
+        Repaint();
     }
 
     public void ResetSelection()
@@ -48,28 +29,27 @@ public class MenuNavigator : MonoBehaviour
         Repaint();
     }
 
-    void OnSubmit(InputAction.CallbackContext ctx)
+    public void Submit()
     {
         if (_labels.Length == 0)
             return;
         Confirmed?.Invoke(_selectedIndex);
     }
 
-    void OnNavigate(InputAction.CallbackContext ctx)
+    public void Navigate(Vector2 direction)
     {
-        var v = ctx.ReadValue<Vector2>();
         if (_mode == NavMode.Vertical)
         {
-            if (v.y > 0.5f)
+            if (direction.y > 0.5f)
                 MoveSelection(-1);
-            else if (v.y < -0.5f)
+            else if (direction.y < -0.5f)
                 MoveSelection(1);
         }
         else
         {
-            if (v.x < -0.5f)
+            if (direction.x < -0.5f)
                 MoveSelection(-1);
-            else if (v.x > 0.5f)
+            else if (direction.x > 0.5f)
                 MoveSelection(1);
         }
     }

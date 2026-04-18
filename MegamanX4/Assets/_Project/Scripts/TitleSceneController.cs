@@ -11,9 +11,9 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] GameObject _menuRoot;
     [SerializeField] MenuNavigator _menuNav;
 
-
     PlayerInput _playerInput;
     InputAction _submitAction;
+    InputAction _navigateAction;
 
     Phase _phase;
 
@@ -21,6 +21,7 @@ public class TitleSceneController : MonoBehaviour
     {
         _playerInput = GetComponent<PlayerInput>();
         _submitAction = _playerInput.actions["Submit"];
+        _navigateAction = _playerInput.actions["Navigate"];
 
         ShowPressStart();
     }
@@ -28,6 +29,7 @@ public class TitleSceneController : MonoBehaviour
     void OnEnable()
     {
         _submitAction.started += OnSubmit;
+        _navigateAction.performed += OnNavigate;
         if (_menuNav)
             _menuNav.Confirmed += OnMenuConfirm;
     }
@@ -35,6 +37,7 @@ public class TitleSceneController : MonoBehaviour
     void OnDisable()
     {
         _submitAction.started -= OnSubmit;
+        _navigateAction.performed -= OnNavigate;
         if (_menuNav)
             _menuNav.Confirmed -= OnMenuConfirm;
     }
@@ -43,6 +46,14 @@ public class TitleSceneController : MonoBehaviour
     {
         if (_phase == Phase.PressStart)
             ShowMenu();
+        else if (_phase == Phase.Menu)
+            _menuNav.Submit();
+    }
+
+    void OnNavigate(InputAction.CallbackContext ctx)
+    {
+        if (_phase == Phase.Menu)
+            _menuNav.Navigate(ctx.ReadValue<Vector2>());
     }
 
     void OnMenuConfirm(int index)
@@ -57,12 +68,14 @@ public class TitleSceneController : MonoBehaviour
 
     void ShowPressStart()
     {
+        _phase = Phase.PressStart;
         _pressStartRoot.SetActive(true);
         _menuRoot.SetActive(false);
     }
 
     void ShowMenu()
     {
+        _phase = Phase.Menu;
         _pressStartRoot.SetActive(false);
         _menuRoot.SetActive(true);
         _menuNav.ResetSelection();
