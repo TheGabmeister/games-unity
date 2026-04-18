@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using PrimeTween;
 using UnityEngine;
 
 public enum GameState
@@ -21,6 +23,8 @@ public class GameStateController : MonoBehaviour
     [SerializeField] SceneLoader _sceneLoader;
     [SerializeField] ScreenFader _fader;
     [SerializeField] LoadingScreen _loading;
+    [SerializeField] float _fadeDuration = 0.3f;
+    [SerializeField] float _minLoadingSeconds = 1f;
 
     public GameState CurrentState => _currentState;
     public ScreenFader Fader => _fader;
@@ -52,9 +56,29 @@ public class GameStateController : MonoBehaviour
             _ = _sceneLoader.LoadSceneByName(LevelSelectSceneName);
     }
 
-    public void LoadStage(string stageSceneName)
+    public async void GoToCharacterSelect()
+    {
+        _currentState = GameState.CharacterSelect;
+        await FadeToLoadingThenLoad(CharacterSelectSceneName);
+    }
+
+    public async void LoadStage(string stageSceneName)
     {
         _currentState = GameState.Gameplay;
-        _ = _sceneLoader.LoadSceneByName(stageSceneName);
+        await FadeToLoadingThenLoad(stageSceneName);
     }
+
+    async Task FadeToLoadingThenLoad(string sceneName)
+    {
+        await Fade(Color.black);
+        _loading.Show();
+        await Fade(Color.clear);
+        await Tween.Delay(_minLoadingSeconds);
+        await Fade(Color.black);
+        await _sceneLoader.LoadSceneByName(sceneName);
+        _loading.Hide();
+        await Fade(Color.clear);
+    }
+
+    Tween Fade(Color color) => _fader.FadeToColor(color, _fadeDuration);
 }
