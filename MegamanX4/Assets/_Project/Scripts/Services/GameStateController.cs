@@ -2,7 +2,9 @@ using UnityEngine;
 
 public enum GameState
 {
+    Intro,
     Title,
+    CharacterSelect,
     LevelSelect,
     Gameplay
 }
@@ -10,7 +12,9 @@ public enum GameState
 [DisallowMultipleComponent]
 public class GameStateController : MonoBehaviour
 {
+    const string IntroSceneName = "Init";
     const string TitleSceneName = "Title";
+    const string CharacterSelectSceneName = "CharacterSelect";
     const string LevelSelectSceneName = "LevelSelect";
 
     [SerializeField] GameState _currentState = GameState.Title;
@@ -24,10 +28,14 @@ public class GameStateController : MonoBehaviour
 
         _currentState = state;
 
-        if (_currentState == GameState.Title)
-            LoadTitleScene();
+        if (_currentState == GameState.Intro)
+            LoadSimpleScene(IntroSceneName);
+        else if (_currentState == GameState.Title)
+            LoadSimpleScene(TitleSceneName);
+        else if (_currentState == GameState.CharacterSelect)
+            LoadSimpleScene(CharacterSelectSceneName);
         else if (_currentState == GameState.LevelSelect)
-            LoadLevelSelectScene();
+            LoadSimpleScene(LevelSelectSceneName);
     }
 
     public void LoadStage(string stageSceneName)
@@ -37,15 +45,9 @@ public class GameStateController : MonoBehaviour
         sceneLoader.LoadSceneByName(stageSceneName);
     }
 
-    void LoadTitleScene()
+    void LoadSimpleScene(string sceneName)
     {
         var sceneLoader = Services.Instance.Get<ISceneLoader>();
-        sceneLoader.LoadSceneByName(TitleSceneName);
-    }
-
-    void LoadLevelSelectScene()
-    {
-        var sceneLoader = Services.Instance.Get<ISceneLoader>();
-        sceneLoader.LoadSceneByName(LevelSelectSceneName);
+        sceneLoader.LoadSceneByName(sceneName);
     }
 }
