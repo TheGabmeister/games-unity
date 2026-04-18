@@ -1,7 +1,9 @@
 {
     "name": "MegamanX4.Editor",
     "references": [
-        "MegamanX4.Runtime"
+        "MegamanX4.Runtime",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"

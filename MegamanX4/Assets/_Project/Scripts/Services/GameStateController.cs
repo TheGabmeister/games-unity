@@ -30,6 +30,13 @@ public class GameStateController : MonoBehaviour
             LoadLevelSelectScene();
     }
 
+    public void LoadStage(string stageSceneName)
+    {
+        _currentState = GameState.Gameplay;
+        var sceneLoader = Services.Instance.Get<ISceneLoader>();
+        sceneLoader.LoadSceneByName(stageSceneName);
+    }
+
     void LoadTitleScene()
     {
         var sceneLoader = Services.Instance.Get<ISceneLoader>();

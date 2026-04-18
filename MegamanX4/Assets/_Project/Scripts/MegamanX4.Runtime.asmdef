@@ -2,6 +2,7 @@
     "name": "MegamanX4.Runtime",
     "references": [
         "Unity.InputSystem",
+        "Unity.TextMeshPro",
         "PrimeTween.Runtime"
     ],
     "includePlatforms": [],
