@@ -62,44 +62,77 @@ Build Settings scene order:
 
 ---
 
-## New persistent services
+## New persistent overlay + services
 
-Both live on the `GameServices` prefab. Registered by `Services.RegisterKnownServices`.
+All live on the `GameServices` prefab so they survive scene loads.
 
-### `LoadingScreen` (new)
+### `LoadingScreen` — persistent overlay (not a service)
 
-Full-screen overlay canvas. Simple `Show()` / `Hide()`. No progress bar in this phase — minimum visible duration is enforced by the caller.
+Full-screen overlay canvas with a plain `LoadingScreen : MonoBehaviour` exposing `Show()` / `Hide()`. No progress bar in this phase — minimum visible duration is enforced by the caller.
 
-Contract:
-
-```csharp
-public interface ILoadingScreenService
-{
-    void Show();
-    void Hide();
-}
-```
+Not registered in `Services`. The only caller is `GameStateController`, which holds a direct reference (either `[SerializeField] LoadingScreen _loading` wired in the prefab, or `GetComponentInChildren<LoadingScreen>(true)` in Awake to match the existing `RegisterKnownServices` pattern for ScreenFader et al.). Promote to a registered service only if a second caller ever appears.
 
 Layering (in `GameServices` prefab):
 - `ScreenFader` canvas renders **above** `LoadingScreen` canvas (higher `sortingOrder`), so fade-to-black visually covers the moment the loading screen appears/disappears.
 
-### `ScreenFader` — add completion callback
+### `ScreenFader` — return `Tween`, demote from service
 
-Existing `FadeToColor(Color, float)` is fire-and-forget. Add an overload:
-
-```csharp
-void FadeToColor(Color color, float duration, System.Action onComplete);
-```
-
-Implementation: swap the hand-rolled lerp for `PrimeTween.Tween.Color(...)` (already in the runtime asmdef) with `OnComplete`. Or keep the lerp and invoke the callback from `Update` when `_lerpTime >= _duration`. Either works; PrimeTween is cleaner.
-
-### `SceneLoader` — completion for `LoadSceneByName`
-
-`LoadSceneByIndex` already has an `onComplete` parameter. Add the same to `LoadSceneByName`:
+Replace the hand-rolled `Update`-driven lerp with `PrimeTween.Tween.Color(...)` and have `FadeToColor` return the `Tween` so the conductor can `await` it:
 
 ```csharp
-void LoadSceneByName(string sceneName, System.Action onComplete = null);
+public class ScreenFader : MonoBehaviour
+{
+    [SerializeField] Image _image;
+
+    public Tween FadeToColor(Color color, float duration) =>
+        Tween.Color(_image, color, duration);
+}
 ```
+
+Drop `IScreenFaderService` and its `RegisterService<ScreenFader, IScreenFaderService>` line in `Services.RegisterKnownServices`. No external code calls `FadeToColor` today — the interface was abstraction-in-waiting for a caller that never appeared. `GameStateController` holds a direct reference (same pattern as `LoadingScreen`):
+
+```csharp
+// GameStateController
+[SerializeField] ScreenFader _fader;  // wired in the GameServices prefab
+// or: _fader = GetComponentInChildren<ScreenFader>(true);
+```
+
+Promote back to a registered service the day a second caller appears (likely when death/cutscene fades land).
+
+### `SceneLoader` — return `Task`, demote from service, drop unused API
+
+Three changes in one pass:
+
+**1. Return `Task`.** `SceneManager.LoadSceneAsync` already exposes an `AsyncOperation.completed` event — bridge that directly to a `TaskCompletionSource`. No coroutine, no `while (!op.isDone)` polling loop.
+
+**2. Drop `ISceneLoader`.** Same reasoning as `IScreenFaderService`: only `GameStateController` uses it. Drop the interface and the `RegisterService<SceneLoader, ISceneLoader>` line. `GameStateController` holds a direct reference.
+
+**3. Delete `SwitchScene`.** It's an additive-load-then-unload helper with zero callers anywhere in the codebase. Dead code.
+
+Final shape:
+
+```csharp
+public class SceneLoader : MonoBehaviour
+{
+    public Task LoadSceneByName(string sceneName)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        var op = SceneManager.LoadSceneAsync(sceneName);
+        op.completed += _ => tcs.SetResult(true);
+        return tcs.Task;
+    }
+
+    public Task LoadSceneByIndex(int index)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        var op = SceneManager.LoadSceneAsync(index);
+        op.completed += _ => tcs.SetResult(true);
+        return tcs.Task;
+    }
+}
+```
+
+The whole file shrinks by ~80 lines. `GameStateController` holds `[SerializeField] SceneLoader _sceneLoader;` (wired in the prefab) and awaits directly. Promote back to a registered service the day a second caller appears.
 
 ---
 
@@ -135,15 +168,7 @@ Canvas + RawImage + VideoPlayer + PlayerInput (UI map, C# events).
 
 ### `TitleSceneController` — in-scene fade between Press-Start and Menu
 
-Existing controller. Extend so `ShowMenu()` does:
-```
-fader.FadeToColor(Black, 0.3s, () => {
-    SwapToMenuPhase();
-    fader.FadeToColor(Clear, 0.3s, null);
-});
-```
-
-No scene load — this is pure intra-scene state change wrapped in a fade.
+Existing controller. `ShowMenu()` becomes `async` and awaits the fader (see "Transition sequences" below). No scene load — this is pure intra-scene state change wrapped in a fade.
 
 ### `CharacterSelectController` (on `CharacterSelect.unity`)
 
@@ -163,63 +188,60 @@ IntroController.OnSkipOrVideoEnd()
       → sceneLoader.LoadSceneByName("Title")
 ```
 
+Transitions are sequenced in `GameStateController` using `async`/`await` over PrimeTween `Tween`s. No coroutines, no callback pyramids. Scene-load completion is a `TaskCompletionSource<bool>` adapter.
+
+Shared timing lives on the conductor as serialized fields — no magic-number literals in sequence code:
+
+```csharp
+[SerializeField] float _fadeDuration = 0.3f;
+[SerializeField] float _minLoadingSeconds = 1f;
+
+Tween Fade(Color color) => _fader.FadeToColor(color, _fadeDuration);
+```
+
 ### Title Press-Start → Menu (in-scene)
 
-```
-TitleSceneController.OnSubmit() on PressStart phase
-  → fader.FadeToColor(Black, 0.3s, () => {
-        _phase = Menu; _pressStartRoot.SetActive(false); _menuRoot.SetActive(true);
-        fader.FadeToColor(Clear, 0.3s, null);
-    })
-```
+Lives on `TitleSceneController`, which holds its own fade reference (or reads `GameStateController._fadeDuration` if we decide to centralize). Spec default: scene-local fade duration.
 
-### New Game → CharacterSelect
-
-```
-TitleSceneController.StartNewGame()
-  → gameState.GoToCharacterSelect()
-      → fader.FadeToColor(Black, 0.3s, () => {
-            loading.Show();
-            fader.FadeToColor(Clear, 0.3s, () => {
-                StartCoroutine(WaitThenLoad(1.0f, "CharacterSelect"));
-            });
-        })
-
-WaitThenLoad(minSeconds, sceneName):
-  yield return new WaitForSeconds(minSeconds);
-  fader.FadeToColor(Black, 0.3s, () => {
-      sceneLoader.LoadSceneByName(sceneName, () => {
-          loading.Hide();
-          fader.FadeToColor(Clear, 0.3s, null);
-      });
-  });
+```csharp
+async void ShowMenu()
+{
+    await _fader.FadeToColor(Color.black, _fadeDuration);
+    _phase = Phase.Menu;
+    _pressStartRoot.SetActive(false);
+    _menuRoot.SetActive(true);
+    RepaintMenu();
+    await _fader.FadeToColor(Color.clear, _fadeDuration);
+}
 ```
 
-### Character X → SkyLagoon
+### New Game → CharacterSelect / Character X → SkyLagoon
 
-Same pattern as `GoToCharacterSelect` — fade to black, reveal loading screen, wait ≥ 1s, fade to black, load scene, fade in. The 1s minimum applies everywhere a loading screen is shown.
+Both flows share the same sequence; only the destination scene differs. The conductor exposes two named intents and a private helper:
 
+```csharp
+public async void GoToCharacterSelect() =>
+    await FadeToLoadingThenLoad("CharacterSelect");
+
+public async void LoadStage(string stageSceneName) =>
+    await FadeToLoadingThenLoad(stageSceneName);
+
+async Task FadeToLoadingThenLoad(string sceneName)
+{
+    await Fade(Color.black);
+    _loading.Show();
+    await Fade(Color.clear);
+    await Tween.Delay(_minLoadingSeconds);
+    await Fade(Color.black);
+    await _sceneLoader.LoadSceneByName(sceneName);
+    _loading.Hide();
+    await Fade(Color.clear);
+}
 ```
-CharacterSelectController.OnSubmitX()
-  → gameState.LoadStage("SkyLagoon")
-      → fader.FadeToColor(Black, 0.3s, () => {
-            loading.Show();
-            fader.FadeToColor(Clear, 0.3s, () => {
-                StartCoroutine(WaitThenLoad(1.0f, "SkyLagoon"));
-            });
-        })
 
-WaitThenLoad(minSeconds, sceneName):
-  yield return new WaitForSeconds(minSeconds);
-  fader.FadeToColor(Black, 0.3s, () => {
-      sceneLoader.LoadSceneByName(sceneName, () => {
-          loading.Hide();
-          fader.FadeToColor(Clear, 0.3s, null);
-      });
-  });
-```
+The sequence reads top-to-bottom exactly like the wall-clock timeline. No TCS adapter — `SceneLoader` returns `Task` directly.
 
-`GoToCharacterSelect` and `LoadStage` share this exact sequence — only the destination scene name differs. Expect the implementation to extract a shared helper on `GameStateController` (e.g. `FadeToLoadingThenLoad(string sceneName, float minSeconds)`).
+**`async void` caveat**: the public intents are `async void` because they're fire-and-forget UI calls. Safe here because `GameStateController` lives on `GameServices` (DontDestroyOnLoad) and never gets destroyed mid-transition. If that ever changes, swap the publics to `async Task` and let the caller await, or wrap in `Sequence.Create().Chain(...)` to stay synchronous at the callsite.
 
 ---
 
@@ -244,7 +266,8 @@ Unchanged from SPEC_GAMESTATE: menus use the shared `EventSystem` on `GameServic
 - **Layering**: `ScreenFader` canvas renders above `LoadingScreen` canvas (higher `sortingOrder`), so fades visually cover the moments the loading screen appears and disappears.
 
 Still open, low priority — tune once running:
-- Fade durations (spec uses 0.3s everywhere).
+- Fade durations default to 0.3s via the serialized `_fadeDuration` on `GameStateController`.
+- Minimum loading-screen visibility defaults to 1s via `_minLoadingSeconds`.
 - Video rendering path: RawImage + RenderTexture vs Camera target. Default: RawImage + RenderTexture.
 
 ---
@@ -255,8 +278,8 @@ Each phase is independently shippable:
 
 1. **Enum expansion + routing**. Add `Intro`, `CharacterSelect` to `GameState`. Route `SetState(Intro)` → `Init.unity`, `SetState(CharacterSelect)` → `CharacterSelect.unity`.
 2. **Init scene + IntroController**. Hand-author scene with VideoPlayer + RawImage + PlayerInput. Implement skip/end → `SetState(Title)`.
-3. **ScreenFader callback + SceneLoader callback**. API additions only; no UX changes yet.
-4. **LoadingScreen service**. Add to GameServices prefab, register in Services.
+3. **Async API pass + service demotions**: `ScreenFader` → PrimeTween with `Tween` return type, drop `IScreenFaderService`. `SceneLoader.LoadSceneByName`/`LoadSceneByIndex` → return `Task` via `AsyncOperation.completed`, drop the coroutine internals, drop `ISceneLoader`, delete the unused `SwitchScene`. `GameStateController` holds both as direct references. API changes only; no UX changes yet.
+4. **LoadingScreen overlay**. Add `LoadingScreen` component + canvas to the GameServices prefab. Wire a reference into `GameStateController`. No service registration.
 5. **Title in-scene fade**. Wrap `ShowMenu()` in fade-out/fade-in.
 6. **Composite `GoToCharacterSelect()` + `LoadStage()` on GameStateController**.
 7. **CharacterSelect scene + controller**.
