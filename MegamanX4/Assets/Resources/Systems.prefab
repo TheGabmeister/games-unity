@@ -628,10 +628,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8940116267780952671}
-  - component: {fileID: 2307293878091307021}
   - component: {fileID: 3297613446565801127}
   m_Layer: 0
-  m_Name: GameServices
+  m_Name: Systems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -660,18 +659,6 @@ Transform:
   - {fileID: 6064731226536063289}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2307293878091307021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739627175281945382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2af3570d0d4e4d7a9d61688950cf8580, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: MegamanX4.Runtime::SystemsRoot
 --- !u!114 &3297613446565801127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -684,7 +671,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1d758cc2d87404cb0d0f7d56f9ad5c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::Description
-  _descriptionText: 
+  _descriptionText: This prefab is loaded before everything else via Bootstrapper.cs.
+    It contains GameObjects that persist across the entire game.
 --- !u!1 &7837661949643712204
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,7 +883,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a90dab736ed4bf42a568897d73d972f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MegamanX4.Runtime::LoadingScreen
-  _root: {fileID: 0}
 --- !u!1 &8367483793042020177
 GameObject:
   m_ObjectHideFlags: 0
@@ -988,3 +975,5 @@ MonoBehaviour:
   _sceneLoader: {fileID: 2176435155069738422}
   _fader: {fileID: 2651332263906806132}
   _loading: {fileID: 7465686908060581370}
+  _fadeDuration: 0.3
+  _minLoadingSeconds: 1

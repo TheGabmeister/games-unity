@@ -27,8 +27,7 @@ public class CharacterSelectController : MonoBehaviour
 
     void SelectX()
     {
-        if (Services.TryGet<GameStateController>(out var gameState))
-            gameState.LoadStage(_xStageSceneName);
+        GameStateController.Instance.LoadStage(_xStageSceneName);
     }
 
     void SelectZero()

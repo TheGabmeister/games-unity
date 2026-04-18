@@ -20,7 +20,7 @@ public class StageSession : MonoBehaviour
     HUD _hud;
     bool _isReloading;
     bool _isPaused;
-    ICheckpointService _checkpointService;
+    CheckpointService _checkpointService;
 
     public bool IsPaused => _isPaused;
 
@@ -34,7 +34,7 @@ public class StageSession : MonoBehaviour
 
         Vector3 defaultSpawnPosition = ResolveDefaultSpawnPosition();
 
-        Services.TryGet(out _checkpointService);
+        _checkpointService = CheckpointService.Instance;
         if (_checkpointService != null)
         {
             _checkpointService.EnterScene(defaultSpawnPosition);

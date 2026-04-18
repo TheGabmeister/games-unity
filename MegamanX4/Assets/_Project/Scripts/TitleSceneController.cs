@@ -24,8 +24,7 @@ public class TitleSceneController : MonoBehaviour
         _playerInput = GetComponent<PlayerInput>();
         _submitAction = _playerInput.actions["Submit"];
 
-        if (Services.TryGet<GameStateController>(out var gs))
-            _fader = gs.Fader;
+        _fader = GameStateController.Instance.Fader;
 
         ShowPressStart();
     }
@@ -88,8 +87,7 @@ public class TitleSceneController : MonoBehaviour
 
     void StartNewGame()
     {
-        if (Services.TryGet<GameStateController>(out var gameState))
-            gameState.GoToCharacterSelect();
+        GameStateController.Instance.GoToCharacterSelect();
     }
 
     void Continue()

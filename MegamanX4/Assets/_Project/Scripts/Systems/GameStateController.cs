@@ -12,7 +12,7 @@ public enum GameState
 }
 
 [DisallowMultipleComponent]
-public class GameStateController : MonoBehaviour
+public class GameStateController : PersistentSingleton<GameStateController>
 {
     const string IntroSceneName = "Init";
     const string TitleSceneName = "Title";
@@ -29,8 +29,9 @@ public class GameStateController : MonoBehaviour
     public GameState CurrentState => _currentState;
     public ScreenFader Fader => _fader;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         if (!_sceneLoader)
             _sceneLoader = transform.root.GetComponentInChildren<SceneLoader>(true);
         if (!_fader)

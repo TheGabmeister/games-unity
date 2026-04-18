@@ -9,7 +9,6 @@ public class Checkpoint : MonoBehaviour
         if (!other.GetComponentInParent<PlayerController>())
             return;
 
-        if (Services.TryGet<ICheckpointService>(out var checkpointService))
-            checkpointService.ActivateCheckpoint(transform.position);
+        CheckpointService.Instance.ActivateCheckpoint(transform.position);
     }
 }

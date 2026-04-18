@@ -47,7 +47,6 @@ public class IntroController : MonoBehaviour
             return;
         _transitioned = true;
 
-        if (Services.TryGet<GameStateController>(out var gameState))
-            gameState.SetState(GameState.Title);
+        GameStateController.Instance.SetState(GameState.Title);
     }
 }

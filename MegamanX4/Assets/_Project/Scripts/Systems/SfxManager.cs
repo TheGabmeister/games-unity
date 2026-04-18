@@ -1,12 +1,13 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class SfxManager : MonoBehaviour, ISfxService
+public class SfxManager : PersistentSingleton<SfxManager>
 {
     AudioSource _audioSource;
 
-    void Awake()
+    protected override void Awake()
     {
+         base.Awake();
         _audioSource = GetComponent<AudioSource>();
     }
 

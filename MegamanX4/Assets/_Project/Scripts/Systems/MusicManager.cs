@@ -1,12 +1,13 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class MusicManager : MonoBehaviour, IMusicService
+public class MusicManager : PersistentSingleton<MusicManager>
 {
     AudioSource _audioSource;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         _audioSource = GetComponent<AudioSource>();
     }
 

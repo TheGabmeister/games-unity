@@ -5,13 +5,10 @@ public static class Bootstrapper
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Execute()
     {
-        if (Services.Instance || Object.FindFirstObjectByType<Services>())
-            return;
-
-        var prefab = Resources.Load<GameObject>("GameServices");
+        var prefab = Resources.Load<GameObject>("Systems");
         if (!prefab)
         {
-            Debug.LogError("Missing Resources/GameServices prefab.");
+            Debug.LogError("Missing Resources/Systems prefab.");
             return;
         }
 
