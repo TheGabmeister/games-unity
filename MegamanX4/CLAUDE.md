@@ -84,11 +84,47 @@ Three decoupled concerns:
 
 ### Bootstrapper / persistent systems
 
-`Bootstrapper` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to instantiate `Resources/GameServices`. The `GameServices` prefab hosts the persistent singletons (`GameStateController`, `SceneLoader`, `SfxManager`, `MusicManager`, `ScreenFader`, `CheckpointService`, plus the shared `EventSystem` for menu input) and calls `DontDestroyOnLoad`. This guarantees persistent systems exist regardless of which scene is loaded first (play-from-any-scene workflow).
+`Bootstrapper` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to instantiate `Resources/Systems` and `DontDestroyOnLoad` it. The `Systems` prefab hosts all persistent singletons (`GameStateController`, `SceneLoader`, `ScreenFader`, `LoadingScreen`, `SfxManager`, `MusicManager`, `CheckpointSystem`, plus the shared `EventSystem` for menu input). Live source lives under [Assets/_Project/Scripts/Systems/](Assets/_Project/Scripts/Systems/). This guarantees persistent systems exist regardless of which scene is loaded first (play-from-any-scene workflow).
 
-Scene layout: `Title.unity` → `LevelSelect.unity` → `Gameplay.unity`, transitioned via `GameStateController.RequestTransition(GameState)` → `SceneLoader.LoadScene`. See [SPEC_GAMESTATE.md](SPEC_GAMESTATE.md) for the ownership rules; scene-local UI only sends intent, never loads scenes directly.
+Scene flow: `Init.unity` (intro video) → `Title.unity` (Press Start + New Game/Continue/Options menu) → `CharacterSelect.unity` (X / Zero) → stage scenes. `LevelSelect.unity` exists as a parallel screen but isn't on the New Game path in current wiring — it slots in post-SkyLagoon later. See [SPEC_GAMEFLOW.md](SPEC_GAMEFLOW.md) for the full sequence, timing, and the composite fade+loading-screen transition.
 
-Service lookup goes through a static `Services.TryGet<T>(out var svc)`. Components that optionally depend on a service (e.g. `StageSession` and `CheckpointService`) null-check the result and degrade gracefully — don't hard-require services from gameplay code.
+### Event-based system communication
+
+The project **used to** have a service locator (`Services.TryGet<T>(out var svc)`). **That has been removed.** All cross-scene communication with persistent systems goes through static events in [Events.cs](Assets/_Project/Scripts/Events.cs).
+
+Shape:
+
+```csharp
+public class GameEvent        { public void Raise(); public void Sub(Action); public void Unsub(Action); }
+public class GameEvent<T>     { public void Raise(T);  public void Sub(Action<T>); public void Unsub(Action<T>); }
+```
+
+Events are grouped into `static` classes by concern:
+
+- `GameStateEvents.SetState.Raise(GameState.Title)` — request a state/scene transition.
+- `MusicEvents.Play.Raise(clip)` / `MusicEvents.Pause.Raise()` / `MusicEvents.Stop.Raise()`.
+- `SfxEvents.Play.Raise(clip)`.
+- `PlayerEvents.Died.Raise()` / `PlayerEvents.CheckpointPassed.Raise()`.
+
+Subscription pattern: `Sub(handler)` in `OnEnable`, `Unsub(handler)` in `OnDisable`, symmetric. Scene-local code *raises* events (sends intent); persistent systems *subscribe* and act. Do not add new `Services.TryGet` patterns — if you see any stragglers in comments or commented-out code (`Checkpoint.cs`, `StageSession.cs` have some), they're dead and pending cleanup.
+
+### Menu / scene controllers
+
+Each scene owns its own controller: [IntroController.cs](Assets/_Project/Scripts/IntroController.cs), [TitleSceneController.cs](Assets/_Project/Scripts/TitleSceneController.cs), [LevelSelectController.cs](Assets/_Project/Scripts/LevelSelectController.cs), [CharacterSelectController.cs](Assets/_Project/Scripts/CharacterSelectController.cs). All follow the same pattern — `PlayerInput` on the scene's Canvas with the `UI` action map (C# events), subscribe to `Submit`/`Navigate`, raise `GameStateEvents.SetState` on confirm.
+
+[MenuNavigator.cs](Assets/_Project/Scripts/MenuNavigator.cs) is a shared component for cursor-driven menus. Serialized `TMP_Text[] _labels`, `NavMode { Vertical, Horizontal }`, emits `event Action<int> Confirmed` on Submit. Used by Title menu (vertical), LevelSelect (vertical), CharacterSelect (horizontal). Scene controllers compose it with a parallel array of dispatch data (e.g. `string[] _sceneNames`) and subscribe to `Confirmed` for dispatch. When you reach the MMX 4x2 grid, extend `NavMode` rather than per-scene reimplementation.
+
+### Composite fade + loading transitions
+
+`GameStateController.FadeToLoadingThenLoad(string)` runs the scripted sequence: fade → show loading screen → reveal → min delay → fade → load scene → hide loading → fade back in. Written in `async`/`await` over PrimeTween `Tween`s — no coroutines.
+
+- [ScreenFader.cs](Assets/_Project/Scripts/Systems/ScreenFader.cs) — `FadeToColor(Color, float)` returns `PrimeTween.Tween`; callers `await` it directly.
+- [SceneLoader.cs](Assets/_Project/Scripts/Systems/SceneLoader.cs) — `LoadSceneByName(string)` returns `Task`, built on `AsyncOperation.completed` via `TaskCompletionSource`. No coroutine internals, no callback parameters.
+- [LoadingScreen.cs](Assets/_Project/Scripts/Systems/LoadingScreen.cs) — persistent overlay canvas on `Systems`. Two methods: `Show()` / `Hide()`. **Do not** re-add a `Hide()` call in `Awake` — the prefab is saved inactive; `Awake` fires on first activation and would immediately cancel a Show in-flight (past-bug).
+
+Fader canvas renders above the LoadingScreen canvas (sortingOrder 200 > 100) so fades visually cover the moments the loading screen appears/disappears. The editor installer [LoadingScreenInstaller.cs](Assets/_Project/Scripts/Editor/LoadingScreenInstaller.cs) wires this layering; re-run if layering looks wrong. Note: the installer still references the old `GameServices.prefab` path — update to `Systems.prefab` when you touch it next.
+
+Known gaps deferred to a later session: `OnSetState` in `GameStateController` has no branch for `GameState.SkyLagoon` or `Gameplay` (raised by `CharacterSelectController` but not routed); `LevelSelectController.OnConfirm` dispatch is commented out; the composite fade+loading transitions are bypassed by the event-routed `OnSetState` (raw `LoadSceneByName`, no fades); `TitleSceneController.ShowMenu` lost its fade during the event migration.
 
 ### Projectile system
 
@@ -145,7 +181,8 @@ Scripted *scene* composition remains banned (see below) — prefab generators ar
 - **Composition over inheritance.** Prefer component + ScriptableObject composition over class hierarchies for gameplay systems. `Health` + `HurtBox` + `HitBox` + `DamageFlash` + `InvulnerabilityBlinker` as independent MonoBehaviours is the template, not `EnemyBase → FlyingEnemy → Bat`.
 - **Private field naming: underscore prefix.** Class-level private fields use `_camelCase` (including `[SerializeField]` fields): `_rb`, `_facing`, `[SerializeField] int _maxHealth`. Public properties and methods stay PascalCase (`IsKnockedBack`, `ApplyKnockback`). `const` and `static readonly` stay PascalCase too. Local variables and parameters stay plain (no underscore). When editing an existing file that doesn't yet follow this, rename its private fields to match while you're there.
 - **User prefers planning before implementation.** For any non-trivial system, produce a short plan / spec before writing code; phased roadmaps are the norm across the user's other recreations. Active specs at the project root:
-  - [SPEC_GAMESTATE.md](SPEC_GAMESTATE.md) — top-level `Title → LevelSelect → Gameplay` flow; `GameStateController` owns transitions, `SceneLoader` loads.
+  - [SPEC_GAMESTATE.md](SPEC_GAMESTATE.md) — the original minimal-state spec (`Title → LevelSelect → Gameplay`). Partially superseded by SPEC_GAMEFLOW (expanded enum, event-based transitions); kept for the ownership rules.
+  - [SPEC_GAMEFLOW.md](SPEC_GAMEFLOW.md) — full boot → gameplay flow: Init video, Title in-scene fade, loading screen overlay, CharacterSelect, fade/loading composite timing. Authoritative for transitions. Phases 1–8 implemented; event-migration leftover gaps documented in "Composite fade + loading transitions" above.
   - [SPEC_PAUSEMENU.md](SPEC_PAUSEMENU.md) — modal Gameplay-local pause; `StageSession` owns the toggle; phased roadmap toward MMX-style weapon-select overlay merged into `HUD` (current: `Time.timeScale` freeze + "PAUSED" `OnGUI` label).
   - [SPEC_ENEMIES.md](SPEC_ENEMIES.md) — full-campaign enemy roster (40 non-boss enemies across Sky Lagoon + 8 Maverick stages). Phases 1–4 implemented (Sky Lagoon + recurring backbone + Jungle + Cyber Space). Later phases use the two-tier rule (reusable component vs single-use AI script) to keep the component library small. Deferred: King Poseidon (water system), Metal Gabyoall wall-crawl (floor-only for now), Raiden (AI-piloted Ride Armor, depends on Ride Armor subsystem). Single-use AI scripts live in [Assets/_Project/Scripts/Enemy/AI/](Assets/_Project/Scripts/Enemy/AI/).
 - **No asset dependencies until explicitly added.** Procedural SVG visuals, stubbed audio (enum-keyed `SfxId`/`MusicId` resolved via a ScriptableObject catalog) until real assets land. Gameplay code should not reference `AudioClip` directly.

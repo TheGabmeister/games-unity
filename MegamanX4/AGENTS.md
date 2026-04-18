@@ -24,12 +24,27 @@ Key project content currently lives under `Assets/_Project/`.
 - `Input/`
   - `InputSystem_Actions.inputactions`
 - `Scenes/`
+  - `Init.unity`
+  - `Title.unity`
+  - `CharacterSelect.unity`
+  - `LevelSelect.unity`
   - `Gameplay.unity`
+  - `Stages/` authored stage scenes such as `SkyLagoon.unity`, `Jungle.unity`, and `Volcano.unity`
 - `Scripts/`
+  - `Events.cs`
   - `HUD.cs`
   - `StageSession.cs`
   - `Description.cs`
+  - `IntroController.cs`
+  - `TitleSceneController.cs`
+  - `CharacterSelectController.cs`
+  - `LevelSelectController.cs`
+  - `MenuNavigator.cs`
+  - `Checkpoint.cs`
+  - `Projectile.cs`
   - `Behavior/`
+    - `Gravity.cs`
+    - `HoverSine.cs`
     - `Lifetime.cs`
     - `MoveForward.cs`
     - `MoveVertical.cs`
@@ -38,6 +53,7 @@ Key project content currently lives under `Assets/_Project/`.
     - `HitBox.cs`
     - `HurtBox.cs`
     - `DamageFlash.cs`
+    - `InvulnerabilityBlinker.cs`
   - `Enemy/`
     - `DestroyOnDepleted.cs`
     - `AutoShoot.cs`
@@ -47,25 +63,37 @@ Key project content currently lives under `Assets/_Project/`.
     - `PatrolWalk.cs`
     - `PlayerDetector.cs`
     - `SwoopAttack.cs`
+    - `TrackPlayer.cs`
+    - `AI/` stage- and enemy-specific behavior scripts
   - `Player/`
     - `PlayerController.cs`
     - `WeaponInventory.cs`
     - `WeaponData.cs`
     - `DashSilhouetteTrail.cs`
-  - `Services/`
+  - `Systems/`
     - `Bootstrapper.cs`
-    - `Services.cs`
+    - `GameStateController.cs`
     - `MusicManager.cs`
     - `SfxManager.cs`
     - `ScreenFader.cs`
-    - `SceneLoader/SceneLoader.cs`
-  - `Editor/FileExtensions.cs`
+    - `SceneLoader.cs`
+    - `LoadingScreen.cs`
+    - `CheckpointSystem.cs`
+  - `Editor/`
+    - prefab and content generators for intro, character select, level select, loading screen, and enemies
 - `Resources/`
-  - `GameServices.prefab`
+  - `Systems.prefab`
 - `Player/`
   - `MegamanX.prefab`
   - `Character/` sprite assets
-  - `Shots/` shot sprites and prefabs
+- `Weapons/`
+  - weapon ScriptableObjects and projectile prefabs such as `Buster`, `FrostTower`, `GroundHunter`, and `TwinSlasher`
+- `Enemies/`
+  - authored enemy prefab/content folders grouped by stage and recurring enemies
+- `UI/`
+  - HUD and front-end prefabs such as `GameplayHUD`, `IntroCanvas`, `CharacterSelectCanvas`, and `LevelSelectCanvas`
+- `Videos/`
+  - intro video assets
 - `Settings/`
   - URP and renderer assets
 
@@ -85,9 +113,9 @@ Ignore generated Unity folders like `Library/`, `Logs/`, and `Temp/` unless a ta
   - Examples: weapon stats, enemy data, stage metadata, palettes.
 - Preserve the code-driven bootstrap direction.
   - `Bootstrapper` runs via `RuntimeInitializeOnLoadMethod` before scene load.
-  - `Assets/Resources/GameServices.prefab` is the persistent services root loaded by `Bootstrapper`.
-  - `Services` enforces that only one persistent services root survives at runtime.
-  - Authored gameplay scenes such as `Gameplay.unity` should contain stage content and spawn markers like `PlayerStart`, not duplicate the persistent services root.
+  - `Assets/Resources/Systems.prefab` is the persistent runtime root loaded by `Bootstrapper`.
+  - Global scene flow currently lives in `GameStateController` plus helper components under `Assets/_Project/Scripts/Systems/`.
+  - Authored scenes should not duplicate the persistent systems root; gameplay scenes should contain stage content and spawn markers like `PlayerStart`.
 - Prefer minimum viable architecture.
   - Default to the smallest design that solves the current implemented need.
   - Do not add new services, managers, state layers, abstractions, interfaces, or systems unless the current codebase concretely needs them now.
@@ -107,17 +135,20 @@ Ignore generated Unity folders like `Library/`, `Logs/`, and `Temp/` unless a ta
 - The player currently uses a custom 2D kinematic controller in `Assets/_Project/Scripts/Player/PlayerController.cs`.
 - X-Buster and weapon swapping behavior currently live in `Assets/_Project/Scripts/Player/WeaponInventory.cs`, which handles charge timing, muzzle spawning, weapon energy, and the small-shot on-screen cap.
 - Projectiles are implemented through composition in `Assets/_Project/Scripts/Projectile.cs` plus movement helpers such as `Assets/_Project/Scripts/Behavior/MoveForward.cs` and `Assets/_Project/Scripts/Behavior/MoveVertical.cs`.
-- Shot prefabs currently live under `Assets/_Project/Player/Shots/Prefabs/`.
-- The project bootstraps persistent services from `Assets/Resources/GameServices.prefab` through `Assets/_Project/Scripts/Services/Bootstrapper.cs`.
-- `Services` is the persistent root singleton for always-on managers and shared runtime services.
+- Weapon assets and projectile prefabs currently live under `Assets/_Project/Weapons/`.
+- The project bootstraps persistent systems from `Assets/Resources/Systems.prefab` through `Assets/_Project/Scripts/Systems/Bootstrapper.cs`.
+- Front-end scene flow currently runs through `GameStateEvents.SetState.Raise(...)` and `Assets/_Project/Scripts/Systems/GameStateController.cs`.
+- `TitleSceneController`, `IntroController`, `CharacterSelectController`, `LevelSelectController`, and `MenuNavigator` drive the current intro/menu flow.
 - `StageSession` currently spawns the player prefab at a `PlayerStart` tag if present, otherwise falls back to the active Scene view camera position in the editor, then instantiates the HUD prefab.
-- `StageSession` also handles the current simple death flow: on player depletion it waits for `_deathReloadDelay` and reloads the active scene. Checkpoints are not implemented yet.
+- `StageSession` also handles the current simple death flow: on player depletion it waits for `_deathReloadDelay` and reloads the active scene.
+- `CheckpointSystem` and `Checkpoint` exist, but checkpoint respawn wiring is currently scaffolded and partially commented out in gameplay flow. Treat checkpoint support as in-progress unless the task is specifically about finishing it.
 - When changing gameplay code, keep inspector-facing tuning values serialized unless there is a clear reason to hard-code them.
 - Prefer extending the existing input actions asset instead of adding ad hoc polling or bespoke input glue.
 - `PlayerController` depends on `WeaponInventory`; keep charge-shot, weapon-energy, and projectile-spawn changes in `WeaponInventory` unless the change is specifically about locomotion/input flow.
 - Projectile movement uses transform-based motion. `MoveForward` advances along `transform.right`; orient projectile instances via rotation at spawn time rather than adding script-side facing state.
 - `MoveVertical` exposes an enum-based up/down choice in the inspector for strictly vertical motion.
 - HUD work is still lightweight and code-driven; prefer small, inspector-wired UI components over heavy framework additions unless the scope clearly calls for them.
+- The lightweight event system in `Assets/_Project/Scripts/Events.cs` uses `.Raise(...)`, `.Sub(...)`, and `.Unsub(...)`; event fields are not directly invokable delegates.
 
 ## Validation
 
