@@ -20,6 +20,7 @@ public class GameStateController : MonoBehaviour
     [SerializeField] GameState _currentState = GameState.Title;
     [SerializeField] SceneLoader _sceneLoader;
     [SerializeField] ScreenFader _fader;
+    [SerializeField] LoadingScreen _loading;
 
     public GameState CurrentState => _currentState;
 
@@ -29,6 +30,8 @@ public class GameStateController : MonoBehaviour
             _sceneLoader = transform.root.GetComponentInChildren<SceneLoader>(true);
         if (!_fader)
             _fader = transform.root.GetComponentInChildren<ScreenFader>(true);
+        if (!_loading)
+            _loading = transform.root.GetComponentInChildren<LoadingScreen>(true);
     }
 
     public void SetState(GameState state)
