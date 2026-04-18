@@ -5,15 +5,42 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/_Project/Scenes/Init.unity
-    guid: fb61240e3c1a5fc41b4f3d3547c735ae
+  - enabled: 1
+    path: Assets/_Project/Scenes/Title.unity
+    guid: 262338794e02f394fb4b15fefaada275
+  - enabled: 1
+    path: Assets/_Project/Scenes/LevelSelect.unity
+    guid: 7db66add24138f545aae0fec1cea1646
   - enabled: 1
     path: Assets/_Project/Scenes/Gameplay.unity
     guid: 03bec8535372b32418561ebb2fc17302
   - enabled: 1
-    path: Assets/_Project/Scenes/LevelSelect.unity
-    guid: 7db66add24138f545aae0fec1cea1646
+    path: Assets/_Project/Scenes/Stages/SkyLagoon.unity
+    guid: 3f4ceb9582832e7479007c0b0130ea63
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/AirForce.unity
+    guid: 559d94b606e67e94ab92ea5773c74678
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/BioLaboratory.unity
+    guid: c456e51e14cc12545aa9396ef7ddb246
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/CyberSpace.unity
+    guid: ae97182d0c1225b4993aeadd9d176e20
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/Jungle.unity
+    guid: 878398dba19da4c45a13b659196b7099
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/MarineBase.unity
+    guid: 634dbb4b7b3adec4d9437512216bff33
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/MilitaryTrain.unity
+    guid: b1587bb22ba3b154a9b59b382dc57233
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/SnowBase.unity
+    guid: 420260e94b9ef3942860c62e303079a0
+  - enabled: 1
+    path: Assets/_Project/Scenes/Stages/Volcano.unity
+    guid: eed6bf07e3a51cd4b8ed1e47ddbcc2f5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
