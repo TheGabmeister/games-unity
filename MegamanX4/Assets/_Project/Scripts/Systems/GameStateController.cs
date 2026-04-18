@@ -25,6 +25,7 @@ public class GameStateController : MonoBehaviour
     [SerializeField] LoadingScreen _loading;
     [SerializeField] float _fadeDuration = 0.3f;
     [SerializeField] float _minLoadingSeconds = 1f;
+    [SerializeField] LevelData[] _levelData;
 
     public GameState CurrentState => _currentState;
     public ScreenFader Fader => _fader;

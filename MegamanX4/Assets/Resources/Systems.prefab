@@ -977,3 +977,5 @@ MonoBehaviour:
   _loading: {fileID: 7465686908060581370}
   _fadeDuration: 0.3
   _minLoadingSeconds: 1
+  _levelData:
+  - {fileID: 11400000, guid: 74afdbee5eb07dc4ca0976fa9724ec2f, type: 2}
