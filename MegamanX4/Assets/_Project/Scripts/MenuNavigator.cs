@@ -5,7 +5,10 @@ using UnityEngine.InputSystem;
 
 public class MenuNavigator : MonoBehaviour
 {
+    public enum NavMode { Vertical, Horizontal }
+
     [SerializeField] TMP_Text[] _labels;
+    [SerializeField] NavMode _mode = NavMode.Vertical;
     [SerializeField] Color _selectedColor = Color.yellow;
     [SerializeField] Color _normalColor = Color.white;
 
@@ -54,11 +57,21 @@ public class MenuNavigator : MonoBehaviour
 
     void OnNavigate(InputAction.CallbackContext ctx)
     {
-        float y = ctx.ReadValue<Vector2>().y;
-        if (y > 0.5f)
-            MoveSelection(-1);
-        else if (y < -0.5f)
-            MoveSelection(1);
+        var v = ctx.ReadValue<Vector2>();
+        if (_mode == NavMode.Vertical)
+        {
+            if (v.y > 0.5f)
+                MoveSelection(-1);
+            else if (v.y < -0.5f)
+                MoveSelection(1);
+        }
+        else
+        {
+            if (v.x < -0.5f)
+                MoveSelection(-1);
+            else if (v.x > 0.5f)
+                MoveSelection(1);
+        }
     }
 
     void MoveSelection(int delta)
