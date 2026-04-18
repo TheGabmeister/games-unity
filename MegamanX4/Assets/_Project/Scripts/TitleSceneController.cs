@@ -15,9 +15,7 @@ public class TitleSceneController : MonoBehaviour
     PlayerInput _playerInput;
     InputAction _submitAction;
 
-
     Phase _phase;
-    bool _transitioning;
 
     void Awake()
     {
@@ -43,17 +41,12 @@ public class TitleSceneController : MonoBehaviour
 
     void OnSubmit(InputAction.CallbackContext ctx)
     {
-        if (_transitioning)
-            return;
         if (_phase == Phase.PressStart)
             ShowMenu();
     }
 
     void OnMenuConfirm(int index)
     {
-        if (_transitioning || _phase != Phase.Menu)
-            return;
-
         if (index == 0)
             StartNewGame();
         else if (index == 1)
@@ -64,21 +57,15 @@ public class TitleSceneController : MonoBehaviour
 
     void ShowPressStart()
     {
-        _phase = Phase.PressStart;
         _pressStartRoot.SetActive(true);
         _menuRoot.SetActive(false);
     }
 
     void ShowMenu()
     {
-        _transitioning = true;
-
-        _phase = Phase.Menu;
         _pressStartRoot.SetActive(false);
         _menuRoot.SetActive(true);
         _menuNav.ResetSelection();
-
-        _transitioning = false;
     }
 
     void StartNewGame()

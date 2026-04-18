@@ -210,8 +210,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -925,7 +925,6 @@ MonoBehaviour:
   _pressStartRoot: {fileID: 167705739}
   _menuRoot: {fileID: 1986186638}
   _menuNav: {fileID: 1726861166}
-  _fadeDuration: 0.3
 --- !u!114 &1726861165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -972,6 +971,7 @@ MonoBehaviour:
   - {fileID: 1604072340}
   - {fileID: 1328107670}
   - {fileID: 1487503359}
+  _mode: 0
   _selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _normalColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1986186638

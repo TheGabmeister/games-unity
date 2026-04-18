@@ -11,6 +11,7 @@ public class StageSession : MonoBehaviour
     [SerializeField] GameObject _playerPrefab;
     [SerializeField] GameObject _hudPrefab;
     [SerializeField, Min(0f)] float _deathReloadDelay = 1f;
+    
 
     GameObject _playerInstance;
     Health _playerHealth;

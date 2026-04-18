@@ -42,11 +42,11 @@ public class GameStateController : MonoBehaviour
     void Awake()
     {
         if (!_sceneLoader)
-            _sceneLoader = transform.root.GetComponentInChildren<SceneLoader>(true);
+            Debug.LogError("Missing Scene Loader!");
         if (!_fader)
-            _fader = transform.root.GetComponentInChildren<ScreenFader>(true);
+            Debug.LogError("Missing Screen Fader!");
         if (!_loading)
-            _loading = transform.root.GetComponentInChildren<LoadingScreen>(true);
+           Debug.LogError("Missing Loading Screen!");
     }
 
     public void OnSetState(GameState state)
