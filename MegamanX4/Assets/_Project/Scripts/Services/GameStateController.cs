@@ -18,8 +18,18 @@ public class GameStateController : MonoBehaviour
     const string LevelSelectSceneName = "LevelSelect";
 
     [SerializeField] GameState _currentState = GameState.Title;
+    [SerializeField] SceneLoader _sceneLoader;
+    [SerializeField] ScreenFader _fader;
 
     public GameState CurrentState => _currentState;
+
+    void Awake()
+    {
+        if (!_sceneLoader)
+            _sceneLoader = transform.root.GetComponentInChildren<SceneLoader>(true);
+        if (!_fader)
+            _fader = transform.root.GetComponentInChildren<ScreenFader>(true);
+    }
 
     public void SetState(GameState state)
     {
@@ -29,25 +39,18 @@ public class GameStateController : MonoBehaviour
         _currentState = state;
 
         if (_currentState == GameState.Intro)
-            LoadSimpleScene(IntroSceneName);
+            _ = _sceneLoader.LoadSceneByName(IntroSceneName);
         else if (_currentState == GameState.Title)
-            LoadSimpleScene(TitleSceneName);
+            _ = _sceneLoader.LoadSceneByName(TitleSceneName);
         else if (_currentState == GameState.CharacterSelect)
-            LoadSimpleScene(CharacterSelectSceneName);
+            _ = _sceneLoader.LoadSceneByName(CharacterSelectSceneName);
         else if (_currentState == GameState.LevelSelect)
-            LoadSimpleScene(LevelSelectSceneName);
+            _ = _sceneLoader.LoadSceneByName(LevelSelectSceneName);
     }
 
     public void LoadStage(string stageSceneName)
     {
         _currentState = GameState.Gameplay;
-        var sceneLoader = Services.Instance.Get<ISceneLoader>();
-        sceneLoader.LoadSceneByName(stageSceneName);
-    }
-
-    void LoadSimpleScene(string sceneName)
-    {
-        var sceneLoader = Services.Instance.Get<ISceneLoader>();
-        sceneLoader.LoadSceneByName(sceneName);
+        _ = _sceneLoader.LoadSceneByName(stageSceneName);
     }
 }
