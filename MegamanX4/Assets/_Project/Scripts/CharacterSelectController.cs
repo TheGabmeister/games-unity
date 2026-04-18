@@ -53,7 +53,7 @@ public class CharacterSelectController : MonoBehaviour
 
     void SelectX()
     {
-        GameStateEvents.SetState.Raise(GameState.SkyLagoon);
+        GameStateEvents.SetState.Raise(GameState.Gameplay);
     }
 
     void SelectZero()

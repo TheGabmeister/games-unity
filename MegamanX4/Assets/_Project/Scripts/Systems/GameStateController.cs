@@ -7,7 +7,6 @@ public enum GameState
     Intro,
     Title,
     CharacterSelect,
-    SkyLagoon,
     LevelSelect,
     Gameplay
 }
@@ -61,9 +60,11 @@ public class GameStateController : MonoBehaviour
         else if (_currentState == GameState.Title)
             _ = _sceneLoader.LoadSceneByName(TitleSceneName);
         else if (_currentState == GameState.CharacterSelect)
-            _ = _sceneLoader.LoadSceneByName(CharacterSelectSceneName);
+            GoToCharacterSelect();
         else if (_currentState == GameState.LevelSelect)
             _ = _sceneLoader.LoadSceneByName(LevelSelectSceneName);
+        else if (_currentState == GameState.Gameplay)
+            LoadStage("SkyLagoon");
     }
 
     public async void GoToCharacterSelect()
