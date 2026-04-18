@@ -47,6 +47,6 @@ public class IntroController : MonoBehaviour
             return;
         _transitioned = true;
 
-        GameStateController.Instance.SetState(GameState.Title);
+        GameStateEvents.SetState.Raise(GameState.Title);
     }
 }

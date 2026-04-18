@@ -1,14 +1,22 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class SfxManager : PersistentSingleton<SfxManager>
+public class SfxManager : MonoBehaviour
 {
     AudioSource _audioSource;
 
-    protected override void Awake()
+    private void OnEnable()
     {
-         base.Awake();
-        _audioSource = GetComponent<AudioSource>();
+        SfxEvents.Play.Sub(PlaySound);
+    }
+    private void OnDisable()
+    {
+        SfxEvents.Play.Unsub(PlaySound);
+    }
+
+    void Awake()
+    {
+         _audioSource = GetComponent<AudioSource>();
     }
 
     public void PlaySound(AudioClip clip)

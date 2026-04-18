@@ -10,11 +10,11 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] GameObject _pressStartRoot;
     [SerializeField] GameObject _menuRoot;
     [SerializeField] MenuNavigator _menuNav;
-    [SerializeField] float _fadeDuration = 0.3f;
+
 
     PlayerInput _playerInput;
     InputAction _submitAction;
-    ScreenFader _fader;
+
 
     Phase _phase;
     bool _transitioning;
@@ -23,8 +23,6 @@ public class TitleSceneController : MonoBehaviour
     {
         _playerInput = GetComponent<PlayerInput>();
         _submitAction = _playerInput.actions["Submit"];
-
-        _fader = GameStateController.Instance.Fader;
 
         ShowPressStart();
     }
@@ -71,23 +69,21 @@ public class TitleSceneController : MonoBehaviour
         _menuRoot.SetActive(false);
     }
 
-    async void ShowMenu()
+    void ShowMenu()
     {
         _transitioning = true;
-        await _fader.FadeToColor(Color.black, _fadeDuration);
 
         _phase = Phase.Menu;
         _pressStartRoot.SetActive(false);
         _menuRoot.SetActive(true);
         _menuNav.ResetSelection();
 
-        await _fader.FadeToColor(Color.clear, _fadeDuration);
         _transitioning = false;
     }
 
     void StartNewGame()
     {
-        GameStateController.Instance.GoToCharacterSelect();
+        GameStateEvents.SetState.Raise(GameState.CharacterSelect);
     }
 
     void Continue()

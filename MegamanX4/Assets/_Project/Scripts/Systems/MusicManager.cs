@@ -1,21 +1,26 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class MusicManager : PersistentSingleton<MusicManager>
+public class MusicManager : MonoBehaviour
 {
     AudioSource _audioSource;
 
-    protected override void Awake()
+    private void OnEnable()
     {
-        base.Awake();
+        MusicEvents.Play.Sub(PlayMusic);
+    }
+    private void OnDisable()
+    {
+        MusicEvents.Play.Unsub(PlayMusic);
+    }
+
+    void Awake()
+    {
         _audioSource = GetComponent<AudioSource>();
     }
 
-    public void ToggleMusic(bool value)
+    public void PlayMusic(AudioClip clip)
     {
-        if (value)
-            _audioSource.Play();
-        else
-            _audioSource.Stop();
+
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class CheckpointService : PersistentSingleton<CheckpointService>
+public class CheckpointSystem : MonoBehaviour 
 {
     Vector3 _activeCheckpointPosition;
     bool _hasActiveCheckpoint;

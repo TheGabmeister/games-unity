@@ -20,7 +20,6 @@ public class StageSession : MonoBehaviour
     HUD _hud;
     bool _isReloading;
     bool _isPaused;
-    CheckpointService _checkpointService;
 
     public bool IsPaused => _isPaused;
 
@@ -34,17 +33,17 @@ public class StageSession : MonoBehaviour
 
         Vector3 defaultSpawnPosition = ResolveDefaultSpawnPosition();
 
-        _checkpointService = CheckpointService.Instance;
-        if (_checkpointService != null)
-        {
-            _checkpointService.EnterScene(defaultSpawnPosition);
+        // _checkpointService = CheckpointService.Instance;
+        // if (_checkpointService != null)
+        // {
+        //     _checkpointService.EnterScene(defaultSpawnPosition);
 
-            if (_checkpointService.TryGetRespawnPosition(out var respawnPosition))
-            {
-                SpawnPlayer(respawnPosition);
-                return;
-            }
-        }
+        //     if (_checkpointService.TryGetRespawnPosition(out var respawnPosition))
+        //     {
+        //         SpawnPlayer(respawnPosition);
+        //         return;
+        //     }
+        // }
 
         SpawnPlayer(defaultSpawnPosition);
     }
@@ -100,7 +99,7 @@ public class StageSession : MonoBehaviour
 
         UnbindPauseAction();
 
-        _checkpointService?.MarkPendingRespawn();
+        //_checkpointService?.MarkPendingRespawn();
 
         StartCoroutine(ReloadSceneAfterDelay());
     }

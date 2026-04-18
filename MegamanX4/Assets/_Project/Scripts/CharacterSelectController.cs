@@ -3,7 +3,6 @@ using UnityEngine;
 public class CharacterSelectController : MonoBehaviour
 {
     [SerializeField] MenuNavigator _menu;
-    [SerializeField] string _xStageSceneName = "SkyLagoon";
 
     void OnEnable()
     {
@@ -27,7 +26,7 @@ public class CharacterSelectController : MonoBehaviour
 
     void SelectX()
     {
-        GameStateController.Instance.LoadStage(_xStageSceneName);
+        GameStateEvents.SetState.Raise(GameState.SkyLagoon);
     }
 
     void SelectZero()

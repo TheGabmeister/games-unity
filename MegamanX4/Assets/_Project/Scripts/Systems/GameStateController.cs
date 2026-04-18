@@ -7,12 +7,13 @@ public enum GameState
     Intro,
     Title,
     CharacterSelect,
+    SkyLagoon,
     LevelSelect,
     Gameplay
 }
 
 [DisallowMultipleComponent]
-public class GameStateController : PersistentSingleton<GameStateController>
+public class GameStateController : MonoBehaviour
 {
     const string IntroSceneName = "Init";
     const string TitleSceneName = "Title";
@@ -29,9 +30,17 @@ public class GameStateController : PersistentSingleton<GameStateController>
     public GameState CurrentState => _currentState;
     public ScreenFader Fader => _fader;
 
-    protected override void Awake()
+    private void OnEnable()
     {
-        base.Awake();
+        GameStateEvents.SetState.Sub(OnSetState);
+    }
+    private void OnDisable()
+    {
+        GameStateEvents.SetState.Unsub(OnSetState);
+    }
+
+    void Awake()
+    {
         if (!_sceneLoader)
             _sceneLoader = transform.root.GetComponentInChildren<SceneLoader>(true);
         if (!_fader)
@@ -40,7 +49,7 @@ public class GameStateController : PersistentSingleton<GameStateController>
             _loading = transform.root.GetComponentInChildren<LoadingScreen>(true);
     }
 
-    public void SetState(GameState state)
+    public void OnSetState(GameState state)
     {
         if (_currentState == state)
             return;

@@ -25,6 +25,6 @@ public class LevelSelectController : MonoBehaviour
         if (string.IsNullOrEmpty(sceneName))
             return;
 
-        GameStateController.Instance.LoadStage(sceneName);
+        //GameStateController.Instance.LoadStage(sceneName);
     }
 }
