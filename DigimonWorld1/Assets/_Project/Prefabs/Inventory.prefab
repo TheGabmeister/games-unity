@@ -45,4 +45,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
   _maxSlots: 20
-  _startingBits: 0
+  _startingBits: 500
+  _startingItems:
+  - Item: {fileID: 11400000, guid: cab25e5c31edc7e4c97e718b06fa8df6, type: 2}
+    Count: 5
+  - Item: {fileID: 11400000, guid: 42d45418d26da494d81cdc0c3d701b32, type: 2}
+    Count: 2
+  - Item: {fileID: 11400000, guid: 7d52f1f7618dfdb4a93b8fe1c17e18b9, type: 2}
+    Count: 3
+  - Item: {fileID: 11400000, guid: 5e199fec87f22d64cb032c10f46a0f68, type: 2}
+    Count: 2

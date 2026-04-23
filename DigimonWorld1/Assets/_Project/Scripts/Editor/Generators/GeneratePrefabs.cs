@@ -100,7 +100,35 @@ public static class GeneratePrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Inventory")]
     public static void GenerateInventory()
     {
-        PrefabGeneratorUtils.SavePrefab("Inventory", InventoryPrefabPath, go => go.AddComponent<Inventory>());
+        PrefabGeneratorUtils.SavePrefab("Inventory", InventoryPrefabPath, go =>
+        {
+            Inventory inv = go.AddComponent<Inventory>();
+
+            string[] itemNames = { "Meat", "GiantMeat", "Medicine", "HappyMushroom" };
+            int[] itemCounts = { 5, 2, 3, 2 };
+
+            SerializedObject so = new SerializedObject(inv);
+            so.FindProperty("_startingBits").intValue = 500;
+
+            SerializedProperty startingItems = so.FindProperty("_startingItems");
+            startingItems.arraySize = itemNames.Length;
+            for (int i = 0; i < itemNames.Length; i++)
+            {
+                string path = $"{ItemDataDir}/{itemNames[i]}.asset";
+                ItemData item = AssetDatabase.LoadAssetAtPath<ItemData>(path);
+                if (item != null)
+                {
+                    SerializedProperty element = startingItems.GetArrayElementAtIndex(i);
+                    element.FindPropertyRelative("Item").objectReferenceValue = item;
+                    element.FindPropertyRelative("Count").intValue = itemCounts[i];
+                }
+                else
+                {
+                    Debug.LogWarning($"Item not found at {path}. Run 'Generate Sample Items' first.");
+                }
+            }
+            so.ApplyModifiedPropertiesWithoutUndo();
+        });
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenFader")]

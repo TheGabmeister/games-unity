@@ -19,6 +19,7 @@ public class Inventory : Singleton<Inventory>
 {
     [SerializeField] private int _maxSlots = 20;
     [SerializeField] private int _startingBits = 0;
+    [SerializeField] private InventorySlot[] _startingItems;
 
     private List<InventorySlot> _slots = new List<InventorySlot>();
     private int _bits;
@@ -33,6 +34,15 @@ public class Inventory : Singleton<Inventory>
     {
         base.Awake();
         _bits = _startingBits;
+
+        if (_startingItems != null)
+        {
+            foreach (var slot in _startingItems)
+            {
+                if (slot.Item != null && slot.Count > 0)
+                    AddItem(slot.Item, slot.Count);
+            }
+        }
     }
 
     public bool AddItem(ItemData item, int amount = 1)
