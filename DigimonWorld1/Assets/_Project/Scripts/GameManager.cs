@@ -8,6 +8,7 @@ public class GameManager : PersistentSingleton<GameManager>
     [SerializeField] private SceneReference _introScene;
     [SerializeField] private SceneReference _mainMenuScene;
     [SerializeField] private SceneReference _nameScene;
+    [SerializeField] private SceneReference _gameplayBootstrapScene;
     [SerializeField] private SceneReference _gameplayScene;
     [SerializeField] private ScreenFader _screenFader;
 
@@ -33,10 +34,18 @@ public class GameManager : PersistentSingleton<GameManager>
 
     public void LoadGameplayScene()
     {
-        LoadScene(_gameplayScene);
+        UnloadNonBootstrapScenes();
+        SceneManager.LoadScene(_gameplayBootstrapScene.Path, LoadSceneMode.Additive);
+        SceneManager.LoadScene(_gameplayScene.Path, LoadSceneMode.Additive);
     }
 
     private void LoadScene(SceneReference scene)
+    {
+        UnloadNonBootstrapScenes();
+        SceneManager.LoadScene(scene.Path, LoadSceneMode.Additive);
+    }
+
+    private void UnloadNonBootstrapScenes()
     {
         for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
         {
@@ -44,7 +53,5 @@ public class GameManager : PersistentSingleton<GameManager>
             if (loaded.buildIndex != 0)
                 SceneManager.UnloadSceneAsync(loaded);
         }
-
-        SceneManager.LoadScene(scene.Path, LoadSceneMode.Additive);
     }
 }

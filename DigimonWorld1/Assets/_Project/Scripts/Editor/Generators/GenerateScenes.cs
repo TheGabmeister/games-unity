@@ -13,11 +13,13 @@ public static class GenerateScenes
     private const string IntroScenePath = SceneDir + "/_Intro.unity";
     private const string MainMenuScenePath = SceneDir + "/_MainMenu.unity";
     private const string NameScenePath = SceneDir + "/_Name.unity";
+    private const string GameplayBootstrapScenePath = SceneDir + "/_GameplayBootstrap.unity";
     private const string GameplayScenePath = SceneDir + "/_Gameplay.unity";
 
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
     private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
+    private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
     private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/DialogueManager.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
@@ -51,20 +53,12 @@ public static class GenerateScenes
             return;
         }
 
-        GameObject dialogueManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DialogueManagerPrefabPath);
-        if (dialogueManagerPrefab == null)
-        {
-            Debug.LogError($"DialogueManager prefab not found at {DialogueManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate DialogueManager' first.");
-            return;
-        }
-
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
         PrefabUtility.InstantiatePrefab(gameManagerPrefab, scene);
         PrefabUtility.InstantiatePrefab(screenFaderPrefab, scene);
-        PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
 
         if (!SaveScene(scene, BootstrapScenePath)) return;
 
@@ -97,6 +91,38 @@ public static class GenerateScenes
     public static void GenerateName()
     {
         GenerateSceneWithPrefab(NameScenePath, NameControllerPrefabPath, "_Name");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate GameplayBootstrap Scene")]
+    public static void GenerateGameplayBootstrap()
+    {
+        GameObject inputManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InputManagerPrefabPath);
+        if (inputManagerPrefab == null)
+        {
+            Debug.LogError($"InputManager prefab not found at {InputManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate InputManager' first.");
+            return;
+        }
+
+        GameObject dialogueManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DialogueManagerPrefabPath);
+        if (dialogueManagerPrefab == null)
+        {
+            Debug.LogError($"DialogueManager prefab not found at {DialogueManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate DialogueManager' first.");
+            return;
+        }
+
+        PrefabGeneratorUtils.EnsureFolder(SceneDir);
+
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        PrefabUtility.InstantiatePrefab(inputManagerPrefab, scene);
+        PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
+
+        if (!SaveScene(scene, GameplayBootstrapScenePath)) return;
+
+        AppendSceneToBuildSettings(GameplayBootstrapScenePath);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"_GameplayBootstrap scene generated at {GameplayBootstrapScenePath}");
     }
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Gameplay Scene")]
@@ -203,6 +229,7 @@ public static class GenerateScenes
         GenerateIntro();
         GenerateMainMenu();
         GenerateName();
+        GenerateGameplayBootstrap();
         GenerateGameplay();
     }
 

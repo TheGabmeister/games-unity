@@ -10,30 +10,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _interactDistance = 3f;
 
     private CharacterController _controller;
-    private InputSystem_Actions _input;
     private float _verticalVelocity;
     private IInteractable _currentInteractable;
 
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
-        _input = new InputSystem_Actions();
-    }
-
-    private void OnEnable()
-    {
-        _input.Player.Enable();
-    }
-
-    private void OnDisable()
-    {
-        _input.Player.Disable();
     }
 
     private void Update()
     {
-        Vector2 moveInput = _input.Player.Move.ReadValue<Vector2>();
-        bool sprinting = _input.Player.Sprint.IsPressed();
+        if (!InputManager.Instance.PlayerInputEnabled) return;
+
+        var actions = InputManager.Instance.Actions;
+        Vector2 moveInput = actions.Player.Move.ReadValue<Vector2>();
+        bool sprinting = actions.Player.Sprint.IsPressed();
 
         Vector3 camForward = _cameraTransform.forward;
         camForward.y = 0f;
@@ -75,7 +66,7 @@ public class PlayerController : MonoBehaviour
             _currentInteractable = newInteractable;
         }
 
-        if (_currentInteractable != null && _input.Player.Interact.WasPressedThisFrame())
+        if (_currentInteractable != null && actions.Player.Interact.WasPressedThisFrame())
             _currentInteractable.Interact();
     }
 }

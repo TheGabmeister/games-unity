@@ -22,9 +22,9 @@ No CLI build pipeline. All work happens in the Unity Editor:
 ## Architecture: bootstrap + singletons
 
 - [_Bootstrap.unity](Assets/_Project/Scenes/_Bootstrap.unity) is the persistent scene, additively loaded before any other scene's `Awake` by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) — a **plain class** (not a MonoBehaviour) with `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` + `[DefaultExecutionOrder(-1000)]`.
-- Each service is a **MonoBehaviour singleton** inheriting from [PersistentSingleton.cs](Assets/_Project/Scripts/PersistentSingleton.cs), which handles `Instance` assignment + `DontDestroyOnLoad` + duplicate-destruction. Call sites read `ServiceName.Instance.Foo` directly.
+- Two singleton base classes: [PersistentSingleton.cs](Assets/_Project/Scripts/PersistentSingleton.cs) for services that survive scene loads (`DontDestroyOnLoad`), and [Singleton.cs](Assets/_Project/Scripts/Singleton.cs) for scene-scoped services that die with their scene.
 - **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up. (`IInteractable` is an interface for world objects, not a service wrapper — that's fine.)
-- Each service lives as its own prefab under `Assets/_Project/Prefabs/`. `_Bootstrap.unity` instantiates: `AudioSystem`, `GameManager`, `ScreenFader`.
+- Each service lives as its own prefab under `Assets/_Project/Prefabs/`. `_Bootstrap.unity` instantiates global services; `_GameplayBootstrap.unity` instantiates gameplay-scoped services.
 - Service `Awake` order is unspecified relative to each other. If service A needs service B during `Awake`, resolve it in `Start` or set A's Script Execution Order explicitly.
 
 ### Current services in _Bootstrap
@@ -34,14 +34,22 @@ No CLI build pipeline. All work happens in the Unity Editor:
 | `AudioSystem` | Stub — validation target for the singleton-generator pipeline |
 | `GameManager` | Scene loader. Holds `SceneReference` fields for all scenes + `ScreenFader` reference. `LoadScene()` unloads all non-bootstrap scenes (buildIndex != 0) then additively loads the target. Kicks off the flow by calling `LoadSplashscreenScene()` in `Start()` |
 | `ScreenFader` | Full-screen Canvas overlay (sortingOrder 999). `FadeOut()` / `FadeIn()` are `async Awaitable` using `Time.unscaledDeltaTime` |
-| `DialogueManager` | Owns dialogue UI Canvas (sortingOrder 100). `StartDialogue(DialogueData)` disables `PlayerController`, shows lines one at a time, E key advances. `EndDialogue()` re-enables player. `IsActive` property for guard checks |
+
+### Current services in _GameplayBootstrap
+
+`_GameplayBootstrap.unity` is loaded additively alongside `_Gameplay` by `GameManager.LoadGameplayScene()`. Both are unloaded when leaving gameplay. Services here use `Singleton<T>` (scene-scoped, not persistent).
+
+| Service | Role |
+|---------|------|
+| `InputManager` | Owns the single `InputSystem_Actions` instance. All gameplay systems read input via `InputManager.Instance.Actions`. `SetPlayerInputEnabled(bool)` sets a flag that `PlayerController` checks to gate movement/interaction — the action map stays enabled so systems like `DialogueManager` can still read Interact |
+| `DialogueManager` | Owns dialogue UI Canvas (sortingOrder 100). `StartDialogue(DialogueData)` calls `InputManager.SetPlayerInputEnabled(false)`, shows lines one at a time, E key advances. `EndDialogue()` re-enables player input. `IsActive` property for guard checks |
 
 ## Scene flow
 
 ```
 _Bootstrap (persistent, auto-loaded)
     ↓ GameManager.Start()
-_Splashscreen → _Intro → _MainMenu → _Name → _Gameplay
+_Splashscreen → _Intro → _MainMenu → _Name → _GameplayBootstrap + _Gameplay
 ```
 
 Each scene has a controller MonoBehaviour that drives its logic and calls `GameManager.Instance.LoadXxxScene()` to advance:
@@ -57,7 +65,7 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 ## Gameplay systems (Phase 1)
 
 ### Player movement
-[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) — `CharacterController`-based, camera-relative horizontal movement. Owns an `InputSystem_Actions` instance directly (no input service wrapper). Walk/sprint, gravity, rotates to face movement direction. Includes interaction detection via `SphereCast`.
+[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) — `CharacterController`-based, camera-relative horizontal movement. Reads input from `InputManager.Instance.Actions`. Walk/sprint, gravity, rotates to face movement direction. Includes interaction detection via `SphereCast`. Early-returns from `Update()` when `InputManager.PlayerInputEnabled` is false.
 
 ### Camera
 [GameplayCamera.cs](Assets/_Project/Scripts/GameplayCamera.cs) — fixed position, `LookAt` player in `LateUpdate`. Digimon World 1 style: camera doesn't follow, just tracks.
@@ -69,10 +77,10 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 [IInteractable.cs](Assets/_Project/Scripts/IInteractable.cs) — interface: `InteractPrompt`, `Interact()`, `ShowPrompt()`, `HidePrompt()`. PlayerController does a `SphereCast` each frame and manages show/hide transitions. [TestInteractable.cs](Assets/_Project/Scripts/TestInteractable.cs) is a test cube that changes color on interact with a billboard TextMeshPro prompt. [NPCInteractable.cs](Assets/_Project/Scripts/NPCInteractable.cs) triggers dialogue via `DialogueManager`.
 
 ### Dialogue
-[DialogueData.cs](Assets/_Project/Scripts/DialogueData.cs) — `ScriptableObject` with a `DialogueLine[]` (each line has `Speaker` + `Text`). Created via `Create → DigimonWorld → DialogueData`. [DialogueManager.cs](Assets/_Project/Scripts/DialogueManager.cs) — `PersistentSingleton` in Bootstrap. `StartDialogue()` disables `PlayerController`, shows a bottom-screen panel, E key advances lines. Uses its own `InputSystem_Actions` instance; a `_justOpened` flag prevents the triggering E press from advancing past line 0.
+[DialogueData.cs](Assets/_Project/Scripts/DialogueData.cs) — `ScriptableObject` with a `DialogueLine[]` (each line has `Speaker` + `Text`). Created via `Create → DigimonWorld → DialogueData`. [DialogueManager.cs](Assets/_Project/Scripts/DialogueManager.cs) — `Singleton` in GameplayBootstrap. `StartDialogue()` calls `InputManager.SetPlayerInputEnabled(false)`, shows a bottom-screen panel, E key advances lines. A `_justOpened` flag prevents the triggering E press from advancing past line 0.
 
 ### Input
-`InputSystem_Actions.inputactions` has C# code generation enabled (see `.meta`). The generated `InputSystem_Actions` class is used directly by `PlayerController` — no input service wrapper. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next.
+[InputManager.cs](Assets/_Project/Scripts/InputManager.cs) — `Singleton` in GameplayBootstrap. Owns the single `InputSystem_Actions` instance; all gameplay systems read from `InputManager.Instance.Actions`. `PlayerInputEnabled` flag gates `PlayerController` without disabling the action map, so `DialogueManager` can still read Interact. `InputSystem_Actions.inputactions` has C# code generation enabled. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next. Menu controllers (`MainMenuController`, `IntroController`) use `Keyboard.current` directly — they exist in isolated non-gameplay scenes.
 
 ## Editor workflow: generators
 
@@ -83,11 +91,11 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 | File | Responsibility |
 |------|---------------|
 | [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
-| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs: Bootstrapper, AudioSystem, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon, NPC. Also `GenerateTestDialogue()` for sample `DialogueData` asset |
+| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs: Bootstrapper, AudioSystem, InputManager, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon, NPC. Also `GenerateTestDialogue()` for sample `DialogueData` asset |
 | [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
 | [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
 | [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |
-| [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All 6 scenes. Bootstrap, Splashscreen, Intro, MainMenu, Name, Gameplay, plus GenerateAll |
+| [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All 7 scenes. Bootstrap, Splashscreen, Intro, MainMenu, Name, GameplayBootstrap, Gameplay, plus GenerateAll |
 
 ### Rules
 
