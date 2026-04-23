@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
-public static class GenerateBootstrapScene
+public static class GenerateScenes
 {
     private const string SceneDir = "Assets/_Project/Scenes";
     private const string BootstrapScenePath = SceneDir + "/_Bootstrap.unity";
@@ -14,13 +14,12 @@ public static class GenerateBootstrapScene
     private const string NameScenePath = SceneDir + "/_Name.unity";
     private const string GameplayScenePath = SceneDir + "/_Gameplay.unity";
 
-    private const string PrefabDir = "Assets/_Project/Prefabs";
-    private const string AudioSystemPrefabPath = PrefabDir + "/AudioSystem.prefab";
-    private const string GameManagerPrefabPath = PrefabDir + "/GameManager.prefab";
-    private const string SplashscreenControllerPrefabPath = PrefabDir + "/SplashscreenController.prefab";
-    private const string IntroControllerPrefabPath = PrefabDir + "/IntroController.prefab";
-    private const string MainMenuControllerPrefabPath = PrefabDir + "/MainMenuController.prefab";
-    private const string NameControllerPrefabPath = PrefabDir + "/NameController.prefab";
+    private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
+    private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
+    private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
+    private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
+    private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
+    private const string NameControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NameController.prefab";
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
     public static void GenerateBootstrap()
@@ -39,7 +38,7 @@ public static class GenerateBootstrapScene
             return;
         }
 
-        EnsureFolder(SceneDir);
+        PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
@@ -104,7 +103,7 @@ public static class GenerateBootstrapScene
             return;
         }
 
-        EnsureFolder(SceneDir);
+        PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CreateCamera(scene);
@@ -121,7 +120,7 @@ public static class GenerateBootstrapScene
 
     private static void GenerateEmptyScene(string scenePath, string displayName)
     {
-        EnsureFolder(SceneDir);
+        PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CreateCamera(scene);
@@ -201,20 +200,5 @@ public static class GenerateBootstrapScene
         System.Array.Copy(scenes, 0, newScenes, 0, scenes.Length);
         newScenes[scenes.Length] = new EditorBuildSettingsScene(scenePath, true);
         EditorBuildSettings.scenes = newScenes;
-    }
-
-    private static void EnsureFolder(string path)
-    {
-        if (AssetDatabase.IsValidFolder(path)) return;
-
-        string[] parts = path.Split('/');
-        string current = parts[0];
-        for (int i = 1; i < parts.Length; i++)
-        {
-            string next = current + "/" + parts[i];
-            if (!AssetDatabase.IsValidFolder(next))
-                AssetDatabase.CreateFolder(current, parts[i]);
-            current = next;
-        }
     }
 }
