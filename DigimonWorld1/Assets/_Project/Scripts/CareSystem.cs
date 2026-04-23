@@ -21,8 +21,9 @@ public class CareSystem : Singleton<CareSystem>
 
     protected override void OnDestroy()
     {
-        if (TimeSystem.Instance != null)
-            TimeSystem.Instance.OnHourChanged -= OnHourChanged;
+        var timeSystem = FindFirstObjectByType<TimeSystem>();
+        if (timeSystem != null)
+            timeSystem.OnHourChanged -= OnHourChanged;
         base.OnDestroy();
     }
 

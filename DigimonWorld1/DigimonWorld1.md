@@ -91,6 +91,7 @@ Goal: scripted moments, permanence, polish.
 39. **Settings Menu** — audio mix, controls rebind, graphics, text speed, subtitles.
 40. **Full Audio Pass** — zone music selection, battle music, SFX coverage, crossfades.
 41. **Debug / Cheat Menu (full)** — spawn, evolve, teleport, fast-forward time, save inspector.
+42. **Singleton Teardown Order** — ensure deterministic shutdown: explicit Script Execution Order or a shutdown manager so singletons that depend on each other during `OnDestroy` don't race. Current workaround: bypass `Singleton.Instance` in `OnDestroy` with direct `FindFirstObjectByType` to avoid error logs.
 
 ---
 
