@@ -30,6 +30,8 @@ public static class GenerateScenes
     private const string HUDPrefabPath = PrefabGeneratorUtils.PrefabDir + "/HUD.prefab";
     private const string CareSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/CareSystem.prefab";
     private const string InventoryPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Inventory.prefab";
+    private const string InventoryScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InventoryScreen.prefab";
+    private const string PauseScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/PauseScreen.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
@@ -169,6 +171,20 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject inventoryScreenPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InventoryScreenPrefabPath);
+        if (inventoryScreenPrefab == null)
+        {
+            Debug.LogError($"InventoryScreen prefab not found at {InventoryScreenPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate InventoryScreen' first.");
+            return;
+        }
+
+        GameObject pauseScreenPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PauseScreenPrefabPath);
+        if (pauseScreenPrefab == null)
+        {
+            Debug.LogError($"PauseScreen prefab not found at {PauseScreenPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate PauseScreen' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -179,6 +195,8 @@ public static class GenerateScenes
         PrefabUtility.InstantiatePrefab(hudPrefab, scene);
         PrefabUtility.InstantiatePrefab(careSystemPrefab, scene);
         PrefabUtility.InstantiatePrefab(inventoryPrefab, scene);
+        PrefabUtility.InstantiatePrefab(inventoryScreenPrefab, scene);
+        PrefabUtility.InstantiatePrefab(pauseScreenPrefab, scene);
 
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);

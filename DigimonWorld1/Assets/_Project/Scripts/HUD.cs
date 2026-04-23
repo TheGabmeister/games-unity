@@ -4,9 +4,30 @@ using UnityEngine;
 public class HUD : Singleton<HUD>
 {
     [SerializeField] private TMP_Text _timeText;
+    [SerializeField] private TMP_Text _dayText;
+    [SerializeField] private TMP_Text _statsText;
+
+    private DigimonInstance _partner;
 
     private void Update()
     {
         _timeText.text = TimeSystem.Instance.TimeString;
+        _dayText.text = $"Day {TimeSystem.Instance.Day}";
+
+        DigimonInstance partner = GetPartner();
+        if (partner == null) return;
+
+        _statsText.text = partner.IsSleeping
+            ? $"{partner.Species.SpeciesName}  [Sleeping]\nHP {partner.CurrentHP}  MP {partner.CurrentMP}"
+            : $"{partner.Species.SpeciesName}\nHP {partner.CurrentHP}  MP {partner.CurrentMP}\n" +
+              $"Hunger {partner.Hunger}  Tired {partner.Tiredness}\n" +
+              $"Happy {partner.Happiness}  Disc {partner.Discipline}";
+    }
+
+    private DigimonInstance GetPartner()
+    {
+        if (_partner == null)
+            _partner = FindFirstObjectByType<DigimonInstance>();
+        return _partner;
     }
 }
