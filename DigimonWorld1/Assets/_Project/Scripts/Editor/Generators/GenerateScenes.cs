@@ -17,6 +17,8 @@ public static class GenerateScenes
     private const string ZoneDir = SceneDir + "/Zones";
     private const string Zone1ScenePath = ZoneDir + "/Zone1.unity";
     private const string Zone2ScenePath = ZoneDir + "/Zone2.unity";
+    private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
+    private const string Zone2DataPath = "Assets/_Project/Data/Zones/Zone2.asset";
 
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
@@ -243,6 +245,10 @@ public static class GenerateScenes
         GameObject npcGo = (GameObject)PrefabUtility.InstantiatePrefab(npcPrefab, scene);
         npcGo.transform.position = new Vector3(5f, 0f, 3f);
 
+        // Zone trigger to Zone2
+        CreateZoneTrigger(scene, "To Zone2", new Vector3(-10f, 1f, 0f), Zone2DataPath,
+            new Color(0.2f, 0.4f, 0.9f, 0.5f));
+
         if (!SaveScene(scene, Zone1ScenePath)) return;
         AppendSceneToBuildSettings(Zone1ScenePath);
         AssetDatabase.SaveAssets();
@@ -284,6 +290,10 @@ public static class GenerateScenes
         capsule.transform.localScale = new Vector3(2f, 6f, 2f);
         capsule.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Landmark.mat", new Color(0.1f, 0.1f, 0.9f));
         SceneManager.MoveGameObjectToScene(capsule, scene);
+
+        // Zone trigger to Zone1
+        CreateZoneTrigger(scene, "To Zone1", new Vector3(-10f, 1f, 0f), Zone1DataPath,
+            new Color(0.9f, 0.2f, 0.2f, 0.5f));
 
         if (!SaveScene(scene, Zone2ScenePath)) return;
         AppendSceneToBuildSettings(Zone2ScenePath);
@@ -412,5 +422,36 @@ public static class GenerateScenes
         System.Array.Copy(scenes, 0, newScenes, 0, scenes.Length);
         newScenes[scenes.Length] = new EditorBuildSettingsScene(scenePath, true);
         EditorBuildSettings.scenes = newScenes;
+    }
+
+    private static void CreateZoneTrigger(Scene scene, string name, Vector3 position,
+        string zoneDataPath, Color color)
+    {
+        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        go.name = name;
+        go.transform.position = position;
+        go.transform.localScale = new Vector3(2f, 3f, 2f);
+        SceneManager.MoveGameObjectToScene(go, scene);
+
+        BoxCollider col = go.GetComponent<BoxCollider>();
+        col.isTrigger = true;
+
+        Material mat = PrefabGeneratorUtils.CreateOrLoadMaterial(
+            $"Assets/_Project/Props/{name.Replace(" ", "")}.mat", color);
+        go.GetComponent<Renderer>().sharedMaterial = mat;
+
+        ZoneTrigger trigger = go.AddComponent<ZoneTrigger>();
+
+        ZoneData zoneData = AssetDatabase.LoadAssetAtPath<ZoneData>(zoneDataPath);
+        if (zoneData != null)
+        {
+            SerializedObject so = new SerializedObject(trigger);
+            so.FindProperty("_destinationZone").objectReferenceValue = zoneData;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+        else
+        {
+            Debug.LogWarning($"ZoneData not found at {zoneDataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
+        }
     }
 }
