@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Gameplay-focused Unity recreation of Digimon World 1. Not a pixel-perfect remake — faithful mechanics with placeholder 3D models (no animations), placeholder textures, placeholder audio, single-player. The phased roadmap lives in [DigimonWorld1.md](DigimonWorld1.md) (6 phases, Phase 0 = Foundation). Treat that doc as the source of truth for scope and sequencing.
 
-Status: early Phase 0. The bootstrap pattern is wired up (scene + singleton pattern + Play-from-any-scene loader) and the first service prefab (`AudioSystem`) exists. Everything past that is still ahead.
+Status: Phase 0 complete, early Phase 1. The bootstrap pattern, scene flow, input system, player movement, partner follow AI, and interaction system are all working. The game runs through Splashscreen → Intro → MainMenu → Name → Gameplay.
 
 ## Unity version & running
 
@@ -19,93 +19,138 @@ No CLI build pipeline. All work happens in the Unity Editor:
 - **Tests:** Unity Test Framework (`com.unity.test-framework` 1.6.0) via `Window → General → Test Runner`. No tests written yet, no CI configured.
 - **Linting/formatting:** none configured.
 
-## Architecture: bootstrap + singletons (implemented)
+## Architecture: bootstrap + singletons
 
-The pattern is in place — match it when adding new services.
-
-- [_Bootstrap.unity](Assets/_Project/Scenes/_Bootstrap.unity) is the persistent scene. It's additively loaded before any other scene's `Awake` by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs), which is a **plain class** (not a MonoBehaviour) carrying only a `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` + `[DefaultExecutionOrder(-1000)]`. Its single job is to call `SceneManager.LoadScene("_Bootstrap", Additive)` if the scene isn't already loaded.
-- Each service is a **MonoBehaviour singleton** inheriting from [PersistentSingleton.cs](Assets/_Project/Scripts/PersistentSingleton.cs), which handles `Instance` assignment + `DontDestroyOnLoad` + duplicate-destruction. See [AudioSystem.cs](Assets/_Project/Scripts/AudioSystem.cs) for the pattern. Call sites read `AudioSystem.Instance.Foo` directly.
-- **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up.
-- Each service lives as its own prefab under [Assets/_Project/Prefabs/](Assets/_Project/Prefabs/). `_Bootstrap.unity` is populated by instantiating those prefabs — either via the scene generator or hand-edited and regenerated.
+- [_Bootstrap.unity](Assets/_Project/Scenes/_Bootstrap.unity) is the persistent scene, additively loaded before any other scene's `Awake` by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) — a **plain class** (not a MonoBehaviour) with `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` + `[DefaultExecutionOrder(-1000)]`.
+- Each service is a **MonoBehaviour singleton** inheriting from [PersistentSingleton.cs](Assets/_Project/Scripts/PersistentSingleton.cs), which handles `Instance` assignment + `DontDestroyOnLoad` + duplicate-destruction. Call sites read `ServiceName.Instance.Foo` directly.
+- **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up. (`IInteractable` is an interface for world objects, not a service wrapper — that's fine.)
+- Each service lives as its own prefab under `Assets/_Project/Prefabs/`. `_Bootstrap.unity` instantiates: `AudioSystem`, `GameManager`, `ScreenFader`.
 - Service `Awake` order is unspecified relative to each other. If service A needs service B during `Awake`, resolve it in `Start` or set A's Script Execution Order explicitly.
 
-## Editor workflow: prefab generators + scene generator
+### Current services in _Bootstrap
 
-**Everything in `_Bootstrap.unity` gets there via prefabs instantiated from an editor script — never inline `new GameObject` + `AddComponent` directly in a scene.** The workflow is a strict two-pass:
+| Service | Role |
+|---------|------|
+| `AudioSystem` | Stub — validation target for the singleton-generator pipeline |
+| `GameManager` | Scene loader. Holds `SceneReference` fields for all scenes + `ScreenFader` reference. `LoadScene()` unloads all non-bootstrap scenes (buildIndex != 0) then additively loads the target. Kicks off the flow by calling `LoadSplashscreenScene()` in `Start()` |
+| `ScreenFader` | Full-screen Canvas overlay (sortingOrder 999). `FadeOut()` / `FadeIn()` are `async Awaitable` using `Time.unscaledDeltaTime` |
 
-1. **Prefab pass.** Menu items under `Tools → DigimonWorld → Prefabs → *` each generate one prefab under `Assets/_Project/Prefabs/`. See [GenerateBootstrapPrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GenerateBootstrapPrefabs.cs). Each prefab gets its own menu item. Generators call `PrefabUtility.SaveAsPrefabAsset` followed by `AssetDatabase.SaveAssets` + `AssetDatabase.Refresh` so GUIDs are committed before the scene pass reads them.
-2. **Scene pass.** `Tools → DigimonWorld → Generate Bootstrap Scene` (see [GenerateBootstrapScene.cs](Assets/_Project/Scripts/Editor/Generators/GenerateBootstrapScene.cs)) loads the prefabs by path, creates a new empty scene, `PrefabUtility.InstantiatePrefab`s them in (never raw `Instantiate` — breaks the prefab link), saves, and idempotently adds the scene to `EditorBuildSettings.scenes` at index 0.
+## Scene flow
 
-Non-negotiables for this workflow:
+```
+_Bootstrap (persistent, auto-loaded)
+    ↓ GameManager.Start()
+_Splashscreen → _Intro → _MainMenu → _Name → _Gameplay
+```
 
-- **One menu item per prefab** — add a new service by adding a const path, a `[MenuItem]` method, and one call to the shared `SavePrefab("Name", Path, go => go.AddComponent<T>())` helper.
-- **Never mix prefab creation and scene composition in one pass.** The prefab pass must run `AssetDatabase.SaveAssets` before any scene generator touches the prefab — otherwise you get `fileID: 0` null-reference writes when Unity hasn't finished serializing the prefab before the scene save path runs.
-- **Generators are idempotent** — re-running overwrites in place. Use `AssetDatabase.LoadAssetAtPath` to detect existing assets.
-- **Generator scripts live under [Assets/_Project/Scripts/Editor/Generators/](Assets/_Project/Scripts/Editor/Generators/)** so they never ship in a build.
-- **Scene generator registers scenes with Build Settings** — `SceneManager.LoadScene("_Bootstrap", Additive)` at runtime requires the scene to be enabled in Build Settings. The idempotent `AddSceneToBuildSettings` helper in the scene generator handles this.
+Each scene has a controller MonoBehaviour that drives its logic and calls `GameManager.Instance.LoadXxxScene()` to advance:
 
-ScriptableObject authoring tools (bulk-create `DigimonDefinition` / `TechniqueDefinition` / `ItemDefinition` from CSV) are fine and follow the same shape — they feed the prefab generators when/if a prefab needs an SO reference.
+| Scene | Controller | Behavior |
+|-------|-----------|----------|
+| `_Splashscreen` | `SplashscreenController` | Shows placeholder logo via OnGUI, waits `_duration` seconds |
+| `_Intro` | `IntroController` | Plays VideoPlayer, skippable via any key |
+| `_MainMenu` | `MainMenuController` | uGUI: "Press Start" (blinking) → 4-option menu (New Game, Continue, Delete, Battle Mode) |
+| `_Name` | `NameController` | uGUI: two TMP_InputFields + Confirm button |
+| `_Gameplay` | (no controller) | Player, partner Agumon, test interactable, ground plane |
 
-PlayMode test fixtures are the one exception: they're built in memory and torn down at teardown, never saved to disk.
+## Gameplay systems (Phase 1)
+
+### Player movement
+[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) — `CharacterController`-based, camera-relative horizontal movement. Owns an `InputSystem_Actions` instance directly (no input service wrapper). Walk/sprint, gravity, rotates to face movement direction. Includes interaction detection via `SphereCast`.
+
+### Camera
+[GameplayCamera.cs](Assets/_Project/Scripts/GameplayCamera.cs) — fixed position, `LookAt` player in `LateUpdate`. Digimon World 1 style: camera doesn't follow, just tracks.
+
+### Partner follow
+[DigimonFollow.cs](Assets/_Project/Scripts/DigimonFollow.cs) — `CharacterController`-based AI. Follows when distance > `_followDistance`, slows as it approaches `_stopDistance`, stops when close. Includes gravity.
+
+### Interaction
+[IInteractable.cs](Assets/_Project/Scripts/IInteractable.cs) — interface: `InteractPrompt`, `Interact()`, `ShowPrompt()`, `HidePrompt()`. PlayerController does a `SphereCast` each frame and manages show/hide transitions. [TestInteractable.cs](Assets/_Project/Scripts/TestInteractable.cs) is a test cube that changes color on interact with a billboard TextMeshPro prompt.
+
+### Input
+`InputSystem_Actions.inputactions` has C# code generation enabled (see `.meta`). The generated `InputSystem_Actions` class is used directly by `PlayerController` — no input service wrapper. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next.
+
+## Editor workflow: generators
+
+**Two-pass workflow — prefabs first, then scenes.** All menu items live under `Tools → DigimonWorld`.
+
+### Generator files
+
+| File | Responsibility |
+|------|---------------|
+| [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
+| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs: Bootstrapper, AudioSystem, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon |
+| [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
+| [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
+| [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All 6 scenes. Bootstrap, Splashscreen, Intro, MainMenu, Name, Gameplay, plus GenerateAll |
+
+### Rules
+
+- **One menu item per prefab.** Add a new service/prefab by adding a const path, a `[MenuItem]` method, and one call to the shared `SavePrefab` helper (or manual creation for complex UI prefabs).
+- **Never mix prefab creation and scene composition in one pass.** The prefab pass must `AssetDatabase.SaveAssets` before any scene generator reads the prefab.
+- **Generators are idempotent** — re-running overwrites in place.
+- **Use `PrefabUtility.InstantiatePrefab`** in scenes (not raw `Instantiate` — that breaks the prefab link).
+- **Scene generator registers scenes in Build Settings** — `_Bootstrap` at index 0, others appended.
+- **Complex UI prefabs get their own generator file** (e.g. `GenerateMainMenuPrefab.cs`) to keep `GeneratePrefabs.cs` focused on simple prefabs.
+
+### Materials
+
+`PrefabGeneratorUtils.CreateOrLoadMaterial(path, color)` creates a URP Lit material at the given asset path, using `_BaseColor` (not legacy `_Color`). Materials live alongside their assets:
+- `Assets/_Project/Digimons/Agumon/Agumon.mat`
+- `Assets/_Project/Props/Ground.mat`
+
+## 3D model generation (Blender)
+
+Placeholder models are generated via headless Blender Python scripts under `Assets/_Project/Scripts/Editor/Generators/BlenderScripts/`. Blender path: `C:\Program Files\Blender Foundation\Blender 5.1\blender.exe`.
+
+```bash
+blender.exe --background --python generate_agumon.py -- "output/path.fbx"
+```
+
+Key export settings for Unity compatibility (no -90° rotation):
+```python
+bpy.ops.export_scene.fbx(
+    axis_forward='-Z', axis_up='Y',
+    use_space_transform=True, bake_space_transform=True,
+)
+```
+
+Pivot points must be at the feet (shift mesh vertices so min_z = 0, keep origin at world origin).
+
+Current models:
+- `Assets/_Project/Player/Player.fbx` — human figure (~1.8m)
+- `Assets/_Project/Digimons/Agumon/Agumon.fbx` — stocky dinosaur (~1m)
 
 ## Naming & conventions
 
-- **Namespaces:** not used. Scripts live in the global namespace. Revisit if assembly/naming collisions actually show up.
-- **Services:** `PascalCase` MonoBehaviour inheriting `PersistentSingleton<Self>` (e.g. `AudioSystem : PersistentSingleton<AudioSystem>`). No `I<Name>Service` interface.
-- **Scenes:** `PascalCase.unity`; scenes that are *not* player-facing gameplay (bootstrap, intro, debug) are prefixed with `_` (`_Bootstrap.unity`, `_Intro.unity`). Zone scenes will use `Zone_` prefix when they arrive.
-- **Prefabs:** `PascalCase.prefab`, filename matches the dominant component (`AudioSystem.prefab` contains `AudioSystem`).
+- **Namespaces:** not used. Scripts live in the global namespace.
+- **Services:** `PascalCase` MonoBehaviour inheriting `PersistentSingleton<Self>`.
+- **Scenes:** `PascalCase.unity`; non-gameplay scenes prefixed with `_` (`_Bootstrap.unity`, `_Intro.unity`). Zone scenes will use `Zone_` prefix.
+- **Prefabs:** `PascalCase.prefab`, filename matches the dominant component.
 - **ScriptableObjects:** `PascalCaseDefinition` or `PascalCaseData`.
 - **Private fields:** `_camelCase`; serialized fields `[SerializeField] private ...`.
 - **Folders:** `PascalCase`.
 
 ## Phased system introduction (the core rule)
 
-Each system enters the plan at the phase where gameplay first actually needs it — not upfront. Audio, UI framework, scene loader, debug tools are all deferred to their first real consumer. See the Implementation Order in `DigimonWorld1.md`.
-
-Concretely: don't build a UI framework in Phase 0 because "we'll need it." Build it in Phase 2 when dialogue + HUD arrive. Don't add `AudioSource.Play` ad-hoc in Phase 3 to sneak audio in before Phase 4 — pull the audio item forward instead.
-
-(`AudioSystem.cs` exists as a stub earlier than its nominal Phase 4 slot — it's currently the validation target for the bootstrap-singleton-generator pipeline, not a real service yet.)
-
-## Project layout (current)
-
-```
-Assets/
-  _Project/
-    Input/       # InputSystem_Actions.inputactions — Unity's default new-input-system asset, not yet wrapped by a service
-    Prefabs/     # AudioSystem.prefab — generated
-    Scenes/      # _Bootstrap.unity (generated), _Intro.unity (hand-authored, plays IntroVideo.mp4)
-    Scripts/
-      Bootstrapper.cs              # [RuntimeInitializeOnLoadMethod] additively loads _Bootstrap
-      PersistentSingleton.cs       # generic MonoBehaviour singleton base
-      AudioSystem.cs               # first service stub (singleton pattern reference)
-      Editor/
-        FileExtensions.cs          # Project panel shows file extensions
-        Generators/
-          GenerateBootstrapPrefabs.cs   # one [MenuItem] per prefab
-          GenerateBootstrapScene.cs     # builds _Bootstrap.unity from prefabs + registers in Build Settings
-    Settings/    # URP assets (PC_RPAsset, Mobile_RPAsset, renderers, volume profile)
-    Videos/      # IntroVideo.mp4 (used by _Intro.unity)
-  Resources/     # empty
-```
-
-Folders for `UI/`, `Debug/`, zone scenes, etc. get created by the phase that introduces them. Don't pre-create empty folders.
+Each system enters at the phase where gameplay first needs it — not upfront. Don't build a UI framework in Phase 0 because "we'll need it." Build it in Phase 2 when dialogue + HUD arrive.
 
 ## Key packages
 
-- **Input System** (`com.unity.inputsystem` 1.19.0) — new input system is the standard; do not use the legacy `Input` class.
-- **URP** (`com.unity.render-pipelines.universal` 17.3.0) — both PC and Mobile render pipeline assets exist under `_Project/Settings/`.
+- **Input System** (`com.unity.inputsystem` 1.19.0) — new input system with code-generated wrapper. Do not use the legacy `Input` class.
+- **URP** (`com.unity.render-pipelines.universal` 17.3.0) — materials must use `Universal Render Pipeline/Lit` shader and `_BaseColor` property.
 - **AI Navigation** (`com.unity.ai.navigation` 2.0.11) — for partner follow / enemy AI in later phases.
 - **PrimeTween** (`com.kyrylokuzyk.primetween` 1.3.8) — preferred tweening library; use it instead of coroutine-based tweens.
-- **Eflatun.SceneReference** (git package, 5.0.0) — typed scene references for the Phase 1 scene/zone loader (avoid raw string scene names).
+- **Eflatun.SceneReference** (git package, 5.0.0) — typed scene references used by `GameManager`. Serializes by GUID internally; construct via `new SceneReference(guid)` or assign in Inspector.
 - **Timeline** (1.8.11) — reserved for the Phase 6 cutscene system.
 
 ## Coding principles
 
-- **KISS** — simplest thing that works. No clever patterns where a plain `if` does the job. If a class is under 50 lines and clear, don't split it.
-- **YAGNI** — don't build for hypothetical needs. No interfaces with one implementation, no config knobs with one value, no abstraction layers "for later." This is why services are singletons with no `I<Name>Service` interface — extract one only when a second implementation shows up.
-- **DRY** — remove real duplication, not shape-similar code. Three copies of the same logic → extract. Two functions that happen to both take a `Vector3` → leave alone. Wrong abstraction costs more than repetition.
+- **KISS** — simplest thing that works. No clever patterns where a plain `if` does the job.
+- **YAGNI** — don't build for hypothetical needs. No interfaces with one implementation, no config knobs with one value.
+- **DRY** — remove real duplication, not shape-similar code. Wrong abstraction costs more than repetition.
 
-When in doubt, lean KISS over DRY. A bit of repetition is cheaper to read and change than the wrong shared helper.
+When in doubt, lean KISS over DRY.
 
 ## Git
 
@@ -119,4 +164,5 @@ When in doubt, lean KISS over DRY. A bit of repetition is cheaper to read and ch
 - No `.editorconfig`, no formatter config.
 - No asmdefs — everything compiles into the default assemblies.
 - No unit tests.
-- No InputSystem service wrapper around `InputSystem_Actions.inputactions` — arrives with Phase 1's player movement.
+- No async scene loading or loading screen.
+- No zone/area concept beyond the single test ground plane.
