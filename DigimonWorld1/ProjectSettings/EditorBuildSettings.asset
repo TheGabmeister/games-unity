@@ -26,6 +26,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/_GameplayBootstrap.unity
     guid: 0ca9a58cfb353f84ca0c30be20f1a0e5
+  - enabled: 1
+    path: Assets/_Project/Scenes/Zones/Zone1.unity
+    guid: f387989add9642c449f556d43e4768e3
+  - enabled: 1
+    path: Assets/_Project/Scenes/Zones/Zone2.unity
+    guid: fd8044e6c69d4a2408b99646fbe30cb7
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
