@@ -36,9 +36,9 @@ No CLI build pipeline. All work happens in the Unity Editor:
 | `ScreenFader` | Full-screen Canvas overlay (sortingOrder 999). `FadeOut()` / `FadeIn()` are `async Awaitable` using `Time.unscaledDeltaTime` |
 | `SceneLoader` | Async scene load/unload via `Awaitable`. `LoadScene(SceneReference)` and `LoadScenes(params SceneReference[])`. Fires `OnSceneLoadStarted` / `OnSceneLoadCompleted` events. Unloads all non-bootstrap scenes before loading |
 
-### Current services in _GameplayBootstrap
+### Additional services in _Gameplay
 
-`_GameplayBootstrap.unity` is loaded additively alongside `_Gameplay` by `GameManager.LoadGameplayScene()`. Both are unloaded when leaving gameplay.
+`_Gameplay.unity` holds gameplay-scoped singletons alongside the player, partner, and camera. Zone scenes are loaded/unloaded additively on top of it.
 
 | Service | Role |
 |---------|------|
@@ -50,7 +50,7 @@ No CLI build pipeline. All work happens in the Unity Editor:
 ```
 _Bootstrap (persistent, auto-loaded)
     ↓ GameManager.Start()
-_Splashscreen → _Intro → _MainMenu → _Name → _GameplayBootstrap + _Gameplay
+_Splashscreen → _Intro → _MainMenu → _Name → _Gameplay + Zone scenes
 ```
 
 Each scene has a controller MonoBehaviour that drives its logic and calls `GameManager.Instance.LoadXxxScene()` to advance:
@@ -61,7 +61,7 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 | `_Intro` | `IntroController` | Plays VideoPlayer, skippable via any key |
 | `_MainMenu` | `MainMenuController` | uGUI: "Press Start" (blinking) → 4-option menu (New Game, Continue, Delete, Battle Mode) |
 | `_Name` | `NameController` | uGUI: two TMP_InputFields + Confirm button |
-| `_Gameplay` | (no controller) | Player, partner Agumon, test interactable, NPC, ground plane |
+| `_Gameplay` | (no controller) | Player, partner Agumon, camera, InputManager, DialogueManager. Zone scenes loaded additively on top |
 
 ## Gameplay systems (Phase 1)
 
@@ -96,7 +96,7 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 | [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
 | [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
 | [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |
-| [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All 7 scenes. Bootstrap, Splashscreen, Intro, MainMenu, Name, GameplayBootstrap, Gameplay, plus GenerateAll |
+| [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All scenes: Bootstrap, Splashscreen, Intro, MainMenu, Name, Gameplay, Zone1, Zone2, plus GenerateAll |
 
 ### Rules
 

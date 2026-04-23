@@ -56,9 +56,6 @@ MonoBehaviour:
   _nameScene:
     asset: {fileID: 102900000, guid: 6df17fbd377c01448aa3d2d37feed8f9, type: 3}
     guid: 6df17fbd377c01448aa3d2d37feed8f9
-  _gameplayBootstrapScene:
-    asset: {fileID: 102900000, guid: 0ca9a58cfb353f84ca0c30be20f1a0e5, type: 3}
-    guid: 0ca9a58cfb353f84ca0c30be20f1a0e5
   _gameplayScene:
     asset: {fileID: 102900000, guid: a7d02de308a9703409cd7ad2b60d9d7a, type: 3}
     guid: a7d02de308a9703409cd7ad2b60d9d7a

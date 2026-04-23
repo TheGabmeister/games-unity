@@ -25,7 +25,6 @@ public static class GeneratePrefabs
     private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
     private const string MainMenuScenePath = "Assets/_Project/Scenes/_MainMenu.unity";
     private const string NameScenePath = "Assets/_Project/Scenes/_Name.unity";
-    private const string GameplayBootstrapScenePath = "Assets/_Project/Scenes/_GameplayBootstrap.unity";
     private const string GameplayScenePath = "Assets/_Project/Scenes/_Gameplay.unity";
     private const string IntroVideoPath = "Assets/_Project/Videos/IntroVideo.mp4";
     private const string PlayerModelPath = "Assets/_Project/Player/Player.fbx";
@@ -49,7 +48,6 @@ public static class GeneratePrefabs
 
         SerializedObject so = new SerializedObject(config);
         PrefabGeneratorUtils.SetSceneReference(so, "_bootstrapScene", BootstrapScenePath);
-        PrefabGeneratorUtils.SetSceneReference(so, "_gameplayBootstrapScene", GameplayBootstrapScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
         so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -144,7 +142,6 @@ public static class GeneratePrefabs
         PrefabGeneratorUtils.SetSceneReference(so, "_introScene", IntroScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_mainMenuScene", MainMenuScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_nameScene", NameScenePath);
-        PrefabGeneratorUtils.SetSceneReference(so, "_gameplayBootstrapScene", GameplayBootstrapScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
 
         if (screenFader != null)

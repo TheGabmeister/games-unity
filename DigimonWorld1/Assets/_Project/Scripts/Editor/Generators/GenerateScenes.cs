@@ -13,7 +13,6 @@ public static class GenerateScenes
     private const string IntroScenePath = SceneDir + "/_Intro.unity";
     private const string MainMenuScenePath = SceneDir + "/_MainMenu.unity";
     private const string NameScenePath = SceneDir + "/_Name.unity";
-    private const string GameplayBootstrapScenePath = SceneDir + "/_GameplayBootstrap.unity";
     private const string GameplayScenePath = SceneDir + "/_Gameplay.unity";
     private const string ZoneDir = SceneDir + "/Zones";
     private const string Zone1ScenePath = ZoneDir + "/Zone1.unity";
@@ -105,8 +104,8 @@ public static class GenerateScenes
         GenerateSceneWithPrefab(NameScenePath, NameControllerPrefabPath, "_Name");
     }
 
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate GameplayBootstrap Scene")]
-    public static void GenerateGameplayBootstrap()
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Gameplay Scene")]
+    public static void GenerateGameplay()
     {
         GameObject inputManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InputManagerPrefabPath);
         if (inputManagerPrefab == null)
@@ -122,24 +121,6 @@ public static class GenerateScenes
             return;
         }
 
-        PrefabGeneratorUtils.EnsureFolder(SceneDir);
-
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        PrefabUtility.InstantiatePrefab(inputManagerPrefab, scene);
-        PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
-
-        if (!SaveScene(scene, GameplayBootstrapScenePath)) return;
-
-        AppendSceneToBuildSettings(GameplayBootstrapScenePath);
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"_GameplayBootstrap scene generated at {GameplayBootstrapScenePath}");
-    }
-
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Gameplay Scene")]
-    public static void GenerateGameplay()
-    {
         GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
         if (playerPrefab == null)
         {
@@ -154,16 +135,12 @@ public static class GenerateScenes
             return;
         }
 
-        GameObject npcPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(NPCPrefabPath);
-        if (npcPrefab == null)
-        {
-            Debug.LogError($"NPC prefab not found at {NPCPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate NPC' first.");
-            return;
-        }
-
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        PrefabUtility.InstantiatePrefab(inputManagerPrefab, scene);
+        PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
 
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);
@@ -190,40 +167,6 @@ public static class GenerateScenes
         digimonSo.FindProperty("_target").objectReferenceValue = playerGo.transform;
         digimonSo.ApplyModifiedPropertiesWithoutUndo();
 
-        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        ground.name = "Ground";
-        ground.transform.position = Vector3.zero;
-        ground.transform.localScale = Vector3.one;
-        ground.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Ground.mat", new Color(0.3f, 0.6f, 0.3f));
-        SceneManager.MoveGameObjectToScene(ground, scene);
-
-        // Test Interactable
-        GameObject interactable = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        interactable.name = "TestInteractable";
-        interactable.transform.position = new Vector3(0f, 0.5f, 3f);
-        SceneManager.MoveGameObjectToScene(interactable, scene);
-
-        TestInteractable testInteractable = interactable.AddComponent<TestInteractable>();
-
-        GameObject promptGo = new GameObject("PromptText");
-        promptGo.transform.SetParent(interactable.transform, false);
-        promptGo.transform.localPosition = new Vector3(0f, 1.2f, 0f);
-
-        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
-        tmp.text = "Press E";
-        tmp.fontSize = 4;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
-        tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
-
-        SerializedObject testSo = new SerializedObject(testInteractable);
-        testSo.FindProperty("_promptText").objectReferenceValue = tmp;
-        testSo.ApplyModifiedPropertiesWithoutUndo();
-
-        // NPC
-        GameObject npcGo = (GameObject)PrefabUtility.InstantiatePrefab(npcPrefab, scene);
-        npcGo.transform.position = new Vector3(5f, 0f, 3f);
-
         if (!SaveScene(scene, GameplayScenePath)) return;
 
         AppendSceneToBuildSettings(GameplayScenePath);
@@ -236,6 +179,13 @@ public static class GenerateScenes
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Zone1 Scene")]
     public static void GenerateZone1()
     {
+        GameObject npcPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(NPCPrefabPath);
+        if (npcPrefab == null)
+        {
+            Debug.LogError($"NPC prefab not found at {NPCPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate NPC' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(ZoneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -265,6 +215,33 @@ public static class GenerateScenes
         sphere.transform.localScale = new Vector3(4f, 4f, 4f);
         sphere.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone1Landmark.mat", new Color(0.9f, 0.1f, 0.1f));
         SceneManager.MoveGameObjectToScene(sphere, scene);
+
+        // Test Interactable
+        GameObject interactable = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        interactable.name = "TestInteractable";
+        interactable.transform.position = new Vector3(0f, 0.5f, 3f);
+        SceneManager.MoveGameObjectToScene(interactable, scene);
+
+        TestInteractable testInteractable = interactable.AddComponent<TestInteractable>();
+
+        GameObject promptGo = new GameObject("PromptText");
+        promptGo.transform.SetParent(interactable.transform, false);
+        promptGo.transform.localPosition = new Vector3(0f, 1.2f, 0f);
+
+        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+        tmp.text = "Press E";
+        tmp.fontSize = 4;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.white;
+        tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
+
+        SerializedObject testSo = new SerializedObject(testInteractable);
+        testSo.FindProperty("_promptText").objectReferenceValue = tmp;
+        testSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // NPC
+        GameObject npcGo = (GameObject)PrefabUtility.InstantiatePrefab(npcPrefab, scene);
+        npcGo.transform.position = new Vector3(5f, 0f, 3f);
 
         if (!SaveScene(scene, Zone1ScenePath)) return;
         AppendSceneToBuildSettings(Zone1ScenePath);
@@ -323,7 +300,6 @@ public static class GenerateScenes
         GenerateIntro();
         GenerateMainMenu();
         GenerateName();
-        GenerateGameplayBootstrap();
         GenerateGameplay();
         GenerateZone1();
         GenerateZone2();

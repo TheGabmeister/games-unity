@@ -11,8 +11,5 @@ public class Bootstrapper
 
         if (SceneManager.GetSceneByPath(config.BootstrapScenePath).isLoaded) return;
         SceneManager.LoadScene(config.BootstrapScenePath, LoadSceneMode.Additive);
-
-        if (SceneManager.GetActiveScene().path == config.GameplayScenePath)
-            SceneManager.LoadScene(config.GameplayBootstrapScenePath, LoadSceneMode.Additive);
     }
 }

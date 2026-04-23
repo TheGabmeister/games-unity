@@ -5,10 +5,8 @@ using UnityEngine;
 public class BootstrapConfig : ScriptableObject
 {
     [SerializeField] private SceneReference _bootstrapScene;
-    [SerializeField] private SceneReference _gameplayBootstrapScene;
     [SerializeField] private SceneReference _gameplayScene;
 
     public string BootstrapScenePath => _bootstrapScene.Path;
-    public string GameplayBootstrapScenePath => _gameplayBootstrapScene.Path;
     public string GameplayScenePath => _gameplayScene.Path;
 }
