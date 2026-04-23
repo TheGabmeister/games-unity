@@ -183,6 +183,34 @@ public static class PrefabGeneratorUtils
         assetProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
     }
 
+    public static Material CreateOrLoadMaterial(string path, Color color)
+    {
+        string dir = System.IO.Path.GetDirectoryName(path).Replace("\\", "/");
+        EnsureFolder(dir);
+
+        Material existing = AssetDatabase.LoadAssetAtPath<Material>(path);
+        if (existing != null)
+        {
+            existing.color = color;
+            EditorUtility.SetDirty(existing);
+            AssetDatabase.SaveAssets();
+            return existing;
+        }
+
+        Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+        Material mat = new Material(shader);
+        mat.SetColor("_BaseColor", color);
+        AssetDatabase.CreateAsset(mat, path);
+        AssetDatabase.SaveAssets();
+        return mat;
+    }
+
+    public static void ApplyMaterialToRenderers(GameObject root, Material material)
+    {
+        foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>())
+            renderer.sharedMaterial = material;
+    }
+
     public static void EnsureFolder(string path)
     {
         if (AssetDatabase.IsValidFolder(path)) return;

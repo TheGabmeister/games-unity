@@ -23,6 +23,7 @@ public static class GenerateScenes
     private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
     private const string NameControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NameController.prefab";
     private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
+    private const string AgumonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Agumon.prefab";
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
     public static void GenerateBootstrap()
@@ -98,6 +99,13 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject agumonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AgumonPrefabPath);
+        if (agumonPrefab == null)
+        {
+            Debug.LogError($"Agumon prefab not found at {AgumonPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate Agumon' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -118,10 +126,20 @@ public static class GenerateScenes
         playerSo.FindProperty("_cameraTransform").objectReferenceValue = camGo.transform;
         playerSo.ApplyModifiedPropertiesWithoutUndo();
 
+        // Partner Digimon
+        GameObject agumonGo = (GameObject)PrefabUtility.InstantiatePrefab(agumonPrefab, scene);
+        agumonGo.transform.position = new Vector3(-1.5f, 0f, -1f);
+        DigimonFollow digimonFollow = agumonGo.GetComponent<DigimonFollow>();
+
+        SerializedObject digimonSo = new SerializedObject(digimonFollow);
+        digimonSo.FindProperty("_target").objectReferenceValue = playerGo.transform;
+        digimonSo.ApplyModifiedPropertiesWithoutUndo();
+
         GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
         ground.name = "Ground";
         ground.transform.position = Vector3.zero;
         ground.transform.localScale = Vector3.one;
+        ground.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Ground.mat", new Color(0.3f, 0.6f, 0.3f));
         SceneManager.MoveGameObjectToScene(ground, scene);
 
         // Test Interactable

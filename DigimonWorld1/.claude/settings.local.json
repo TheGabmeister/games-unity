@@ -12,7 +12,8 @@
       "WebFetch(domain:medium.com)",
       "WebFetch(domain:weisl.github.io)",
       "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --python-expr \"import bpy; help\\(bpy.ops.export_scene.fbx\\)\")",
-      "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --python \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Scripts/Editor/Generators/BlenderScripts/generate_player_model.py\" -- \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Player/Player.fbx\")"
+      "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --python \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Scripts/Editor/Generators/BlenderScripts/generate_player_model.py\" -- \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Player/Player.fbx\")",
+      "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --python \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Scripts/Editor/Generators/BlenderScripts/generate_agumon.py\" -- \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Digimons/Agumon/Agumon.fbx\")"
     ]
   }
 }

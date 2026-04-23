@@ -13,6 +13,7 @@ public static class GeneratePrefabs
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
     private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
+    private const string AgumonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Agumon.prefab";
 
     private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
     private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
@@ -21,6 +22,7 @@ public static class GeneratePrefabs
     private const string GameplayScenePath = "Assets/_Project/Scenes/_Gameplay.unity";
     private const string IntroVideoPath = "Assets/_Project/Videos/IntroVideo.mp4";
     private const string PlayerModelPath = "Assets/_Project/Player/Player.fbx";
+    private const string AgumonModelPath = "Assets/_Project/Digimons/Agumon/Agumon.fbx";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
     public static void GenerateBootstrapper()
@@ -187,5 +189,52 @@ public static class GeneratePrefabs
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"Prefab generated at {PlayerPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Agumon")]
+    public static void GenerateAgumon()
+    {
+        GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(AgumonModelPath);
+        if (modelAsset == null)
+        {
+            Debug.LogError($"Agumon model not found at {AgumonModelPath}.");
+            return;
+        }
+
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+
+        GameObject root = new GameObject("Agumon");
+        try
+        {
+            CharacterController cc = root.AddComponent<CharacterController>();
+            cc.center = new Vector3(0f, 0.5f, 0f);
+            cc.height = 1f;
+            cc.radius = 0.3f;
+
+            root.AddComponent<DigimonFollow>();
+
+            GameObject model = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
+            model.name = "AgumonModel";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+
+            Material agumonMat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Digimons/Agumon/Agumon.mat", new Color(1f, 0.8f, 0.2f));
+            PrefabGeneratorUtils.ApplyMaterialToRenderers(model, agumonMat);
+
+            PrefabUtility.SaveAsPrefabAsset(root, AgumonPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {AgumonPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {AgumonPrefabPath}");
     }
 }
