@@ -26,6 +26,8 @@ public static class GenerateScenes
     private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
     private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
     private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/DialogueManager.prefab";
+    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
+    private const string HUDPrefabPath = PrefabGeneratorUtils.PrefabDir + "/HUD.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
@@ -137,12 +139,28 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject timeSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TimeSystemPrefabPath);
+        if (timeSystemPrefab == null)
+        {
+            Debug.LogError($"TimeSystem prefab not found at {TimeSystemPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate TimeSystem' first.");
+            return;
+        }
+
+        GameObject hudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(HUDPrefabPath);
+        if (hudPrefab == null)
+        {
+            Debug.LogError($"HUD prefab not found at {HUDPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate HUD' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
         PrefabUtility.InstantiatePrefab(inputManagerPrefab, scene);
         PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
+        PrefabUtility.InstantiatePrefab(timeSystemPrefab, scene);
+        PrefabUtility.InstantiatePrefab(hudPrefab, scene);
 
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);

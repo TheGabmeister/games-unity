@@ -17,6 +17,7 @@ public static class GeneratePrefabs
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
     private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
+    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
     private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
     private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
@@ -77,6 +78,12 @@ public static class GeneratePrefabs
     public static void GenerateSceneLoader()
     {
         PrefabGeneratorUtils.SavePrefab("SceneLoader", SceneLoaderPrefabPath, go => go.AddComponent<SceneLoader>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate TimeSystem")]
+    public static void GenerateTimeSystem()
+    {
+        PrefabGeneratorUtils.SavePrefab("TimeSystem", TimeSystemPrefabPath, go => go.AddComponent<TimeSystem>());
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenFader")]
