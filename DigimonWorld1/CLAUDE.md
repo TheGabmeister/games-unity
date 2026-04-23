@@ -33,13 +33,13 @@ The intended pattern, per `SPEC_PHASE_00.md`:
 - **No `I<Name>Service` interfaces.** Call sites couple to the concrete singleton. Extract an interface only when a second implementation actually shows up.
 - Service `Awake` order on the Bootstrap scene is unspecified relative to each other. If service A needs service B during `Awake`, resolve it in `Start` or set A's Script Execution Order explicitly.
 - `EditorBootstrapLoader` — `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` — additively loads `Bootstrap` if it isn't already loaded, so you can press Play from any zone scene during iteration.
-- Scripts under `DigimonWorld.Core` (bootstrapper + editor loader) and `DigimonWorld.<Subsystem>` (e.g. `DigimonWorld.Input`).
+- Scripts live in the global namespace; organisation is by folder (`Assets/_Project/Scripts/`, `Scripts/Editor/Generators/`, etc.), not by namespace.
 
 When implementing Phase 0, follow the acceptance checklist at the bottom of `SPEC_PHASE_00.md`.
 
 ## Naming conventions (from SPEC_PHASE_00.md)
 
-- **Namespace:** `DigimonWorld.<Subsystem>` (e.g. `DigimonWorld.Input`)
+- **Namespaces:** not used — scripts live in the global namespace. Revisit if assembly/naming collisions actually show up.
 - **Services:** `PascalCaseService` — MonoBehaviour singleton with `public static <Service> Instance { get; private set; }` (`InputService`). No `I<Name>Service` interface.
 - **ScriptableObjects:** `PascalCaseDefinition` or `PascalCaseData`
 - **Enums:** `PascalCase` singular (`InputActionMap`)
