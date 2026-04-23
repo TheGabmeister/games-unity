@@ -1,27 +1,21 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class NameController : MonoBehaviour
 {
-    private string _playerName = "";
-    private string _digimonName = "";
-    private bool _editingDigimonName;
+    [SerializeField] private TMP_InputField _playerNameInput;
+    [SerializeField] private TMP_InputField _digimonNameInput;
 
-    private void Update()
+    private void Start()
     {
-        if (Keyboard.current == null)
+        _playerNameInput.Select();
+    }
+
+    public void OnConfirm()
+    {
+        if (_playerNameInput.text.Length == 0 || _digimonNameInput.text.Length == 0)
             return;
 
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
-        {
-            if (!_editingDigimonName)
-            {
-                _editingDigimonName = true;
-            }
-            else if (_digimonName.Length > 0)
-            {
-                GameManager.Instance.LoadGameplayScene();
-            }
-        }
+        GameManager.Instance.LoadGameplayScene();
     }
 }

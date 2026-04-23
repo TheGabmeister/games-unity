@@ -213,10 +213,149 @@ public static class GenerateBootstrapPrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NameController")]
     public static void GenerateNameController()
     {
-        SavePrefab("NameController", NameControllerPrefabPath, go =>
+        EnsureFolder(PrefabDir);
+
+        GameObject root = new GameObject("NameController");
+        try
         {
-            go.AddComponent<NameController>();
-        });
+            Canvas canvas = root.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            CanvasScaler scaler = root.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            root.AddComponent<GraphicRaycaster>();
+
+            GameObject eventSystemGo = new GameObject("EventSystem");
+            eventSystemGo.transform.SetParent(root.transform, false);
+            eventSystemGo.AddComponent<EventSystem>();
+            eventSystemGo.AddComponent<InputSystemUIInputModule>();
+
+            CreateText("Title", root.transform,
+                "Enter Names", 48, FontStyles.Bold, TextAlignmentOptions.Center,
+                new Vector2(0f, 200f), new Vector2(600f, 70f));
+
+            CreateText("PlayerNameLabel", root.transform,
+                "Player Name", 28, FontStyles.Normal, TextAlignmentOptions.MidlineLeft,
+                new Vector2(-100f, 80f), new Vector2(300f, 40f));
+
+            TMP_InputField playerNameInput = CreateInputField("PlayerNameInput", root.transform,
+                new Vector2(0f, 30f), new Vector2(400f, 50f));
+
+            CreateText("DigimonNameLabel", root.transform,
+                "Digimon Name", 28, FontStyles.Normal, TextAlignmentOptions.MidlineLeft,
+                new Vector2(-100f, -40f), new Vector2(300f, 40f));
+
+            TMP_InputField digimonNameInput = CreateInputField("DigimonNameInput", root.transform,
+                new Vector2(0f, -90f), new Vector2(400f, 50f));
+
+            // Confirm button
+            GameObject buttonGo = new GameObject("ConfirmButton", typeof(RectTransform));
+            buttonGo.transform.SetParent(root.transform, false);
+            Image buttonImage = buttonGo.AddComponent<Image>();
+            buttonImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
+            Button button = buttonGo.AddComponent<Button>();
+            RectTransform buttonRt = buttonGo.GetComponent<RectTransform>();
+            buttonRt.anchorMin = new Vector2(0.5f, 0.5f);
+            buttonRt.anchorMax = new Vector2(0.5f, 0.5f);
+            buttonRt.anchoredPosition = new Vector2(0f, -180f);
+            buttonRt.sizeDelta = new Vector2(200f, 50f);
+
+            TMP_Text buttonText = CreateText("Text", buttonGo.transform,
+                "Confirm", 28, FontStyles.Bold, TextAlignmentOptions.Center,
+                Vector2.zero, new Vector2(200f, 50f));
+            buttonText.color = Color.white;
+
+            // Controller
+            NameController controller = root.AddComponent<NameController>();
+
+            SerializedObject so = new SerializedObject(controller);
+            so.FindProperty("_playerNameInput").objectReferenceValue = playerNameInput;
+            so.FindProperty("_digimonNameInput").objectReferenceValue = digimonNameInput;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            // Wire button onClick to controller.OnConfirm
+            UnityEditor.Events.UnityEventTools.AddPersistentListener(
+                button.onClick,
+                new UnityEngine.Events.UnityAction(controller.OnConfirm));
+
+            PrefabUtility.SaveAsPrefabAsset(root, NameControllerPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {NameControllerPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {NameControllerPrefabPath}");
+    }
+
+    private static TMP_InputField CreateInputField(string name, Transform parent,
+        Vector2 position, Vector2 size)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+
+        Image bg = go.AddComponent<Image>();
+        bg.color = new Color(0.15f, 0.15f, 0.15f, 1f);
+
+        TMP_InputField inputField = go.AddComponent<TMP_InputField>();
+
+        // Text area
+        GameObject textArea = new GameObject("Text Area", typeof(RectTransform));
+        textArea.transform.SetParent(go.transform, false);
+        RectTransform textAreaRt = textArea.GetComponent<RectTransform>();
+        textAreaRt.anchorMin = Vector2.zero;
+        textAreaRt.anchorMax = Vector2.one;
+        textAreaRt.offsetMin = new Vector2(10f, 0f);
+        textAreaRt.offsetMax = new Vector2(-10f, 0f);
+        textArea.AddComponent<RectMask2D>();
+
+        // Placeholder
+        GameObject placeholderGo = new GameObject("Placeholder", typeof(RectTransform));
+        placeholderGo.transform.SetParent(textArea.transform, false);
+        TextMeshProUGUI placeholder = placeholderGo.AddComponent<TextMeshProUGUI>();
+        placeholder.text = "Enter name...";
+        placeholder.fontSize = 24;
+        placeholder.fontStyle = FontStyles.Italic;
+        placeholder.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+        placeholder.alignment = TextAlignmentOptions.MidlineLeft;
+        RectTransform placeholderRt = placeholderGo.GetComponent<RectTransform>();
+        placeholderRt.anchorMin = Vector2.zero;
+        placeholderRt.anchorMax = Vector2.one;
+        placeholderRt.offsetMin = Vector2.zero;
+        placeholderRt.offsetMax = Vector2.zero;
+
+        // Input text
+        GameObject textGo = new GameObject("Text", typeof(RectTransform));
+        textGo.transform.SetParent(textArea.transform, false);
+        TextMeshProUGUI inputText = textGo.AddComponent<TextMeshProUGUI>();
+        inputText.fontSize = 24;
+        inputText.color = Color.white;
+        inputText.alignment = TextAlignmentOptions.MidlineLeft;
+        RectTransform textRt = textGo.GetComponent<RectTransform>();
+        textRt.anchorMin = Vector2.zero;
+        textRt.anchorMax = Vector2.one;
+        textRt.offsetMin = Vector2.zero;
+        textRt.offsetMax = Vector2.zero;
+
+        inputField.textViewport = textAreaRt;
+        inputField.textComponent = inputText;
+        inputField.placeholder = placeholder;
+        inputField.characterLimit = 8;
+
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = position;
+        rt.sizeDelta = size;
+
+        return inputField;
     }
 
     private static void SetSceneReference(SerializedObject so, string fieldName, string scenePath)
