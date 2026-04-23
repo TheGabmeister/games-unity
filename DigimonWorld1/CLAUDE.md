@@ -111,6 +111,8 @@ Key export settings: `axis_forward='-Z', axis_up='Y', use_space_transform=True, 
 - **DRY** — remove real duplication, not shape-similar code. Wrong abstraction costs more than repetition.
 - **Phased introduction** — each system enters at the phase where gameplay first needs it.
 
+When in doubt, lean KISS over DRY.
+
 ## Git
 
 - Remote: `TheGabmeister/games-unity` (project is a sub-directory).
