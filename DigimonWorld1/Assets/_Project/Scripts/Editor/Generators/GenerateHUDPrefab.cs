@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public static class GenerateHUDPrefab
 {
-    private const string PrefabPath = PrefabGeneratorUtils.PrefabDir + "/HUD.prefab";
+    private const string PrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/HUD.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate HUD")]
     public static void Generate()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.UIPrefabDir);
 
         GameObject root = new GameObject("HUD");
         try

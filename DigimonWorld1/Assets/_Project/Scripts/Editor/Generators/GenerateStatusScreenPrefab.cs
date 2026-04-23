@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public static class GenerateStatusScreenPrefab
 {
-    private const string PrefabPath = PrefabGeneratorUtils.PrefabDir + "/StatusScreen.prefab";
+    private const string PrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/StatusScreen.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate StatusScreen")]
     public static void Generate()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.UIPrefabDir);
 
         GameObject root = new GameObject("StatusScreen");
         try

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class GenerateMainMenuPrefab
 {
-    private const string PrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
+    private const string PrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/MainMenuController.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate MainMenuController")]
     public static void Generate()

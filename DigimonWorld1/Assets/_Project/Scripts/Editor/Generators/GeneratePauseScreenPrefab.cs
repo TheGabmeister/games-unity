@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public static class GeneratePauseScreenPrefab
 {
-    private const string PrefabPath = PrefabGeneratorUtils.PrefabDir + "/PauseScreen.prefab";
+    private const string PrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/PauseScreen.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate PauseScreen")]
     public static void Generate()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.UIPrefabDir);
 
         GameObject root = new GameObject("PauseScreen");
         try

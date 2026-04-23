@@ -6,21 +6,21 @@ using UnityEngine.Video;
 
 public static class GeneratePrefabs
 {
-    private const string BootstrapperPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Bootstrapper.prefab";
-    private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
-    private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
-    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
-    private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
-    private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
-    private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
-    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/PartnerDigimon.prefab";
-    private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
-    private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
-    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
-    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
-    private const string CareSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/CareSystem.prefab";
-    private const string InventoryPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Inventory.prefab";
-    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TrainingFacility.prefab";
+    private const string BootstrapperPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/Bootstrapper.prefab";
+    private const string AudioSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/AudioSystem.prefab";
+    private const string GameManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameManager.prefab";
+    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenFader.prefab";
+    private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/SplashscreenController.prefab";
+    private const string IntroControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/IntroController.prefab";
+    private const string PlayerPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/Player.prefab";
+    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/PartnerDigimon.prefab";
+    private const string NPCPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/NPC.prefab";
+    private const string InputManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/InputManager.prefab";
+    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/SceneLoader.prefab";
+    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/TimeSystem.prefab";
+    private const string CareSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/CareSystem.prefab";
+    private const string InventoryPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/Inventory.prefab";
+    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.InteractablesPrefabDir + "/TrainingFacility.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
     private const string DigimonDataDir = "Assets/_Project/Data/Digimons";
     private const string TrainingDataDir = "Assets/_Project/Data/Training";
@@ -136,7 +136,7 @@ public static class GeneratePrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenFader")]
     public static void GenerateScreenFader()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.ServicesPrefabDir);
 
         GameObject root = new GameObject("ScreenFader");
         try
@@ -268,7 +268,7 @@ public static class GeneratePrefabs
             return;
         }
 
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
 
         GameObject root = new GameObject("Player");
         try
@@ -312,7 +312,7 @@ public static class GeneratePrefabs
             return;
         }
 
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
 
         GameObject root = new GameObject("PartnerDigimon");
         try
@@ -624,7 +624,7 @@ public static class GeneratePrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate TrainingFacility")]
     public static void GenerateTrainingFacility()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.InteractablesPrefabDir);
 
         GameObject root = new GameObject("TrainingFacility");
         try
@@ -681,7 +681,7 @@ public static class GeneratePrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NPC")]
     public static void GenerateNPC()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
 
         GameObject root = new GameObject("NPC");
         try

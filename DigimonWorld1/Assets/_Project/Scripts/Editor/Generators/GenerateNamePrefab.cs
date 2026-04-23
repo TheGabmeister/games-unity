@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public static class GenerateNamePrefab
 {
-    private const string PrefabPath = PrefabGeneratorUtils.PrefabDir + "/NameController.prefab";
+    private const string PrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/NameController.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NameController")]
     public static void Generate()

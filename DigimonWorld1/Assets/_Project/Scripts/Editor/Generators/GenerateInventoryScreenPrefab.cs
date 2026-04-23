@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public static class GenerateInventoryScreenPrefab
 {
-    private const string PrefabPath = PrefabGeneratorUtils.PrefabDir + "/InventoryScreen.prefab";
+    private const string PrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/InventoryScreen.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate InventoryScreen")]
     public static void Generate()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.UIPrefabDir);
 
         GameObject root = new GameObject("InventoryScreen");
         try

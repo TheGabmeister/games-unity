@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public static class GenerateDialoguePrefab
 {
-    private const string PrefabPath = PrefabGeneratorUtils.PrefabDir + "/DialogueManager.prefab";
+    private const string PrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/DialogueManager.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate DialogueManager")]
     public static void Generate()
     {
-        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.UIPrefabDir);
 
         GameObject root = new GameObject("DialogueManager");
         try

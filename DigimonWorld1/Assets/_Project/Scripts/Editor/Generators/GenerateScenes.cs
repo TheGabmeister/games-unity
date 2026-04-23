@@ -20,28 +20,28 @@ public static class GenerateScenes
     private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
     private const string Zone2DataPath = "Assets/_Project/Data/Zones/Zone2.asset";
 
-    private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
-    private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
-    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
-    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
-    private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
-    private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/DialogueManager.prefab";
-    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
-    private const string HUDPrefabPath = PrefabGeneratorUtils.PrefabDir + "/HUD.prefab";
-    private const string CareSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/CareSystem.prefab";
-    private const string InventoryPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Inventory.prefab";
-    private const string InventoryScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InventoryScreen.prefab";
-    private const string PauseScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/PauseScreen.prefab";
-    private const string StatusScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/StatusScreen.prefab";
-    private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
-    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TrainingFacility.prefab";
+    private const string AudioSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/AudioSystem.prefab";
+    private const string GameManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameManager.prefab";
+    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenFader.prefab";
+    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/SceneLoader.prefab";
+    private const string InputManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/InputManager.prefab";
+    private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/DialogueManager.prefab";
+    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/TimeSystem.prefab";
+    private const string HUDPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/HUD.prefab";
+    private const string CareSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/CareSystem.prefab";
+    private const string InventoryPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/Inventory.prefab";
+    private const string InventoryScreenPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/InventoryScreen.prefab";
+    private const string PauseScreenPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/PauseScreen.prefab";
+    private const string StatusScreenPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/StatusScreen.prefab";
+    private const string NPCPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/NPC.prefab";
+    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.InteractablesPrefabDir + "/TrainingFacility.prefab";
     private const string TrainingDataDir = "Assets/_Project/Data/Training";
-    private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
-    private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
-    private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
-    private const string NameControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NameController.prefab";
-    private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
-    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/PartnerDigimon.prefab";
+    private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/SplashscreenController.prefab";
+    private const string IntroControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/IntroController.prefab";
+    private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/MainMenuController.prefab";
+    private const string NameControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/NameController.prefab";
+    private const string PlayerPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/Player.prefab";
+    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/PartnerDigimon.prefab";
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
     public static void GenerateBootstrap()

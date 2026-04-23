@@ -8,10 +8,16 @@ using UnityEngine.UI;
 public static class PrefabGeneratorUtils
 {
     public const string PrefabDir = "Assets/_Project/Prefabs";
+    public const string ServicesPrefabDir = PrefabDir + "/Services";
+    public const string UIPrefabDir = PrefabDir + "/UI";
+    public const string ControllersPrefabDir = PrefabDir + "/Controllers";
+    public const string CharactersPrefabDir = PrefabDir + "/Characters";
+    public const string InteractablesPrefabDir = PrefabDir + "/Interactables";
 
     public static void SavePrefab(string name, string path, System.Action<GameObject> configure)
     {
-        EnsureFolder(PrefabDir);
+        string dir = System.IO.Path.GetDirectoryName(path).Replace("\\", "/");
+        EnsureFolder(dir);
 
         GameObject source = new GameObject(name);
         try

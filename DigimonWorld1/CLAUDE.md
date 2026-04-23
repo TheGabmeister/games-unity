@@ -24,7 +24,7 @@ No CLI build pipeline. All work happens in the Unity Editor:
 - [_Bootstrap.unity](Assets/_Project/Scenes/_Bootstrap.unity) is the persistent scene, additively loaded before any other scene's `Awake` by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) — a **plain class** (not a MonoBehaviour) with `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` + `[DefaultExecutionOrder(-1000)]`. Bootstrapper reads scene paths from [BootstrapConfig.cs](Assets/_Project/Scripts/BootstrapConfig.cs), a `ScriptableObject` in `Resources/` — no hardcoded scene names.
 - One singleton base class: [Singleton.cs](Assets/_Project/Scripts/Singleton.cs). No `DontDestroyOnLoad` — scene lifetimes are managed explicitly by `GameManager` and `Bootstrapper`. Services live as long as their scene does. `OnDestroy()` nulls the static instance.
 - **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up. (`IInteractable` is an interface for world objects, not a service wrapper — that's fine.)
-- Each service lives as its own prefab under `Assets/_Project/Prefabs/`.
+- Each service lives as its own prefab under `Assets/_Project/Prefabs/`, organized into subdirectories: `Services/` (singletons), `UI/` (Canvas-based screens), `Controllers/` (scene controllers), `Characters/` (Player, PartnerDigimon, NPC), `Interactables/` (TrainingFacility).
 - Service `Awake` order is unspecified relative to each other. If service A needs service B during `Awake`, resolve it in `Start` or set A's Script Execution Order explicitly.
 
 ### Current services in _Bootstrap
