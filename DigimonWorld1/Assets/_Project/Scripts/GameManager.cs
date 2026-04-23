@@ -10,28 +10,45 @@ public class GameManager : PersistentSingleton<GameManager>
     [SerializeField] private SceneReference _nameScene;
     [SerializeField] private SceneReference _gameplayScene;
 
+    private void Start()
+    {
+        LoadSplashscreenScene();
+    }
+
     public void LoadSplashscreenScene()
     {
-        SceneManager.LoadScene(_splashscreenScene.Path, LoadSceneMode.Additive);
+        LoadScene(_splashscreenScene);
     }
 
     public void LoadIntroScene()
     {
-        SceneManager.LoadScene(_introScene.Path, LoadSceneMode.Additive);
+        LoadScene(_introScene);
     }
 
     public void LoadMainMenuScene()
     {
-        SceneManager.LoadScene(_mainMenuScene.Path, LoadSceneMode.Additive);
+        LoadScene(_mainMenuScene);
     }
 
     public void LoadNameScene()
     {
-        SceneManager.LoadScene(_nameScene.Path, LoadSceneMode.Additive);
+        LoadScene(_nameScene);
     }
 
     public void LoadGameplayScene()
     {
-        SceneManager.LoadScene(_gameplayScene.Path, LoadSceneMode.Additive);
+        LoadScene(_gameplayScene);
+    }
+
+    private void LoadScene(SceneReference scene)
+    {
+        for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+        {
+            Scene loaded = SceneManager.GetSceneAt(i);
+            if (loaded.name != "_Bootstrap")
+                SceneManager.UnloadSceneAsync(loaded);
+        }
+
+        SceneManager.LoadScene(scene.Path, LoadSceneMode.Additive);
     }
 }
