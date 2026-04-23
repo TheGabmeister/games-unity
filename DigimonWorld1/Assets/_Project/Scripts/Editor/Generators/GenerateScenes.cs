@@ -18,6 +18,8 @@ public static class GenerateScenes
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
     private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
+    private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/DialogueManager.prefab";
+    private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
     private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
@@ -49,12 +51,20 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject dialogueManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DialogueManagerPrefabPath);
+        if (dialogueManagerPrefab == null)
+        {
+            Debug.LogError($"DialogueManager prefab not found at {DialogueManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate DialogueManager' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
         PrefabUtility.InstantiatePrefab(gameManagerPrefab, scene);
         PrefabUtility.InstantiatePrefab(screenFaderPrefab, scene);
+        PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
 
         if (!SaveScene(scene, BootstrapScenePath)) return;
 
@@ -103,6 +113,13 @@ public static class GenerateScenes
         if (agumonPrefab == null)
         {
             Debug.LogError($"Agumon prefab not found at {AgumonPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate Agumon' first.");
+            return;
+        }
+
+        GameObject npcPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(NPCPrefabPath);
+        if (npcPrefab == null)
+        {
+            Debug.LogError($"NPC prefab not found at {NPCPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate NPC' first.");
             return;
         }
 
@@ -164,6 +181,10 @@ public static class GenerateScenes
         SerializedObject testSo = new SerializedObject(testInteractable);
         testSo.FindProperty("_promptText").objectReferenceValue = tmp;
         testSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // NPC
+        GameObject npcGo = (GameObject)PrefabUtility.InstantiatePrefab(npcPrefab, scene);
+        npcGo.transform.position = new Vector3(5f, 0f, 3f);
 
         if (!SaveScene(scene, GameplayScenePath)) return;
 

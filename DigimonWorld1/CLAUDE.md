@@ -34,6 +34,7 @@ No CLI build pipeline. All work happens in the Unity Editor:
 | `AudioSystem` | Stub — validation target for the singleton-generator pipeline |
 | `GameManager` | Scene loader. Holds `SceneReference` fields for all scenes + `ScreenFader` reference. `LoadScene()` unloads all non-bootstrap scenes (buildIndex != 0) then additively loads the target. Kicks off the flow by calling `LoadSplashscreenScene()` in `Start()` |
 | `ScreenFader` | Full-screen Canvas overlay (sortingOrder 999). `FadeOut()` / `FadeIn()` are `async Awaitable` using `Time.unscaledDeltaTime` |
+| `DialogueManager` | Owns dialogue UI Canvas (sortingOrder 100). `StartDialogue(DialogueData)` disables `PlayerController`, shows lines one at a time, E key advances. `EndDialogue()` re-enables player. `IsActive` property for guard checks |
 
 ## Scene flow
 
@@ -51,7 +52,7 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 | `_Intro` | `IntroController` | Plays VideoPlayer, skippable via any key |
 | `_MainMenu` | `MainMenuController` | uGUI: "Press Start" (blinking) → 4-option menu (New Game, Continue, Delete, Battle Mode) |
 | `_Name` | `NameController` | uGUI: two TMP_InputFields + Confirm button |
-| `_Gameplay` | (no controller) | Player, partner Agumon, test interactable, ground plane |
+| `_Gameplay` | (no controller) | Player, partner Agumon, test interactable, NPC, ground plane |
 
 ## Gameplay systems (Phase 1)
 
@@ -65,7 +66,10 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 [DigimonFollow.cs](Assets/_Project/Scripts/DigimonFollow.cs) — `CharacterController`-based AI. Follows when distance > `_followDistance`, slows as it approaches `_stopDistance`, stops when close. Includes gravity.
 
 ### Interaction
-[IInteractable.cs](Assets/_Project/Scripts/IInteractable.cs) — interface: `InteractPrompt`, `Interact()`, `ShowPrompt()`, `HidePrompt()`. PlayerController does a `SphereCast` each frame and manages show/hide transitions. [TestInteractable.cs](Assets/_Project/Scripts/TestInteractable.cs) is a test cube that changes color on interact with a billboard TextMeshPro prompt.
+[IInteractable.cs](Assets/_Project/Scripts/IInteractable.cs) — interface: `InteractPrompt`, `Interact()`, `ShowPrompt()`, `HidePrompt()`. PlayerController does a `SphereCast` each frame and manages show/hide transitions. [TestInteractable.cs](Assets/_Project/Scripts/TestInteractable.cs) is a test cube that changes color on interact with a billboard TextMeshPro prompt. [NPCInteractable.cs](Assets/_Project/Scripts/NPCInteractable.cs) triggers dialogue via `DialogueManager`.
+
+### Dialogue
+[DialogueData.cs](Assets/_Project/Scripts/DialogueData.cs) — `ScriptableObject` with a `DialogueLine[]` (each line has `Speaker` + `Text`). Created via `Create → DigimonWorld → DialogueData`. [DialogueManager.cs](Assets/_Project/Scripts/DialogueManager.cs) — `PersistentSingleton` in Bootstrap. `StartDialogue()` disables `PlayerController`, shows a bottom-screen panel, E key advances lines. Uses its own `InputSystem_Actions` instance; a `_justOpened` flag prevents the triggering E press from advancing past line 0.
 
 ### Input
 `InputSystem_Actions.inputactions` has C# code generation enabled (see `.meta`). The generated `InputSystem_Actions` class is used directly by `PlayerController` — no input service wrapper. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next.
@@ -79,9 +83,10 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 | File | Responsibility |
 |------|---------------|
 | [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
-| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs: Bootstrapper, AudioSystem, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon |
+| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs: Bootstrapper, AudioSystem, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon, NPC. Also `GenerateTestDialogue()` for sample `DialogueData` asset |
 | [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
 | [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
+| [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |
 | [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All 6 scenes. Bootstrap, Splashscreen, Intro, MainMenu, Name, Gameplay, plus GenerateAll |
 
 ### Rules
@@ -98,6 +103,7 @@ Each scene has a controller MonoBehaviour that drives its logic and calls `GameM
 `PrefabGeneratorUtils.CreateOrLoadMaterial(path, color)` creates a URP Lit material at the given asset path, using `_BaseColor` (not legacy `_Color`). Materials live alongside their assets:
 - `Assets/_Project/Digimons/Agumon/Agumon.mat`
 - `Assets/_Project/Props/Ground.mat`
+- `Assets/_Project/Props/NPC.mat`
 
 ## 3D model generation (Blender)
 

@@ -14,6 +14,8 @@ public static class GeneratePrefabs
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
     private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
     private const string AgumonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Agumon.prefab";
+    private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
+    private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
 
     private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
     private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
@@ -236,5 +238,96 @@ public static class GeneratePrefabs
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"Prefab generated at {AgumonPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate TestDialogue")]
+    public static void GenerateTestDialogue()
+    {
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Data");
+
+        DialogueData dialogue = ScriptableObject.CreateInstance<DialogueData>();
+
+        SerializedObject so = new SerializedObject(dialogue);
+        SerializedProperty lines = so.FindProperty("_lines");
+        lines.arraySize = 3;
+
+        lines.GetArrayElementAtIndex(0).FindPropertyRelative("Speaker").stringValue = "Jijimon";
+        lines.GetArrayElementAtIndex(0).FindPropertyRelative("Text").stringValue = "Ah, you must be the new Tamer! Welcome to File City.";
+
+        lines.GetArrayElementAtIndex(1).FindPropertyRelative("Speaker").stringValue = "Jijimon";
+        lines.GetArrayElementAtIndex(1).FindPropertyRelative("Text").stringValue = "Things have been rough since the Digimon started losing their memories...";
+
+        lines.GetArrayElementAtIndex(2).FindPropertyRelative("Speaker").stringValue = "Jijimon";
+        lines.GetArrayElementAtIndex(2).FindPropertyRelative("Text").stringValue = "Please, help us rebuild this city. Talk to the Digimon and bring them back!";
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(dialogue, TestDialoguePath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"TestDialogue asset generated at {TestDialoguePath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate NPC")]
+    public static void GenerateNPC()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+
+        GameObject root = new GameObject("NPC");
+        try
+        {
+            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+
+            Object.DestroyImmediate(model.GetComponent<CapsuleCollider>());
+            CapsuleCollider col = root.AddComponent<CapsuleCollider>();
+            col.center = new Vector3(0f, 1f, 0f);
+            col.height = 2f;
+            col.radius = 0.5f;
+
+            Material npcMat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/NPC.mat", new Color(0.2f, 0.4f, 0.9f));
+            model.GetComponent<Renderer>().sharedMaterial = npcMat;
+
+            NPCInteractable npc = root.AddComponent<NPCInteractable>();
+
+            GameObject promptGo = new GameObject("PromptText");
+            promptGo.transform.SetParent(root.transform, false);
+            promptGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
+
+            TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+            tmp.text = "Talk";
+            tmp.fontSize = 4;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = Color.white;
+            tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
+
+            SerializedObject so = new SerializedObject(npc);
+            so.FindProperty("_promptText").objectReferenceValue = tmp;
+
+            DialogueData testDialogue = AssetDatabase.LoadAssetAtPath<DialogueData>(TestDialoguePath);
+            if (testDialogue != null)
+                so.FindProperty("_dialogue").objectReferenceValue = testDialogue;
+            else
+                Debug.LogWarning($"TestDialogue not found at {TestDialoguePath}. Run 'Tools/DigimonWorld/Data/Generate TestDialogue' first.");
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, NPCPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {NPCPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {NPCPrefabPath}");
     }
 }
