@@ -10,9 +10,23 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private SceneReference _nameScene;
     [SerializeField] private SceneReference _gameplayScene;
     [SerializeField] private ZoneData _startingZone;
-    [SerializeField] private ScreenFader _screenFader;
+    [SerializeField] private ZoneData[] _allZones;
 
     private ZoneData _currentZone;
+    private bool _isTransitioning;
+
+    private void Start()
+    {
+        foreach (var zone in _allZones)
+        {
+            if (SceneManager.GetSceneByPath(zone.Scene.Path).isLoaded)
+            {
+                _currentZone = zone;
+                ApplyCameraPosition(_currentZone);
+                return;
+            }
+        }
+    }
 
     public async void LoadSplashscreenScene()
     {
@@ -36,35 +50,38 @@ public class GameManager : Singleton<GameManager>
 
     public async void LoadGameplayScene()
     {
-        await _screenFader.FadeOut();
+        await ScreenFader.Instance.FadeOut();
         UnloadNonBootstrapScenes();
         await SceneLoader.Instance.LoadScene(_gameplayScene);
         await SceneLoader.Instance.LoadScene(_startingZone.Scene);
         _currentZone = _startingZone;
         ApplyCameraPosition(_currentZone);
-        await _screenFader.FadeIn();
+        await ScreenFader.Instance.FadeIn();
     }
 
     public async void LoadZone(ZoneData zone)
     {
-        if (_currentZone == zone) return;
+        if (_currentZone == zone || _isTransitioning) return;
+        _isTransitioning = true;
 
-        await _screenFader.FadeOut();
+        await ScreenFader.Instance.FadeOut();
         if (_currentZone != null)
             await SceneLoader.Instance.UnloadScene(_currentZone.Scene);
         await SceneLoader.Instance.LoadScene(zone.Scene);
         _currentZone = zone;
         ApplyCameraPosition(_currentZone);
-        await _screenFader.FadeIn();
+        await ScreenFader.Instance.FadeIn();
+
+        _isTransitioning = false;
     }
 
     private async Awaitable LoadSceneWithFade(SceneReference scene)
     {
-        await _screenFader.FadeOut();
+        await ScreenFader.Instance.FadeOut();
         UnloadNonBootstrapScenes();
         await SceneLoader.Instance.LoadScene(scene);
         _currentZone = null;
-        await _screenFader.FadeIn();
+        await ScreenFader.Instance.FadeIn();
     }
 
     private void UnloadNonBootstrapScenes()

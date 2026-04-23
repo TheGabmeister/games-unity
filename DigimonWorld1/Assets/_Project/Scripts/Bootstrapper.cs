@@ -11,5 +11,10 @@ public class Bootstrapper
 
         if (SceneManager.GetSceneByPath(config.BootstrapScenePath).isLoaded) return;
         SceneManager.LoadScene(config.BootstrapScenePath, LoadSceneMode.Additive);
+
+        string activeScenePath = SceneManager.GetActiveScene().path;
+
+        if (activeScenePath == config.GameplayScenePath || activeScenePath.Contains("/Zones/"))
+            SceneManager.LoadScene(config.GameplayScenePath, LoadSceneMode.Additive);
     }
 }

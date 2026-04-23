@@ -148,11 +148,22 @@ public static class GeneratePrefabs
         PrefabGeneratorUtils.SetSceneReference(so, "_nameScene", NameScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
 
-        ZoneData startingZone = AssetDatabase.LoadAssetAtPath<ZoneData>(Zone1DataPath);
-        if (startingZone != null)
-            so.FindProperty("_startingZone").objectReferenceValue = startingZone;
+        ZoneData zone1 = AssetDatabase.LoadAssetAtPath<ZoneData>(Zone1DataPath);
+        ZoneData zone2 = AssetDatabase.LoadAssetAtPath<ZoneData>(Zone2DataPath);
+
+        if (zone1 != null)
+            so.FindProperty("_startingZone").objectReferenceValue = zone1;
         else
             Debug.LogWarning($"Zone1 data not found at {Zone1DataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
+
+        SerializedProperty allZones = so.FindProperty("_allZones");
+        int zoneCount = 0;
+        if (zone1 != null) zoneCount++;
+        if (zone2 != null) zoneCount++;
+        allZones.arraySize = zoneCount;
+        int idx = 0;
+        if (zone1 != null) allZones.GetArrayElementAtIndex(idx++).objectReferenceValue = zone1;
+        if (zone2 != null) allZones.GetArrayElementAtIndex(idx++).objectReferenceValue = zone2;
 
         if (screenFader != null)
             so.FindProperty("_screenFader").objectReferenceValue = screenFader;
