@@ -2,7 +2,7 @@ using Eflatun.SceneReference;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : PersistentSingleton<GameManager>
+public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private SceneReference _splashscreenScene;
     [SerializeField] private SceneReference _introScene;

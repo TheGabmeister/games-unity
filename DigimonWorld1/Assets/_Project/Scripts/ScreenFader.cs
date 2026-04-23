@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ScreenFader : PersistentSingleton<ScreenFader>
+public class ScreenFader : Singleton<ScreenFader>
 {
     [SerializeField] private Image _fadeImage;
     [SerializeField] private float _fadeDuration = 0.5f;
