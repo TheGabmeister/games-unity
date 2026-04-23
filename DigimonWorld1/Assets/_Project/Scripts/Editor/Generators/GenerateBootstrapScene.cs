@@ -6,11 +6,14 @@ using UnityEngine.SceneManagement;
 public static class GenerateBootstrapScene
 {
     private const string SceneDir = "Assets/_Project/Scenes";
-    private const string ScenePath = SceneDir + "/_Bootstrap.unity";
+    private const string BootstrapScenePath = SceneDir + "/_Bootstrap.unity";
+    private const string SplashscreenScenePath = SceneDir + "/_Splashscreen.unity";
+    private const string MainMenuScenePath = SceneDir + "/_MainMenu.unity";
+    private const string NameScenePath = SceneDir + "/_Name.unity";
     private const string AudioSystemPrefabPath = "Assets/_Project/Prefabs/AudioSystem.prefab";
 
-    [MenuItem("Tools/DigimonWorld/Generate Bootstrap Scene")]
-    public static void Generate()
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
+    public static void GenerateBootstrap()
     {
         GameObject audioSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AudioSystemPrefabPath);
         if (audioSystemPrefab == null)
@@ -24,21 +27,93 @@ public static class GenerateBootstrapScene
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
 
-        bool saved = EditorSceneManager.SaveScene(scene, ScenePath);
-        if (!saved)
-        {
-            Debug.LogError($"Failed to save scene at {ScenePath}");
-            return;
-        }
+        if (!SaveScene(scene, BootstrapScenePath)) return;
 
-        AddSceneToBuildSettings(ScenePath);
+        AddSceneToBuildSettingsAtIndex(BootstrapScenePath, 0);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"Bootstrap scene generated at {ScenePath}");
+        Debug.Log($"Bootstrap scene generated at {BootstrapScenePath}");
     }
 
-    private static void AddSceneToBuildSettings(string scenePath)
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Splashscreen Scene")]
+    public static void GenerateSplashscreen()
+    {
+        GenerateEmptyScene(SplashscreenScenePath, "_Splashscreen");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate MainMenu Scene")]
+    public static void GenerateMainMenu()
+    {
+        GenerateEmptyScene(MainMenuScenePath, "_MainMenu");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Name Scene")]
+    public static void GenerateName()
+    {
+        GenerateEmptyScene(NameScenePath, "_Name");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate All Scenes")]
+    public static void GenerateAll()
+    {
+        GenerateBootstrap();
+        GenerateSplashscreen();
+        GenerateMainMenu();
+        GenerateName();
+    }
+
+    private static void GenerateEmptyScene(string scenePath, string displayName)
+    {
+        EnsureFolder(SceneDir);
+
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        if (!SaveScene(scene, scenePath)) return;
+
+        AppendSceneToBuildSettings(scenePath);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"{displayName} scene generated at {scenePath}");
+    }
+
+    private static bool SaveScene(Scene scene, string scenePath)
+    {
+        bool saved = EditorSceneManager.SaveScene(scene, scenePath);
+        if (!saved)
+        {
+            Debug.LogError($"Failed to save scene at {scenePath}");
+        }
+        return saved;
+    }
+
+    private static void AddSceneToBuildSettingsAtIndex(string scenePath, int index)
+    {
+        var scenes = EditorBuildSettings.scenes;
+        for (int i = 0; i < scenes.Length; i++)
+        {
+            if (scenes[i].path == scenePath)
+            {
+                if (!scenes[i].enabled)
+                {
+                    scenes[i].enabled = true;
+                    EditorBuildSettings.scenes = scenes;
+                }
+                return;
+            }
+        }
+
+        var newScenes = new EditorBuildSettingsScene[scenes.Length + 1];
+        if (index > 0)
+            System.Array.Copy(scenes, 0, newScenes, 0, index);
+        newScenes[index] = new EditorBuildSettingsScene(scenePath, true);
+        if (index < scenes.Length)
+            System.Array.Copy(scenes, index, newScenes, index + 1, scenes.Length - index);
+        EditorBuildSettings.scenes = newScenes;
+    }
+
+    private static void AppendSceneToBuildSettings(string scenePath)
     {
         var scenes = EditorBuildSettings.scenes;
         foreach (var entry in scenes)
@@ -55,8 +130,8 @@ public static class GenerateBootstrapScene
         }
 
         var newScenes = new EditorBuildSettingsScene[scenes.Length + 1];
-        newScenes[0] = new EditorBuildSettingsScene(scenePath, true);
-        System.Array.Copy(scenes, 0, newScenes, 1, scenes.Length);
+        System.Array.Copy(scenes, 0, newScenes, 0, scenes.Length);
+        newScenes[scenes.Length] = new EditorBuildSettingsScene(scenePath, true);
         EditorBuildSettings.scenes = newScenes;
     }
 
