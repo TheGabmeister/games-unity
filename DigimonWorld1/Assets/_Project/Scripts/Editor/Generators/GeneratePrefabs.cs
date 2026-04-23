@@ -19,9 +19,11 @@ public static class GeneratePrefabs
     private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
     private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
     private const string CareSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/CareSystem.prefab";
+    private const string InventoryPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Inventory.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
     private const string DigimonDataDir = "Assets/_Project/Data/Digimons";
     private const string TechniqueDataDir = "Assets/_Project/Data/Techniques";
+    private const string ItemDataDir = "Assets/_Project/Data/Items";
     private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
     private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
     private const string Zone2DataPath = "Assets/_Project/Data/Zones/Zone2.asset";
@@ -93,6 +95,12 @@ public static class GeneratePrefabs
     public static void GenerateCareSystem()
     {
         PrefabGeneratorUtils.SavePrefab("CareSystem", CareSystemPrefabPath, go => go.AddComponent<CareSystem>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Inventory")]
+    public static void GenerateInventory()
+    {
+        PrefabGeneratorUtils.SavePrefab("Inventory", InventoryPrefabPath, go => go.AddComponent<Inventory>());
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenFader")]
@@ -487,6 +495,63 @@ public static class GeneratePrefabs
 
         AssetDatabase.CreateAsset(species, path);
         Debug.Log($"Species asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Items")]
+    public static void GenerateSampleItems()
+    {
+        PrefabGeneratorUtils.EnsureFolder(ItemDataDir);
+
+        CreateItem("Meat", ItemCategory.Food, 100, 50, 10, "Basic food. Reduces hunger.",
+            hungerReduction: 15, weightGain: 3);
+        CreateItem("GiantMeat", ItemCategory.Food, 500, 250, 10, "Large food. Greatly reduces hunger.",
+            hungerReduction: 30, weightGain: 5);
+        CreateItem("Sirloin", ItemCategory.Food, 1000, 500, 10, "Premium food. Best hunger reduction.",
+            hungerReduction: 50, weightGain: 8);
+        CreateItem("DigiMushroom", ItemCategory.Food, 200, 100, 10, "A mushroom that slightly reduces tiredness.",
+            hungerReduction: 10, weightGain: 1, tirednessReduction: 10);
+        CreateItem("Medicine", ItemCategory.Recovery, 500, 250, 10, "Restores a moderate amount of HP.",
+            hpRestore: 500);
+        CreateItem("SuperRecovery", ItemCategory.Recovery, 1500, 750, 10, "Fully restores HP and MP.",
+            hpRestore: 9999, mpRestore: 9999);
+        CreateItem("MPFloppy", ItemCategory.Recovery, 300, 150, 10, "Restores MP.",
+            mpRestore: 500);
+        CreateItem("HappyMushroom", ItemCategory.Status, 300, 150, 10, "Increases happiness.",
+            happinessChange: 10);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample item assets generated.");
+    }
+
+    private static void CreateItem(string itemName, ItemCategory category, int buyPrice,
+        int sellPrice, int maxStack, string description,
+        int hungerReduction = 0, int weightGain = 0, int hpRestore = 0,
+        int mpRestore = 0, int happinessChange = 0, int disciplineChange = 0,
+        int tirednessReduction = 0)
+    {
+        string path = $"{ItemDataDir}/{itemName}.asset";
+
+        ItemData item = ScriptableObject.CreateInstance<ItemData>();
+
+        SerializedObject so = new SerializedObject(item);
+        so.FindProperty("_itemName").stringValue = itemName;
+        so.FindProperty("_category").enumValueIndex = (int)category;
+        so.FindProperty("_description").stringValue = description;
+        so.FindProperty("_buyPrice").intValue = buyPrice;
+        so.FindProperty("_sellPrice").intValue = sellPrice;
+        so.FindProperty("_maxStack").intValue = maxStack;
+        so.FindProperty("_hungerReduction").intValue = hungerReduction;
+        so.FindProperty("_weightGain").intValue = weightGain;
+        so.FindProperty("_hpRestore").intValue = hpRestore;
+        so.FindProperty("_mpRestore").intValue = mpRestore;
+        so.FindProperty("_happinessChange").intValue = happinessChange;
+        so.FindProperty("_disciplineChange").intValue = disciplineChange;
+        so.FindProperty("_tirednessReduction").intValue = tirednessReduction;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(item, path);
+        Debug.Log($"Item asset generated at {path}");
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NPC")]

@@ -29,6 +29,7 @@ public static class GenerateScenes
     private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
     private const string HUDPrefabPath = PrefabGeneratorUtils.PrefabDir + "/HUD.prefab";
     private const string CareSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/CareSystem.prefab";
+    private const string InventoryPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Inventory.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
@@ -161,6 +162,13 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject inventoryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InventoryPrefabPath);
+        if (inventoryPrefab == null)
+        {
+            Debug.LogError($"Inventory prefab not found at {InventoryPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate Inventory' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -170,6 +178,7 @@ public static class GenerateScenes
         PrefabUtility.InstantiatePrefab(timeSystemPrefab, scene);
         PrefabUtility.InstantiatePrefab(hudPrefab, scene);
         PrefabUtility.InstantiatePrefab(careSystemPrefab, scene);
+        PrefabUtility.InstantiatePrefab(inventoryPrefab, scene);
 
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca72ef5e54b062440b6504162fe5e4cc, type: 3}
+  m_Name: GiantMeat
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  _itemName: GiantMeat
+  _category: 0
+  _description: Large food. Greatly reduces hunger.
+  _buyPrice: 500
+  _sellPrice: 250
+  _maxStack: 10
+  _hungerReduction: 30
+  _weightGain: 5
+  _hpRestore: 0
+  _mpRestore: 0
+  _happinessChange: 0
+  _disciplineChange: 0
+  _tirednessReduction: 0
