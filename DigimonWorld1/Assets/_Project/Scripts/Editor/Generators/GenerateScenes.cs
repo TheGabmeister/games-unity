@@ -16,6 +16,7 @@ public static class GenerateScenes
 
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
+    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
     private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
@@ -38,11 +39,19 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject screenFaderPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ScreenFaderPrefabPath);
+        if (screenFaderPrefab == null)
+        {
+            Debug.LogError($"ScreenFader prefab not found at {ScreenFaderPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate ScreenFader' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
         PrefabUtility.InstantiatePrefab(gameManagerPrefab, scene);
+        PrefabUtility.InstantiatePrefab(screenFaderPrefab, scene);
 
         if (!SaveScene(scene, BootstrapScenePath)) return;
 

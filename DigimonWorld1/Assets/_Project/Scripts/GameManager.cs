@@ -9,6 +9,7 @@ public class GameManager : PersistentSingleton<GameManager>
     [SerializeField] private SceneReference _mainMenuScene;
     [SerializeField] private SceneReference _nameScene;
     [SerializeField] private SceneReference _gameplayScene;
+    [SerializeField] private ScreenFader _screenFader;
 
     public void LoadSplashscreenScene()
     {

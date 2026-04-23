@@ -1,5 +1,7 @@
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 public static class GeneratePrefabs
@@ -7,6 +9,7 @@ public static class GeneratePrefabs
     private const string BootstrapperPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Bootstrapper.prefab";
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
+    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
 
@@ -32,10 +35,64 @@ public static class GeneratePrefabs
         PrefabGeneratorUtils.SavePrefab("AudioSystem", AudioSystemPrefabPath, go => go.AddComponent<AudioSystem>());
     }
 
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenFader")]
+    public static void GenerateScreenFader()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+
+        GameObject root = new GameObject("ScreenFader");
+        try
+        {
+            Canvas canvas = root.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 999;
+            CanvasScaler scaler = root.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+
+            GameObject imageGo = new GameObject("FadeImage", typeof(RectTransform));
+            imageGo.transform.SetParent(root.transform, false);
+            Image fadeImage = imageGo.AddComponent<Image>();
+            fadeImage.color = new Color(0f, 0f, 0f, 0f);
+            fadeImage.raycastTarget = false;
+            RectTransform rt = imageGo.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            ScreenFader fader = root.AddComponent<ScreenFader>();
+
+            SerializedObject so = new SerializedObject(fader);
+            so.FindProperty("_fadeImage").objectReferenceValue = fadeImage;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, ScreenFaderPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {ScreenFaderPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {ScreenFaderPrefabPath}");
+    }
+
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate GameManager")]
     public static void GenerateGameManager()
     {
         PrefabGeneratorUtils.SavePrefab("GameManager", GameManagerPrefabPath, go => go.AddComponent<GameManager>());
+
+        GameObject screenFaderPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ScreenFaderPrefabPath);
+        ScreenFader screenFader = screenFaderPrefab != null ? screenFaderPrefab.GetComponent<ScreenFader>() : null;
+        if (screenFader == null)
+            Debug.LogWarning($"ScreenFader prefab not found at {ScreenFaderPrefabPath}. Generate it first. _screenFader will be empty.");
 
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameManagerPrefabPath);
         GameManager gm = prefab.GetComponent<GameManager>();
@@ -46,6 +103,9 @@ public static class GeneratePrefabs
         PrefabGeneratorUtils.SetSceneReference(so, "_mainMenuScene", MainMenuScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_nameScene", NameScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
+
+        if (screenFader != null)
+            so.FindProperty("_screenFader").objectReferenceValue = screenFader;
 
         so.ApplyModifiedPropertiesWithoutUndo();
         AssetDatabase.SaveAssets();

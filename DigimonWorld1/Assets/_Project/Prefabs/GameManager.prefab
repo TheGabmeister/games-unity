@@ -59,3 +59,4 @@ MonoBehaviour:
   _gameplayScene:
     asset: {fileID: 102900000, guid: a7d02de308a9703409cd7ad2b60d9d7a, type: 3}
     guid: a7d02de308a9703409cd7ad2b60d9d7a
+  _screenFader: {fileID: 7929186611997119701, guid: b28ef6ee44f73504b80a3c2b865f8916, type: 3}
