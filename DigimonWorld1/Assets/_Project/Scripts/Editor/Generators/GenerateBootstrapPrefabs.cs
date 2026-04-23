@@ -1,6 +1,10 @@
 using Eflatun.SceneReference;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 public static class GenerateBootstrapPrefabs
@@ -90,10 +94,120 @@ public static class GenerateBootstrapPrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate MainMenuController")]
     public static void GenerateMainMenuController()
     {
-        SavePrefab("MainMenuController", MainMenuControllerPrefabPath, go =>
+        EnsureFolder(PrefabDir);
+
+        GameObject root = new GameObject("MainMenuController");
+        try
         {
-            go.AddComponent<MainMenuController>();
-        });
+            // Canvas
+            Canvas canvas = root.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            CanvasScaler scaler = root.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            root.AddComponent<GraphicRaycaster>();
+
+            // EventSystem
+            GameObject eventSystemGo = new GameObject("EventSystem");
+            eventSystemGo.transform.SetParent(root.transform, false);
+            eventSystemGo.AddComponent<EventSystem>();
+            eventSystemGo.AddComponent<InputSystemUIInputModule>();
+
+            // Press Start Panel
+            GameObject pressStartPanel = CreatePanel("PressStartPanel", root.transform);
+
+            TMP_Text pressStartTitle = CreateText("Title", pressStartPanel.transform,
+                "DIGIMON WORLD", 72, FontStyles.Bold, TextAlignmentOptions.Center,
+                new Vector2(0f, 80f), new Vector2(800f, 100f));
+            pressStartTitle.color = Color.white;
+
+            TMP_Text pressStartText = CreateText("PressStartText", pressStartPanel.transform,
+                "Press Start", 36, FontStyles.Normal, TextAlignmentOptions.Center,
+                new Vector2(0f, -60f), new Vector2(400f, 50f));
+            pressStartText.color = Color.white;
+
+            // Menu Panel (hidden by default)
+            GameObject menuPanel = CreatePanel("MenuPanel", root.transform);
+            menuPanel.SetActive(false);
+
+            TMP_Text menuTitle = CreateText("Title", menuPanel.transform,
+                "DIGIMON WORLD", 72, FontStyles.Bold, TextAlignmentOptions.Center,
+                new Vector2(0f, 160f), new Vector2(800f, 100f));
+            menuTitle.color = Color.white;
+
+            string[] labels = { "New Game", "Continue Game", "Delete Game", "Battle Mode" };
+            TMP_Text[] optionTexts = new TMP_Text[labels.Length];
+            for (int i = 0; i < labels.Length; i++)
+            {
+                string prefix = (i == 0) ? "> " : "  ";
+                TMP_Text optionText = CreateText(labels[i].Replace(" ", ""), menuPanel.transform,
+                    prefix + labels[i], 36, FontStyles.Normal, TextAlignmentOptions.MidlineLeft,
+                    new Vector2(-60f, 40f - i * 50f), new Vector2(400f, 50f));
+                optionText.color = (i == 0) ? Color.white : Color.gray;
+                optionTexts[i] = optionText;
+            }
+
+            // Controller
+            MainMenuController controller = root.AddComponent<MainMenuController>();
+
+            SerializedObject so = new SerializedObject(controller);
+            so.FindProperty("_pressStartPanel").objectReferenceValue = pressStartPanel;
+            so.FindProperty("_menuPanel").objectReferenceValue = menuPanel;
+            so.FindProperty("_pressStartText").objectReferenceValue = pressStartText;
+
+            SerializedProperty menuOptionsProp = so.FindProperty("_menuOptionTexts");
+            menuOptionsProp.arraySize = optionTexts.Length;
+            for (int i = 0; i < optionTexts.Length; i++)
+                menuOptionsProp.GetArrayElementAtIndex(i).objectReferenceValue = optionTexts[i];
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, MainMenuControllerPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {MainMenuControllerPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {MainMenuControllerPrefabPath}");
+    }
+
+    private static GameObject CreatePanel(string name, Transform parent)
+    {
+        GameObject panel = new GameObject(name, typeof(RectTransform));
+        panel.transform.SetParent(parent, false);
+        RectTransform rt = panel.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+        return panel;
+    }
+
+    private static TMP_Text CreateText(string name, Transform parent, string text,
+        int fontSize, FontStyles fontStyle, TextAlignmentOptions alignment,
+        Vector2 position, Vector2 size)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        TextMeshProUGUI tmp = go.AddComponent<TextMeshProUGUI>();
+        tmp.text = text;
+        tmp.fontSize = fontSize;
+        tmp.fontStyle = fontStyle;
+        tmp.alignment = alignment;
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = position;
+        rt.sizeDelta = size;
+        return tmp;
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NameController")]

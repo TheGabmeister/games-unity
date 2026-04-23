@@ -1,8 +1,14 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class MainMenuController : MonoBehaviour
 {
+    [SerializeField] private GameObject _pressStartPanel;
+    [SerializeField] private GameObject _menuPanel;
+    [SerializeField] private TMP_Text _pressStartText;
+    [SerializeField] private TMP_Text[] _menuOptionTexts;
+
     private enum State
     {
         PressStart,
@@ -17,8 +23,6 @@ public class MainMenuController : MonoBehaviour
         BattleMode
     }
 
-    private static readonly string[] MenuLabels = { "New Game", "Continue Game", "Delete Game", "Battle Mode" };
-
     private State _state = State.PressStart;
     private int _selectedOption;
     private float _blinkTimer;
@@ -26,6 +30,12 @@ public class MainMenuController : MonoBehaviour
     private void Update()
     {
         _blinkTimer += Time.deltaTime;
+
+        if (_state == State.PressStart)
+        {
+            bool visible = Mathf.Sin(_blinkTimer * 3f) > 0f;
+            _pressStartText.enabled = visible;
+        }
 
         if (Keyboard.current == null)
             return;
@@ -37,18 +47,58 @@ public class MainMenuController : MonoBehaviour
                 {
                     _state = State.Menu;
                     _selectedOption = 0;
+                    _pressStartPanel.SetActive(false);
+                    _menuPanel.SetActive(true);
+                    UpdateMenuHighlight();
                 }
                 break;
 
             case State.Menu:
                 if (Keyboard.current.upArrowKey.wasPressedThisFrame)
-                    _selectedOption = (_selectedOption - 1 + MenuLabels.Length) % MenuLabels.Length;
+                {
+                    _selectedOption = (_selectedOption - 1 + _menuOptionTexts.Length) % _menuOptionTexts.Length;
+                    UpdateMenuHighlight();
+                }
                 else if (Keyboard.current.downArrowKey.wasPressedThisFrame)
-                    _selectedOption = (_selectedOption + 1) % MenuLabels.Length;
+                {
+                    _selectedOption = (_selectedOption + 1) % _menuOptionTexts.Length;
+                    UpdateMenuHighlight();
+                }
                 else if (Keyboard.current.enterKey.wasPressedThisFrame)
+                {
                     SelectOption((MenuOption)_selectedOption);
+                }
                 break;
         }
+    }
+
+    private void UpdateMenuHighlight()
+    {
+        for (int i = 0; i < _menuOptionTexts.Length; i++)
+        {
+            if (i == _selectedOption)
+            {
+                _menuOptionTexts[i].color = Color.white;
+                _menuOptionTexts[i].text = "> " + GetOptionLabel(i);
+            }
+            else
+            {
+                _menuOptionTexts[i].color = Color.gray;
+                _menuOptionTexts[i].text = "  " + GetOptionLabel(i);
+            }
+        }
+    }
+
+    private static string GetOptionLabel(int index)
+    {
+        return index switch
+        {
+            0 => "New Game",
+            1 => "Continue Game",
+            2 => "Delete Game",
+            3 => "Battle Mode",
+            _ => ""
+        };
     }
 
     private void SelectOption(MenuOption option)
@@ -64,84 +114,6 @@ public class MainMenuController : MonoBehaviour
                 break;
             case MenuOption.BattleMode:
                 break;
-        }
-    }
-
-    private void OnGUI()
-    {
-        switch (_state)
-        {
-            case State.PressStart:
-                DrawPressStart();
-                break;
-            case State.Menu:
-                DrawMenu();
-                break;
-        }
-    }
-
-    private void DrawPressStart()
-    {
-        GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 36,
-            fontStyle = FontStyle.Bold,
-            alignment = TextAnchor.MiddleCenter,
-            normal = { textColor = Color.white }
-        };
-
-        GUIStyle blinkStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 22,
-            alignment = TextAnchor.MiddleCenter,
-            normal = { textColor = Color.white }
-        };
-
-        float cx = Screen.width / 2f;
-        float cy = Screen.height / 2f;
-
-        GUI.Label(new Rect(cx - 200f, cy - 100f, 400f, 60f), "DIGIMON WORLD", titleStyle);
-
-        bool visible = Mathf.Sin(_blinkTimer * 3f) > 0f;
-        if (visible)
-            GUI.Label(new Rect(cx - 150f, cy + 20f, 300f, 40f), "Press Start", blinkStyle);
-    }
-
-    private void DrawMenu()
-    {
-        GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 36,
-            fontStyle = FontStyle.Bold,
-            alignment = TextAnchor.MiddleCenter,
-            normal = { textColor = Color.white }
-        };
-
-        GUIStyle normalStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 22,
-            alignment = TextAnchor.MiddleLeft,
-            normal = { textColor = Color.gray }
-        };
-
-        GUIStyle selectedStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 22,
-            alignment = TextAnchor.MiddleLeft,
-            normal = { textColor = Color.white }
-        };
-
-        float cx = Screen.width / 2f;
-        float menuX = cx - 100f;
-        float menuY = Screen.height / 2f - 40f;
-
-        GUI.Label(new Rect(cx - 200f, menuY - 100f, 400f, 60f), "DIGIMON WORLD", titleStyle);
-
-        for (int i = 0; i < MenuLabels.Length; i++)
-        {
-            GUIStyle style = (i == _selectedOption) ? selectedStyle : normalStyle;
-            string prefix = (i == _selectedOption) ? "> " : "  ";
-            GUI.Label(new Rect(menuX, menuY + i * 35f, 300f, 35f), prefix + MenuLabels[i], style);
         }
     }
 }
