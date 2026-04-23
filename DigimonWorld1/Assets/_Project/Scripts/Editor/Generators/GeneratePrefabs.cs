@@ -187,12 +187,12 @@ public static class GeneratePrefabs
     {
         PrefabGeneratorUtils.SavePrefab("GameManager", GameManagerPrefabPath, go => go.AddComponent<GameManager>());
 
-        GameObject screenFaderPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ScreenFaderPrefabPath);
-        ScreenFader screenFader = screenFaderPrefab != null ? screenFaderPrefab.GetComponent<ScreenFader>() : null;
-        if (screenFader == null)
-            Debug.LogWarning($"ScreenFader prefab not found at {ScreenFaderPrefabPath}. Generate it first. _screenFader will be empty.");
-
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameManagerPrefabPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"GameManager prefab not found at {GameManagerPrefabPath} after save. Check folder structure.");
+            return;
+        }
         GameManager gm = prefab.GetComponent<GameManager>();
         SerializedObject so = new SerializedObject(gm);
 
@@ -218,9 +218,6 @@ public static class GeneratePrefabs
         int idx = 0;
         if (zone1 != null) allZones.GetArrayElementAtIndex(idx++).objectReferenceValue = zone1;
         if (zone2 != null) allZones.GetArrayElementAtIndex(idx++).objectReferenceValue = zone2;
-
-        if (screenFader != null)
-            so.FindProperty("_screenFader").objectReferenceValue = screenFader;
 
         so.ApplyModifiedPropertiesWithoutUndo();
         AssetDatabase.SaveAssets();

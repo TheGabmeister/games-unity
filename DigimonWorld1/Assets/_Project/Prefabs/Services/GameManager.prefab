@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5252150469442020366
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5443893031767345309}
+  - component: {fileID: 4800611798311874807}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5443893031767345309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5252150469442020366}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4800611798311874807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5252150469442020366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83f968a837d6b854894032e9539e772b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  _splashscreenScene:
+    asset: {fileID: 102900000, guid: 0e9931a2ec9f4d44ca710e44a0c1db68, type: 3}
+    guid: 0e9931a2ec9f4d44ca710e44a0c1db68
+  _introScene:
+    asset: {fileID: 102900000, guid: 2153dabde2a58b0478cab01e81f0267f, type: 3}
+    guid: 2153dabde2a58b0478cab01e81f0267f
+  _mainMenuScene:
+    asset: {fileID: 102900000, guid: 9bfc2d1758833ce46aba7354676e2a7d, type: 3}
+    guid: 9bfc2d1758833ce46aba7354676e2a7d
+  _nameScene:
+    asset: {fileID: 102900000, guid: 6df17fbd377c01448aa3d2d37feed8f9, type: 3}
+    guid: 6df17fbd377c01448aa3d2d37feed8f9
+  _gameplayScene:
+    asset: {fileID: 102900000, guid: a7d02de308a9703409cd7ad2b60d9d7a, type: 3}
+    guid: a7d02de308a9703409cd7ad2b60d9d7a
+  _startingZone: {fileID: 11400000, guid: a83e3ded37a71b944a0235fa8aecb0bc, type: 2}
+  _allZones:
+  - {fileID: 11400000, guid: a83e3ded37a71b944a0235fa8aecb0bc, type: 2}
+  - {fileID: 11400000, guid: 6d65992c722d45243bc9889023330412, type: 2}
