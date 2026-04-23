@@ -31,9 +31,33 @@ public static class GenerateBootstrapScene
             return;
         }
 
+        AddSceneToBuildSettings(ScenePath);
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"Bootstrap scene generated at {ScenePath}");
+    }
+
+    private static void AddSceneToBuildSettings(string scenePath)
+    {
+        var scenes = EditorBuildSettings.scenes;
+        foreach (var entry in scenes)
+        {
+            if (entry.path == scenePath)
+            {
+                if (!entry.enabled)
+                {
+                    entry.enabled = true;
+                    EditorBuildSettings.scenes = scenes;
+                }
+                return;
+            }
+        }
+
+        var newScenes = new EditorBuildSettingsScene[scenes.Length + 1];
+        newScenes[0] = new EditorBuildSettingsScene(scenePath, true);
+        System.Array.Copy(scenes, 0, newScenes, 1, scenes.Length);
+        EditorBuildSettings.scenes = newScenes;
     }
 
     private static void EnsureFolder(string path)

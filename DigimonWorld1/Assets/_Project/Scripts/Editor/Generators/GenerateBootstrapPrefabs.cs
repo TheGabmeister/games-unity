@@ -14,7 +14,7 @@ public static class GenerateBootstrapPrefabs
         GameObject source = new GameObject("Bootstrapper");
         try
         {
-            source.AddComponent<Bootstrapper>();
+            //source.AddComponent<Bootstrapper>();
             PrefabUtility.SaveAsPrefabAsset(source, BootstrapperPrefabPath, out bool success);
             if (!success)
             {
