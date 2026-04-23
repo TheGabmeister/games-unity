@@ -5,20 +5,35 @@ public static class GenerateBootstrapPrefabs
 {
     private const string PrefabDir = "Assets/_Project/Prefabs";
     private const string BootstrapperPrefabPath = PrefabDir + "/Bootstrapper.prefab";
+    private const string AudioSystemPrefabPath = PrefabDir + "/AudioSystem.prefab";
 
-    [MenuItem("Tools/DigimonWorld/Generate Bootstrap Prefabs")]
-    public static void Generate()
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
+    public static void GenerateBootstrapper()
+    {
+        SavePrefab("Bootstrapper", BootstrapperPrefabPath, go =>
+        {
+            //go.AddComponent<Bootstrapper>();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate AudioSystem")]
+    public static void GenerateAudioSystem()
+    {
+        SavePrefab("AudioSystem", AudioSystemPrefabPath, go => go.AddComponent<AudioSystem>());
+    }
+
+    private static void SavePrefab(string name, string path, System.Action<GameObject> configure)
     {
         EnsureFolder(PrefabDir);
 
-        GameObject source = new GameObject("Bootstrapper");
+        GameObject source = new GameObject(name);
         try
         {
-            //source.AddComponent<Bootstrapper>();
-            PrefabUtility.SaveAsPrefabAsset(source, BootstrapperPrefabPath, out bool success);
+            configure(source);
+            PrefabUtility.SaveAsPrefabAsset(source, path, out bool success);
             if (!success)
             {
-                Debug.LogError($"Failed to save prefab at {BootstrapperPrefabPath}");
+                Debug.LogError($"Failed to save prefab at {path}");
                 return;
             }
         }
@@ -29,7 +44,7 @@ public static class GenerateBootstrapPrefabs
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"Bootstrap prefabs generated at {PrefabDir}");
+        Debug.Log($"Prefab generated at {path}");
     }
 
     private static void EnsureFolder(string path)

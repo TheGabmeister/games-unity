@@ -7,22 +7,22 @@ public static class GenerateBootstrapScene
 {
     private const string SceneDir = "Assets/_Project/Scenes";
     private const string ScenePath = SceneDir + "/_Bootstrap.unity";
-    private const string BootstrapperPrefabPath = "Assets/_Project/Prefabs/Bootstrapper.prefab";
+    private const string AudioSystemPrefabPath = "Assets/_Project/Prefabs/AudioSystem.prefab";
 
     [MenuItem("Tools/DigimonWorld/Generate Bootstrap Scene")]
     public static void Generate()
     {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BootstrapperPrefabPath);
-        if (prefab == null)
+        GameObject audioSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AudioSystemPrefabPath);
+        if (audioSystemPrefab == null)
         {
-            Debug.LogError($"Bootstrapper prefab not found at {BootstrapperPrefabPath}. Run 'Tools/DigimonWorld/Generate Bootstrap Prefabs' first.");
+            Debug.LogError($"AudioSystem prefab not found at {AudioSystemPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate AudioSystem' first.");
             return;
         }
 
         EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        PrefabUtility.InstantiatePrefab(prefab, scene);
+        PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
 
         bool saved = EditorSceneManager.SaveScene(scene, ScenePath);
         if (!saved)
