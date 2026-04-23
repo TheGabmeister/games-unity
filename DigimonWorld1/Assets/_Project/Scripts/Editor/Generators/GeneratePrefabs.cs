@@ -20,6 +20,7 @@ public static class GeneratePrefabs
     private const string NameScenePath = "Assets/_Project/Scenes/_Name.unity";
     private const string GameplayScenePath = "Assets/_Project/Scenes/_Gameplay.unity";
     private const string IntroVideoPath = "Assets/_Project/Videos/IntroVideo.mp4";
+    private const string PlayerModelPath = "Assets/_Project/Player/Player.fbx";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
     public static void GenerateBootstrapper()
@@ -147,6 +148,13 @@ public static class GeneratePrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Player")]
     public static void GeneratePlayer()
     {
+        GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerModelPath);
+        if (modelAsset == null)
+        {
+            Debug.LogError($"Player model not found at {PlayerModelPath}.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
 
         GameObject root = new GameObject("Player");
@@ -159,11 +167,10 @@ public static class GeneratePrefabs
 
             root.AddComponent<PlayerController>();
 
-            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            GameObject model = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
             model.name = "PlayerModel";
             model.transform.SetParent(root.transform, false);
-            model.transform.localPosition = new Vector3(0f, 1f, 0f);
-            Object.DestroyImmediate(model.GetComponent<Collider>());
+            model.transform.localPosition = Vector3.zero;
 
             PrefabUtility.SaveAsPrefabAsset(root, PlayerPrefabPath, out bool success);
             if (!success)

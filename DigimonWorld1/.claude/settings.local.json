@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git -C c:/dev/games-unity/DigimonWorld1 remote -v)"
+      "Bash(git -C c:/dev/games-unity/DigimonWorld1 remote -v)",
+      "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --python \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Scripts/Editor/Generators/BlenderScripts/generate_player_model.py\" -- \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Models/PlayerModel.fbx\")",
+      "WebSearch",
+      "WebFetch(domain:www.katsbits.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.blender.org)",
+      "WebFetch(domain:www.immersivelimit.com)",
+      "WebFetch(domain:discussions.unity.com)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:weisl.github.io)",
+      "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --python-expr \"import bpy; help\\(bpy.ops.export_scene.fbx\\)\")",
+      "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --background --python \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Scripts/Editor/Generators/BlenderScripts/generate_player_model.py\" -- \"c:/dev/games-unity/DigimonWorld1/Assets/_Project/Player/Player.fbx\")"
     ]
   }
 }
