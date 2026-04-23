@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C c:/dev/games-unity/DigimonWorld1 remote -v)"
+    ]
+  }
+}

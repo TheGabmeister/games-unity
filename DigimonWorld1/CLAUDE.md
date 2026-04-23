@@ -2,89 +2,115 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repo purpose
+## Project
 
-Two Unity project templates (2D and 3D) used as the starting point for personal game projects, plus in-progress design docs for a gameplay-focused Unity recreation of Digimon World 1 built on top of the 3D template.
+Gameplay-focused Unity recreation of Digimon World 1. Not a pixel-perfect remake — faithful mechanics with placeholder 3D models (no animations), placeholder textures, placeholder audio, single-player.
 
-- `UnityTemplate2D/` and `UnityTemplate3D/` — mirror structures, differ only in packages (2D has `com.unity.feature.2d`; 3D has `com.unity.ai.navigation`).
-- `DigimonWorld1.md` — phased roadmap for the Digimon World 1 recreation (6 phases, Phase 0 = Foundation).
-- `SPEC_PHASE_00.md` — current phase spec with naming conventions, service list, and acceptance checklist. Treat this as the source of truth for Phase 0 architecture decisions.
+Two roadmap docs own the scope and sequencing; treat them as source of truth:
 
-## Unity version
+- [DigimonWorld1.md](DigimonWorld1.md) — 6-phase roadmap. Phase 0 = Foundation, Phase 1 = player in a world, etc.
+- [SPEC_PHASE_00.md](SPEC_PHASE_00.md) — current phase's spec: naming conventions, service list, acceptance checklist.
 
-**6000.3.12f1** (Unity 6). Both templates are pinned to this version via `ProjectSettings/ProjectVersion.txt`. Don't upgrade casually — package compatibility matters.
+The project is at the start of Phase 0 — most of what the specs describe does not yet exist in `Assets/`. Only scaffolding (folder layout, input actions asset, one editor utility) is checked in. Do not assume a system exists because a spec mentions it — check the tree.
 
-## Running, building, testing
+## Unity version & running
 
-There is no CLI build pipeline. Work happens inside the Unity Editor:
+**Unity 6000.3.12f1** (Unity 6), pinned via `ProjectSettings/ProjectVersion.txt`. Don't upgrade casually — package compatibility matters.
 
-- **Open a template:** open `UnityTemplate2D` or `UnityTemplate3D` as a project in Unity Hub.
-- **Run:** press Play in the editor. The first scene should be `Init.unity` (see bootstrap pattern below).
-- **Tests:** Unity Test Framework (`com.unity.test-framework` 1.6.0) via `Window → General → Test Runner`. Edit Mode and Play Mode both available. No CI configured.
-- **Linting/formatting:** none configured. Follow the naming conventions in `SPEC_PHASE_00.md`.
+There is no CLI build pipeline. All work happens in the Unity Editor:
 
-## Architecture: the bootstrap pattern
+- **Open:** open this folder as a project in Unity Hub.
+- **Run:** press Play. Once Phase 0 lands, `Bootstrap.unity` is the canonical first scene, but `EditorBootstrapLoader` is designed so Play-from-any-scene works.
+- **Tests:** Unity Test Framework (`com.unity.test-framework` 1.6.0) via `Window → General → Test Runner`. No tests written yet, no CI configured.
+- **Linting/formatting:** none. Follow naming conventions in `SPEC_PHASE_00.md`.
 
-Both templates use a "global init via prefab" pattern instead of initialising systems in the first scene:
+## Architecture (per the Phase 0 spec — not yet implemented)
 
-- `Assets/_Project/Scripts/Editor/Bootstrapper.cs` runs at `RuntimeInitializeLoadType.BeforeSceneLoad` and instantiates `Resources/Systems.prefab` with `DontDestroyOnLoad`. The `Systems` prefab is where long-lived services (input, audio, UI, scene loader, etc.) should live.
-- This means **any scene can be the Play-mode entry point** during iteration — Bootstrapper guarantees `Systems` exists before any scene `Awake` runs.
-- `Bootstrapper.cs` is currently under `Scripts/Editor/` but is a runtime script (not editor-only). Moving it out of `Editor/` is on the cleanup list when Phase 0 implementation begins.
+The intended pattern, per `SPEC_PHASE_00.md`:
 
-References in the source: https://low-scope.com/unity-tips-1-dont-use-your-first-scene-for-global-script-initialization/
+- `Bootstrap` scene holds a single `Bootstrapper` MonoBehaviour at **Script Execution Order −1000**, so its `Awake` runs before any other `Awake`.
+- `Bootstrapper` registers services (starting with `IInputService`) into a static `ServiceLocator` (just `Register<T>` / `Get<T>` — no DI framework).
+- Consumers access services via `Game.I.<Service>` (e.g. `Game.I.Input.Move`), safe from any `Awake`.
+- `EditorBootstrapLoader` — `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` — additively loads `Bootstrap` if it isn't already loaded, so you can press Play from any zone scene during iteration.
+- Scripts under `DigimonWorld.Core` (bootstrap, service locator) and `DigimonWorld.<Subsystem>` (e.g. `DigimonWorld.Input`).
 
-## Project layout (inside each template)
+When implementing Phase 0, follow the acceptance checklist at the bottom of `SPEC_PHASE_00.md`.
+
+## Naming conventions (from SPEC_PHASE_00.md)
+
+- **Namespace:** `DigimonWorld.<Subsystem>` (e.g. `DigimonWorld.Input`)
+- **Interfaces:** `IPascalCase` (`IInputService`); services implement `I<Name>Service`
+- **Services:** `PascalCaseService` — the MonoBehaviour implementation (`InputService`)
+- **ScriptableObjects:** `PascalCaseDefinition` or `PascalCaseData`
+- **Enums:** `PascalCase` singular (`InputActionMap`)
+- **Scenes:** `PascalCase.unity`; zone scenes prefixed `Zone_` (`Zone_TestRoom.unity`)
+- **Private fields:** `_camelCase`; serialized fields `[SerializeField] private ...`
+- **Folders:** `PascalCase`
+
+## Phased system introduction (the core rule)
+
+Each system enters the plan at the phase where gameplay first actually needs it — not upfront. If infrastructure isn't required until Phase 3, it lands in Phase 3. Audio, UI framework, scene loader, debug tools are all deferred to their first real consumer. See the Implementation Order in `DigimonWorld1.md`.
+
+Concretely: don't build a UI framework in Phase 0 because "we'll need it." Build it in Phase 2 when dialogue + HUD arrive. Don't add `AudioSource.Play` ad-hoc in Phase 3 to sneak audio in before Phase 4 — pull the audio item forward instead.
+
+## Project layout (current, minimal)
 
 ```
-Assets/_Project/
-  Input/       # InputSystem_Actions.inputactions
-  Scenes/      # Init, Game/Gameplay, UI (3D only)
-  Scripts/
-    Editor/    # Bootstrapper, DisableDomainReload, FileExtensions
-  Settings/    # URP render pipeline + renderer assets
-Assets/Resources/
-  Systems.prefab  # 3D only — holds long-lived services
+Assets/
+  _Project/
+    Input/       # InputSystem_Actions.inputactions (pre-existing scaffold — Phase 0 will replace with DigimonWorld.Input's InputActions.inputactions)
+    Scripts/
+      Editor/    # FileExtensions.cs (editor utility — shows file extensions in Project panel)
+    Settings/    # URP assets (PC_RPAsset, Mobile_RPAsset, renderers, volume profile)
+  Resources/     # empty — Systems.prefab will live here once Phase 0 adds it (if used)
 ```
 
-The 2D template does not yet have a `Resources/Systems.prefab`; add one if you bring the bootstrap pattern over.
+Folders for `Bootstrap/`, `Scenes/`, `Scripts/Core/`, `Scripts/Input/`, `Settings/Input/`, `Audio/`, `UI/`, `Debug/` get created by the phase that introduces them. Don't pre-create empty folders.
 
 ## Key packages
 
-- **Input System** (`com.unity.inputsystem`) — new input system is the standard; do not use the legacy `Input` class.
-- **URP** (`com.unity.render-pipelines.universal`) — both templates use it.
-- **PrimeTween** (`com.kyrylokuzyk.primetween`) — preferred tweening library; use it instead of coroutine-based tweens.
-- **Unity Toolbar Extender** — used by `DisableDomainReload.cs` to add a toolbar toggle.
-- **Timeline, UGUI, Test Framework** — standard.
-- **AI Navigation** (3D only), **feature.2d** (2D only).
+- **Input System** (`com.unity.inputsystem` 1.19.0) — new input system is the standard; do not use the legacy `Input` class.
+- **URP** (`com.unity.render-pipelines.universal` 17.3.0) — both PC and Mobile render pipeline assets exist under `Assets/_Project/Settings/`.
+- **AI Navigation** (`com.unity.ai.navigation` 2.0.11) — for partner follow / enemy AI in later phases.
+- **PrimeTween** (`com.kyrylokuzyk.primetween` 1.3.8) — preferred tweening library; use it instead of coroutine-based tweens.
+- **Eflatun.SceneReference** (git package, 5.0.0) — typed scene references for the Phase 1 scene/zone loader (avoid raw string scene names).
+- **Timeline** (1.8.11) — reserved for the Phase 6 cutscene system.
 
-## Digimon World 1 work (in progress)
+## Editor-driven content: prefabs and scenes
 
-If asked to work on the Digimon World 1 recreation:
+This project generates **both prefabs and scenes** via editor scripts. The mandatory order is:
 
-- Check `DigimonWorld1.md` for the phase and scope.
-- Check `SPEC_PHASE_00.md` for naming conventions, service locator pattern, and the list of Phase 0 systems (Bootstrap + Service Locator, Input) plus the `Bootstrapper` / `EditorBootstrapLoader` / `ServiceLocator` core scripts. Other infrastructure (Audio, UI framework, Debug tools, Scene/Zone loader) is intentionally deferred to the phase that first needs it — see the Implementation Order in `DigimonWorld1.md`.
-- Namespace: `DigimonWorld.<Subsystem>`. Services implement `I<Name>Service`. Scene files for zones use the `Zone_` prefix.
-- Services are accessed via service locator; `Bootstrapper` runs at Script Execution Order -1000 so `Game.I.<Service>` is safe from `Awake`.
-- The Digimon World 1 implementation targets the 3D template (needs AI Navigation).
+1. **Generate prefabs first.** Editor scripts create and save prefab assets (Digimon, items, NPCs, zone props, etc.) from ScriptableObject definitions or other data sources. Use `PrefabUtility.SaveAsPrefabAsset` and follow with `AssetDatabase.SaveAssets` + `AssetDatabase.Refresh` so the GUIDs are committed before step 2 reads them.
+2. **Generate scenes second, referencing the prefabs created in step 1.** Editor scripts compose scenes by instantiating those prefabs (`PrefabUtility.InstantiatePrefab` — never `Instantiate`, which breaks the prefab link) and saving via `EditorSceneManager.SaveScene`. Reference prefabs by asset path or via a serialized `GameObject` field on a generator SO; do not hard-code GUIDs.
 
-## Git
+Non-negotiables for this workflow:
 
-- Single remote: `TheGabmeister/Unity-Templates`.
-- Default branch: `main`.
-- `.gitattributes` sets `* text=auto` for LF normalisation. Unity meta files are tracked — don't delete them.
-- `ignore.conf` inside each template mirrors the standard Unity gitignore; actual `.gitignore` is at the repo root level if present (not currently).
+- **Never build scene content inline** (raw `GameObject` + `AddComponent` calls that aren't wrapping a prefab instantiation). If a scene needs an object, it needs a prefab first.
+- **Separate the two passes.** A single editor menu item that "generates everything" must run the prefab pass to completion — including `AssetDatabase.SaveAssets` — before touching a scene. Mixing the two in one pass is how you get `fileID: 0` null-reference writes when Unity hasn't finished serializing the prefab before the scene save path runs.
+- **Generators are idempotent.** Re-running the generator on an existing prefab/scene should update it in place, not duplicate it. Use `AssetDatabase.LoadAssetAtPath` to detect existing assets and overwrite deterministically.
+- **Generator scripts live under `Assets/_Project/Scripts/Editor/Generators/`** so they're clearly distinguishable from runtime code and never ship in a build.
+- **ScriptableObject authoring tools are fine too** — bulk-create `DigimonDefinition`, `TechniqueDefinition`, `ItemDefinition` assets from CSV or similar. These feed the prefab generators in step 1.
+
+PlayMode test fixtures are still built in memory and torn down at teardown — never saved to disk, even though scene generation is otherwise allowed.
 
 ## Coding principles
 
 - **KISS** — simplest thing that works. No clever patterns where a plain `if` does the job. If a class is under 50 lines and clear, don't split it.
-- **YAGNI** — don't build for hypothetical needs. No interfaces with one implementation, no config knobs with one value, no abstraction layers "for later." Write what this phase needs; refactor when a second use case actually shows up.
+- **YAGNI** — don't build for hypothetical needs. No interfaces with one implementation, no config knobs with one value, no abstraction layers "for later." (The one explicit exception is service interfaces — `IInputService` etc. — because the service locator design calls for them even at one implementation.)
 - **DRY** — remove real duplication, not shape-similar code. Three copies of the same logic → extract. Two functions that happen to both take a `Vector3` → leave alone. Wrong abstraction costs more than repetition.
 
 When in doubt, lean KISS over DRY. A bit of repetition is cheaper to read and change than the wrong shared helper.
 
-## Things not in the repo (yet)
+## Git
+
+- Remote: `TheGabmeister/games-unity` (this project lives in a sub-directory of that repo).
+- Default branch: `main`.
+- Unity meta files are tracked — don't delete them. `.gitignore` follows the standard Unity template.
+
+## Things not in the repo yet
 
 - No CI / GitHub Actions.
 - No `.editorconfig`, no formatter config.
-- No asmdefs — all scripts compile into the default assemblies. Add asmdefs per-subsystem when Phase 0 implementation lands.
-- No unit tests written yet.
+- No asmdefs — everything compiles into the default assemblies. Add asmdefs per-subsystem when Phase 0 implementation introduces `DigimonWorld.Core` / `DigimonWorld.Input`.
+- No unit tests.
+- No `Bootstrap.unity`, `Bootstrapper.cs`, `ServiceLocator.cs`, or `Game.cs` yet — these are the Phase 0 deliverable.
