@@ -102,11 +102,13 @@ public class DigimonInstance : MonoBehaviour
 
     public void Heal(int amount)
     {
+        if (_species == null) return;
         _currentHP = Mathf.Clamp(_currentHP + amount, 0, _species.BaseHP);
     }
 
     public void RestoreMP(int amount)
     {
+        if (_species == null) return;
         _currentMP = Mathf.Clamp(_currentMP + amount, 0, _species.BaseMP);
     }
 }

@@ -44,4 +44,11 @@ public class PauseScreen : Singleton<PauseScreen>
         Time.timeScale = 1f;
         InputManager.Instance.SetPlayerInputEnabled(true);
     }
+
+    protected override void OnDestroy()
+    {
+        if (_isOpen)
+            Time.timeScale = 1f;
+        base.OnDestroy();
+    }
 }

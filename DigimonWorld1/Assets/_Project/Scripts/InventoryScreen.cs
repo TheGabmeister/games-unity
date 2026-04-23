@@ -119,12 +119,16 @@ public class InventoryScreen : Singleton<InventoryScreen>
         for (int i = 0; i < slotCount; i++)
         {
             InventorySlot slot = Inventory.Instance.GetSlot(i);
+            if (slot.Item == null) continue;
             string marker = i == _selectedIndex ? "> " : "  ";
             sb.AppendLine($"{marker}{slot.Item.ItemName} x{slot.Count}");
         }
         _itemListText.text = sb.ToString();
 
         InventorySlot selected = Inventory.Instance.GetSlot(_selectedIndex);
-        _instructionsText.text = $"{selected.Item.Description}\nW/S: Navigate  E: Use  Q: Discard  Tab/I: Close";
+        if (selected.Item != null)
+            _instructionsText.text = $"{selected.Item.Description}\nW/S: Navigate  E: Use  Q: Discard  Tab/I: Close";
+        else
+            _instructionsText.text = "Tab/I: Close";
     }
 }
