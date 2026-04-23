@@ -1,3 +1,4 @@
+using Eflatun.SceneReference;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,6 +8,11 @@ public static class GenerateBootstrapPrefabs
     private const string BootstrapperPrefabPath = PrefabDir + "/Bootstrapper.prefab";
     private const string AudioSystemPrefabPath = PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabDir + "/GameManager.prefab";
+
+    private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
+    private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
+    private const string MainMenuScenePath = "Assets/_Project/Scenes/_MainMenu.unity";
+    private const string NameScenePath = "Assets/_Project/Scenes/_Name.unity";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
     public static void GenerateBootstrapper()
@@ -27,6 +33,35 @@ public static class GenerateBootstrapPrefabs
     public static void GenerateGameManager()
     {
         SavePrefab("GameManager", GameManagerPrefabPath, go => go.AddComponent<GameManager>());
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameManagerPrefabPath);
+        GameManager gm = prefab.GetComponent<GameManager>();
+        SerializedObject so = new SerializedObject(gm);
+
+        SetSceneReference(so, "_splashscreenScene", SplashscreenScenePath);
+        SetSceneReference(so, "_introScene", IntroScenePath);
+        SetSceneReference(so, "_mainMenuScene", MainMenuScenePath);
+        SetSceneReference(so, "_nameScene", NameScenePath);
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+        AssetDatabase.SaveAssets();
+    }
+
+    private static void SetSceneReference(SerializedObject so, string fieldName, string scenePath)
+    {
+        string guid = AssetDatabase.AssetPathToGUID(scenePath);
+        if (string.IsNullOrEmpty(guid))
+        {
+            Debug.LogWarning($"Scene not found at {scenePath} — {fieldName} will be empty. Generate scenes first.");
+            return;
+        }
+
+        SerializedProperty prop = so.FindProperty(fieldName);
+        SerializedProperty guidProp = prop.FindPropertyRelative("guid");
+        SerializedProperty assetProp = prop.FindPropertyRelative("asset");
+
+        guidProp.stringValue = guid;
+        assetProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
     }
 
     private static void SavePrefab(string name, string path, System.Action<GameObject> configure)

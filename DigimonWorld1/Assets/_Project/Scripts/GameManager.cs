@@ -4,10 +4,16 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : PersistentSingleton<GameManager>
 {
+    [SerializeField] private SceneReference _splashscreenScene;
     [SerializeField] private SceneReference _introScene;
     [SerializeField] private SceneReference _mainMenuScene;
     [SerializeField] private SceneReference _nameScene;
     [SerializeField] private SceneReference _gameplayScene;
+
+    public void LoadSplashscreenScene()
+    {
+        SceneManager.LoadScene(_splashscreenScene.Path, LoadSceneMode.Additive);
+    }
 
     public void LoadIntroScene()
     {
