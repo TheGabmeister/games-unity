@@ -20,8 +20,8 @@ Each system enters the plan at the phase where gameplay first actually needs it 
 
 The bare minimum plumbing to let Phase 1 start. Nothing else — every other "foundation" system (audio, UI framework, debug console, scene loader) waits until the phase that first needs it.
 
-1. **Bootstrap + Service Locator** — `Bootstrapper` instantiates a persistent `Systems` prefab with `DontDestroyOnLoad`; `ServiceLocator` lets other systems find services without hardcoded refs. Runs before any scene `Awake` (Script Execution Order −1000) plus an `EditorBootstrapLoader` so Play-from-any-scene works.
-2. **Input System** — keyboard, mouse, gamepad; action maps (`Gameplay`, `UI`); core actions (`Move`, `Look`, `Interact`, `Pause`); `IInputService`. Needed immediately by Phase 1's player movement. Rebind UI deferred to Phase 6.
+1. **Bootstrap + Singletons** — `Bootstrapper` instantiates a persistent `Systems` prefab with `DontDestroyOnLoad`; each service is a MonoBehaviour singleton on that prefab (`InputService.Instance`, etc.). Runs before any scene `Awake` (Script Execution Order −1000) plus an `EditorBootstrapLoader` so Play-from-any-scene works.
+2. **Input System** — keyboard, mouse, gamepad; action maps (`Gameplay`, `UI`); core actions (`Move`, `Look`, `Interact`, `Pause`); `InputService` singleton. Needed immediately by Phase 1's player movement. Rebind UI deferred to Phase 6.
 
 ### Phase 1 — The Player in a World
 
@@ -61,7 +61,7 @@ Goal: the partner is a real Digimon with stats, needs, and care.
 
 Goal: fight wild Digimon, win, lose, flee.
 
-22. **Audio System (bare)** — `AudioMixer` with `Master`/`Music`/`SFX`/`UI` buses, `IAudioService` with `PlaySFX`/`PlayMusic`/`StopMusic`/`SetBusVolume`, SFX one-shot pool, simple music player. Introduced here because battle hits, technique cues, and status changes are the first place silence genuinely hurts. If an earlier phase ends up needing a single SFX, pull this item forward — don't add ad-hoc `AudioSource.Play` calls.
+22. **Audio System (bare)** — `AudioMixer` with `Master`/`Music`/`SFX`/`UI` buses, `AudioService` singleton with `PlaySFX`/`PlayMusic`/`StopMusic`/`SetBusVolume`, SFX one-shot pool, simple music player. Introduced here because battle hits, technique cues, and status changes are the first place silence genuinely hurts. If an earlier phase ends up needing a single SFX, pull this item forward — don't add ad-hoc `AudioSource.Play` calls.
 23. **Techniques / Moves Data** — move list, MP cost, element, power.
 24. **Battle System Core** — encounter start, turn/command flow, damage calc, type/element advantage.
 25. **Enemy AI (Battle)** — move selection, targeting, retreat thresholds.

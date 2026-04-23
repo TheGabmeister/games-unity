@@ -28,19 +28,19 @@ There is no CLI build pipeline. All work happens in the Unity Editor:
 
 The intended pattern, per `SPEC_PHASE_00.md`:
 
-- `Bootstrap` scene holds a single `Bootstrapper` MonoBehaviour at **Script Execution Order −1000**, so its `Awake` runs before any other `Awake`.
-- `Bootstrapper` registers services (starting with `IInputService`) into a static `ServiceLocator` (just `Register<T>` / `Get<T>` — no DI framework).
-- Consumers access services via `Game.I.<Service>` (e.g. `Game.I.Input.Move`), safe from any `Awake`.
+- `Bootstrap` scene holds a `Bootstrapper` MonoBehaviour at **Script Execution Order −1000**, plus one GameObject per service (`InputService`, later `AudioService`, etc.). Bootstrapper's `Awake` runs before any other and calls `DontDestroyOnLoad` so services survive scene loads.
+- **Each service is a MonoBehaviour singleton** — no service locator, no DI framework. A service exposes `public static <Service> Instance { get; private set; }` and sets it in its own `Awake`. Call sites read `InputService.Instance.Move` directly.
+- **No `I<Name>Service` interfaces.** Call sites couple to the concrete singleton. Extract an interface only when a second implementation actually shows up.
+- Service `Awake` order on the Bootstrap scene is unspecified relative to each other. If service A needs service B during `Awake`, resolve it in `Start` or set A's Script Execution Order explicitly.
 - `EditorBootstrapLoader` — `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` — additively loads `Bootstrap` if it isn't already loaded, so you can press Play from any zone scene during iteration.
-- Scripts under `DigimonWorld.Core` (bootstrap, service locator) and `DigimonWorld.<Subsystem>` (e.g. `DigimonWorld.Input`).
+- Scripts under `DigimonWorld.Core` (bootstrapper + editor loader) and `DigimonWorld.<Subsystem>` (e.g. `DigimonWorld.Input`).
 
 When implementing Phase 0, follow the acceptance checklist at the bottom of `SPEC_PHASE_00.md`.
 
 ## Naming conventions (from SPEC_PHASE_00.md)
 
 - **Namespace:** `DigimonWorld.<Subsystem>` (e.g. `DigimonWorld.Input`)
-- **Interfaces:** `IPascalCase` (`IInputService`); services implement `I<Name>Service`
-- **Services:** `PascalCaseService` — the MonoBehaviour implementation (`InputService`)
+- **Services:** `PascalCaseService` — MonoBehaviour singleton with `public static <Service> Instance { get; private set; }` (`InputService`). No `I<Name>Service` interface.
 - **ScriptableObjects:** `PascalCaseDefinition` or `PascalCaseData`
 - **Enums:** `PascalCase` singular (`InputActionMap`)
 - **Scenes:** `PascalCase.unity`; zone scenes prefixed `Zone_` (`Zone_TestRoom.unity`)
@@ -96,7 +96,7 @@ PlayMode test fixtures are still built in memory and torn down at teardown — n
 ## Coding principles
 
 - **KISS** — simplest thing that works. No clever patterns where a plain `if` does the job. If a class is under 50 lines and clear, don't split it.
-- **YAGNI** — don't build for hypothetical needs. No interfaces with one implementation, no config knobs with one value, no abstraction layers "for later." (The one explicit exception is service interfaces — `IInputService` etc. — because the service locator design calls for them even at one implementation.)
+- **YAGNI** — don't build for hypothetical needs. No interfaces with one implementation, no config knobs with one value, no abstraction layers "for later." This is why services are singletons with no `I<Name>Service` interface — extract one only when a second implementation shows up.
 - **DRY** — remove real duplication, not shape-similar code. Three copies of the same logic → extract. Two functions that happen to both take a `Vector3` → leave alone. Wrong abstraction costs more than repetition.
 
 When in doubt, lean KISS over DRY. A bit of repetition is cheaper to read and change than the wrong shared helper.
