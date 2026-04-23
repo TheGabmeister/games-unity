@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 public static class GenerateBootstrapScene
@@ -106,6 +107,7 @@ public static class GenerateBootstrapScene
         EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        CreateCamera(scene);
         PrefabUtility.InstantiatePrefab(prefab, scene);
 
         if (!SaveScene(scene, scenePath)) return;
@@ -122,6 +124,7 @@ public static class GenerateBootstrapScene
         EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        CreateCamera(scene);
 
         if (!SaveScene(scene, scenePath)) return;
 
@@ -130,6 +133,17 @@ public static class GenerateBootstrapScene
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"{displayName} scene generated at {scenePath}");
+    }
+
+    private static void CreateCamera(Scene scene)
+    {
+        GameObject camGo = new GameObject("Main Camera");
+        camGo.tag = "MainCamera";
+        Camera cam = camGo.AddComponent<Camera>();
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = Color.black;
+        camGo.AddComponent<UniversalAdditionalCameraData>();
+        SceneManager.MoveGameObjectToScene(camGo, scene);
     }
 
     private static bool SaveScene(Scene scene, string scenePath)
