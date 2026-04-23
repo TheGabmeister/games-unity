@@ -10,11 +10,6 @@ public class GameManager : PersistentSingleton<GameManager>
     [SerializeField] private SceneReference _nameScene;
     [SerializeField] private SceneReference _gameplayScene;
 
-    private void Start()
-    {
-        LoadSplashscreenScene();
-    }
-
     public void LoadSplashscreenScene()
     {
         LoadScene(_splashscreenScene);

@@ -8,6 +8,11 @@ public class IntroController : MonoBehaviour
 
     private bool _transitioning;
 
+    private void Awake()
+    {
+        _videoPlayer.targetCamera = Camera.main;
+    }
+
     private void OnEnable()
     {
         _videoPlayer.loopPointReached += OnVideoFinished;

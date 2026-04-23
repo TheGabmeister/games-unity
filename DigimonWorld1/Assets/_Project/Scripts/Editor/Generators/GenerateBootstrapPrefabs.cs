@@ -19,6 +19,7 @@ public static class GenerateBootstrapPrefabs
     private const string MainMenuScenePath = "Assets/_Project/Scenes/_MainMenu.unity";
     private const string NameScenePath = "Assets/_Project/Scenes/_Name.unity";
     private const string GameplayScenePath = "Assets/_Project/Scenes/_Gameplay.unity";
+    private const string IntroVideoPath = "Assets/_Project/Videos/IntroVideo.mp4";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
     public static void GenerateBootstrapper()
@@ -71,6 +72,12 @@ public static class GenerateBootstrapPrefabs
             VideoPlayer vp = go.AddComponent<VideoPlayer>();
             vp.playOnAwake = true;
             vp.renderMode = VideoRenderMode.CameraNearPlane;
+
+            VideoClip clip = AssetDatabase.LoadAssetAtPath<VideoClip>(IntroVideoPath);
+            if (clip != null)
+                vp.clip = clip;
+            else
+                Debug.LogWarning($"Intro video not found at {IntroVideoPath} — VideoPlayer clip will be empty.");
 
             IntroController controller = go.AddComponent<IntroController>();
 
