@@ -1,6 +1,7 @@
 using Eflatun.SceneReference;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Video;
 
 public static class GenerateBootstrapPrefabs
 {
@@ -8,6 +9,10 @@ public static class GenerateBootstrapPrefabs
     private const string BootstrapperPrefabPath = PrefabDir + "/Bootstrapper.prefab";
     private const string AudioSystemPrefabPath = PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabDir + "/GameManager.prefab";
+    private const string SplashscreenControllerPrefabPath = PrefabDir + "/SplashscreenController.prefab";
+    private const string IntroControllerPrefabPath = PrefabDir + "/IntroController.prefab";
+    private const string MainMenuControllerPrefabPath = PrefabDir + "/MainMenuController.prefab";
+    private const string NameControllerPrefabPath = PrefabDir + "/NameController.prefab";
 
     private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
     private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
@@ -47,6 +52,50 @@ public static class GenerateBootstrapPrefabs
 
         so.ApplyModifiedPropertiesWithoutUndo();
         AssetDatabase.SaveAssets();
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate SplashscreenController")]
+    public static void GenerateSplashscreenController()
+    {
+        SavePrefab("SplashscreenController", SplashscreenControllerPrefabPath, go =>
+        {
+            go.AddComponent<SplashscreenController>();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate IntroController")]
+    public static void GenerateIntroController()
+    {
+        SavePrefab("IntroController", IntroControllerPrefabPath, go =>
+        {
+            VideoPlayer vp = go.AddComponent<VideoPlayer>();
+            vp.playOnAwake = true;
+            vp.renderMode = VideoRenderMode.CameraNearPlane;
+
+            IntroController controller = go.AddComponent<IntroController>();
+
+            SerializedObject so = new SerializedObject(controller);
+            so.FindProperty("_videoPlayer").objectReferenceValue = vp;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate MainMenuController")]
+    public static void GenerateMainMenuController()
+    {
+        SavePrefab("MainMenuController", MainMenuControllerPrefabPath, go =>
+        {
+            go.AddComponent<MainMenuController>();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate NameController")]
+    public static void GenerateNameController()
+    {
+        SavePrefab("NameController", NameControllerPrefabPath, go =>
+        {
+            go.AddComponent<NameController>();
+        });
     }
 
     private static void SetSceneReference(SerializedObject so, string fieldName, string scenePath)

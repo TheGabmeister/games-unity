@@ -8,10 +8,18 @@ public static class GenerateBootstrapScene
     private const string SceneDir = "Assets/_Project/Scenes";
     private const string BootstrapScenePath = SceneDir + "/_Bootstrap.unity";
     private const string SplashscreenScenePath = SceneDir + "/_Splashscreen.unity";
+    private const string IntroScenePath = SceneDir + "/_Intro.unity";
     private const string MainMenuScenePath = SceneDir + "/_MainMenu.unity";
     private const string NameScenePath = SceneDir + "/_Name.unity";
-    private const string AudioSystemPrefabPath = "Assets/_Project/Prefabs/AudioSystem.prefab";
-    private const string GameManagerPrefabPath = "Assets/_Project/Prefabs/GameManager.prefab";
+    private const string GameplayScenePath = SceneDir + "/_Gameplay.unity";
+
+    private const string PrefabDir = "Assets/_Project/Prefabs";
+    private const string AudioSystemPrefabPath = PrefabDir + "/AudioSystem.prefab";
+    private const string GameManagerPrefabPath = PrefabDir + "/GameManager.prefab";
+    private const string SplashscreenControllerPrefabPath = PrefabDir + "/SplashscreenController.prefab";
+    private const string IntroControllerPrefabPath = PrefabDir + "/IntroController.prefab";
+    private const string MainMenuControllerPrefabPath = PrefabDir + "/MainMenuController.prefab";
+    private const string NameControllerPrefabPath = PrefabDir + "/NameController.prefab";
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
     public static void GenerateBootstrap()
@@ -48,19 +56,31 @@ public static class GenerateBootstrapScene
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Splashscreen Scene")]
     public static void GenerateSplashscreen()
     {
-        GenerateEmptyScene(SplashscreenScenePath, "_Splashscreen");
+        GenerateSceneWithPrefab(SplashscreenScenePath, SplashscreenControllerPrefabPath, "_Splashscreen");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Intro Scene")]
+    public static void GenerateIntro()
+    {
+        GenerateSceneWithPrefab(IntroScenePath, IntroControllerPrefabPath, "_Intro");
     }
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate MainMenu Scene")]
     public static void GenerateMainMenu()
     {
-        GenerateEmptyScene(MainMenuScenePath, "_MainMenu");
+        GenerateSceneWithPrefab(MainMenuScenePath, MainMenuControllerPrefabPath, "_MainMenu");
     }
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Name Scene")]
     public static void GenerateName()
     {
-        GenerateEmptyScene(NameScenePath, "_Name");
+        GenerateSceneWithPrefab(NameScenePath, NameControllerPrefabPath, "_Name");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Gameplay Scene")]
+    public static void GenerateGameplay()
+    {
+        GenerateEmptyScene(GameplayScenePath, "_Gameplay");
     }
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate All Scenes")]
@@ -68,8 +88,33 @@ public static class GenerateBootstrapScene
     {
         GenerateBootstrap();
         GenerateSplashscreen();
+        GenerateIntro();
         GenerateMainMenu();
         GenerateName();
+        GenerateGameplay();
+    }
+
+    private static void GenerateSceneWithPrefab(string scenePath, string prefabPath, string displayName)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"Prefab not found at {prefabPath}. Generate prefabs first.");
+            return;
+        }
+
+        EnsureFolder(SceneDir);
+
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        PrefabUtility.InstantiatePrefab(prefab, scene);
+
+        if (!SaveScene(scene, scenePath)) return;
+
+        AppendSceneToBuildSettings(scenePath);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"{displayName} scene generated at {scenePath}");
     }
 
     private static void GenerateEmptyScene(string scenePath, string displayName)
