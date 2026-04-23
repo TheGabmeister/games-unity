@@ -4,233 +4,116 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Gameplay-focused Unity recreation of Digimon World 1. Not a pixel-perfect remake — faithful mechanics with placeholder 3D models (no animations), placeholder textures, placeholder audio, single-player. The phased roadmap lives in [DigimonWorld1.md](DigimonWorld1.md) (6 phases, Phase 0 = Foundation). Treat that doc as the source of truth for scope and sequencing.
+Gameplay-focused Unity recreation of Digimon World 1. Not a pixel-perfect remake — faithful mechanics with placeholder 3D models (no animations), placeholder textures, placeholder audio, single-player. The phased roadmap lives in [DigimonWorld1.md](DigimonWorld1.md) (6 phases). Treat that doc as the source of truth for scope and sequencing.
 
-Status: Phase 0 complete, Phase 1 in progress. Bootstrap pattern, scene flow, input system, player movement, partner follow AI, interaction system, dialogue, and zone transitions are all working.
+Status: Phase 0–1 complete, Phase 2–3 in progress. Working: bootstrap, scene flow, input, player movement, partner follow AI, interaction, dialogue, zone transitions, time system, HUD with partner stats, care system (hunger/tiredness/sleep), inventory with items, training facilities, pause/inventory/status screens.
 
 ## Unity version & running
 
-**Unity 6000.3.12f1** (Unity 6), pinned via `ProjectSettings/ProjectVersion.txt`. Don't upgrade casually — package compatibility matters.
+**Unity 6000.3.12f1** (Unity 6), pinned via `ProjectSettings/ProjectVersion.txt`.
 
-No CLI build pipeline. All work happens in the Unity Editor:
-
-- **Open:** open this folder as a project in Unity Hub.
-- **Run:** press Play from any scene. `Bootstrapper` has a `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` that additively loads `_Bootstrap.unity` before any scene's `Awake`. If the active scene is `_Gameplay` or a zone scene (path contains `/Zones/`), it also loads `_Gameplay` — so pressing Play from a zone scene gets you a fully bootstrapped world.
-- **Tests:** Unity Test Framework (`com.unity.test-framework` 1.6.0) via `Window → General → Test Runner`. No tests written yet, no CI configured.
+- **Run:** press Play from any scene. `Bootstrapper` auto-loads `_Bootstrap.unity` + `_Gameplay.unity` (if in a zone scene) before any `Awake`.
+- **Tests:** none written yet. Test Framework available via `Window → General → Test Runner`.
 - **Linting/formatting:** none configured.
 
 ## Architecture: bootstrap + singletons
 
-- [_Bootstrap.unity](Assets/_Project/Scenes/_Bootstrap.unity) is the persistent scene, additively loaded before any other scene's `Awake` by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) — a **plain class** (not a MonoBehaviour) with `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` + `[DefaultExecutionOrder(-1000)]`. Bootstrapper reads scene paths from [BootstrapConfig.cs](Assets/_Project/Scripts/BootstrapConfig.cs), a `ScriptableObject` in `Resources/` — no hardcoded scene names.
-- One singleton base class: [Singleton.cs](Assets/_Project/Scripts/Singleton.cs). No `DontDestroyOnLoad` — scene lifetimes are managed explicitly by `GameManager` and `Bootstrapper`. Services live as long as their scene does. `OnDestroy()` nulls the static instance.
-- **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up. (`IInteractable` is an interface for world objects, not a service wrapper — that's fine.)
-- Each service lives as its own prefab under `Assets/_Project/Prefabs/`, organized into subdirectories: `Services/` (singletons), `UI/` (Canvas-based screens), `Controllers/` (scene controllers), `Characters/` (Player, PartnerDigimon, NPC), `Interactables/` (TrainingFacility).
-- Service `Awake` order is unspecified relative to each other. If service A needs service B during `Awake`, resolve it in `Start` or set A's Script Execution Order explicitly.
+- `_Bootstrap.unity` is the persistent scene, auto-loaded by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) (`[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]`). Scene paths come from [BootstrapConfig.cs](Assets/_Project/Scripts/BootstrapConfig.cs) in `Resources/`.
+- One singleton base class: [Singleton.cs](Assets/_Project/Scripts/Singleton.cs). No `DontDestroyOnLoad` — services live as long as their scene. `OnDestroy()` nulls the static instance.
+- **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up.
+- Prefabs organized under `Assets/_Project/Prefabs/`: `Services/`, `UI/`, `Controllers/`, `Characters/`, `Interactables/`.
+- Service `Awake` order is unspecified. If service A needs B during `Awake`, resolve in `Start` or set Script Execution Order.
 
-### Current services in _Bootstrap
+### _Bootstrap services
 
-| Service | Role |
-|---------|------|
-| `AudioSystem` | Stub — validation target for the singleton-generator pipeline |
-| `GameManager` | Orchestrator. Holds `SceneReference` fields for all scenes, `ZoneData` references for zones. Manages scene transitions with fade (`ScreenFader.Instance`), delegates async loading to `SceneLoader`. Tracks `_currentZone` and handles zone swaps via `LoadZone(ZoneData)` |
-| `ScreenFader` | Full-screen Canvas overlay (sortingOrder 999). `FadeOut()` / `FadeIn()` are `async Awaitable` using `Time.unscaledDeltaTime` |
-| `SceneLoader` | Thin async wrapper around `SceneManager`. `LoadScene(SceneReference)` and `UnloadScene(SceneReference)`. Fires `OnSceneLoadStarted` / `OnSceneLoadCompleted` events. No orchestration logic — just load and unload |
+`GameManager` (scene orchestrator, zone transitions with `ScreenFader` fade), `SceneLoader` (async load/unload), `ScreenFader` (sortingOrder 999), `AudioSystem` (stub).
 
-### Additional services in _Gameplay
+### _Gameplay services & systems
 
-`_Gameplay.unity` holds gameplay-scoped singletons alongside the player, partner, and camera. Zone scenes are loaded/unloaded additively on top of it.
+`_Gameplay.unity` holds gameplay-scoped singletons + player + partner + camera. Zone scenes load additively on top.
 
-| Service | Role |
-|---------|------|
-| `InputManager` | Owns the single `InputSystem_Actions` instance. All gameplay systems read input via `InputManager.Instance.Actions`. `SetPlayerInputEnabled(bool)` sets a flag that `PlayerController` checks to gate movement/interaction — the action map stays enabled so systems like `DialogueManager` can still read Interact |
-| `DialogueManager` | Owns dialogue UI Canvas (sortingOrder 100). `StartDialogue(DialogueData)` calls `InputManager.SetPlayerInputEnabled(false)`, shows lines one at a time, E key advances. `EndDialogue()` re-enables player input. `IsActive` property for guard checks |
-| `TimeSystem` | In-game clock. 1 real second = 1 in-game minute. Tracks `Hour`, `Minute`, `Day`. Uses `Time.deltaTime` so clock pauses with `timeScale = 0`. `SetPaused(bool)` for explicit pause. `OnHourChanged` event for future time-gated hooks |
-| `HUD` | Screen overlay Canvas (sortingOrder 50). Top-right: time + day. Top-left: partner stats (name, HP, MP, hunger, tiredness, happiness, discipline) |
-| `CareSystem` | Subscribes to `TimeSystem.OnHourChanged`. Ticks hunger, tiredness, sleep, and care mistakes on the partner `DigimonInstance`. Exposes `Feed()`, `Praise()`, `Scold()` for player actions |
-| `Inventory` | Stackable item inventory (max 20 slots) + Bits currency. `AddItem`, `RemoveItem`, `UseItem` (routes food through `CareSystem.Feed()`, recovery items directly to `DigimonInstance`). `OnInventoryChanged` event |
-| `InventoryScreen` | Toggleable Canvas (sortingOrder 80). Tab/I to open/close. W/S navigate, E use, Q discard. Shows item list with selection cursor, Bits, and item description |
-| `PauseScreen` | Toggleable Canvas (sortingOrder 90). Escape to pause/resume. Sets `Time.timeScale = 0` on pause, freezing TimeSystem and CareSystem |
-| `StatusScreen` | Toggleable Canvas (sortingOrder 80). C to open/close. Shows full partner stats: identity (name, stage, attribute), combat stats (HP/MP/OFF/DEF/SPD/BRN), condition (age, weight, hunger, tiredness, happiness, discipline, care mistakes, virus gauge) |
+- **InputManager** — owns `InputSystem_Actions`. `SetPlayerInputEnabled(bool)` gates `PlayerController` without disabling the action map.
+- **TimeSystem** — in-game clock (1 real second = 1 in-game minute). `OnHourChanged` event. Uses `Time.deltaTime` so pauses with `timeScale = 0`.
+- **CareSystem** — subscribes to `OnHourChanged`. Ticks hunger/tiredness, manages sleep (21:00–06:00), tracks care mistakes. Exposes `Feed()`, `Praise()`, `Scold()`.
+- **Inventory** — stackable items (max 20 slots) + Bits currency. `UseItem` routes food through `CareSystem.Feed()`, non-food applies effects directly to `DigimonInstance`.
+- **DialogueManager** — bottom-screen panel, E key advances, disables player input while active.
+- **HUD** — top-right: time + day. Top-left: partner stats.
+- **InventoryScreen** (Tab/I), **StatusScreen** (C), **PauseScreen** (Escape) — toggleable UI screens, mutually exclusive. PauseScreen sets `timeScale = 0`.
+
+### Canvas sorting order
+
+HUD: 50 → InventoryScreen/StatusScreen: 80 → PauseScreen: 90 → DialogueManager: 100 → ScreenFader: 999
 
 ## Scene flow
 
 ```
-_Bootstrap (persistent, auto-loaded)
-    ↓ GameManager
-_Splashscreen → _Intro → _MainMenu → _Name → _Gameplay + Zone scene
+_Bootstrap (persistent) → _Splashscreen → _Intro → _MainMenu → _Name → _Gameplay + Zone
 ```
 
-Each non-gameplay scene has a controller MonoBehaviour that drives its logic and calls `GameManager.Instance.LoadXxxScene()` to advance:
-
-| Scene | Controller | Behavior |
-|-------|-----------|----------|
-| `_Splashscreen` | `SplashscreenController` | Shows placeholder logo via OnGUI, waits `_duration` seconds |
-| `_Intro` | `IntroController` | Plays VideoPlayer, skippable via any key |
-| `_MainMenu` | `MainMenuController` | uGUI: "Press Start" (blinking) → 4-option menu (New Game, Continue, Delete, Battle Mode) |
-| `_Name` | `NameController` | uGUI: two TMP_InputFields + Confirm button |
-| `_Gameplay` | (no controller) | Player, PartnerDigimon, camera, InputManager, DialogueManager, TimeSystem, HUD, CareSystem, Inventory, InventoryScreen, PauseScreen, StatusScreen. Zone scenes loaded additively on top |
+Each non-gameplay scene has a controller (`SplashscreenController`, `IntroController`, `MainMenuController`, `NameController`) that calls `GameManager.Instance.LoadXxxScene()` to advance.
 
 ### Zone system
 
-- [ZoneData.cs](Assets/_Project/Scripts/ZoneData.cs) — `ScriptableObject` with `SceneReference` + `Vector3 CameraPosition`. Created via `Create → DigimonWorld → ZoneData`. Assets in `Assets/_Project/Data/Zones/`.
-- [ZoneTrigger.cs](Assets/_Project/Scripts/ZoneTrigger.cs) — `BoxCollider` trigger in zone scenes. On player enter, calls `GameManager.Instance.LoadZone(destinationZone)`.
-- `GameManager.LoadZone()` — fades out, unloads current zone, loads new zone, repositions camera, fades in. `_isTransitioning` flag prevents re-entry during fade.
-- `GameManager.Start()` detects which zone is already loaded (for press-Play-from-zone-scene) by iterating `_allZones[]`.
-- Zone scenes contain only environment: terrain, props, NPCs, interactables, zone triggers. No camera, no player.
+`ZoneData` SO (`SceneReference` + `CameraPosition`). `ZoneTrigger` (`BoxCollider` trigger) calls `GameManager.LoadZone()` which fades, unloads old zone, loads new, repositions camera. Zone scenes contain only environment — no camera, no player.
 
 ## Gameplay systems
 
-### Player movement
-[PlayerController.cs](Assets/_Project/Scripts/PlayerController.cs) — `CharacterController`-based, camera-relative horizontal movement. Reads input from `InputManager.Instance.Actions`. Walk/sprint, gravity, rotates to face movement direction. Includes interaction detection via `SphereCast`. Early-returns from `Update()` when `InputManager.PlayerInputEnabled` is false.
+**Player:** `PlayerController` — `CharacterController`-based, camera-relative movement, `SphereCast` interaction detection. `GameplayCamera` — fixed position per zone, tracks player.
 
-### Camera
-[GameplayCamera.cs](Assets/_Project/Scripts/GameplayCamera.cs) — fixed position, `LookAt` player in `LateUpdate`. Digimon World 1 style: camera doesn't follow, just tracks. Position set per-zone via `ZoneData.CameraPosition`.
+**Partner Digimon:** single `PartnerDigimon.prefab` with `DigimonFollow` (follow AI) + `DigimonInstance` (runtime mutable state). Species swappable via `DigimonSpeciesData` reference.
 
-### Partner Digimon
-`PartnerDigimon.prefab` — single prefab for the player's partner. Components: `CharacterController`, `DigimonFollow`, `DigimonInstance`. The species is swappable via the `DigimonSpeciesData` reference on `DigimonInstance`; defaults to Agumon. Uses the Agumon placeholder model for now.
+**DigimonInstance:** holds current HP/MP, training bonuses (`_bonusOffense`/`_bonusDefense`/`_bonusSpeed`/`_bonusBrains`), care stats (hunger, tiredness, happiness, discipline, care mistakes, virus gauge, weight, age). `TrainStat(TrainableStat, int)` for training. `InitializeFromSpecies()` resets all state.
 
-[DigimonFollow.cs](Assets/_Project/Scripts/DigimonFollow.cs) — `CharacterController`-based AI. Follows when distance > `_followDistance`, slows as it approaches `_stopDistance`, stops when close. Includes gravity.
+**Interaction:** `IInteractable` interface (`Interact()`, `ShowPrompt()`, `HidePrompt()`). Implementations: `NPCInteractable` (dialogue), `TrainingFacility` (stat training, instant success — mini-game deferred to Phase 6), `TestInteractable` (debug).
 
-[DigimonInstance.cs](Assets/_Project/Scripts/DigimonInstance.cs) — Runtime mutable state for a partner Digimon. Holds a `DigimonSpeciesData` reference (swapped on evolution) and runtime fields: `CurrentHP`, `CurrentMP`, `Age`, `Weight`, `Hunger`, `Tiredness`, `Happiness`, `Discipline`, `CareMistakes`, `VirusGauge`. `InitializeFromSpecies(DigimonSpeciesData)` resets state from base stats.
+**Data model SOs:** `DigimonSpeciesData` (species identity + base stats + techniques), `TechniqueData`, `ItemData` (flat effect fields), `TrainingData`, `DialogueData`. All use `[CreateAssetMenu(menuName = "DigimonWorld/...")]`. Assets in `Assets/_Project/Data/` subdirectories.
 
-### Interaction
-[IInteractable.cs](Assets/_Project/Scripts/IInteractable.cs) — interface: `InteractPrompt`, `Interact()`, `ShowPrompt()`, `HidePrompt()`. PlayerController does a `SphereCast` each frame and manages show/hide transitions. [TestInteractable.cs](Assets/_Project/Scripts/TestInteractable.cs) is a test cube that changes color on interact with a billboard TextMeshPro prompt. [NPCInteractable.cs](Assets/_Project/Scripts/NPCInteractable.cs) triggers dialogue via `DialogueManager`.
-
-### Dialogue
-[DialogueData.cs](Assets/_Project/Scripts/DialogueData.cs) — `ScriptableObject` with a `DialogueLine[]` (each line has `Speaker` + `Text`). Created via `Create → DigimonWorld → DialogueData`. [DialogueManager.cs](Assets/_Project/Scripts/DialogueManager.cs) — `Singleton` in `_Gameplay`. `StartDialogue()` calls `InputManager.SetPlayerInputEnabled(false)`, shows a bottom-screen panel, E key advances lines. A `_justOpened` flag prevents the triggering E press from advancing past line 0.
-
-### Time
-[TimeSystem.cs](Assets/_Project/Scripts/TimeSystem.cs) — `Singleton` in `_Gameplay`. In-game clock: 1 real second = 1 in-game minute. Tracks `Hour`, `Minute`, `Day`. Uses `Time.deltaTime` so clock pauses with `timeScale = 0`. `SetPaused(bool)` for explicit pause. `OnHourChanged` event for future time-gated hooks. Starts at 06:00 Day 1 by default (configurable via `_startHour`/`_startMinute`).
-
-### HUD
-[HUD.cs](Assets/_Project/Scripts/HUD.cs) — `Singleton` in `_Gameplay`. Canvas overlay (sortingOrder 50). Polls `TimeSystem.Instance.TimeString` each frame to display "HH:MM" in the top-right corner.
-
-### Digimon data model
-[DigimonEnums.cs](Assets/_Project/Scripts/DigimonEnums.cs) — `DigimonStage` (Fresh, InTraining, Rookie, Champion, Ultimate), `DigimonAttribute` (Vaccine, Data, Virus), `TechniqueCategory` (Fire, Battle, Air, Earth, Water, Machine, Filth).
-
-[TechniqueData.cs](Assets/_Project/Scripts/TechniqueData.cs) — `ScriptableObject` with `TechniqueName`, `Category`, `MpCost`, `Power`, `Range`. Created via `Create → DigimonWorld → TechniqueData`. Assets in `Assets/_Project/Data/Techniques/`.
-
-[DigimonSpeciesData.cs](Assets/_Project/Scripts/DigimonSpeciesData.cs) — `ScriptableObject` defining a Digimon species. Fields: `SpeciesName`, `Stage`, `Attribute`, base stats (HP, MP, Offense, Defense, Speed, Brains), `LifespanHours`, `LearnableTechniques[]`. Created via `Create → DigimonWorld → DigimonSpeciesData`. Assets in `Assets/_Project/Data/Digimons/`.
-
-### Care system
-[CareSystem.cs](Assets/_Project/Scripts/CareSystem.cs) — `Singleton` in `_Gameplay`. Subscribes to `TimeSystem.OnHourChanged`. Each in-game hour: increments hunger (+4) and tiredness (+3) on the partner `DigimonInstance`, checks thresholds (80 = warning, 100 = care mistake + happiness penalty), manages sleep (21:00–06:00, tiredness recovery). Player actions: `Feed(hungerReduction, weightGain)`, `Praise()` (+happiness, +discipline), `Scold()` (-happiness, +discipline). Finds partner via `FindFirstObjectByType<DigimonInstance>()` with lazy cache.
-
-### Item & Inventory
-[ItemCategory.cs](Assets/_Project/Scripts/ItemCategory.cs) — enum: Food, Recovery, Training, Status.
-
-[ItemData.cs](Assets/_Project/Scripts/ItemData.cs) — `ScriptableObject` defining an item. Fields: `ItemName`, `Category`, `Description`, `BuyPrice`/`SellPrice`, `MaxStack` (default 10), flat effect ints (`HungerReduction`, `WeightGain`, `HpRestore`, `MpRestore`, `HappinessChange`, `DisciplineChange`, `TirednessReduction`). Created via `Create → DigimonWorld → ItemData`. Assets in `Assets/_Project/Data/Items/`.
-
-[Inventory.cs](Assets/_Project/Scripts/Inventory.cs) — `Singleton` in `_Gameplay`. `InventorySlot` struct (ItemData + Count) in same file. Flat `List<InventorySlot>` with max 20 slots. `AddItem`/`RemoveItem`/`UseItem`/`HasItem`/`GetItemCount`/`GetSlot`. `UseItem` routes food through `CareSystem.Instance.Feed()`, non-food applies HP/MP directly, then universal effects (happiness, discipline, tiredness). Bits currency via `AddBits`/`SpendBits`. `OnInventoryChanged` event.
-
-### Training
-[TrainingData.cs](Assets/_Project/Scripts/TrainingData.cs) — `ScriptableObject` defining a training facility. Fields: `FacilityName`, `Stat` (TrainableStat enum), `StatGainMin`/`StatGainMax`, `TirednessCost`, `HappinessCost`. Created via `Create → DigimonWorld → TrainingData`. Assets in `Assets/_Project/Data/Training/`.
-
-[TrainingFacility.cs](Assets/_Project/Scripts/TrainingFacility.cs) — `IInteractable` in zone scenes. On interact: checks tiredness < 80, rolls random stat gain, calls `DigimonInstance.TrainStat()`, applies tiredness/happiness costs. Instant success (mini-game deferred to Phase 6). Uses same prompt pattern as NPCInteractable.
-
-`DigimonInstance` tracks training bonuses via `_bonusOffense`/`_bonusDefense`/`_bonusSpeed`/`_bonusBrains`. `TrainStat(TrainableStat, int)` adds to these. Total stats exposed via `Offense`, `Defense`, `Speed`, `Brains` properties (base + bonus). `TrainableStat` enum in `DigimonEnums.cs`.
-
-### Input
-[InputManager.cs](Assets/_Project/Scripts/InputManager.cs) — `Singleton` in `_Gameplay`. Owns the single `InputSystem_Actions` instance; all gameplay systems read from `InputManager.Instance.Actions`. `PlayerInputEnabled` flag gates `PlayerController` without disabling the action map, so `DialogueManager` can still read Interact. `InputSystem_Actions.inputactions` has C# code generation enabled. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next. Menu controllers (`MainMenuController`, `IntroController`) use `Keyboard.current` directly — they exist in isolated non-gameplay scenes.
+**Enums:** `DigimonStage`, `DigimonAttribute`, `TrainableStat`, `TechniqueCategory` (in `DigimonEnums.cs`). `ItemCategory` (in `ItemCategory.cs`).
 
 ## Editor workflow: generators
 
-**Two-pass workflow — prefabs first, then scenes.** All menu items live under `Tools → DigimonWorld`.
-
-### Generator files
-
-| File | Responsibility |
-|------|---------------|
-| [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
-| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, PartnerDigimon, NPC, TimeSystem, CareSystem, Inventory, TrainingFacility. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species, Sample Items, Sample Training |
-| [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
-| [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
-| [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |
-| [GenerateHUDPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateHUDPrefab.cs) | HUD with Canvas (sortingOrder 50) + time/day top-right, partner stats top-left |
-| [GenerateInventoryScreenPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateInventoryScreenPrefab.cs) | InventoryScreen with Canvas (sortingOrder 80) + center panel, item list, bits, instructions |
-| [GeneratePauseScreenPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePauseScreenPrefab.cs) | PauseScreen with Canvas (sortingOrder 90) + fullscreen overlay, "PAUSED" title |
-| [GenerateStatusScreenPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateStatusScreenPrefab.cs) | StatusScreen with Canvas (sortingOrder 80) + identity, stats, condition panels |
-| [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All scenes: Bootstrap, Splashscreen, Intro, MainMenu, Name, Gameplay, Zone1, Zone2, plus GenerateAll. Zone scenes include `ZoneTrigger` creation via `CreateZoneTrigger` helper |
+**Two-pass: data/prefabs first, then scenes.** Use the **Generator Window** (`Tools → DigimonWorld → Generator Window`) — dockable panel with all generators by category + "Generate All" button.
 
 ### Rules
 
-- **One menu item per prefab.** Add a new service/prefab by adding a const path, a `[MenuItem]` method, and one call to the shared `SavePrefab` helper (or manual creation for complex UI prefabs).
-- **Never mix prefab creation and scene composition in one pass.** The prefab pass must `AssetDatabase.SaveAssets` before any scene generator reads the prefab.
+- **One menu item per prefab.** Simple prefabs use `PrefabGeneratorUtils.SavePrefab()` in `GeneratePrefabs.cs`. Complex UI prefabs get their own file (e.g. `GenerateHUDPrefab.cs`).
+- **Never mix prefab creation and scene composition in one pass.**
 - **Generators are idempotent** — re-running overwrites in place.
-- **Use `PrefabUtility.InstantiatePrefab`** in scenes (not raw `Instantiate` — that breaks the prefab link).
-- **Scene generator registers scenes in Build Settings** — `_Bootstrap` at index 0, others appended.
-- **Complex UI prefabs get their own generator file** (e.g. `GenerateMainMenuPrefab.cs`) to keep `GeneratePrefabs.cs` focused on simple prefabs.
-
-### Materials
-
-`PrefabGeneratorUtils.CreateOrLoadMaterial(path, color)` creates a URP Lit material at the given asset path, using `_BaseColor` (not legacy `_Color`). Materials live alongside their assets:
-- `Assets/_Project/Digimons/Agumon/Agumon.mat`
-- `Assets/_Project/Props/Ground.mat`
-- `Assets/_Project/Props/NPC.mat`
-- Zone materials: `Zone1Ground.mat`, `Zone2Ground.mat`, etc. in `Assets/_Project/Props/`
+- **Use `PrefabUtility.InstantiatePrefab`** in scenes (not `Instantiate`).
+- Materials: `PrefabGeneratorUtils.CreateOrLoadMaterial(path, color)` — URP Lit shader, `_BaseColor` property.
 
 ## 3D model generation (Blender)
 
-Placeholder models are generated via headless Blender Python scripts under `Assets/_Project/Scripts/Editor/Generators/BlenderScripts/`. Blender path: `C:\Program Files\Blender Foundation\Blender 5.1\blender.exe`.
+Headless Blender scripts in `Assets/_Project/Scripts/Editor/Generators/BlenderScripts/`. Blender path: `C:\Program Files\Blender Foundation\Blender 5.1\blender.exe`.
 
-```bash
-blender.exe --background --python generate_agumon.py -- "output/path.fbx"
-```
-
-Key export settings for Unity compatibility (no -90° rotation):
-```python
-bpy.ops.export_scene.fbx(
-    axis_forward='-Z', axis_up='Y',
-    use_space_transform=True, bake_space_transform=True,
-)
-```
-
-Pivot points must be at the feet (shift mesh vertices so min_z = 0, keep origin at world origin).
-
-Current models:
-- `Assets/_Project/Player/Player.fbx` — human figure (~1.8m)
-- `Assets/_Project/Digimons/Agumon/Agumon.fbx` — stocky dinosaur (~1m)
+Key export settings: `axis_forward='-Z', axis_up='Y', use_space_transform=True, bake_space_transform=True`. Pivot at feet (min_z = 0).
 
 ## Naming & conventions
 
-- **Namespaces:** not used. Scripts live in the global namespace.
+- **Namespaces:** not used.
 - **Services:** `PascalCase` MonoBehaviour inheriting `Singleton<Self>`.
-- **Scenes:** `PascalCase.unity`; non-gameplay scenes prefixed with `_` (`_Bootstrap.unity`, `_Intro.unity`). Zone scenes use plain names in `Scenes/Zones/` (`Zone1.unity`).
-- **Prefabs:** `PascalCase.prefab`, filename matches the dominant component.
-- **ScriptableObjects:** `PascalCaseData` (e.g. `DialogueData`, `ZoneData`).
-- **Private fields:** `_camelCase`; serialized fields `[SerializeField] private ...`.
-- **Folders:** `PascalCase`.
-
-## Phased system introduction (the core rule)
-
-Each system enters at the phase where gameplay first needs it — not upfront. Don't build a UI framework in Phase 0 because "we'll need it." Build it in Phase 2 when dialogue + HUD arrive.
+- **Scenes:** `_PascalCase.unity` (non-gameplay), plain names in `Scenes/Zones/`.
+- **ScriptableObjects:** `PascalCaseData`.
+- **Private fields:** `_camelCase` with `[SerializeField] private`.
 
 ## Key packages
 
-- **Input System** (`com.unity.inputsystem` 1.19.0) — new input system with code-generated wrapper. Do not use the legacy `Input` class.
-- **URP** (`com.unity.render-pipelines.universal` 17.3.0) — materials must use `Universal Render Pipeline/Lit` shader and `_BaseColor` property.
-- **AI Navigation** (`com.unity.ai.navigation` 2.0.11) — for partner follow / enemy AI in later phases.
-- **PrimeTween** (`com.kyrylokuzyk.primetween` 1.3.8) — preferred tweening library; use it instead of coroutine-based tweens.
-- **Eflatun.SceneReference** (git package, 5.0.0) — typed scene references used by `GameManager` and `BootstrapConfig`. Serializes by GUID internally; construct via `new SceneReference(guid)` or assign in Inspector.
-- **Timeline** (1.8.11) — reserved for the Phase 6 cutscene system.
+- **Input System** (1.19.0) — code-generated wrapper. Do not use legacy `Input` class.
+- **URP** (17.3.0) — `Universal Render Pipeline/Lit` shader, `_BaseColor` property.
+- **Eflatun.SceneReference** (5.0.0) — typed scene refs by GUID.
+- **PrimeTween** (1.3.8) — preferred over coroutine tweens.
+- **AI Navigation** (2.0.11) — for later phases.
 
 ## Coding principles
 
 - **KISS** — simplest thing that works. No clever patterns where a plain `if` does the job.
 - **YAGNI** — don't build for hypothetical needs. No interfaces with one implementation, no config knobs with one value.
 - **DRY** — remove real duplication, not shape-similar code. Wrong abstraction costs more than repetition.
-
-When in doubt, lean KISS over DRY.
+- **Phased introduction** — each system enters at the phase where gameplay first needs it.
 
 ## Git
 
-- Remote: `TheGabmeister/games-unity` — this project lives as a sub-directory of that repo.
+- Remote: `TheGabmeister/games-unity` (project is a sub-directory).
 - Default branch: `main`.
-- Unity meta files are tracked — don't delete them. `.gitignore` follows the standard Unity template.
-
-## Things not in the repo yet
-
-- No CI / GitHub Actions.
-- No `.editorconfig`, no formatter config.
-- No asmdefs — everything compiles into the default assemblies.
-- No unit tests.
-- No loading screen.
+- Unity meta files are tracked — don't delete them.
+- No CI, no `.editorconfig`, no asmdefs, no unit tests.
