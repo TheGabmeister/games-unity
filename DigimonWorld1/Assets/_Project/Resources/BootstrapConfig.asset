@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 808a935951601fc438a36d0eb4e7e700, type: 3}
+  m_Name: BootstrapConfig
+  m_EditorClassIdentifier: Assembly-CSharp::BootstrapConfig
+  _bootstrapScene:
+    asset: {fileID: 102900000, guid: c60002c2276b78044a1874957808f6b6, type: 3}
+    guid: c60002c2276b78044a1874957808f6b6
+  _gameplayBootstrapScene:
+    asset: {fileID: 102900000, guid: 0ca9a58cfb353f84ca0c30be20f1a0e5, type: 3}
+    guid: 0ca9a58cfb353f84ca0c30be20f1a0e5
+  _gameplayScene:
+    asset: {fileID: 102900000, guid: a7d02de308a9703409cd7ad2b60d9d7a, type: 3}
+    guid: a7d02de308a9703409cd7ad2b60d9d7a

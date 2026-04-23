@@ -17,7 +17,9 @@ public static class GeneratePrefabs
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
+    private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
 
+    private const string BootstrapScenePath = "Assets/_Project/Scenes/_Bootstrap.unity";
     private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
     private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
     private const string MainMenuScenePath = "Assets/_Project/Scenes/_MainMenu.unity";
@@ -35,6 +37,25 @@ public static class GeneratePrefabs
         {
             //go.AddComponent<Bootstrapper>();
         });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate BootstrapConfig")]
+    public static void GenerateBootstrapConfig()
+    {
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Resources");
+
+        BootstrapConfig config = ScriptableObject.CreateInstance<BootstrapConfig>();
+
+        SerializedObject so = new SerializedObject(config);
+        PrefabGeneratorUtils.SetSceneReference(so, "_bootstrapScene", BootstrapScenePath);
+        PrefabGeneratorUtils.SetSceneReference(so, "_gameplayBootstrapScene", GameplayBootstrapScenePath);
+        PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(config, BootstrapConfigPath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"BootstrapConfig asset generated at {BootstrapConfigPath}");
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate AudioSystem")]
