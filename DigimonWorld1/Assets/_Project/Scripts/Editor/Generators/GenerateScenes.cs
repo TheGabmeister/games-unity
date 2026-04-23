@@ -239,8 +239,6 @@ public static class GenerateScenes
         PrefabGeneratorUtils.EnsureFolder(ZoneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        GameObject camGo = CreateCamera(scene);
-        camGo.transform.position = new Vector3(0f, 10f, -10f);
 
         // Red ground
         GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -281,8 +279,6 @@ public static class GenerateScenes
         PrefabGeneratorUtils.EnsureFolder(ZoneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        GameObject camGo = CreateCamera(scene);
-        camGo.transform.position = new Vector3(0f, 10f, -10f);
 
         // Blue ground
         GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
