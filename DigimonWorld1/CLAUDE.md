@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Gameplay-focused Unity recreation of Digimon World 1. Not a pixel-perfect remake — faithful mechanics with placeholder 3D models (no animations), placeholder textures, placeholder audio, single-player. The phased roadmap lives in [DigimonWorld1.md](DigimonWorld1.md) (6 phases). Treat that doc as the source of truth for scope and sequencing.
 
-Status: Phase 0–1 complete, Phase 2–3 in progress. Working: bootstrap, scene flow, input, player movement, partner follow AI, interaction, dialogue, zone transitions, time system, HUD with partner stats, care system (hunger/tiredness/sleep), inventory with items, training facilities, pause/inventory/status screens.
+Status: Phases 0–4 complete. Working: bootstrap, scene flow, input, player movement, partner follow AI, interaction, dialogue, zone transitions, time system, HUD with partner stats, care system (hunger/tiredness/sleep), inventory with items, training facilities, pause/inventory/status screens, audio system, battle system with turn-based combat, battle UI, enemy AI, status effects, brains-driven obedience, overworld wild Digimon encounters.
 
 ## Unity version & running
 
@@ -23,10 +23,11 @@ Status: Phase 0–1 complete, Phase 2–3 in progress. Working: bootstrap, scene
 - **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up.
 - Prefabs organized under `Assets/_Project/Prefabs/`: `Services/`, `UI/`, `Controllers/`, `Characters/`, `Interactables/`.
 - Service `Awake` order is unspecified. If service A needs B during `Awake`, resolve in `Start` or set Script Execution Order.
+- **Teardown gotcha:** `Singleton.Instance` logs an error if the instance is already destroyed. In `OnDestroy`, use `FindFirstObjectByType<T>()` directly instead of `T.Instance` to avoid errors when exit-order is nondeterministic. Proper teardown ordering is deferred to Phase 6.
 
 ### _Bootstrap services
 
-`GameManager` (scene orchestrator, zone transitions with `ScreenFader` fade), `SceneLoader` (async load/unload), `ScreenFader` (sortingOrder 999), `AudioSystem` (stub).
+`GameManager` (scene orchestrator, zone transitions with `ScreenFader` fade), `SceneLoader` (async load/unload), `ScreenFader` (sortingOrder 999), `AudioSystem` (`AudioMixer` with Master/Music/SFX/UI buses, SFX one-shot pool, music player, `PlaySFX`/`PlayMusic`/`StopMusic`/`SetBusVolume`).
 
 ### _Gameplay services & systems
 
@@ -39,10 +40,12 @@ Status: Phase 0–1 complete, Phase 2–3 in progress. Working: bootstrap, scene
 - **DialogueManager** — bottom-screen panel, E key advances, disables player input while active.
 - **HUD** — top-right: time + day. Top-left: partner stats.
 - **InventoryScreen** (Tab/I), **StatusScreen** (C), **PauseScreen** (Escape) — toggleable UI screens, mutually exclusive. PauseScreen sets `timeScale = 0`.
+- **BattleSystem** — turn-based combat singleton. UI overlay (not a separate scene). `StartBattle(DigimonInstance, WildDigimonInstance, callback)` disables player input, pauses TimeSystem, hides HUD, shows BattleUI. Turn flow: player command → obedience check → status effects → execute → enemy AI → repeat. `EndBattle(BattleResult)` restores all state and invokes callback.
+- **BattleUI** — command menu (Attack/Technique/Item/Flee/Auto), technique and item submenus, battle log. Input: W/S navigate, E confirm, Q/ESC back.
 
 ### Canvas sorting order
 
-HUD: 50 → InventoryScreen/StatusScreen: 80 → PauseScreen: 90 → DialogueManager: 100 → ScreenFader: 999
+HUD: 50 → InventoryScreen/StatusScreen: 80 → BattleUI: 85 → PauseScreen: 90 → DialogueManager: 100 → ScreenFader: 999
 
 ## Scene flow
 
@@ -62,13 +65,17 @@ Each non-gameplay scene has a controller (`SplashscreenController`, `IntroContro
 
 **Partner Digimon:** single `PartnerDigimon.prefab` with `DigimonFollow` (follow AI) + `DigimonInstance` (runtime mutable state). Species swappable via `DigimonSpeciesData` reference.
 
-**DigimonInstance:** holds current HP/MP, training bonuses (`_bonusOffense`/`_bonusDefense`/`_bonusSpeed`/`_bonusBrains`), care stats (hunger, tiredness, happiness, discipline, care mistakes, virus gauge, weight, age). `TrainStat(TrainableStat, int)` for training. `InitializeFromSpecies()` resets all state.
+**DigimonInstance:** holds current HP/MP, training bonuses (`_bonusOffense`/`_bonusDefense`/`_bonusSpeed`/`_bonusBrains`), care stats (hunger, tiredness, happiness, discipline, care mistakes, virus gauge, weight, age), `_knownTechniques` (runtime list, capped at 4). `TrainStat(TrainableStat, int)` for training. `TakeDamage(int)`, `SpendMP(int)` for combat. `InitializeFromSpecies()` resets all state and seeds known techniques from species learnables.
 
 **Interaction:** `IInteractable` interface (`Interact()`, `ShowPrompt()`, `HidePrompt()`). Implementations: `NPCInteractable` (dialogue), `TrainingFacility` (stat training, instant success — mini-game deferred to Phase 6), `TestInteractable` (debug).
 
-**Data model SOs:** `DigimonSpeciesData` (species identity + base stats + techniques), `TechniqueData`, `ItemData` (flat effect fields), `TrainingData`, `DialogueData`. All use `[CreateAssetMenu(menuName = "DigimonWorld/...")]`. Assets in `Assets/_Project/Data/` subdirectories.
+**Battle:** `BattleSystem` manages turn-based 1v1 combat. Partner uses `DigimonInstance` directly (damage persists). Enemies use `WildDigimonInstance` (plain C# class with stat scaling). `BattleFormulas` (static) handles damage calc and type advantage. `EnemyBattleAI` (static) picks actions weighted by technique power, flees at low HP. Obedience check in `BattleSystem.ApplyObedienceCheck()` — scales with Brains/Discipline, disobey = random action. Status effects (Poison/Paralysis/Sleep/Confusion) tracked per-combatant in BattleSystem, tick each turn.
 
-**Enums:** `DigimonStage`, `DigimonAttribute`, `TrainableStat`, `TechniqueCategory` (in `DigimonEnums.cs`). `ItemCategory` (in `ItemCategory.cs`).
+**Overworld encounters:** `WildDigimon` MonoBehaviour with Patrol/Chase/Defeated states, `CharacterController`-based movement. `EncounterData` SO defines species + stat scale + bit reward. Contact triggers `BattleSystem.StartBattle()`.
+
+**Data model SOs:** `DigimonSpeciesData` (species identity + base stats + techniques), `TechniqueData` (name, category, MP cost, power, range, accuracy, status effect + chance), `ItemData` (flat effect fields), `TrainingData`, `DialogueData`, `EncounterData` (species + stat scale + bit reward). All use `[CreateAssetMenu(menuName = "DigimonWorld/...")]`. Assets in `Assets/_Project/Data/` subdirectories.
+
+**Enums:** `DigimonStage`, `DigimonAttribute`, `TrainableStat`, `TechniqueCategory` (in `DigimonEnums.cs`). `ItemCategory` (in `ItemCategory.cs`). `StatusEffectType` (in `StatusEffectType.cs`). `BattleActionType`, `BattleResult` (in their own files).
 
 ## Editor workflow: generators
 
