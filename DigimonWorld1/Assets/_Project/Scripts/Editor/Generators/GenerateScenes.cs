@@ -34,7 +34,7 @@ public static class GenerateScenes
     private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
     private const string NameControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NameController.prefab";
     private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
-    private const string AgumonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Agumon.prefab";
+    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/PartnerDigimon.prefab";
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
     public static void GenerateBootstrap()
@@ -132,10 +132,10 @@ public static class GenerateScenes
             return;
         }
 
-        GameObject agumonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AgumonPrefabPath);
-        if (agumonPrefab == null)
+        GameObject partnerDigimonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PartnerDigimonPrefabPath);
+        if (partnerDigimonPrefab == null)
         {
-            Debug.LogError($"Agumon prefab not found at {AgumonPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate Agumon' first.");
+            Debug.LogError($"PartnerDigimon prefab not found at {PartnerDigimonPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate PartnerDigimon' first.");
             return;
         }
 
@@ -179,9 +179,9 @@ public static class GenerateScenes
         playerSo.ApplyModifiedPropertiesWithoutUndo();
 
         // Partner Digimon
-        GameObject agumonGo = (GameObject)PrefabUtility.InstantiatePrefab(agumonPrefab, scene);
-        agumonGo.transform.position = new Vector3(-1.5f, 0f, -1f);
-        DigimonFollow digimonFollow = agumonGo.GetComponent<DigimonFollow>();
+        GameObject partnerGo = (GameObject)PrefabUtility.InstantiatePrefab(partnerDigimonPrefab, scene);
+        partnerGo.transform.position = new Vector3(-1.5f, 0f, -1f);
+        DigimonFollow digimonFollow = partnerGo.GetComponent<DigimonFollow>();
 
         SerializedObject digimonSo = new SerializedObject(digimonFollow);
         digimonSo.FindProperty("_target").objectReferenceValue = playerGo.transform;

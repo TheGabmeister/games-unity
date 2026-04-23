@@ -13,7 +13,7 @@ public static class GeneratePrefabs
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
     private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
-    private const string AgumonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Agumon.prefab";
+    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/PartnerDigimon.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
     private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
@@ -257,19 +257,19 @@ public static class GeneratePrefabs
         Debug.Log($"Prefab generated at {PlayerPrefabPath}");
     }
 
-    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Agumon")]
-    public static void GenerateAgumon()
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate PartnerDigimon")]
+    public static void GeneratePartnerDigimon()
     {
         GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(AgumonModelPath);
         if (modelAsset == null)
         {
-            Debug.LogError($"Agumon model not found at {AgumonModelPath}.");
+            Debug.LogError($"Agumon model not found at {AgumonModelPath}. Using this as default partner model.");
             return;
         }
 
         PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
 
-        GameObject root = new GameObject("Agumon");
+        GameObject root = new GameObject("PartnerDigimon");
         try
         {
             CharacterController cc = root.AddComponent<CharacterController>();
@@ -278,19 +278,32 @@ public static class GeneratePrefabs
             cc.radius = 0.3f;
 
             root.AddComponent<DigimonFollow>();
+            DigimonInstance instance = root.AddComponent<DigimonInstance>();
+
+            DigimonSpeciesData agumonSpecies = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>(DigimonDataDir + "/Agumon.asset");
+            if (agumonSpecies != null)
+            {
+                SerializedObject instanceSo = new SerializedObject(instance);
+                instanceSo.FindProperty("_species").objectReferenceValue = agumonSpecies;
+                instanceSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                Debug.LogWarning("Agumon species data not found. Run 'Generate Sample Species' first. _species will be empty.");
+            }
 
             GameObject model = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
-            model.name = "AgumonModel";
+            model.name = "Model";
             model.transform.SetParent(root.transform, false);
             model.transform.localPosition = Vector3.zero;
 
             Material agumonMat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Digimons/Agumon/Agumon.mat", new Color(1f, 0.8f, 0.2f));
             PrefabGeneratorUtils.ApplyMaterialToRenderers(model, agumonMat);
 
-            PrefabUtility.SaveAsPrefabAsset(root, AgumonPrefabPath, out bool success);
+            PrefabUtility.SaveAsPrefabAsset(root, PartnerDigimonPrefabPath, out bool success);
             if (!success)
             {
-                Debug.LogError($"Failed to save prefab at {AgumonPrefabPath}");
+                Debug.LogError($"Failed to save prefab at {PartnerDigimonPrefabPath}");
                 return;
             }
         }
@@ -301,7 +314,7 @@ public static class GeneratePrefabs
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"Prefab generated at {AgumonPrefabPath}");
+        Debug.Log($"Prefab generated at {PartnerDigimonPrefabPath}");
     }
 
     [MenuItem("Tools/DigimonWorld/Data/Generate TestDialogue")]

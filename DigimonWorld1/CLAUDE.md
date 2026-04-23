@@ -63,7 +63,7 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 | `_Intro` | `IntroController` | Plays VideoPlayer, skippable via any key |
 | `_MainMenu` | `MainMenuController` | uGUI: "Press Start" (blinking) → 4-option menu (New Game, Continue, Delete, Battle Mode) |
 | `_Name` | `NameController` | uGUI: two TMP_InputFields + Confirm button |
-| `_Gameplay` | (no controller) | Player, partner Agumon, camera, InputManager, DialogueManager, TimeSystem, HUD. Zone scenes loaded additively on top |
+| `_Gameplay` | (no controller) | Player, PartnerDigimon, camera, InputManager, DialogueManager, TimeSystem, HUD. Zone scenes loaded additively on top |
 
 ### Zone system
 
@@ -81,8 +81,12 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 ### Camera
 [GameplayCamera.cs](Assets/_Project/Scripts/GameplayCamera.cs) — fixed position, `LookAt` player in `LateUpdate`. Digimon World 1 style: camera doesn't follow, just tracks. Position set per-zone via `ZoneData.CameraPosition`.
 
-### Partner follow
+### Partner Digimon
+`PartnerDigimon.prefab` — single prefab for the player's partner. Components: `CharacterController`, `DigimonFollow`, `DigimonInstance`. The species is swappable via the `DigimonSpeciesData` reference on `DigimonInstance`; defaults to Agumon. Uses the Agumon placeholder model for now.
+
 [DigimonFollow.cs](Assets/_Project/Scripts/DigimonFollow.cs) — `CharacterController`-based AI. Follows when distance > `_followDistance`, slows as it approaches `_stopDistance`, stops when close. Includes gravity.
+
+[DigimonInstance.cs](Assets/_Project/Scripts/DigimonInstance.cs) — Runtime mutable state for a partner Digimon. Holds a `DigimonSpeciesData` reference (swapped on evolution) and runtime fields: `CurrentHP`, `CurrentMP`, `Age`, `Weight`, `Hunger`, `Tiredness`, `Happiness`, `Discipline`, `CareMistakes`, `VirusGauge`. `InitializeFromSpecies(DigimonSpeciesData)` resets state from base stats.
 
 ### Interaction
 [IInteractable.cs](Assets/_Project/Scripts/IInteractable.cs) — interface: `InteractPrompt`, `Interact()`, `ShowPrompt()`, `HidePrompt()`. PlayerController does a `SphereCast` each frame and manages show/hide transitions. [TestInteractable.cs](Assets/_Project/Scripts/TestInteractable.cs) is a test cube that changes color on interact with a billboard TextMeshPro prompt. [NPCInteractable.cs](Assets/_Project/Scripts/NPCInteractable.cs) triggers dialogue via `DialogueManager`.
@@ -115,7 +119,7 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 | File | Responsibility |
 |------|---------------|
 | [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
-| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon, NPC, TimeSystem. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species |
+| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, PartnerDigimon, NPC, TimeSystem. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species |
 | [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
 | [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
 | [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |
