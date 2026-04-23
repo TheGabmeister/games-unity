@@ -46,6 +46,7 @@ No CLI build pipeline. All work happens in the Unity Editor:
 | `DialogueManager` | Owns dialogue UI Canvas (sortingOrder 100). `StartDialogue(DialogueData)` calls `InputManager.SetPlayerInputEnabled(false)`, shows lines one at a time, E key advances. `EndDialogue()` re-enables player input. `IsActive` property for guard checks |
 | `TimeSystem` | In-game clock. 1 real second = 1 in-game minute. Tracks `Hour`, `Minute`, `Day`. Uses `Time.deltaTime` so clock pauses with `timeScale = 0`. `SetPaused(bool)` for explicit pause. `OnHourChanged` event for future time-gated hooks |
 | `HUD` | Screen overlay Canvas (sortingOrder 50). Displays `TimeSystem.TimeString` as "HH:MM" in top-right corner |
+| `CareSystem` | Subscribes to `TimeSystem.OnHourChanged`. Ticks hunger, tiredness, sleep, and care mistakes on the partner `DigimonInstance`. Exposes `Feed()`, `Praise()`, `Scold()` for player actions |
 
 ## Scene flow
 
@@ -63,7 +64,7 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 | `_Intro` | `IntroController` | Plays VideoPlayer, skippable via any key |
 | `_MainMenu` | `MainMenuController` | uGUI: "Press Start" (blinking) → 4-option menu (New Game, Continue, Delete, Battle Mode) |
 | `_Name` | `NameController` | uGUI: two TMP_InputFields + Confirm button |
-| `_Gameplay` | (no controller) | Player, PartnerDigimon, camera, InputManager, DialogueManager, TimeSystem, HUD. Zone scenes loaded additively on top |
+| `_Gameplay` | (no controller) | Player, PartnerDigimon, camera, InputManager, DialogueManager, TimeSystem, HUD, CareSystem. Zone scenes loaded additively on top |
 
 ### Zone system
 
@@ -107,6 +108,9 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 
 [DigimonSpeciesData.cs](Assets/_Project/Scripts/DigimonSpeciesData.cs) — `ScriptableObject` defining a Digimon species. Fields: `SpeciesName`, `Stage`, `Attribute`, base stats (HP, MP, Offense, Defense, Speed, Brains), `LifespanHours`, `LearnableTechniques[]`. Created via `Create → DigimonWorld → DigimonSpeciesData`. Assets in `Assets/_Project/Data/Digimons/`.
 
+### Care system
+[CareSystem.cs](Assets/_Project/Scripts/CareSystem.cs) — `Singleton` in `_Gameplay`. Subscribes to `TimeSystem.OnHourChanged`. Each in-game hour: increments hunger (+4) and tiredness (+3) on the partner `DigimonInstance`, checks thresholds (80 = warning, 100 = care mistake + happiness penalty), manages sleep (21:00–06:00, tiredness recovery). Player actions: `Feed(hungerReduction, weightGain)`, `Praise()` (+happiness, +discipline), `Scold()` (-happiness, +discipline). Finds partner via `FindFirstObjectByType<DigimonInstance>()` with lazy cache.
+
 ### Input
 [InputManager.cs](Assets/_Project/Scripts/InputManager.cs) — `Singleton` in `_Gameplay`. Owns the single `InputSystem_Actions` instance; all gameplay systems read from `InputManager.Instance.Actions`. `PlayerInputEnabled` flag gates `PlayerController` without disabling the action map, so `DialogueManager` can still read Interact. `InputSystem_Actions.inputactions` has C# code generation enabled. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next. Menu controllers (`MainMenuController`, `IntroController`) use `Keyboard.current` directly — they exist in isolated non-gameplay scenes.
 
@@ -119,7 +123,7 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 | File | Responsibility |
 |------|---------------|
 | [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
-| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, PartnerDigimon, NPC, TimeSystem. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species |
+| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, PartnerDigimon, NPC, TimeSystem, CareSystem. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species |
 | [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
 | [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
 | [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |

@@ -28,6 +28,7 @@ public static class GenerateScenes
     private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/DialogueManager.prefab";
     private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
     private const string HUDPrefabPath = PrefabGeneratorUtils.PrefabDir + "/HUD.prefab";
+    private const string CareSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/CareSystem.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
@@ -153,6 +154,13 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject careSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(CareSystemPrefabPath);
+        if (careSystemPrefab == null)
+        {
+            Debug.LogError($"CareSystem prefab not found at {CareSystemPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate CareSystem' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -161,6 +169,7 @@ public static class GenerateScenes
         PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
         PrefabUtility.InstantiatePrefab(timeSystemPrefab, scene);
         PrefabUtility.InstantiatePrefab(hudPrefab, scene);
+        PrefabUtility.InstantiatePrefab(careSystemPrefab, scene);
 
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);
