@@ -15,6 +15,9 @@ public static class GenerateScenes
     private const string NameScenePath = SceneDir + "/_Name.unity";
     private const string GameplayBootstrapScenePath = SceneDir + "/_GameplayBootstrap.unity";
     private const string GameplayScenePath = SceneDir + "/_Gameplay.unity";
+    private const string ZoneDir = SceneDir + "/Zones";
+    private const string Zone1ScenePath = ZoneDir + "/Zone1.unity";
+    private const string Zone2ScenePath = ZoneDir + "/Zone2.unity";
 
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
@@ -230,6 +233,92 @@ public static class GenerateScenes
         Debug.Log($"_Gameplay scene generated at {GameplayScenePath}");
     }
 
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Zone1 Scene")]
+    public static void GenerateZone1()
+    {
+        PrefabGeneratorUtils.EnsureFolder(ZoneDir);
+
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        GameObject camGo = CreateCamera(scene);
+        camGo.transform.position = new Vector3(0f, 10f, -10f);
+
+        // Red ground
+        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        ground.name = "Ground";
+        ground.transform.localScale = new Vector3(3f, 1f, 3f);
+        ground.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone1Ground.mat", new Color(0.7f, 0.2f, 0.2f));
+        SceneManager.MoveGameObjectToScene(ground, scene);
+
+        // Tall cylinders
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject cyl = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            cyl.name = $"Pillar_{i}";
+            cyl.transform.position = new Vector3(-4f + i * 2f, 1.5f, 3f);
+            cyl.transform.localScale = new Vector3(0.5f, 3f, 0.5f);
+            cyl.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone1Pillar.mat", new Color(0.9f, 0.5f, 0.1f));
+            SceneManager.MoveGameObjectToScene(cyl, scene);
+        }
+
+        // Large sphere landmark
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.name = "Landmark";
+        sphere.transform.position = new Vector3(0f, 2f, 8f);
+        sphere.transform.localScale = new Vector3(4f, 4f, 4f);
+        sphere.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone1Landmark.mat", new Color(0.9f, 0.1f, 0.1f));
+        SceneManager.MoveGameObjectToScene(sphere, scene);
+
+        if (!SaveScene(scene, Zone1ScenePath)) return;
+        AppendSceneToBuildSettings(Zone1ScenePath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Zone1 scene generated at {Zone1ScenePath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Scenes/Generate Zone2 Scene")]
+    public static void GenerateZone2()
+    {
+        PrefabGeneratorUtils.EnsureFolder(ZoneDir);
+
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        GameObject camGo = CreateCamera(scene);
+        camGo.transform.position = new Vector3(0f, 10f, -10f);
+
+        // Blue ground
+        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        ground.name = "Ground";
+        ground.transform.localScale = new Vector3(3f, 1f, 3f);
+        ground.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Ground.mat", new Color(0.2f, 0.2f, 0.7f));
+        SceneManager.MoveGameObjectToScene(ground, scene);
+
+        // Scattered cubes
+        for (int i = 0; i < 6; i++)
+        {
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.name = $"Block_{i}";
+            float x = (i % 3 - 1) * 4f;
+            float z = (i / 3) * 5f + 2f;
+            cube.transform.position = new Vector3(x, 0.5f, z);
+            cube.transform.localScale = new Vector3(1.5f, 1f + i * 0.3f, 1.5f);
+            cube.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Block.mat", new Color(0.1f, 0.7f, 0.9f));
+            SceneManager.MoveGameObjectToScene(cube, scene);
+        }
+
+        // Capsule tower landmark
+        GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        capsule.name = "Landmark";
+        capsule.transform.position = new Vector3(0f, 3f, 10f);
+        capsule.transform.localScale = new Vector3(2f, 6f, 2f);
+        capsule.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Landmark.mat", new Color(0.1f, 0.1f, 0.9f));
+        SceneManager.MoveGameObjectToScene(capsule, scene);
+
+        if (!SaveScene(scene, Zone2ScenePath)) return;
+        AppendSceneToBuildSettings(Zone2ScenePath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Zone2 scene generated at {Zone2ScenePath}");
+    }
+
     [MenuItem("Tools/DigimonWorld/Scenes/Generate All Scenes")]
     public static void GenerateAll()
     {
@@ -240,6 +329,8 @@ public static class GenerateScenes
         GenerateName();
         GenerateGameplayBootstrap();
         GenerateGameplay();
+        GenerateZone1();
+        GenerateZone2();
     }
 
     private static void GenerateSceneWithPrefab(string scenePath, string prefabPath, string displayName)
