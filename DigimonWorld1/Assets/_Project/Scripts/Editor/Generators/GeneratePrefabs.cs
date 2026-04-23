@@ -12,6 +12,7 @@ public static class GeneratePrefabs
     private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
+    private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
 
     private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
     private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
@@ -141,5 +142,43 @@ public static class GeneratePrefabs
             so.FindProperty("_videoPlayer").objectReferenceValue = vp;
             so.ApplyModifiedPropertiesWithoutUndo();
         });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Player")]
+    public static void GeneratePlayer()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+
+        GameObject root = new GameObject("Player");
+        try
+        {
+            CharacterController cc = root.AddComponent<CharacterController>();
+            cc.center = new Vector3(0f, 1f, 0f);
+            cc.height = 2f;
+            cc.radius = 0.5f;
+
+            root.AddComponent<PlayerController>();
+
+            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            model.name = "PlayerModel";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = new Vector3(0f, 1f, 0f);
+            Object.DestroyImmediate(model.GetComponent<Collider>());
+
+            PrefabUtility.SaveAsPrefabAsset(root, PlayerPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {PlayerPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {PlayerPrefabPath}");
     }
 }

@@ -21,6 +21,7 @@ public static class GenerateScenes
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
     private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
     private const string NameControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NameController.prefab";
+    private const string PlayerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Player.prefab";
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
     public static void GenerateBootstrap()
@@ -89,7 +90,46 @@ public static class GenerateScenes
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Gameplay Scene")]
     public static void GenerateGameplay()
     {
-        GenerateEmptyScene(GameplayScenePath, "_Gameplay");
+        GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
+        if (playerPrefab == null)
+        {
+            Debug.LogError($"Player prefab not found at {PlayerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate Player' first.");
+            return;
+        }
+
+        PrefabGeneratorUtils.EnsureFolder(SceneDir);
+
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        GameObject camGo = CreateCamera(scene);
+        camGo.transform.position = new Vector3(0f, 10f, -10f);
+        GameplayCamera gameCam = camGo.AddComponent<GameplayCamera>();
+
+        GameObject playerGo = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, scene);
+        playerGo.transform.position = Vector3.zero;
+        PlayerController playerCtrl = playerGo.GetComponent<PlayerController>();
+
+        SerializedObject camSo = new SerializedObject(gameCam);
+        camSo.FindProperty("_target").objectReferenceValue = playerGo.transform;
+        camSo.ApplyModifiedPropertiesWithoutUndo();
+
+        SerializedObject playerSo = new SerializedObject(playerCtrl);
+        playerSo.FindProperty("_cameraTransform").objectReferenceValue = camGo.transform;
+        playerSo.ApplyModifiedPropertiesWithoutUndo();
+
+        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        ground.name = "Ground";
+        ground.transform.position = Vector3.zero;
+        ground.transform.localScale = new Vector3(5f, 1f, 5f);
+        SceneManager.MoveGameObjectToScene(ground, scene);
+
+        if (!SaveScene(scene, GameplayScenePath)) return;
+
+        AppendSceneToBuildSettings(GameplayScenePath);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"_Gameplay scene generated at {GameplayScenePath}");
     }
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate All Scenes")]
@@ -143,7 +183,7 @@ public static class GenerateScenes
         Debug.Log($"{displayName} scene generated at {scenePath}");
     }
 
-    private static void CreateCamera(Scene scene)
+    private static GameObject CreateCamera(Scene scene)
     {
         GameObject camGo = new GameObject("Main Camera");
         camGo.tag = "MainCamera";
@@ -152,6 +192,7 @@ public static class GenerateScenes
         cam.backgroundColor = Color.black;
         camGo.AddComponent<UniversalAdditionalCameraData>();
         SceneManager.MoveGameObjectToScene(camGo, scene);
+        return camGo;
     }
 
     private static bool SaveScene(Scene scene, string scenePath)
