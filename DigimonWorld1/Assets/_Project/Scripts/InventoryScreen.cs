@@ -27,6 +27,7 @@ public class InventoryScreen : Singleton<InventoryScreen>
         if (Keyboard.current.tabKey.wasPressedThisFrame || Keyboard.current.iKey.wasPressedThisFrame)
         {
             if (PauseScreen.Instance != null && PauseScreen.Instance.IsOpen) return;
+            if (StatusScreen.Instance != null && StatusScreen.Instance.IsOpen) return;
             if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
 
             if (_isOpen)

@@ -20,8 +20,10 @@ public static class GeneratePrefabs
     private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
     private const string CareSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/CareSystem.prefab";
     private const string InventoryPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Inventory.prefab";
+    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TrainingFacility.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
     private const string DigimonDataDir = "Assets/_Project/Data/Digimons";
+    private const string TrainingDataDir = "Assets/_Project/Data/Training";
     private const string TechniqueDataDir = "Assets/_Project/Data/Techniques";
     private const string ItemDataDir = "Assets/_Project/Data/Items";
     private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
@@ -580,6 +582,100 @@ public static class GeneratePrefabs
 
         AssetDatabase.CreateAsset(item, path);
         Debug.Log($"Item asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Training")]
+    public static void GenerateSampleTraining()
+    {
+        PrefabGeneratorUtils.EnsureFolder(TrainingDataDir);
+
+        CreateTraining("HPTraining", TrainableStat.HP, 10, 30, 12, 2);
+        CreateTraining("MPTraining", TrainableStat.MP, 8, 25, 12, 2);
+        CreateTraining("OffenseTraining", TrainableStat.Offense, 3, 8, 15, 3);
+        CreateTraining("DefenseTraining", TrainableStat.Defense, 3, 8, 15, 3);
+        CreateTraining("SpeedTraining", TrainableStat.Speed, 3, 8, 15, 3);
+        CreateTraining("BrainsTraining", TrainableStat.Brains, 3, 8, 10, 1);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample training assets generated.");
+    }
+
+    private static void CreateTraining(string facilityName, TrainableStat stat,
+        int gainMin, int gainMax, int tirednessCost, int happinessCost)
+    {
+        string path = $"{TrainingDataDir}/{facilityName}.asset";
+
+        TrainingData training = ScriptableObject.CreateInstance<TrainingData>();
+
+        SerializedObject so = new SerializedObject(training);
+        so.FindProperty("_facilityName").stringValue = facilityName;
+        so.FindProperty("_stat").enumValueIndex = (int)stat;
+        so.FindProperty("_statGainMin").intValue = gainMin;
+        so.FindProperty("_statGainMax").intValue = gainMax;
+        so.FindProperty("_tirednessCost").intValue = tirednessCost;
+        so.FindProperty("_happinessCost").intValue = happinessCost;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(training, path);
+        Debug.Log($"Training asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate TrainingFacility")]
+    public static void GenerateTrainingFacility()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.PrefabDir);
+
+        GameObject root = new GameObject("TrainingFacility");
+        try
+        {
+            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localScale = new Vector3(0.8f, 0.5f, 0.8f);
+
+            Object.DestroyImmediate(model.GetComponent<CapsuleCollider>());
+            CapsuleCollider col = root.AddComponent<CapsuleCollider>();
+            col.center = new Vector3(0f, 0.5f, 0f);
+            col.height = 1f;
+            col.radius = 0.5f;
+
+            Material mat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/TrainingFacility.mat", new Color(0.6f, 0.9f, 0.3f));
+            model.GetComponent<Renderer>().sharedMaterial = mat;
+
+            TrainingFacility facility = root.AddComponent<TrainingFacility>();
+
+            GameObject promptGo = new GameObject("PromptText");
+            promptGo.transform.SetParent(root.transform, false);
+            promptGo.transform.localPosition = new Vector3(0f, 1.5f, 0f);
+
+            TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+            tmp.text = "Train";
+            tmp.fontSize = 4;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = Color.white;
+            tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
+
+            SerializedObject so = new SerializedObject(facility);
+            so.FindProperty("_promptText").objectReferenceValue = tmp;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, TrainingFacilityPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {TrainingFacilityPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {TrainingFacilityPrefabPath}");
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NPC")]

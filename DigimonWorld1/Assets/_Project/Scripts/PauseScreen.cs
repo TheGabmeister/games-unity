@@ -21,6 +21,7 @@ public class PauseScreen : Singleton<PauseScreen>
         if (!Keyboard.current.escapeKey.wasPressedThisFrame) return;
 
         if (InventoryScreen.Instance != null && InventoryScreen.Instance.IsOpen) return;
+        if (StatusScreen.Instance != null && StatusScreen.Instance.IsOpen) return;
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
 
         if (_isOpen)

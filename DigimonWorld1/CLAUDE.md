@@ -50,6 +50,7 @@ No CLI build pipeline. All work happens in the Unity Editor:
 | `Inventory` | Stackable item inventory (max 20 slots) + Bits currency. `AddItem`, `RemoveItem`, `UseItem` (routes food through `CareSystem.Feed()`, recovery items directly to `DigimonInstance`). `OnInventoryChanged` event |
 | `InventoryScreen` | Toggleable Canvas (sortingOrder 80). Tab/I to open/close. W/S navigate, E use, Q discard. Shows item list with selection cursor, Bits, and item description |
 | `PauseScreen` | Toggleable Canvas (sortingOrder 90). Escape to pause/resume. Sets `Time.timeScale = 0` on pause, freezing TimeSystem and CareSystem |
+| `StatusScreen` | Toggleable Canvas (sortingOrder 80). C to open/close. Shows full partner stats: identity (name, stage, attribute), combat stats (HP/MP/OFF/DEF/SPD/BRN), condition (age, weight, hunger, tiredness, happiness, discipline, care mistakes, virus gauge) |
 
 ## Scene flow
 
@@ -67,7 +68,7 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 | `_Intro` | `IntroController` | Plays VideoPlayer, skippable via any key |
 | `_MainMenu` | `MainMenuController` | uGUI: "Press Start" (blinking) → 4-option menu (New Game, Continue, Delete, Battle Mode) |
 | `_Name` | `NameController` | uGUI: two TMP_InputFields + Confirm button |
-| `_Gameplay` | (no controller) | Player, PartnerDigimon, camera, InputManager, DialogueManager, TimeSystem, HUD, CareSystem, Inventory, InventoryScreen, PauseScreen. Zone scenes loaded additively on top |
+| `_Gameplay` | (no controller) | Player, PartnerDigimon, camera, InputManager, DialogueManager, TimeSystem, HUD, CareSystem, Inventory, InventoryScreen, PauseScreen, StatusScreen. Zone scenes loaded additively on top |
 
 ### Zone system
 
@@ -121,6 +122,13 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 
 [Inventory.cs](Assets/_Project/Scripts/Inventory.cs) — `Singleton` in `_Gameplay`. `InventorySlot` struct (ItemData + Count) in same file. Flat `List<InventorySlot>` with max 20 slots. `AddItem`/`RemoveItem`/`UseItem`/`HasItem`/`GetItemCount`/`GetSlot`. `UseItem` routes food through `CareSystem.Instance.Feed()`, non-food applies HP/MP directly, then universal effects (happiness, discipline, tiredness). Bits currency via `AddBits`/`SpendBits`. `OnInventoryChanged` event.
 
+### Training
+[TrainingData.cs](Assets/_Project/Scripts/TrainingData.cs) — `ScriptableObject` defining a training facility. Fields: `FacilityName`, `Stat` (TrainableStat enum), `StatGainMin`/`StatGainMax`, `TirednessCost`, `HappinessCost`. Created via `Create → DigimonWorld → TrainingData`. Assets in `Assets/_Project/Data/Training/`.
+
+[TrainingFacility.cs](Assets/_Project/Scripts/TrainingFacility.cs) — `IInteractable` in zone scenes. On interact: checks tiredness < 80, rolls random stat gain, calls `DigimonInstance.TrainStat()`, applies tiredness/happiness costs. Instant success (mini-game deferred to Phase 6). Uses same prompt pattern as NPCInteractable.
+
+`DigimonInstance` tracks training bonuses via `_bonusOffense`/`_bonusDefense`/`_bonusSpeed`/`_bonusBrains`. `TrainStat(TrainableStat, int)` adds to these. Total stats exposed via `Offense`, `Defense`, `Speed`, `Brains` properties (base + bonus). `TrainableStat` enum in `DigimonEnums.cs`.
+
 ### Input
 [InputManager.cs](Assets/_Project/Scripts/InputManager.cs) — `Singleton` in `_Gameplay`. Owns the single `InputSystem_Actions` instance; all gameplay systems read from `InputManager.Instance.Actions`. `PlayerInputEnabled` flag gates `PlayerController` without disabling the action map, so `DialogueManager` can still read Interact. `InputSystem_Actions.inputactions` has C# code generation enabled. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next. Menu controllers (`MainMenuController`, `IntroController`) use `Keyboard.current` directly — they exist in isolated non-gameplay scenes.
 
@@ -133,13 +141,14 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 | File | Responsibility |
 |------|---------------|
 | [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
-| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, PartnerDigimon, NPC, TimeSystem, CareSystem, Inventory. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species, Sample Items |
+| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, PartnerDigimon, NPC, TimeSystem, CareSystem, Inventory, TrainingFacility. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species, Sample Items, Sample Training |
 | [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
 | [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
 | [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |
 | [GenerateHUDPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateHUDPrefab.cs) | HUD with Canvas (sortingOrder 50) + time/day top-right, partner stats top-left |
 | [GenerateInventoryScreenPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateInventoryScreenPrefab.cs) | InventoryScreen with Canvas (sortingOrder 80) + center panel, item list, bits, instructions |
 | [GeneratePauseScreenPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePauseScreenPrefab.cs) | PauseScreen with Canvas (sortingOrder 90) + fullscreen overlay, "PAUSED" title |
+| [GenerateStatusScreenPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateStatusScreenPrefab.cs) | StatusScreen with Canvas (sortingOrder 80) + identity, stats, condition panels |
 | [GenerateScenes.cs](Assets/_Project/Scripts/Editor/Generators/GenerateScenes.cs) | All scenes: Bootstrap, Splashscreen, Intro, MainMenu, Name, Gameplay, Zone1, Zone2, plus GenerateAll. Zone scenes include `ZoneTrigger` creation via `CreateZoneTrigger` helper |
 
 ### Rules

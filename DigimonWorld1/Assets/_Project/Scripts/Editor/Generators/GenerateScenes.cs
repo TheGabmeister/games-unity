@@ -32,7 +32,10 @@ public static class GenerateScenes
     private const string InventoryPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Inventory.prefab";
     private const string InventoryScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InventoryScreen.prefab";
     private const string PauseScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/PauseScreen.prefab";
+    private const string StatusScreenPrefabPath = PrefabGeneratorUtils.PrefabDir + "/StatusScreen.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
+    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TrainingFacility.prefab";
+    private const string TrainingDataDir = "Assets/_Project/Data/Training";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/IntroController.prefab";
     private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/MainMenuController.prefab";
@@ -185,6 +188,13 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject statusScreenPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(StatusScreenPrefabPath);
+        if (statusScreenPrefab == null)
+        {
+            Debug.LogError($"StatusScreen prefab not found at {StatusScreenPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate StatusScreen' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -197,6 +207,7 @@ public static class GenerateScenes
         PrefabUtility.InstantiatePrefab(inventoryPrefab, scene);
         PrefabUtility.InstantiatePrefab(inventoryScreenPrefab, scene);
         PrefabUtility.InstantiatePrefab(pauseScreenPrefab, scene);
+        PrefabUtility.InstantiatePrefab(statusScreenPrefab, scene);
 
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);
@@ -298,6 +309,19 @@ public static class GenerateScenes
         // NPC
         GameObject npcGo = (GameObject)PrefabUtility.InstantiatePrefab(npcPrefab, scene);
         npcGo.transform.position = new Vector3(5f, 0f, 3f);
+
+        // Training facilities
+        GameObject trainingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TrainingFacilityPrefabPath);
+        if (trainingPrefab != null)
+        {
+            CreateTrainingInstance(trainingPrefab, scene, "OffenseTraining", new Vector3(6f, 0f, -4f));
+            CreateTrainingInstance(trainingPrefab, scene, "DefenseTraining", new Vector3(8f, 0f, -4f));
+            CreateTrainingInstance(trainingPrefab, scene, "SpeedTraining", new Vector3(10f, 0f, -4f));
+        }
+        else
+        {
+            Debug.LogWarning($"TrainingFacility prefab not found. Run 'Generate TrainingFacility' first. Skipping training facilities.");
+        }
 
         // Zone trigger to Zone2
         CreateZoneTrigger(scene, "To Zone2", new Vector3(-10f, 1f, 0f), Zone2DataPath,
@@ -506,6 +530,28 @@ public static class GenerateScenes
         else
         {
             Debug.LogWarning($"ZoneData not found at {zoneDataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
+        }
+    }
+
+    private static void CreateTrainingInstance(GameObject prefab, Scene scene,
+        string trainingDataName, Vector3 position)
+    {
+        GameObject go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
+        go.name = trainingDataName;
+        go.transform.position = position;
+
+        string dataPath = $"{TrainingDataDir}/{trainingDataName}.asset";
+        TrainingData data = AssetDatabase.LoadAssetAtPath<TrainingData>(dataPath);
+        if (data != null)
+        {
+            TrainingFacility facility = go.GetComponent<TrainingFacility>();
+            SerializedObject so = new SerializedObject(facility);
+            so.FindProperty("_training").objectReferenceValue = data;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+        else
+        {
+            Debug.LogWarning($"TrainingData not found at {dataPath}. Run 'Generate Sample Training' first.");
         }
     }
 }

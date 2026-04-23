@@ -14,6 +14,16 @@ public enum DigimonAttribute
     Virus
 }
 
+public enum TrainableStat
+{
+    HP,
+    MP,
+    Offense,
+    Defense,
+    Speed,
+    Brains
+}
+
 public enum TechniqueCategory
 {
     Fire,

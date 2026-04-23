@@ -7,6 +7,10 @@ public class DigimonInstance : MonoBehaviour
 
     private int _currentHP;
     private int _currentMP;
+    private int _bonusOffense;
+    private int _bonusDefense;
+    private int _bonusSpeed;
+    private int _bonusBrains;
     private int _age;
     private int _weight;
     private int _hunger;
@@ -20,6 +24,16 @@ public class DigimonInstance : MonoBehaviour
     public DigimonSpeciesData Species => _species;
     public int CurrentHP => _currentHP;
     public int CurrentMP => _currentMP;
+    public int MaxHP => _species != null ? _species.BaseHP + _bonusOffense : _currentHP;
+    public int MaxMP => _species != null ? _species.BaseMP + _bonusBrains : _currentMP;
+    public int Offense => (_species != null ? _species.BaseOffense : 0) + _bonusOffense;
+    public int Defense => (_species != null ? _species.BaseDefense : 0) + _bonusDefense;
+    public int Speed => (_species != null ? _species.BaseSpeed : 0) + _bonusSpeed;
+    public int Brains => (_species != null ? _species.BaseBrains : 0) + _bonusBrains;
+    public int BonusOffense => _bonusOffense;
+    public int BonusDefense => _bonusDefense;
+    public int BonusSpeed => _bonusSpeed;
+    public int BonusBrains => _bonusBrains;
     public int Age => _age;
     public int Weight => _weight;
     public int Hunger => _hunger;
@@ -43,6 +57,10 @@ public class DigimonInstance : MonoBehaviour
         _species = species;
         _currentHP = species.BaseHP;
         _currentMP = species.BaseMP;
+        _bonusOffense = 0;
+        _bonusDefense = 0;
+        _bonusSpeed = 0;
+        _bonusBrains = 0;
         _age = 0;
         _weight = 15;
         _hunger = 0;
@@ -98,6 +116,31 @@ public class DigimonInstance : MonoBehaviour
     public void SetSleeping(bool sleeping)
     {
         _isSleeping = sleeping;
+    }
+
+    public void TrainStat(TrainableStat stat, int amount)
+    {
+        switch (stat)
+        {
+            case TrainableStat.HP:
+                _currentHP = Mathf.Max(0, _currentHP + amount);
+                break;
+            case TrainableStat.MP:
+                _currentMP = Mathf.Max(0, _currentMP + amount);
+                break;
+            case TrainableStat.Offense:
+                _bonusOffense += amount;
+                break;
+            case TrainableStat.Defense:
+                _bonusDefense += amount;
+                break;
+            case TrainableStat.Speed:
+                _bonusSpeed += amount;
+                break;
+            case TrainableStat.Brains:
+                _bonusBrains += amount;
+                break;
+        }
     }
 
     public void Heal(int amount)
