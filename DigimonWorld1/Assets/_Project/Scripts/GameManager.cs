@@ -8,6 +8,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private SceneReference _mainMenuScene;
     [SerializeField] private SceneReference _nameScene;
     [SerializeField] private SceneReference _gameplayScene;
+    [SerializeField] private ZoneData _startingZone;
     [SerializeField] private ScreenFader _screenFader;
 
     public async void LoadSplashscreenScene()
@@ -32,7 +33,9 @@ public class GameManager : Singleton<GameManager>
 
     public async void LoadGameplayScene()
     {
-        await LoadSceneWithFade(_gameplayScene);
+        await _screenFader.FadeOut();
+        await SceneLoader.Instance.LoadScenes(_gameplayScene, _startingZone.Scene);
+        await _screenFader.FadeIn();
     }
 
     private async Awaitable LoadSceneWithFade(SceneReference scene)

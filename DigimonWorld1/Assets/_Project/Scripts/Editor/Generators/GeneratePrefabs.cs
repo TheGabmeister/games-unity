@@ -19,6 +19,10 @@ public static class GeneratePrefabs
     private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
     private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
+    private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
+    private const string Zone2DataPath = "Assets/_Project/Data/Zones/Zone2.asset";
+    private const string Zone1ScenePath = "Assets/_Project/Scenes/Zones/Zone1.unity";
+    private const string Zone2ScenePath = "Assets/_Project/Scenes/Zones/Zone2.unity";
 
     private const string BootstrapScenePath = "Assets/_Project/Scenes/_Bootstrap.unity";
     private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
@@ -143,6 +147,12 @@ public static class GeneratePrefabs
         PrefabGeneratorUtils.SetSceneReference(so, "_mainMenuScene", MainMenuScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_nameScene", NameScenePath);
         PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
+
+        ZoneData startingZone = AssetDatabase.LoadAssetAtPath<ZoneData>(Zone1DataPath);
+        if (startingZone != null)
+            so.FindProperty("_startingZone").objectReferenceValue = startingZone;
+        else
+            Debug.LogWarning($"Zone1 data not found at {Zone1DataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
 
         if (screenFader != null)
             so.FindProperty("_screenFader").objectReferenceValue = screenFader;
@@ -300,6 +310,29 @@ public static class GeneratePrefabs
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"TestDialogue asset generated at {TestDialoguePath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate ZoneData Assets")]
+    public static void GenerateZoneData()
+    {
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Data/Zones");
+
+        CreateZoneData(Zone1DataPath, Zone1ScenePath, new Vector3(0f, 10f, -10f));
+        CreateZoneData(Zone2DataPath, Zone2ScenePath, new Vector3(0f, 12f, -15f));
+    }
+
+    private static void CreateZoneData(string assetPath, string scenePath, Vector3 cameraPosition)
+    {
+        ZoneData zone = ScriptableObject.CreateInstance<ZoneData>();
+
+        SerializedObject so = new SerializedObject(zone);
+        PrefabGeneratorUtils.SetSceneReference(so, "_scene", scenePath);
+        so.FindProperty("_cameraPosition").vector3Value = cameraPosition;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(zone, assetPath);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"ZoneData asset generated at {assetPath}");
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NPC")]
