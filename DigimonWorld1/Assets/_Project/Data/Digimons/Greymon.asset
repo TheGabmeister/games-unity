@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0640b46515dc4c042afb1a507eb99ce7, type: 3}
+  m_Name: Greymon
+  m_EditorClassIdentifier: Assembly-CSharp::DigimonSpeciesData
+  _speciesName: Greymon
+  _stage: 3
+  _attribute: 0
+  _baseHP: 2500
+  _baseMP: 1200
+  _baseOffense: 200
+  _baseDefense: 150
+  _baseSpeed: 130
+  _baseBrains: 120
+  _lifespanHours: 384
+  _learnableTechniques:
+  - {fileID: 11400000, guid: 32f46a72ff9411b4fb87bf1e9340980a, type: 2}
+  - {fileID: 11400000, guid: 98400fc6be850d844a296f78ba71df2c, type: 2}
+  - {fileID: 11400000, guid: cc0e0112e8923504c853e834fbe306a1, type: 2}
+  - {fileID: 11400000, guid: baa69b03430b1a34e8ff65695336dce6, type: 2}

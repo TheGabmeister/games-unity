@@ -19,6 +19,8 @@ public static class GeneratePrefabs
     private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
     private const string TimeSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/TimeSystem.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
+    private const string DigimonDataDir = "Assets/_Project/Data/Digimons";
+    private const string TechniqueDataDir = "Assets/_Project/Data/Techniques";
     private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
     private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
     private const string Zone2DataPath = "Assets/_Project/Data/Zones/Zone2.asset";
@@ -351,6 +353,120 @@ public static class GeneratePrefabs
         AssetDatabase.CreateAsset(zone, assetPath);
         AssetDatabase.SaveAssets();
         Debug.Log($"ZoneData asset generated at {assetPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Techniques")]
+    public static void GenerateSampleTechniques()
+    {
+        PrefabGeneratorUtils.EnsureFolder(TechniqueDataDir);
+
+        CreateTechnique("PepperBreath", TechniqueCategory.Fire, 12, 110, 3f);
+        CreateTechnique("DynamiteCick", TechniqueCategory.Battle, 8, 90, 1.5f);
+        CreateTechnique("SonicJab", TechniqueCategory.Battle, 5, 60, 1f);
+        CreateTechnique("NovaBlast", TechniqueCategory.Fire, 28, 260, 5f);
+        CreateTechnique("MetalClaw", TechniqueCategory.Battle, 15, 150, 1.5f);
+        CreateTechnique("IceStatue", TechniqueCategory.Water, 18, 170, 4f);
+        CreateTechnique("ElectroShocker", TechniqueCategory.Air, 22, 200, 4f);
+        CreateTechnique("PoisonIvy", TechniqueCategory.Earth, 10, 80, 3f);
+        CreateTechnique("MegaFlame", TechniqueCategory.Fire, 20, 190, 4.5f);
+        CreateTechnique("SpinningNeedle", TechniqueCategory.Machine, 14, 130, 3f);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample technique assets generated.");
+    }
+
+    private static void CreateTechnique(string techniqueName, TechniqueCategory category,
+        int mpCost, int power, float range)
+    {
+        string path = $"{TechniqueDataDir}/{techniqueName}.asset";
+
+        TechniqueData technique = ScriptableObject.CreateInstance<TechniqueData>();
+
+        SerializedObject so = new SerializedObject(technique);
+        so.FindProperty("_techniqueName").stringValue = techniqueName;
+        so.FindProperty("_category").enumValueIndex = (int)category;
+        so.FindProperty("_mpCost").intValue = mpCost;
+        so.FindProperty("_power").intValue = power;
+        so.FindProperty("_range").floatValue = range;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(technique, path);
+        Debug.Log($"Technique asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Species")]
+    public static void GenerateSampleSpecies()
+    {
+        PrefabGeneratorUtils.EnsureFolder(DigimonDataDir);
+
+        CreateSpecies("Botamon", DigimonStage.Fresh, DigimonAttribute.Data,
+            300, 100, 10, 10, 10, 10, 48, new string[0]);
+
+        CreateSpecies("Koromon", DigimonStage.InTraining, DigimonAttribute.Data,
+            500, 200, 30, 25, 25, 20, 72, new string[0]);
+
+        CreateSpecies("Agumon", DigimonStage.Rookie, DigimonAttribute.Vaccine,
+            1000, 500, 80, 60, 70, 50, 384,
+            new[] { "PepperBreath", "DynamiteCick", "SonicJab" });
+
+        CreateSpecies("Greymon", DigimonStage.Champion, DigimonAttribute.Vaccine,
+            2500, 1200, 200, 150, 130, 120, 384,
+            new[] { "PepperBreath", "NovaBlast", "MegaFlame", "MetalClaw" });
+
+        CreateSpecies("MetalGreymon", DigimonStage.Ultimate, DigimonAttribute.Vaccine,
+            4500, 2500, 400, 350, 280, 300, 480,
+            new[] { "NovaBlast", "MegaFlame", "MetalClaw", "ElectroShocker" });
+
+        CreateSpecies("Gabumon", DigimonStage.Rookie, DigimonAttribute.Data,
+            900, 600, 70, 70, 60, 60, 384,
+            new[] { "IceStatue", "SonicJab", "DynamiteCick" });
+
+        CreateSpecies("Palmon", DigimonStage.Rookie, DigimonAttribute.Data,
+            800, 700, 60, 50, 50, 80, 384,
+            new[] { "PoisonIvy", "SpinningNeedle" });
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample species assets generated.");
+    }
+
+    private static void CreateSpecies(string speciesName, DigimonStage stage,
+        DigimonAttribute attribute, int hp, int mp, int offense, int defense,
+        int speed, int brains, int lifespanHours, string[] techniqueNames)
+    {
+        string path = $"{DigimonDataDir}/{speciesName}.asset";
+
+        DigimonSpeciesData species = ScriptableObject.CreateInstance<DigimonSpeciesData>();
+
+        SerializedObject so = new SerializedObject(species);
+        so.FindProperty("_speciesName").stringValue = speciesName;
+        so.FindProperty("_stage").enumValueIndex = (int)stage;
+        so.FindProperty("_attribute").enumValueIndex = (int)attribute;
+        so.FindProperty("_baseHP").intValue = hp;
+        so.FindProperty("_baseMP").intValue = mp;
+        so.FindProperty("_baseOffense").intValue = offense;
+        so.FindProperty("_baseDefense").intValue = defense;
+        so.FindProperty("_baseSpeed").intValue = speed;
+        so.FindProperty("_baseBrains").intValue = brains;
+        so.FindProperty("_lifespanHours").intValue = lifespanHours;
+
+        SerializedProperty techniques = so.FindProperty("_learnableTechniques");
+        techniques.arraySize = techniqueNames.Length;
+        for (int i = 0; i < techniqueNames.Length; i++)
+        {
+            string techPath = $"{TechniqueDataDir}/{techniqueNames[i]}.asset";
+            TechniqueData techAsset = AssetDatabase.LoadAssetAtPath<TechniqueData>(techPath);
+            if (techAsset != null)
+                techniques.GetArrayElementAtIndex(i).objectReferenceValue = techAsset;
+            else
+                Debug.LogWarning($"Technique not found at {techPath}. Run 'Generate Sample Techniques' first.");
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(species, path);
+        Debug.Log($"Species asset generated at {path}");
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate NPC")]

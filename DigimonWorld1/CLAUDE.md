@@ -90,6 +90,19 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 ### Dialogue
 [DialogueData.cs](Assets/_Project/Scripts/DialogueData.cs) — `ScriptableObject` with a `DialogueLine[]` (each line has `Speaker` + `Text`). Created via `Create → DigimonWorld → DialogueData`. [DialogueManager.cs](Assets/_Project/Scripts/DialogueManager.cs) — `Singleton` in `_Gameplay`. `StartDialogue()` calls `InputManager.SetPlayerInputEnabled(false)`, shows a bottom-screen panel, E key advances lines. A `_justOpened` flag prevents the triggering E press from advancing past line 0.
 
+### Time
+[TimeSystem.cs](Assets/_Project/Scripts/TimeSystem.cs) — `Singleton` in `_Gameplay`. In-game clock: 1 real second = 1 in-game minute. Tracks `Hour`, `Minute`, `Day`. Uses `Time.deltaTime` so clock pauses with `timeScale = 0`. `SetPaused(bool)` for explicit pause. `OnHourChanged` event for future time-gated hooks. Starts at 06:00 Day 1 by default (configurable via `_startHour`/`_startMinute`).
+
+### HUD
+[HUD.cs](Assets/_Project/Scripts/HUD.cs) — `Singleton` in `_Gameplay`. Canvas overlay (sortingOrder 50). Polls `TimeSystem.Instance.TimeString` each frame to display "HH:MM" in the top-right corner.
+
+### Digimon data model
+[DigimonEnums.cs](Assets/_Project/Scripts/DigimonEnums.cs) — `DigimonStage` (Fresh, InTraining, Rookie, Champion, Ultimate), `DigimonAttribute` (Vaccine, Data, Virus), `TechniqueCategory` (Fire, Battle, Air, Earth, Water, Machine, Filth).
+
+[TechniqueData.cs](Assets/_Project/Scripts/TechniqueData.cs) — `ScriptableObject` with `TechniqueName`, `Category`, `MpCost`, `Power`, `Range`. Created via `Create → DigimonWorld → TechniqueData`. Assets in `Assets/_Project/Data/Techniques/`.
+
+[DigimonSpeciesData.cs](Assets/_Project/Scripts/DigimonSpeciesData.cs) — `ScriptableObject` defining a Digimon species. Fields: `SpeciesName`, `Stage`, `Attribute`, base stats (HP, MP, Offense, Defense, Speed, Brains), `LifespanHours`, `LearnableTechniques[]`. Created via `Create → DigimonWorld → DigimonSpeciesData`. Assets in `Assets/_Project/Data/Digimons/`.
+
 ### Input
 [InputManager.cs](Assets/_Project/Scripts/InputManager.cs) — `Singleton` in `_Gameplay`. Owns the single `InputSystem_Actions` instance; all gameplay systems read from `InputManager.Instance.Actions`. `PlayerInputEnabled` flag gates `PlayerController` without disabling the action map, so `DialogueManager` can still read Interact. `InputSystem_Actions.inputactions` has C# code generation enabled. Player action map has: Move, Look, Sprint, Attack, Interact, Jump, Crouch, Previous, Next. Menu controllers (`MainMenuController`, `IntroController`) use `Keyboard.current` directly — they exist in isolated non-gameplay scenes.
 
@@ -102,7 +115,7 @@ Each non-gameplay scene has a controller MonoBehaviour that drives its logic and
 | File | Responsibility |
 |------|---------------|
 | [PrefabGeneratorUtils.cs](Assets/_Project/Scripts/Editor/Generators/PrefabGeneratorUtils.cs) | Shared helpers: `SavePrefab`, `CreateCanvasRoot`, `SaveAndCleanup`, `CreatePanel`, `CreateText`, `CreateInputField`, `SetSceneReference`, `CreateOrLoadMaterial`, `ApplyMaterialToRenderers`, `EnsureFolder` |
-| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon, NPC, TimeSystem. Data: TestDialogue, BootstrapConfig, ZoneData assets |
+| [GeneratePrefabs.cs](Assets/_Project/Scripts/Editor/Generators/GeneratePrefabs.cs) | Simple prefabs + data assets: Bootstrapper, AudioSystem, InputManager, SceneLoader, ScreenFader, GameManager, SplashscreenController, IntroController, Player, Agumon, NPC, TimeSystem. Data: TestDialogue, BootstrapConfig, ZoneData, Sample Techniques, Sample Species |
 | [GenerateMainMenuPrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateMainMenuPrefab.cs) | MainMenuController with full Canvas + uGUI hierarchy |
 | [GenerateNamePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateNamePrefab.cs) | NameController with Canvas + InputFields + Confirm button |
 | [GenerateDialoguePrefab.cs](Assets/_Project/Scripts/Editor/Generators/GenerateDialoguePrefab.cs) | DialogueManager with Canvas (sortingOrder 100) + bottom panel + speaker/body text |

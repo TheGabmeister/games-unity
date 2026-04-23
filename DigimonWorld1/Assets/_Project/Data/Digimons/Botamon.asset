@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0640b46515dc4c042afb1a507eb99ce7, type: 3}
+  m_Name: Botamon
+  m_EditorClassIdentifier: Assembly-CSharp::DigimonSpeciesData
+  _speciesName: Botamon
+  _stage: 0
+  _attribute: 1
+  _baseHP: 300
+  _baseMP: 100
+  _baseOffense: 10
+  _baseDefense: 10
+  _baseSpeed: 10
+  _baseBrains: 10
+  _lifespanHours: 48
+  _learnableTechniques: []
