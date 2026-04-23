@@ -13,6 +13,7 @@ public static class GenerateBootstrapPrefabs
     private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
     private const string MainMenuScenePath = "Assets/_Project/Scenes/_MainMenu.unity";
     private const string NameScenePath = "Assets/_Project/Scenes/_Name.unity";
+    private const string GameplayScenePath = "Assets/_Project/Scenes/_Gameplay.unity";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
     public static void GenerateBootstrapper()
@@ -42,6 +43,7 @@ public static class GenerateBootstrapPrefabs
         SetSceneReference(so, "_introScene", IntroScenePath);
         SetSceneReference(so, "_mainMenuScene", MainMenuScenePath);
         SetSceneReference(so, "_nameScene", NameScenePath);
+        SetSceneReference(so, "_gameplayScene", GameplayScenePath);
 
         so.ApplyModifiedPropertiesWithoutUndo();
         AssetDatabase.SaveAssets();
