@@ -6,6 +6,7 @@ public static class GenerateBootstrapPrefabs
     private const string PrefabDir = "Assets/_Project/Prefabs";
     private const string BootstrapperPrefabPath = PrefabDir + "/Bootstrapper.prefab";
     private const string AudioSystemPrefabPath = PrefabDir + "/AudioSystem.prefab";
+    private const string GameManagerPrefabPath = PrefabDir + "/GameManager.prefab";
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
     public static void GenerateBootstrapper()
@@ -20,6 +21,12 @@ public static class GenerateBootstrapPrefabs
     public static void GenerateAudioSystem()
     {
         SavePrefab("AudioSystem", AudioSystemPrefabPath, go => go.AddComponent<AudioSystem>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate GameManager")]
+    public static void GenerateGameManager()
+    {
+        SavePrefab("GameManager", GameManagerPrefabPath, go => go.AddComponent<GameManager>());
     }
 
     private static void SavePrefab(string name, string path, System.Action<GameObject> configure)

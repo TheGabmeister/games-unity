@@ -11,6 +11,7 @@ public static class GenerateBootstrapScene
     private const string MainMenuScenePath = SceneDir + "/_MainMenu.unity";
     private const string NameScenePath = SceneDir + "/_Name.unity";
     private const string AudioSystemPrefabPath = "Assets/_Project/Prefabs/AudioSystem.prefab";
+    private const string GameManagerPrefabPath = "Assets/_Project/Prefabs/GameManager.prefab";
 
     [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
     public static void GenerateBootstrap()
@@ -22,10 +23,18 @@ public static class GenerateBootstrapScene
             return;
         }
 
+        GameObject gameManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameManagerPrefabPath);
+        if (gameManagerPrefab == null)
+        {
+            Debug.LogError($"GameManager prefab not found at {GameManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate GameManager' first.");
+            return;
+        }
+
         EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
+        PrefabUtility.InstantiatePrefab(gameManagerPrefab, scene);
 
         if (!SaveScene(scene, BootstrapScenePath)) return;
 
