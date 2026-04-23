@@ -18,6 +18,7 @@ public class PauseScreen : Singleton<PauseScreen>
 
     private void Update()
     {
+        if (BattleSystem.Instance != null && BattleSystem.Instance.InBattle) return;
         if (!Keyboard.current.escapeKey.wasPressedThisFrame) return;
 
         if (InventoryScreen.Instance != null && InventoryScreen.Instance.IsOpen) return;

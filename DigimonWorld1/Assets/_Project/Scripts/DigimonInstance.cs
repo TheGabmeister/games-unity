@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DigimonInstance : MonoBehaviour
@@ -20,8 +21,11 @@ public class DigimonInstance : MonoBehaviour
     private int _careMistakes;
     private int _virusGauge;
     private bool _isSleeping;
+    private List<TechniqueData> _knownTechniques = new List<TechniqueData>();
 
     public DigimonSpeciesData Species => _species;
+    public IReadOnlyList<TechniqueData> KnownTechniques => _knownTechniques;
+    public bool IsAlive => _currentHP > 0;
     public int CurrentHP => _currentHP;
     public int CurrentMP => _currentMP;
     public int MaxHP => _species != null ? _species.BaseHP + _bonusOffense : _currentHP;
@@ -70,6 +74,17 @@ public class DigimonInstance : MonoBehaviour
         _careMistakes = 0;
         _virusGauge = 0;
         _isSleeping = false;
+
+        _knownTechniques.Clear();
+        if (species.LearnableTechniques != null)
+        {
+            int count = Mathf.Min(3, species.LearnableTechniques.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (species.LearnableTechniques[i] != null)
+                    _knownTechniques.Add(species.LearnableTechniques[i]);
+            }
+        }
     }
 
     public void ModifyHunger(int amount)
@@ -146,12 +161,31 @@ public class DigimonInstance : MonoBehaviour
     public void Heal(int amount)
     {
         if (_species == null) return;
-        _currentHP = Mathf.Clamp(_currentHP + amount, 0, _species.BaseHP);
+        _currentHP = Mathf.Clamp(_currentHP + amount, 0, MaxHP);
     }
 
     public void RestoreMP(int amount)
     {
         if (_species == null) return;
-        _currentMP = Mathf.Clamp(_currentMP + amount, 0, _species.BaseMP);
+        _currentMP = Mathf.Clamp(_currentMP + amount, 0, MaxMP);
+    }
+
+    public void TakeDamage(int amount)
+    {
+        _currentHP = Mathf.Max(0, _currentHP - amount);
+    }
+
+    public bool SpendMP(int amount)
+    {
+        if (_currentMP < amount) return false;
+        _currentMP -= amount;
+        return true;
+    }
+
+    public void LearnTechnique(TechniqueData technique)
+    {
+        if (technique == null || _knownTechniques.Contains(technique)) return;
+        if (_knownTechniques.Count >= 4) return;
+        _knownTechniques.Add(technique);
     }
 }

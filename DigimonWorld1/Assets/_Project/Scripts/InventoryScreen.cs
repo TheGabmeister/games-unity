@@ -24,6 +24,8 @@ public class InventoryScreen : Singleton<InventoryScreen>
 
     private void Update()
     {
+        if (BattleSystem.Instance != null && BattleSystem.Instance.InBattle) return;
+
         if (Keyboard.current.tabKey.wasPressedThisFrame || Keyboard.current.iKey.wasPressedThisFrame)
         {
             if (PauseScreen.Instance != null && PauseScreen.Instance.IsOpen) return;

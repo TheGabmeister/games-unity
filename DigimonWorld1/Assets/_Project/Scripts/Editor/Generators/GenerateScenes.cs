@@ -35,6 +35,10 @@ public static class GenerateScenes
     private const string StatusScreenPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/StatusScreen.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/NPC.prefab";
     private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.InteractablesPrefabDir + "/TrainingFacility.prefab";
+    private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
+    private const string BattleUIPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/BattleUI.prefab";
+    private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
+    private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
     private const string TrainingDataDir = "Assets/_Project/Data/Training";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/SplashscreenController.prefab";
     private const string IntroControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/IntroController.prefab";
@@ -209,6 +213,18 @@ public static class GenerateScenes
         PrefabUtility.InstantiatePrefab(pauseScreenPrefab, scene);
         PrefabUtility.InstantiatePrefab(statusScreenPrefab, scene);
 
+        GameObject battleSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BattleSystemPrefabPath);
+        if (battleSystemPrefab != null)
+            PrefabUtility.InstantiatePrefab(battleSystemPrefab, scene);
+        else
+            Debug.LogWarning($"BattleSystem prefab not found at {BattleSystemPrefabPath}. Run 'Generate BattleSystem' first.");
+
+        GameObject battleUIPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BattleUIPrefabPath);
+        if (battleUIPrefab != null)
+            PrefabUtility.InstantiatePrefab(battleUIPrefab, scene);
+        else
+            Debug.LogWarning($"BattleUI prefab not found at {BattleUIPrefabPath}. Run 'Generate BattleUI' first.");
+
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);
         GameplayCamera gameCam = camGo.AddComponent<GameplayCamera>();
@@ -323,6 +339,18 @@ public static class GenerateScenes
             Debug.LogWarning($"TrainingFacility prefab not found. Run 'Generate TrainingFacility' first. Skipping training facilities.");
         }
 
+        // Wild Digimon encounters
+        GameObject wildDigimonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(WildDigimonPrefabPath);
+        if (wildDigimonPrefab != null)
+        {
+            CreateWildDigimonInstance(wildDigimonPrefab, scene, "WildAgumon", new Vector3(-5f, 0f, 8f));
+            CreateWildDigimonInstance(wildDigimonPrefab, scene, "WildPalmon", new Vector3(8f, 0f, 6f));
+        }
+        else
+        {
+            Debug.LogWarning($"WildDigimon prefab not found. Run 'Generate WildDigimon' first.");
+        }
+
         // Zone trigger to Zone2
         CreateZoneTrigger(scene, "To Zone2", new Vector3(-10f, 1f, 0f), Zone2DataPath,
             new Color(0.2f, 0.4f, 0.9f, 0.5f));
@@ -368,6 +396,17 @@ public static class GenerateScenes
         capsule.transform.localScale = new Vector3(2f, 6f, 2f);
         capsule.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Landmark.mat", new Color(0.1f, 0.1f, 0.9f));
         SceneManager.MoveGameObjectToScene(capsule, scene);
+
+        // Wild Digimon encounters
+        GameObject wildDigimonPrefab2 = AssetDatabase.LoadAssetAtPath<GameObject>(WildDigimonPrefabPath);
+        if (wildDigimonPrefab2 != null)
+        {
+            CreateWildDigimonInstance(wildDigimonPrefab2, scene, "WildGabumon", new Vector3(3f, 0f, 5f));
+        }
+        else
+        {
+            Debug.LogWarning($"WildDigimon prefab not found. Run 'Generate WildDigimon' first.");
+        }
 
         // Zone trigger to Zone1
         CreateZoneTrigger(scene, "To Zone1", new Vector3(-10f, 1f, 0f), Zone1DataPath,
@@ -530,6 +569,28 @@ public static class GenerateScenes
         else
         {
             Debug.LogWarning($"ZoneData not found at {zoneDataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
+        }
+    }
+
+    private static void CreateWildDigimonInstance(GameObject prefab, Scene scene,
+        string encounterName, Vector3 position)
+    {
+        GameObject go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
+        go.name = encounterName;
+        go.transform.position = position;
+
+        string dataPath = $"{EncounterDataDir}/{encounterName}.asset";
+        EncounterData data = AssetDatabase.LoadAssetAtPath<EncounterData>(dataPath);
+        if (data != null)
+        {
+            WildDigimon wild = go.GetComponent<WildDigimon>();
+            SerializedObject so = new SerializedObject(wild);
+            so.FindProperty("_encounter").objectReferenceValue = data;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+        else
+        {
+            Debug.LogWarning($"EncounterData not found at {dataPath}. Run 'Generate Sample Encounters' first.");
         }
     }
 

@@ -44,3 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0383af535958a5842bdf81f34489d94c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioSystem
+  _mixer: {fileID: 24100000, guid: bc4027f110a4a09488df3fc0ab647323, type: 2}
+  _sfxPoolSize: 8

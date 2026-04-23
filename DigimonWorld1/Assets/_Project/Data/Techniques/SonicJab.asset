@@ -17,3 +17,6 @@ MonoBehaviour:
   _mpCost: 5
   _power: 60
   _range: 1
+  _accuracy: 100
+  _statusEffect: 0
+  _statusChance: 0

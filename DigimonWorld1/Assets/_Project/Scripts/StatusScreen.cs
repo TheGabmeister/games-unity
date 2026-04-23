@@ -24,6 +24,8 @@ public class StatusScreen : Singleton<StatusScreen>
 
     private void Update()
     {
+        if (BattleSystem.Instance != null && BattleSystem.Instance.InBattle) return;
+
         if (Keyboard.current.cKey.wasPressedThisFrame)
         {
             if (PauseScreen.Instance != null && PauseScreen.Instance.IsOpen) return;

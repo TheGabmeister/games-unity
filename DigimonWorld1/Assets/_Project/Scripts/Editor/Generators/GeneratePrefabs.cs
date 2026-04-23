@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
@@ -8,6 +9,10 @@ public static class GeneratePrefabs
 {
     private const string BootstrapperPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/Bootstrapper.prefab";
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/AudioSystem.prefab";
+    private const string AudioMixerPath = "Assets/_Project/Audio/MainMixer.mixer";
+    private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
+    private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
+    private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameManager.prefab";
     private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenFader.prefab";
     private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/SplashscreenController.prefab";
@@ -72,7 +77,27 @@ public static class GeneratePrefabs
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate AudioSystem")]
     public static void GenerateAudioSystem()
     {
-        PrefabGeneratorUtils.SavePrefab("AudioSystem", AudioSystemPrefabPath, go => go.AddComponent<AudioSystem>());
+        PrefabGeneratorUtils.SavePrefab("AudioSystem", AudioSystemPrefabPath, go =>
+        {
+            AudioSystem audio = go.AddComponent<AudioSystem>();
+            AudioMixer mixer = AssetDatabase.LoadAssetAtPath<AudioMixer>(AudioMixerPath);
+            if (mixer != null)
+            {
+                SerializedObject so = new SerializedObject(audio);
+                so.FindProperty("_mixer").objectReferenceValue = mixer;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                Debug.LogWarning($"AudioMixer not found at {AudioMixerPath}. Create it manually: Master group with Music/SFX/UI children, expose volume parameters.");
+            }
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate BattleSystem")]
+    public static void GenerateBattleSystem()
+    {
+        PrefabGeneratorUtils.SavePrefab("BattleSystem", BattleSystemPrefabPath, go => go.AddComponent<BattleSystem>());
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate InputManager")]
@@ -422,9 +447,9 @@ public static class GeneratePrefabs
         CreateTechnique("MetalClaw", TechniqueCategory.Battle, 15, 150, 1.5f);
         CreateTechnique("IceStatue", TechniqueCategory.Water, 18, 170, 4f);
         CreateTechnique("ElectroShocker", TechniqueCategory.Air, 22, 200, 4f);
-        CreateTechnique("PoisonIvy", TechniqueCategory.Earth, 10, 80, 3f);
+        CreateTechnique("PoisonIvy", TechniqueCategory.Earth, 10, 80, 3f, 100, StatusEffectType.Poison, 30);
         CreateTechnique("MegaFlame", TechniqueCategory.Fire, 20, 190, 4.5f);
-        CreateTechnique("SpinningNeedle", TechniqueCategory.Machine, 14, 130, 3f);
+        CreateTechnique("SpinningNeedle", TechniqueCategory.Machine, 14, 130, 3f, 100, StatusEffectType.Confusion, 20);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -432,7 +457,8 @@ public static class GeneratePrefabs
     }
 
     private static void CreateTechnique(string techniqueName, TechniqueCategory category,
-        int mpCost, int power, float range)
+        int mpCost, int power, float range,
+        int accuracy = 100, StatusEffectType statusEffect = StatusEffectType.None, int statusChance = 0)
     {
         string path = $"{TechniqueDataDir}/{techniqueName}.asset";
 
@@ -444,6 +470,9 @@ public static class GeneratePrefabs
         so.FindProperty("_mpCost").intValue = mpCost;
         so.FindProperty("_power").intValue = power;
         so.FindProperty("_range").floatValue = range;
+        so.FindProperty("_accuracy").intValue = accuracy;
+        so.FindProperty("_statusEffect").enumValueIndex = (int)statusEffect;
+        so.FindProperty("_statusChance").intValue = statusChance;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         AssetDatabase.CreateAsset(technique, path);
@@ -736,5 +765,83 @@ public static class GeneratePrefabs
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"Prefab generated at {NPCPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Encounters")]
+    public static void GenerateSampleEncounters()
+    {
+        PrefabGeneratorUtils.EnsureFolder(EncounterDataDir);
+
+        CreateEncounter("WildAgumon", "Agumon", 0.8f, 50);
+        CreateEncounter("WildGabumon", "Gabumon", 0.9f, 60);
+        CreateEncounter("WildPalmon", "Palmon", 0.7f, 40);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample encounter assets generated.");
+    }
+
+    private static void CreateEncounter(string encounterName, string speciesName, float statScale, int bitReward)
+    {
+        string path = $"{EncounterDataDir}/{encounterName}.asset";
+
+        EncounterData encounter = ScriptableObject.CreateInstance<EncounterData>();
+
+        SerializedObject so = new SerializedObject(encounter);
+        DigimonSpeciesData species = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/{speciesName}.asset");
+        if (species != null)
+            so.FindProperty("_species").objectReferenceValue = species;
+        else
+            Debug.LogWarning($"Species {speciesName} not found. Run 'Generate Sample Species' first.");
+
+        so.FindProperty("_statScale").floatValue = statScale;
+        so.FindProperty("_bitReward").intValue = bitReward;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(encounter, path);
+        Debug.Log($"Encounter asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate WildDigimon")]
+    public static void GenerateWildDigimon()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
+
+        GameObject root = new GameObject("WildDigimon");
+        try
+        {
+            CharacterController cc = root.AddComponent<CharacterController>();
+            cc.center = new Vector3(0f, 0.75f, 0f);
+            cc.height = 1.5f;
+            cc.radius = 0.4f;
+
+            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localScale = new Vector3(0.6f, 0.75f, 0.6f);
+
+            Object.DestroyImmediate(model.GetComponent<CapsuleCollider>());
+
+            Material mat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/WildDigimon.mat", new Color(0.9f, 0.2f, 0.2f));
+            model.GetComponent<Renderer>().sharedMaterial = mat;
+
+            root.AddComponent<WildDigimon>();
+
+            PrefabUtility.SaveAsPrefabAsset(root, WildDigimonPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {WildDigimonPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {WildDigimonPrefabPath}");
     }
 }

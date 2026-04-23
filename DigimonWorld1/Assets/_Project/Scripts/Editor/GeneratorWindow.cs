@@ -24,6 +24,7 @@ public class GeneratorWindow : EditorWindow
             Button("Sample Species", GeneratePrefabs.GenerateSampleSpecies);
             Button("Sample Items", GeneratePrefabs.GenerateSampleItems);
             Button("Sample Training", GeneratePrefabs.GenerateSampleTraining);
+            Button("Sample Encounters", GeneratePrefabs.GenerateSampleEncounters);
         });
 
         Section("Prefabs — Services", () =>
@@ -37,6 +38,7 @@ public class GeneratorWindow : EditorWindow
             Button("TimeSystem", GeneratePrefabs.GenerateTimeSystem);
             Button("CareSystem", GeneratePrefabs.GenerateCareSystem);
             Button("Inventory", GeneratePrefabs.GenerateInventory);
+            Button("BattleSystem", GeneratePrefabs.GenerateBattleSystem);
         });
 
         Section("Prefabs — UI", () =>
@@ -46,6 +48,7 @@ public class GeneratorWindow : EditorWindow
             Button("InventoryScreen", GenerateInventoryScreenPrefab.Generate);
             Button("PauseScreen", GeneratePauseScreenPrefab.Generate);
             Button("StatusScreen", GenerateStatusScreenPrefab.Generate);
+            Button("BattleUI", GenerateBattleUIPrefab.Generate);
         });
 
         Section("Prefabs — Controllers", () =>
@@ -61,6 +64,7 @@ public class GeneratorWindow : EditorWindow
             Button("Player", GeneratePrefabs.GeneratePlayer);
             Button("PartnerDigimon", GeneratePrefabs.GeneratePartnerDigimon);
             Button("NPC", GeneratePrefabs.GenerateNPC);
+            Button("WildDigimon", GeneratePrefabs.GenerateWildDigimon);
         });
 
         Section("Prefabs — Interactables", () =>
@@ -117,6 +121,7 @@ public class GeneratorWindow : EditorWindow
         GeneratePrefabs.GenerateSampleSpecies();
         GeneratePrefabs.GenerateSampleItems();
         GeneratePrefabs.GenerateSampleTraining();
+        GeneratePrefabs.GenerateSampleEncounters();
 
         GeneratePrefabs.GenerateBootstrapper();
         GeneratePrefabs.GenerateAudioSystem();
@@ -127,12 +132,14 @@ public class GeneratorWindow : EditorWindow
         GeneratePrefabs.GenerateTimeSystem();
         GeneratePrefabs.GenerateCareSystem();
         GeneratePrefabs.GenerateInventory();
+        GeneratePrefabs.GenerateBattleSystem();
 
         GenerateDialoguePrefab.Generate();
         GenerateHUDPrefab.Generate();
         GenerateInventoryScreenPrefab.Generate();
         GeneratePauseScreenPrefab.Generate();
         GenerateStatusScreenPrefab.Generate();
+        GenerateBattleUIPrefab.Generate();
 
         GeneratePrefabs.GenerateSplashscreenController();
         GeneratePrefabs.GenerateIntroController();
@@ -142,6 +149,7 @@ public class GeneratorWindow : EditorWindow
         GeneratePrefabs.GeneratePlayer();
         GeneratePrefabs.GeneratePartnerDigimon();
         GeneratePrefabs.GenerateNPC();
+        GeneratePrefabs.GenerateWildDigimon();
 
         GeneratePrefabs.GenerateTrainingFacility();
 

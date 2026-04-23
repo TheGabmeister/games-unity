@@ -8,6 +8,18 @@ public class HUD : Singleton<HUD>
     [SerializeField] private TMP_Text _statsText;
 
     private DigimonInstance _partner;
+    private Canvas _canvas;
+
+    private void Start()
+    {
+        _canvas = GetComponent<Canvas>();
+    }
+
+    public void SetVisible(bool visible)
+    {
+        if (_canvas != null)
+            _canvas.enabled = visible;
+    }
 
     private void Update()
     {
