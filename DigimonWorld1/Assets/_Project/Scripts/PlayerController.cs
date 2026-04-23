@@ -7,10 +7,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _walkSpeed = 3f;
     [SerializeField] private float _sprintSpeed = 6f;
     [SerializeField] private float _gravity = -15f;
+    [SerializeField] private float _interactDistance = 3f;
 
     private CharacterController _controller;
     private InputSystem_Actions _input;
     private float _verticalVelocity;
+    private IInteractable _currentInteractable;
 
     private void Awake()
     {
@@ -56,5 +58,24 @@ public class PlayerController : MonoBehaviour
 
         if (moveDir.sqrMagnitude > 0.001f)
             transform.rotation = Quaternion.LookRotation(moveDir, Vector3.up);
+
+        IInteractable newInteractable = null;
+
+        Vector3 rayOrigin = transform.position + Vector3.up;
+        Vector3 rayDir = transform.forward;
+        Debug.DrawRay(rayOrigin, rayDir * _interactDistance, Color.yellow);
+
+        if (Physics.SphereCast(rayOrigin, 0.3f, rayDir, out RaycastHit hit, _interactDistance))
+            newInteractable = hit.collider.GetComponent<IInteractable>();
+
+        if (newInteractable != _currentInteractable)
+        {
+            _currentInteractable?.HidePrompt();
+            newInteractable?.ShowPrompt();
+            _currentInteractable = newInteractable;
+        }
+
+        if (_currentInteractable != null && _input.Player.Interact.WasPressedThisFrame())
+            _currentInteractable.Interact();
     }
 }

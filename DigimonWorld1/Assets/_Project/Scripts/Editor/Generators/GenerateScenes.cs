@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -120,8 +121,31 @@ public static class GenerateScenes
         GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
         ground.name = "Ground";
         ground.transform.position = Vector3.zero;
-        ground.transform.localScale = new Vector3(5f, 1f, 5f);
+        ground.transform.localScale = Vector3.one;
         SceneManager.MoveGameObjectToScene(ground, scene);
+
+        // Test Interactable
+        GameObject interactable = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        interactable.name = "TestInteractable";
+        interactable.transform.position = new Vector3(0f, 0.5f, 3f);
+        SceneManager.MoveGameObjectToScene(interactable, scene);
+
+        TestInteractable testInteractable = interactable.AddComponent<TestInteractable>();
+
+        GameObject promptGo = new GameObject("PromptText");
+        promptGo.transform.SetParent(interactable.transform, false);
+        promptGo.transform.localPosition = new Vector3(0f, 1.2f, 0f);
+
+        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+        tmp.text = "Press E";
+        tmp.fontSize = 4;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.white;
+        tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
+
+        SerializedObject testSo = new SerializedObject(testInteractable);
+        testSo.FindProperty("_promptText").objectReferenceValue = tmp;
+        testSo.ApplyModifiedPropertiesWithoutUndo();
 
         if (!SaveScene(scene, GameplayScenePath)) return;
 
