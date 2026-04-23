@@ -40,7 +40,7 @@ public class GameManager : PersistentSingleton<GameManager>
         for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
         {
             Scene loaded = SceneManager.GetSceneAt(i);
-            if (loaded.name != "_Bootstrap")
+            if (loaded.buildIndex != 0)
                 SceneManager.UnloadSceneAsync(loaded);
         }
 
