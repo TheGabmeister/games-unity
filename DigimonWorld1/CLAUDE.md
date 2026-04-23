@@ -21,8 +21,8 @@ No CLI build pipeline. All work happens in the Unity Editor:
 
 ## Architecture: bootstrap + singletons
 
-- [_Bootstrap.unity](Assets/_Project/Scenes/_Bootstrap.unity) is the persistent scene, additively loaded before any other scene's `Awake` by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) — a **plain class** (not a MonoBehaviour) with `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` + `[DefaultExecutionOrder(-1000)]`.
-- Two singleton base classes: [PersistentSingleton.cs](Assets/_Project/Scripts/PersistentSingleton.cs) for services that survive scene loads (`DontDestroyOnLoad`), and [Singleton.cs](Assets/_Project/Scripts/Singleton.cs) for scene-scoped services that die with their scene.
+- [_Bootstrap.unity](Assets/_Project/Scenes/_Bootstrap.unity) is the persistent scene, additively loaded before any other scene's `Awake` by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) — a **plain class** (not a MonoBehaviour) with `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` + `[DefaultExecutionOrder(-1000)]`. Bootstrapper reads scene paths from [BootstrapConfig.cs](Assets/_Project/Scripts/BootstrapConfig.cs), a `ScriptableObject` in `Resources/` — no hardcoded scene names.
+- One singleton base class: [Singleton.cs](Assets/_Project/Scripts/Singleton.cs). No `DontDestroyOnLoad` — scene lifetimes are managed explicitly by `GameManager` and `Bootstrapper`. Services live as long as their scene does.
 - **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up. (`IInteractable` is an interface for world objects, not a service wrapper — that's fine.)
 - Each service lives as its own prefab under `Assets/_Project/Prefabs/`. `_Bootstrap.unity` instantiates global services; `_GameplayBootstrap.unity` instantiates gameplay-scoped services.
 - Service `Awake` order is unspecified relative to each other. If service A needs service B during `Awake`, resolve it in `Start` or set A's Script Execution Order explicitly.
@@ -32,12 +32,13 @@ No CLI build pipeline. All work happens in the Unity Editor:
 | Service | Role |
 |---------|------|
 | `AudioSystem` | Stub — validation target for the singleton-generator pipeline |
-| `GameManager` | Scene loader. Holds `SceneReference` fields for all scenes + `ScreenFader` reference. `LoadScene()` unloads all non-bootstrap scenes (buildIndex != 0) then additively loads the target. Kicks off the flow by calling `LoadSplashscreenScene()` in `Start()` |
+| `GameManager` | Orchestrator. Holds `SceneReference` fields for all scenes + `ScreenFader` reference. `LoadXxxScene()` methods fade out via `ScreenFader`, delegate to `SceneLoader` for async load, then fade in |
 | `ScreenFader` | Full-screen Canvas overlay (sortingOrder 999). `FadeOut()` / `FadeIn()` are `async Awaitable` using `Time.unscaledDeltaTime` |
+| `SceneLoader` | Async scene load/unload via `Awaitable`. `LoadScene(SceneReference)` and `LoadScenes(params SceneReference[])`. Fires `OnSceneLoadStarted` / `OnSceneLoadCompleted` events. Unloads all non-bootstrap scenes before loading |
 
 ### Current services in _GameplayBootstrap
 
-`_GameplayBootstrap.unity` is loaded additively alongside `_Gameplay` by `GameManager.LoadGameplayScene()`. Both are unloaded when leaving gameplay. Services here use `Singleton<T>` (scene-scoped, not persistent).
+`_GameplayBootstrap.unity` is loaded additively alongside `_Gameplay` by `GameManager.LoadGameplayScene()`. Both are unloaded when leaving gameplay.
 
 | Service | Role |
 |---------|------|

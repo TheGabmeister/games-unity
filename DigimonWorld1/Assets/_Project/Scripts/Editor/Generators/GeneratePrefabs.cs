@@ -16,6 +16,7 @@ public static class GeneratePrefabs
     private const string AgumonPrefabPath = PrefabGeneratorUtils.PrefabDir + "/Agumon.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
     private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
+    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
     private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
     private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
 
@@ -68,6 +69,12 @@ public static class GeneratePrefabs
     public static void GenerateInputManager()
     {
         PrefabGeneratorUtils.SavePrefab("InputManager", InputManagerPrefabPath, go => go.AddComponent<InputManager>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate SceneLoader")]
+    public static void GenerateSceneLoader()
+    {
+        PrefabGeneratorUtils.SavePrefab("SceneLoader", SceneLoaderPrefabPath, go => go.AddComponent<SceneLoader>());
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenFader")]

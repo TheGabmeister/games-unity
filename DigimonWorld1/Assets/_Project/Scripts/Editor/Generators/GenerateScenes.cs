@@ -19,6 +19,7 @@ public static class GenerateScenes
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.PrefabDir + "/AudioSystem.prefab";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/GameManager.prefab";
     private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/ScreenFader.prefab";
+    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.PrefabDir + "/SceneLoader.prefab";
     private const string InputManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/InputManager.prefab";
     private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.PrefabDir + "/DialogueManager.prefab";
     private const string NPCPrefabPath = PrefabGeneratorUtils.PrefabDir + "/NPC.prefab";
@@ -53,12 +54,20 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject sceneLoaderPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SceneLoaderPrefabPath);
+        if (sceneLoaderPrefab == null)
+        {
+            Debug.LogError($"SceneLoader prefab not found at {SceneLoaderPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate SceneLoader' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
         PrefabUtility.InstantiatePrefab(gameManagerPrefab, scene);
         PrefabUtility.InstantiatePrefab(screenFaderPrefab, scene);
+        PrefabUtility.InstantiatePrefab(sceneLoaderPrefab, scene);
 
         if (!SaveScene(scene, BootstrapScenePath)) return;
 

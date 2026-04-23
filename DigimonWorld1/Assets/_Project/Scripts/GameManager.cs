@@ -1,6 +1,5 @@
 using Eflatun.SceneReference;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -12,46 +11,37 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private SceneReference _gameplayScene;
     [SerializeField] private ScreenFader _screenFader;
 
-    public void LoadSplashscreenScene()
+    public async void LoadSplashscreenScene()
     {
-        LoadScene(_splashscreenScene);
+        await LoadSceneWithFade(_splashscreenScene);
     }
 
-    public void LoadIntroScene()
+    public async void LoadIntroScene()
     {
-        LoadScene(_introScene);
+        await LoadSceneWithFade(_introScene);
     }
 
-    public void LoadMainMenuScene()
+    public async void LoadMainMenuScene()
     {
-        LoadScene(_mainMenuScene);
+        await LoadSceneWithFade(_mainMenuScene);
     }
 
-    public void LoadNameScene()
+    public async void LoadNameScene()
     {
-        LoadScene(_nameScene);
+        await LoadSceneWithFade(_nameScene);
     }
 
-    public void LoadGameplayScene()
+    public async void LoadGameplayScene()
     {
-        UnloadNonBootstrapScenes();
-        SceneManager.LoadScene(_gameplayBootstrapScene.Path, LoadSceneMode.Additive);
-        SceneManager.LoadScene(_gameplayScene.Path, LoadSceneMode.Additive);
+        await _screenFader.FadeOut();
+        await SceneLoader.Instance.LoadScenes(_gameplayBootstrapScene, _gameplayScene);
+        await _screenFader.FadeIn();
     }
 
-    private void LoadScene(SceneReference scene)
+    private async Awaitable LoadSceneWithFade(SceneReference scene)
     {
-        UnloadNonBootstrapScenes();
-        SceneManager.LoadScene(scene.Path, LoadSceneMode.Additive);
-    }
-
-    private void UnloadNonBootstrapScenes()
-    {
-        for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
-        {
-            Scene loaded = SceneManager.GetSceneAt(i);
-            if (loaded.buildIndex != 0)
-                SceneManager.UnloadSceneAsync(loaded);
-        }
+        await _screenFader.FadeOut();
+        await SceneLoader.Instance.LoadScene(scene);
+        await _screenFader.FadeIn();
     }
 }
