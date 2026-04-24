@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameplayManager : Singleton<GameplayManager>
 {
@@ -14,6 +15,12 @@ public class GameplayManager : Singleton<GameplayManager>
     [SerializeField] private InventoryScreen _inventoryScreen;
     [SerializeField] private PauseScreen _pauseScreen;
     [SerializeField] private StatusScreen _statusScreen;
+    [SerializeField] private GameplayCamera _gameplayCamera;
+    [SerializeField] private ZoneData _startingZone;
+    [SerializeField] private ZoneData[] _allZones;
+
+    private ZoneData _currentZone;
+    private bool _isTransitioning;
 
     public InputManager InputManager => _inputManager;
     public TimeSystem TimeSystem => _timeSystem;
@@ -26,10 +33,46 @@ public class GameplayManager : Singleton<GameplayManager>
     public InventoryScreen InventoryScreen => _inventoryScreen;
     public PauseScreen PauseScreen => _pauseScreen;
     public StatusScreen StatusScreen => _statusScreen;
+    public ZoneData StartingZone => _startingZone;
 
     public bool IsAnyScreenOpen => _inventoryScreen.IsOpen
                                  || _pauseScreen.IsOpen
                                  || _statusScreen.IsOpen;
+
+    private void Start()
+    {
+        foreach (var zone in _allZones)
+        {
+            if (SceneManager.GetSceneByPath(zone.Scene.Path).isLoaded)
+            {
+                _currentZone = zone;
+                _gameplayCamera.transform.position = zone.CameraPosition;
+                return;
+            }
+        }
+    }
+
+    public async void LoadZone(ZoneData zone)
+    {
+        if (_currentZone == zone || _isTransitioning) return;
+        _isTransitioning = true;
+
+        await ScreenFader.Instance.FadeOut();
+        if (_currentZone != null)
+            await SceneLoader.Instance.UnloadScene(_currentZone.Scene);
+        await SceneLoader.Instance.LoadScene(zone.Scene);
+        _currentZone = zone;
+        _gameplayCamera.transform.position = zone.CameraPosition;
+        await ScreenFader.Instance.FadeIn();
+
+        _isTransitioning = false;
+    }
+
+    public void SetInitialZone(ZoneData zone)
+    {
+        _currentZone = zone;
+        _gameplayCamera.transform.position = zone.CameraPosition;
+    }
 
     private void Update()
     {

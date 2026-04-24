@@ -309,12 +309,13 @@ public static class GenerateScenes
         gmSo.FindProperty("_inventoryScreen").objectReferenceValue = inventoryScreen;
         gmSo.FindProperty("_pauseScreen").objectReferenceValue = pauseScreen;
         gmSo.FindProperty("_statusScreen").objectReferenceValue = statusScreen;
-        gmSo.ApplyModifiedPropertiesWithoutUndo();
 
         // Camera
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);
         GameplayCamera gameCam = camGo.AddComponent<GameplayCamera>();
+        gmSo.FindProperty("_gameplayCamera").objectReferenceValue = gameCam;
+        gmSo.ApplyModifiedPropertiesWithoutUndo();
 
         GameObject playerGo = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, scene);
         playerGo.transform.position = Vector3.zero;

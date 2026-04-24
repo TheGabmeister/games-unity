@@ -9,24 +9,6 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private SceneReference _mainMenuScene;
     [SerializeField] private SceneReference _nameScene;
     [SerializeField] private SceneReference _gameplayScene;
-    [SerializeField] private ZoneData _startingZone;
-    [SerializeField] private ZoneData[] _allZones;
-
-    private ZoneData _currentZone;
-    private bool _isTransitioning;
-
-    private void Start()
-    {
-        foreach (var zone in _allZones)
-        {
-            if (SceneManager.GetSceneByPath(zone.Scene.Path).isLoaded)
-            {
-                _currentZone = zone;
-                ApplyCameraPosition(_currentZone);
-                return;
-            }
-        }
-    }
 
     public async void LoadSplashscreenScene()
     {
@@ -53,26 +35,10 @@ public class GameManager : Singleton<GameManager>
         await ScreenFader.Instance.FadeOut();
         UnloadNonBootstrapScenes();
         await SceneLoader.Instance.LoadScene(_gameplayScene);
-        await SceneLoader.Instance.LoadScene(_startingZone.Scene);
-        _currentZone = _startingZone;
-        ApplyCameraPosition(_currentZone);
+        ZoneData startingZone = GameplayManager.Instance.StartingZone;
+        await SceneLoader.Instance.LoadScene(startingZone.Scene);
+        GameplayManager.Instance.SetInitialZone(startingZone);
         await ScreenFader.Instance.FadeIn();
-    }
-
-    public async void LoadZone(ZoneData zone)
-    {
-        if (_currentZone == zone || _isTransitioning) return;
-        _isTransitioning = true;
-
-        await ScreenFader.Instance.FadeOut();
-        if (_currentZone != null)
-            await SceneLoader.Instance.UnloadScene(_currentZone.Scene);
-        await SceneLoader.Instance.LoadScene(zone.Scene);
-        _currentZone = zone;
-        ApplyCameraPosition(_currentZone);
-        await ScreenFader.Instance.FadeIn();
-
-        _isTransitioning = false;
     }
 
     private async Awaitable LoadSceneWithFade(SceneReference scene)
@@ -80,7 +46,6 @@ public class GameManager : Singleton<GameManager>
         await ScreenFader.Instance.FadeOut();
         UnloadNonBootstrapScenes();
         await SceneLoader.Instance.LoadScene(scene);
-        _currentZone = null;
         await ScreenFader.Instance.FadeIn();
     }
 
@@ -92,12 +57,5 @@ public class GameManager : Singleton<GameManager>
             if (loaded.buildIndex != 0)
                 SceneManager.UnloadSceneAsync(loaded);
         }
-    }
-
-    private void ApplyCameraPosition(ZoneData zone)
-    {
-        GameplayCamera cam = FindFirstObjectByType<GameplayCamera>();
-        if (cam != null)
-            cam.transform.position = zone.CameraPosition;
     }
 }

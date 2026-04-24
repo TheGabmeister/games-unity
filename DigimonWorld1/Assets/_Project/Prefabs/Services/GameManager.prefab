@@ -59,7 +59,3 @@ MonoBehaviour:
   _gameplayScene:
     asset: {fileID: 102900000, guid: a7d02de308a9703409cd7ad2b60d9d7a, type: 3}
     guid: a7d02de308a9703409cd7ad2b60d9d7a
-  _startingZone: {fileID: 11400000, guid: a83e3ded37a71b944a0235fa8aecb0bc, type: 2}
-  _allZones:
-  - {fileID: 11400000, guid: a83e3ded37a71b944a0235fa8aecb0bc, type: 2}
-  - {fileID: 11400000, guid: 6d65992c722d45243bc9889023330412, type: 2}

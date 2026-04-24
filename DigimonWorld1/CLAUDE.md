@@ -28,13 +28,13 @@ Status: Phases 0–4 complete. Working: bootstrap, scene flow, input, player mov
 
 ### _Bootstrap services
 
-`GameManager` (scene orchestrator, zone transitions with `ScreenFader` fade), `SceneLoader` (async load/unload), `ScreenFader` (sortingOrder 999), `AudioSystem` (`AudioMixer` with Master/Music/SFX/UI buses, SFX one-shot pool, music player, `PlaySFX`/`PlayMusic`/`StopMusic`/`SetBusVolume`).
+`GameManager` (scene orchestrator, loads gameplay/menu scenes with `ScreenFader` fade), `SceneLoader` (async load/unload), `ScreenFader` (sortingOrder 999), `AudioSystem` (`AudioMixer` with Master/Music/SFX/UI buses, SFX one-shot pool, music player, `PlaySFX`/`PlayMusic`/`StopMusic`/`SetBusVolume`).
 
 ### _Gameplay services & systems
 
 `_Gameplay.unity` holds one singleton (`GameplayManager`) + plain MonoBehaviour systems + player + partner + camera. Zone scenes load additively on top. All gameplay systems are wired via serialized references in the scene generator.
 
-- **GameplayManager** — the sole gameplay singleton. Holds refs to all systems below. External code accesses systems via `GameplayManager.Instance.X`.
+- **GameplayManager** — the sole gameplay singleton. Holds refs to all systems below. External code accesses systems via `GameplayManager.Instance.X`. Also owns zone transitions (`LoadZone(ZoneData)`) and repositions `GameplayCamera` per zone.
 - **InputManager** — owns `InputSystem_Actions`. `SetPlayerInputEnabled(bool)` gates `PlayerController` without disabling the action map.
 - **TimeSystem** — in-game clock (1 real second = 1 in-game minute). `OnHourChanged` event. Uses `Time.deltaTime` so pauses with `timeScale = 0`.
 - **CareSystem** — subscribes to `OnHourChanged` (via serialized `_timeSystem` ref). Ticks hunger/tiredness, manages sleep (21:00–06:00), tracks care mistakes. Exposes `Feed()`, `Praise()`, `Scold()`.
@@ -59,7 +59,7 @@ Each non-gameplay scene has a controller (`SplashscreenController`, `IntroContro
 
 ### Zone system
 
-`ZoneData` SO (`SceneReference` + `CameraPosition`). `ZoneTrigger` (`BoxCollider` trigger) calls `GameManager.LoadZone()` which fades, unloads old zone, loads new, repositions camera. Zone scenes contain only environment — no camera, no player.
+`ZoneData` SO (`SceneReference` + `CameraPosition`). `ZoneTrigger` (`BoxCollider` trigger) calls `GameplayManager.Instance.LoadZone()` which fades, unloads old zone, loads new, repositions camera. Zone scenes contain only environment — no camera, no player.
 
 ## Gameplay systems
 

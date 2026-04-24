@@ -8,6 +8,6 @@ public class ZoneTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<PlayerController>() != null)
-            GameManager.Instance.LoadZone(_destinationZone);
+            GameplayManager.Instance.LoadZone(_destinationZone);
     }
 }
