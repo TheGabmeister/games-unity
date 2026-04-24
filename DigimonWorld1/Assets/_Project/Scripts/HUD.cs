@@ -1,11 +1,12 @@
 using TMPro;
 using UnityEngine;
 
-public class HUD : Singleton<HUD>
+public class HUD : MonoBehaviour
 {
     [SerializeField] private TMP_Text _timeText;
     [SerializeField] private TMP_Text _dayText;
     [SerializeField] private TMP_Text _statsText;
+    [SerializeField] private TimeSystem _timeSystem;
 
     private DigimonInstance _partner;
     private Canvas _canvas;
@@ -23,8 +24,8 @@ public class HUD : Singleton<HUD>
 
     private void Update()
     {
-        _timeText.text = TimeSystem.Instance.TimeString;
-        _dayText.text = $"Day {TimeSystem.Instance.Day}";
+        _timeText.text = _timeSystem.TimeString;
+        _dayText.text = $"Day {_timeSystem.Day}";
 
         DigimonInstance partner = GetPartner();
         if (partner == null) return;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CareSystem : Singleton<CareSystem>
+public class CareSystem : MonoBehaviour
 {
     [SerializeField] private int _hungerIncreasePerHour = 4;
     [SerializeField] private int _tirednessIncreasePerHour = 3;
@@ -9,6 +9,7 @@ public class CareSystem : Singleton<CareSystem>
     [SerializeField] private int _sleepHour = 21;
     [SerializeField] private int _wakeHour = 6;
     [SerializeField] private int _tirednessRecoveryPerHourSleeping = 10;
+    [SerializeField] private TimeSystem _timeSystem;
 
     private DigimonInstance _partner;
     private bool _hungerWarningActive;
@@ -16,15 +17,13 @@ public class CareSystem : Singleton<CareSystem>
 
     private void Start()
     {
-        TimeSystem.Instance.OnHourChanged += OnHourChanged;
+        _timeSystem.OnHourChanged += OnHourChanged;
     }
 
-    protected override void OnDestroy()
+    private void OnDestroy()
     {
-        var timeSystem = FindFirstObjectByType<TimeSystem>();
-        if (timeSystem != null)
-            timeSystem.OnHourChanged -= OnHourChanged;
-        base.OnDestroy();
+        if (_timeSystem != null)
+            _timeSystem.OnHourChanged -= OnHourChanged;
     }
 
     private void OnHourChanged()
@@ -52,7 +51,7 @@ public class CareSystem : Singleton<CareSystem>
     {
         partner.ModifyTiredness(-_tirednessRecoveryPerHourSleeping);
 
-        if (TimeSystem.Instance.Hour == _wakeHour)
+        if (_timeSystem.Hour == _wakeHour)
         {
             partner.SetSleeping(false);
             partner.ModifyHappiness(5);
@@ -109,7 +108,7 @@ public class CareSystem : Singleton<CareSystem>
 
     private void CheckSleepTime(DigimonInstance partner)
     {
-        if (TimeSystem.Instance.Hour == _sleepHour)
+        if (_timeSystem.Hour == _sleepHour)
         {
             partner.SetSleeping(true);
             Debug.Log($"[CareSystem] {partner.Species.SpeciesName} fell asleep.");

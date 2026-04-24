@@ -36,7 +36,7 @@ public class WildDigimon : MonoBehaviour
     {
         if (_state == State.Defeated) return;
         if (_player == null) return;
-        if (BattleSystem.Instance != null && BattleSystem.Instance.InBattle) return;
+        if (GameplayManager.Instance.BattleSystem != null && GameplayManager.Instance.BattleSystem.InBattle) return;
 
         if (_controller.isGrounded && _verticalVelocity < 0f)
             _verticalVelocity = -2f;
@@ -114,14 +114,14 @@ public class WildDigimon : MonoBehaviour
 
     private void TriggerBattle()
     {
-        if (BattleSystem.Instance == null || BattleSystem.Instance.InBattle) return;
+        if (GameplayManager.Instance.BattleSystem == null || GameplayManager.Instance.BattleSystem.InBattle) return;
         if (_encounter == null || _encounter.Species == null) return;
 
         DigimonInstance partner = FindFirstObjectByType<DigimonInstance>();
         if (partner == null) return;
 
         WildDigimonInstance wildInstance = new WildDigimonInstance(_encounter.Species, _encounter.StatScale);
-        BattleSystem.Instance.StartBattle(partner, wildInstance, OnBattleEnd);
+        GameplayManager.Instance.BattleSystem.StartBattle(partner, wildInstance, OnBattleEnd);
     }
 
     private void OnBattleEnd(BattleResult result)
@@ -130,7 +130,7 @@ public class WildDigimon : MonoBehaviour
         {
             case BattleResult.Win:
                 if (_encounter != null)
-                    Inventory.Instance.AddBits(_encounter.BitReward);
+                    GameplayManager.Instance.Inventory.AddBits(_encounter.BitReward);
                 _state = State.Defeated;
                 gameObject.SetActive(false);
                 break;

@@ -2,8 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleSystem : Singleton<BattleSystem>
+public class BattleSystem : MonoBehaviour
 {
+    [SerializeField] private InputManager _inputManager;
+    [SerializeField] private TimeSystem _timeSystem;
+    [SerializeField] private HUD _hud;
+    [SerializeField] private BattleUI _battleUI;
+    [SerializeField] private Inventory _inventory;
+
     private bool _inBattle;
     private bool _executingTurn;
     private DigimonInstance _partner;
@@ -28,13 +34,13 @@ public class BattleSystem : Singleton<BattleSystem>
         _enemyStatusEffect = null;
         _onBattleEnd = onEnd;
 
-        InputManager.Instance.SetPlayerInputEnabled(false);
-        TimeSystem.Instance.SetPaused(true);
-        HUD.Instance.SetVisible(false);
+        _inputManager.SetPlayerInputEnabled(false);
+        _timeSystem.SetPaused(true);
+        _hud.SetVisible(false);
 
-        BattleUI.Instance.Show(_partner, _enemy);
-        BattleUI.Instance.AddLogLine($"A wild {_enemy.Species.SpeciesName} appeared!");
-        BattleUI.Instance.ShowCommandMenu();
+        _battleUI.Show(_partner, _enemy);
+        _battleUI.AddLogLine($"A wild {_enemy.Species.SpeciesName} appeared!");
+        _battleUI.ShowCommandMenu();
     }
 
     public void SelectAttack()
@@ -49,7 +55,7 @@ public class BattleSystem : Singleton<BattleSystem>
 
         if (!_partner.SpendMP(technique.MpCost))
         {
-            BattleUI.Instance.AddLogLine("Not enough MP!");
+            _battleUI.AddLogLine("Not enough MP!");
             return;
         }
 
@@ -91,7 +97,7 @@ public class BattleSystem : Singleton<BattleSystem>
     private async void ExecutePlayerTurn(BattleAction action)
     {
         _executingTurn = true;
-        BattleUI.Instance.HideCommandMenu();
+        _battleUI.HideCommandMenu();
 
         if (action.Type != BattleActionType.Flee && action.Type != BattleActionType.Item)
             action = ApplyObedienceCheck(action);
@@ -106,14 +112,14 @@ public class BattleSystem : Singleton<BattleSystem>
         }
 
         ExecuteAction(action, true);
-        BattleUI.Instance.RefreshStats(_partner, _enemy);
+        _battleUI.RefreshStats(_partner, _enemy);
 
         await Awaitable.WaitForSecondsAsync(0.5f);
 
         if (!_enemy.IsAlive)
         {
-            BattleUI.Instance.AddLogLine($"{_enemy.Species.SpeciesName} was defeated!");
-            BattleUI.Instance.RefreshStats(_partner, _enemy);
+            _battleUI.AddLogLine($"{_enemy.Species.SpeciesName} was defeated!");
+            _battleUI.RefreshStats(_partner, _enemy);
             await Awaitable.WaitForSecondsAsync(1f);
             EndBattle(BattleResult.Win);
             return;
@@ -128,8 +134,8 @@ public class BattleSystem : Singleton<BattleSystem>
 
         if (enemyAction.Type == BattleActionType.Flee)
         {
-            BattleUI.Instance.AddLogLine($"{_enemy.Species.SpeciesName} fled!");
-            BattleUI.Instance.RefreshStats(_partner, _enemy);
+            _battleUI.AddLogLine($"{_enemy.Species.SpeciesName} fled!");
+            _battleUI.RefreshStats(_partner, _enemy);
             await Awaitable.WaitForSecondsAsync(1f);
             EndBattle(BattleResult.Win);
             return;
@@ -144,21 +150,21 @@ public class BattleSystem : Singleton<BattleSystem>
             ExecuteAction(enemyAction, false);
         }
 
-        BattleUI.Instance.RefreshStats(_partner, _enemy);
+        _battleUI.RefreshStats(_partner, _enemy);
 
         await Awaitable.WaitForSecondsAsync(0.5f);
 
         if (!_partner.IsAlive)
         {
-            BattleUI.Instance.AddLogLine($"{_partner.Species.SpeciesName} was defeated...");
-            BattleUI.Instance.RefreshStats(_partner, _enemy);
+            _battleUI.AddLogLine($"{_partner.Species.SpeciesName} was defeated...");
+            _battleUI.RefreshStats(_partner, _enemy);
             await Awaitable.WaitForSecondsAsync(1f);
             EndBattle(BattleResult.Lose);
             return;
         }
 
         _executingTurn = false;
-        BattleUI.Instance.ShowCommandMenu();
+        _battleUI.ShowCommandMenu();
     }
 
     private void ExecuteAction(BattleAction action, bool isPartnerAction)
@@ -179,7 +185,7 @@ public class BattleSystem : Singleton<BattleSystem>
                 else
                     _partner.TakeDamage(damage);
 
-                BattleUI.Instance.AddLogLine($"{attackerName} attacks {defenderName} for {damage} damage!");
+                _battleUI.AddLogLine($"{attackerName} attacks {defenderName} for {damage} damage!");
                 break;
             }
 
@@ -194,7 +200,7 @@ public class BattleSystem : Singleton<BattleSystem>
 
                 if (tech.Accuracy < 100 && UnityEngine.Random.Range(0, 100) >= tech.Accuracy)
                 {
-                    BattleUI.Instance.AddLogLine($"{attackerName} used {tech.TechniqueName} but missed!");
+                    _battleUI.AddLogLine($"{attackerName} used {tech.TechniqueName} but missed!");
                     break;
                 }
 
@@ -207,7 +213,7 @@ public class BattleSystem : Singleton<BattleSystem>
                     _partner.TakeDamage(damage);
 
                 string effectiveness = typeMult > 1f ? " It's super effective!" : typeMult < 1f ? " It's not very effective." : "";
-                BattleUI.Instance.AddLogLine($"{attackerName} used {tech.TechniqueName} for {damage} damage!{effectiveness}");
+                _battleUI.AddLogLine($"{attackerName} used {tech.TechniqueName} for {damage} damage!{effectiveness}");
 
                 TryApplyStatusEffect(tech, isPartnerAction, defenderName);
                 break;
@@ -217,8 +223,8 @@ public class BattleSystem : Singleton<BattleSystem>
             {
                 if (action.Item != null)
                 {
-                    Inventory.Instance.UseItem(action.Item);
-                    BattleUI.Instance.AddLogLine($"Used {action.Item.ItemName}!");
+                    _inventory.UseItem(action.Item);
+                    _battleUI.AddLogLine($"Used {action.Item.ItemName}!");
                 }
                 break;
             }
@@ -244,7 +250,7 @@ public class BattleSystem : Singleton<BattleSystem>
         else
             _partnerStatusEffect = effect;
 
-        BattleUI.Instance.AddLogLine($"{targetName} is now {GetStatusName(tech.StatusEffect)}!");
+        _battleUI.AddLogLine($"{targetName} is now {GetStatusName(tech.StatusEffect)}!");
     }
 
     private bool ProcessStatusEffects(ref StatusEffect effect, string name, bool isPartner)
@@ -261,21 +267,21 @@ public class BattleSystem : Singleton<BattleSystem>
                     _partner.TakeDamage(poisonDmg);
                 else
                     _enemy.TakeDamage(poisonDmg);
-                BattleUI.Instance.AddLogLine($"{name} took {poisonDmg} poison damage!");
+                _battleUI.AddLogLine($"{name} took {poisonDmg} poison damage!");
                 break;
             }
 
             case StatusEffectType.Paralysis:
                 if (UnityEngine.Random.value < 0.4f)
                 {
-                    BattleUI.Instance.AddLogLine($"{name} is paralyzed and can't move!");
+                    _battleUI.AddLogLine($"{name} is paralyzed and can't move!");
                     TickStatusEffect(ref effect);
                     return true;
                 }
                 break;
 
             case StatusEffectType.Sleep:
-                BattleUI.Instance.AddLogLine($"{name} is asleep!");
+                _battleUI.AddLogLine($"{name} is asleep!");
                 TickStatusEffect(ref effect);
                 return true;
 
@@ -288,7 +294,7 @@ public class BattleSystem : Singleton<BattleSystem>
                         _partner.TakeDamage(confusionDmg);
                     else
                         _enemy.TakeDamage(confusionDmg);
-                    BattleUI.Instance.AddLogLine($"{name} hurt itself in confusion for {confusionDmg} damage!");
+                    _battleUI.AddLogLine($"{name} hurt itself in confusion for {confusionDmg} damage!");
                     TickStatusEffect(ref effect);
                     return true;
                 }
@@ -305,7 +311,7 @@ public class BattleSystem : Singleton<BattleSystem>
         effect.RemainingTurns--;
         if (effect.RemainingTurns <= 0)
         {
-            BattleUI.Instance.AddLogLine($"The {GetStatusName(effect.Type)} wore off!");
+            _battleUI.AddLogLine($"The {GetStatusName(effect.Type)} wore off!");
             effect = null;
         }
     }
@@ -323,7 +329,7 @@ public class BattleSystem : Singleton<BattleSystem>
 
         if (roll < 0.3f)
         {
-            BattleUI.Instance.AddLogLine($"{_partner.Species.SpeciesName} ignored your command!");
+            _battleUI.AddLogLine($"{_partner.Species.SpeciesName} ignored your command!");
             return new BattleAction { Type = BattleActionType.DoNothing };
         }
 
@@ -340,12 +346,12 @@ public class BattleSystem : Singleton<BattleSystem>
             {
                 TechniqueData picked = affordable[UnityEngine.Random.Range(0, affordable.Count)];
                 _partner.SpendMP(picked.MpCost);
-                BattleUI.Instance.AddLogLine($"{_partner.Species.SpeciesName} disobeyed and used {picked.TechniqueName}!");
+                _battleUI.AddLogLine($"{_partner.Species.SpeciesName} disobeyed and used {picked.TechniqueName}!");
                 return new BattleAction { Type = BattleActionType.Technique, Technique = picked };
             }
         }
 
-        BattleUI.Instance.AddLogLine($"{_partner.Species.SpeciesName} disobeyed and attacked on its own!");
+        _battleUI.AddLogLine($"{_partner.Species.SpeciesName} disobeyed and attacked on its own!");
         return new BattleAction { Type = BattleActionType.Attack };
     }
 
@@ -362,12 +368,12 @@ public class BattleSystem : Singleton<BattleSystem>
             BattleResult.Fled => "Fled from battle.",
             _ => ""
         };
-        BattleUI.Instance.AddLogLine(resultText);
+        _battleUI.AddLogLine(resultText);
 
-        TimeSystem.Instance.SetPaused(false);
-        HUD.Instance.SetVisible(true);
-        InputManager.Instance.SetPlayerInputEnabled(true);
-        BattleUI.Instance.Hide();
+        _timeSystem.SetPaused(false);
+        _hud.SetVisible(true);
+        _inputManager.SetPlayerInputEnabled(true);
+        _battleUI.Hide();
 
         _inBattle = false;
 

@@ -15,10 +15,10 @@ public class NPCInteractable : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (DialogueManager.Instance.IsActive) return;
+        if (GameplayManager.Instance.DialogueManager.IsActive) return;
 
         HidePrompt();
-        DialogueManager.Instance.StartDialogue(_dialogue);
+        GameplayManager.Instance.DialogueManager.StartDialogue(_dialogue);
     }
 
     public void ShowPrompt()

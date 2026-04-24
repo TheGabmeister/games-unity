@@ -15,11 +15,12 @@ public struct InventorySlot
     }
 }
 
-public class Inventory : Singleton<Inventory>
+public class Inventory : MonoBehaviour
 {
     [SerializeField] private int _maxSlots = 20;
     [SerializeField] private int _startingBits = 0;
     [SerializeField] private InventorySlot[] _startingItems;
+    [SerializeField] private CareSystem _careSystem;
 
     private List<InventorySlot> _slots = new List<InventorySlot>();
     private int _bits;
@@ -30,9 +31,8 @@ public class Inventory : Singleton<Inventory>
 
     public event Action OnInventoryChanged;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         _bits = _startingBits;
 
         if (_startingItems != null)
@@ -101,7 +101,7 @@ public class Inventory : Singleton<Inventory>
 
         if (item.Category == ItemCategory.Food)
         {
-            CareSystem.Instance.Feed(item.HungerReduction, item.WeightGain);
+            _careSystem.Feed(item.HungerReduction, item.WeightGain);
         }
         else
         {

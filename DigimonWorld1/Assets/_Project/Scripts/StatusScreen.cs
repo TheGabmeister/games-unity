@@ -1,8 +1,7 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class StatusScreen : Singleton<StatusScreen>
+public class StatusScreen : MonoBehaviour
 {
     [SerializeField] private GameObject _panel;
     [SerializeField] private TMP_Text _identityText;
@@ -15,49 +14,23 @@ public class StatusScreen : Singleton<StatusScreen>
 
     public bool IsOpen => _isOpen;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         if (_panel != null)
             _panel.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (BattleSystem.Instance != null && BattleSystem.Instance.InBattle) return;
-
-        if (Keyboard.current.cKey.wasPressedThisFrame)
-        {
-            if (PauseScreen.Instance != null && PauseScreen.Instance.IsOpen) return;
-            if (InventoryScreen.Instance != null && InventoryScreen.Instance.IsOpen) return;
-            if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
-
-            if (_isOpen)
-                Close();
-            else
-                Open();
-            return;
-        }
-
-        if (!_isOpen) return;
-
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            Close();
-    }
-
-    private void Open()
+    public void Open()
     {
         _isOpen = true;
         _panel.SetActive(true);
-        InputManager.Instance.SetPlayerInputEnabled(false);
         RefreshDisplay();
     }
 
-    private void Close()
+    public void Close()
     {
         _isOpen = false;
         _panel.SetActive(false);
-        InputManager.Instance.SetPlayerInputEnabled(true);
     }
 
     private void RefreshDisplay()

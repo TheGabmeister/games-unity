@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InputManager : Singleton<InputManager>
+public class InputManager : MonoBehaviour
 {
     private InputSystem_Actions _input;
     private bool _playerInputEnabled = true;
@@ -8,9 +8,8 @@ public class InputManager : Singleton<InputManager>
     public InputSystem_Actions Actions => _input;
     public bool PlayerInputEnabled => _playerInputEnabled;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         _input = new InputSystem_Actions();
     }
 

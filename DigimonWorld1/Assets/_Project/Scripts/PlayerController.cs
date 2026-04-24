@@ -20,9 +20,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (!InputManager.Instance.PlayerInputEnabled) return;
+        if (!GameplayManager.Instance.InputManager.PlayerInputEnabled) return;
 
-        var actions = InputManager.Instance.Actions;
+        var actions = GameplayManager.Instance.InputManager.Actions;
         Vector2 moveInput = actions.Player.Move.ReadValue<Vector2>();
         bool sprinting = actions.Player.Sprint.IsPressed();
 

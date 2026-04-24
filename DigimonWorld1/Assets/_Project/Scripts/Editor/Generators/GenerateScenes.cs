@@ -37,6 +37,8 @@ public static class GenerateScenes
     private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.InteractablesPrefabDir + "/TrainingFacility.prefab";
     private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
     private const string BattleUIPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/BattleUI.prefab";
+    private const string GameplayManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameplayManager.prefab";
+    private const string ScreenManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenManager.prefab";
     private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
     private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
     private const string TrainingDataDir = "Assets/_Project/Data/Training";
@@ -199,32 +201,135 @@ public static class GenerateScenes
             return;
         }
 
+        GameObject gameplayManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameplayManagerPrefabPath);
+        if (gameplayManagerPrefab == null)
+        {
+            Debug.LogError($"GameplayManager prefab not found at {GameplayManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate GameplayManager' first.");
+            return;
+        }
+
+        GameObject screenManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ScreenManagerPrefabPath);
+        if (screenManagerPrefab == null)
+        {
+            Debug.LogError($"ScreenManager prefab not found at {ScreenManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate ScreenManager' first.");
+            return;
+        }
+
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-        PrefabUtility.InstantiatePrefab(inputManagerPrefab, scene);
-        PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
-        PrefabUtility.InstantiatePrefab(timeSystemPrefab, scene);
-        PrefabUtility.InstantiatePrefab(hudPrefab, scene);
-        PrefabUtility.InstantiatePrefab(careSystemPrefab, scene);
-        PrefabUtility.InstantiatePrefab(inventoryPrefab, scene);
-        PrefabUtility.InstantiatePrefab(inventoryScreenPrefab, scene);
-        PrefabUtility.InstantiatePrefab(pauseScreenPrefab, scene);
-        PrefabUtility.InstantiatePrefab(statusScreenPrefab, scene);
+        GameObject inputManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(inputManagerPrefab, scene);
+        GameObject dialogueManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
+        GameObject timeSystemGo = (GameObject)PrefabUtility.InstantiatePrefab(timeSystemPrefab, scene);
+        GameObject hudGo = (GameObject)PrefabUtility.InstantiatePrefab(hudPrefab, scene);
+        GameObject careSystemGo = (GameObject)PrefabUtility.InstantiatePrefab(careSystemPrefab, scene);
+        GameObject inventoryGo = (GameObject)PrefabUtility.InstantiatePrefab(inventoryPrefab, scene);
+        GameObject inventoryScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(inventoryScreenPrefab, scene);
+        GameObject pauseScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(pauseScreenPrefab, scene);
+        GameObject statusScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(statusScreenPrefab, scene);
+        GameObject gameplayManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(gameplayManagerPrefab, scene);
+        GameObject screenManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(screenManagerPrefab, scene);
 
+        GameObject battleSystemGo = null;
         GameObject battleSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BattleSystemPrefabPath);
         if (battleSystemPrefab != null)
-            PrefabUtility.InstantiatePrefab(battleSystemPrefab, scene);
+            battleSystemGo = (GameObject)PrefabUtility.InstantiatePrefab(battleSystemPrefab, scene);
         else
             Debug.LogWarning($"BattleSystem prefab not found at {BattleSystemPrefabPath}. Run 'Generate BattleSystem' first.");
 
+        GameObject battleUIGo = null;
         GameObject battleUIPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BattleUIPrefabPath);
         if (battleUIPrefab != null)
-            PrefabUtility.InstantiatePrefab(battleUIPrefab, scene);
+            battleUIGo = (GameObject)PrefabUtility.InstantiatePrefab(battleUIPrefab, scene);
         else
             Debug.LogWarning($"BattleUI prefab not found at {BattleUIPrefabPath}. Run 'Generate BattleUI' first.");
 
+        // Wire cross-references between systems
+        InputManager inputManager = inputManagerGo.GetComponent<InputManager>();
+        TimeSystem timeSystem = timeSystemGo.GetComponent<TimeSystem>();
+        CareSystem careSystem = careSystemGo.GetComponent<CareSystem>();
+        Inventory inventory = inventoryGo.GetComponent<Inventory>();
+        DialogueManager dialogueManager = dialogueManagerGo.GetComponent<DialogueManager>();
+        HUD hud = hudGo.GetComponent<HUD>();
+        InventoryScreen inventoryScreen = inventoryScreenGo.GetComponent<InventoryScreen>();
+        PauseScreen pauseScreen = pauseScreenGo.GetComponent<PauseScreen>();
+        StatusScreen statusScreen = statusScreenGo.GetComponent<StatusScreen>();
+        GameplayManager gameplayManager = gameplayManagerGo.GetComponent<GameplayManager>();
+        ScreenManager screenManager = screenManagerGo.GetComponent<ScreenManager>();
+        BattleSystem battleSystem = battleSystemGo != null ? battleSystemGo.GetComponent<BattleSystem>() : null;
+        BattleUI battleUI = battleUIGo != null ? battleUIGo.GetComponent<BattleUI>() : null;
+
+        // CareSystem -> TimeSystem
+        SerializedObject careSystemSo = new SerializedObject(careSystem);
+        careSystemSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
+        careSystemSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // Inventory -> CareSystem
+        SerializedObject inventorySo = new SerializedObject(inventory);
+        inventorySo.FindProperty("_careSystem").objectReferenceValue = careSystem;
+        inventorySo.ApplyModifiedPropertiesWithoutUndo();
+
+        // DialogueManager -> InputManager
+        SerializedObject dialogueSo = new SerializedObject(dialogueManager);
+        dialogueSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
+        dialogueSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // HUD -> TimeSystem
+        SerializedObject hudSo = new SerializedObject(hud);
+        hudSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
+        hudSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // InventoryScreen -> Inventory
+        SerializedObject invScreenSo = new SerializedObject(inventoryScreen);
+        invScreenSo.FindProperty("_inventory").objectReferenceValue = inventory;
+        invScreenSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // BattleSystem -> InputManager, TimeSystem, HUD, BattleUI, Inventory
+        if (battleSystem != null)
+        {
+            SerializedObject battleSysSo = new SerializedObject(battleSystem);
+            battleSysSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
+            battleSysSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
+            battleSysSo.FindProperty("_hud").objectReferenceValue = hud;
+            battleSysSo.FindProperty("_battleUI").objectReferenceValue = battleUI;
+            battleSysSo.FindProperty("_inventory").objectReferenceValue = inventory;
+            battleSysSo.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        // BattleUI -> BattleSystem, Inventory
+        if (battleUI != null)
+        {
+            SerializedObject battleUiSo = new SerializedObject(battleUI);
+            battleUiSo.FindProperty("_battleSystem").objectReferenceValue = battleSystem;
+            battleUiSo.FindProperty("_inventory").objectReferenceValue = inventory;
+            battleUiSo.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        // ScreenManager -> screens, BattleSystem, DialogueManager, InputManager
+        SerializedObject screenMgrSo = new SerializedObject(screenManager);
+        screenMgrSo.FindProperty("_inventoryScreen").objectReferenceValue = inventoryScreen;
+        screenMgrSo.FindProperty("_pauseScreen").objectReferenceValue = pauseScreen;
+        screenMgrSo.FindProperty("_statusScreen").objectReferenceValue = statusScreen;
+        screenMgrSo.FindProperty("_battleSystem").objectReferenceValue = battleSystem;
+        screenMgrSo.FindProperty("_dialogueManager").objectReferenceValue = dialogueManager;
+        screenMgrSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
+        screenMgrSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // GameplayManager -> all systems
+        SerializedObject gmSo = new SerializedObject(gameplayManager);
+        gmSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
+        gmSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
+        gmSo.FindProperty("_careSystem").objectReferenceValue = careSystem;
+        gmSo.FindProperty("_inventory").objectReferenceValue = inventory;
+        gmSo.FindProperty("_dialogueManager").objectReferenceValue = dialogueManager;
+        gmSo.FindProperty("_hud").objectReferenceValue = hud;
+        gmSo.FindProperty("_battleSystem").objectReferenceValue = battleSystem;
+        gmSo.FindProperty("_battleUI").objectReferenceValue = battleUI;
+        gmSo.FindProperty("_screenManager").objectReferenceValue = screenManager;
+        gmSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // Camera
         GameObject camGo = CreateCamera(scene);
         camGo.transform.position = new Vector3(0f, 10f, -10f);
         GameplayCamera gameCam = camGo.AddComponent<GameplayCamera>();

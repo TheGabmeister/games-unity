@@ -102,6 +102,7 @@ MonoBehaviour:
   _timeText: {fileID: 9154403317316281010}
   _dayText: {fileID: 3425700160662089397}
   _statsText: {fileID: 6415260839573343629}
+  _timeSystem: {fileID: 0}
 --- !u!1 &1346235542905606671
 GameObject:
   m_ObjectHideFlags: 0

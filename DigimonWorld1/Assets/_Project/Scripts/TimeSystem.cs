@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class TimeSystem : Singleton<TimeSystem>
+public class TimeSystem : MonoBehaviour
 {
     [SerializeField] private int _startHour = 6;
     [SerializeField] private int _startMinute = 0;
@@ -20,9 +20,8 @@ public class TimeSystem : Singleton<TimeSystem>
 
     public event Action OnHourChanged;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         _hour = _startHour;
         _minute = _startMinute;
         _day = 1;

@@ -255,6 +255,7 @@ MonoBehaviour:
   _dialoguePanel: {fileID: 6511163839208301357}
   _speakerText: {fileID: 3975422204595406843}
   _bodyText: {fileID: 4014231317568815008}
+  _inputManager: {fileID: 0}
 --- !u!1 &6511163839208301357
 GameObject:
   m_ObjectHideFlags: 0

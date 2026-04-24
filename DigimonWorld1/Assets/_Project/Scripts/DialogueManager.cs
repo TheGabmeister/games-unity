@@ -1,11 +1,12 @@
 using TMPro;
 using UnityEngine;
 
-public class DialogueManager : Singleton<DialogueManager>
+public class DialogueManager : MonoBehaviour
 {
     [SerializeField] private GameObject _dialoguePanel;
     [SerializeField] private TMP_Text _speakerText;
     [SerializeField] private TMP_Text _bodyText;
+    [SerializeField] private InputManager _inputManager;
 
     private DialogueData _currentDialogue;
     private int _lineIndex;
@@ -14,9 +15,8 @@ public class DialogueManager : Singleton<DialogueManager>
 
     public bool IsActive => _isActive;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         if (_dialoguePanel != null)
             _dialoguePanel.SetActive(false);
     }
@@ -25,7 +25,7 @@ public class DialogueManager : Singleton<DialogueManager>
     {
         if (!_isActive) return;
 
-        if (InputManager.Instance.Actions.Player.Interact.WasPressedThisFrame())
+        if (_inputManager.Actions.Player.Interact.WasPressedThisFrame())
         {
             if (_justOpened)
             {
@@ -43,7 +43,7 @@ public class DialogueManager : Singleton<DialogueManager>
         _isActive = true;
         _justOpened = true;
 
-        InputManager.Instance.SetPlayerInputEnabled(false);
+        _inputManager.SetPlayerInputEnabled(false);
 
         _dialoguePanel.SetActive(true);
         ShowCurrentLine();
@@ -73,6 +73,6 @@ public class DialogueManager : Singleton<DialogueManager>
         _currentDialogue = null;
         _dialoguePanel.SetActive(false);
 
-        InputManager.Instance.SetPlayerInputEnabled(true);
+        _inputManager.SetPlayerInputEnabled(true);
     }
 }

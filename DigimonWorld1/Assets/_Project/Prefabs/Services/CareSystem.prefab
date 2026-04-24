@@ -51,3 +51,4 @@ MonoBehaviour:
   _sleepHour: 21
   _wakeHour: 6
   _tirednessRecoveryPerHourSleeping: 10
+  _timeSystem: {fileID: 0}

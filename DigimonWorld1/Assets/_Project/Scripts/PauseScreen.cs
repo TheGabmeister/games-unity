@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class PauseScreen : Singleton<PauseScreen>
+public class PauseScreen : MonoBehaviour
 {
     [SerializeField] private GameObject _panel;
 
@@ -9,48 +8,29 @@ public class PauseScreen : Singleton<PauseScreen>
 
     public bool IsOpen => _isOpen;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         if (_panel != null)
             _panel.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (BattleSystem.Instance != null && BattleSystem.Instance.InBattle) return;
-        if (!Keyboard.current.escapeKey.wasPressedThisFrame) return;
-
-        if (InventoryScreen.Instance != null && InventoryScreen.Instance.IsOpen) return;
-        if (StatusScreen.Instance != null && StatusScreen.Instance.IsOpen) return;
-        if (DialogueManager.Instance != null && DialogueManager.Instance.IsActive) return;
-
-        if (_isOpen)
-            Resume();
-        else
-            Pause();
-    }
-
-    private void Pause()
+    public void Open()
     {
         _isOpen = true;
         _panel.SetActive(true);
         Time.timeScale = 0f;
-        InputManager.Instance.SetPlayerInputEnabled(false);
     }
 
-    private void Resume()
+    public void Close()
     {
         _isOpen = false;
         _panel.SetActive(false);
         Time.timeScale = 1f;
-        InputManager.Instance.SetPlayerInputEnabled(true);
     }
 
-    protected override void OnDestroy()
+    private void OnDestroy()
     {
         if (_isOpen)
             Time.timeScale = 1f;
-        base.OnDestroy();
     }
 }

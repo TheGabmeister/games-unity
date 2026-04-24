@@ -55,3 +55,4 @@ MonoBehaviour:
     Count: 3
   - Item: {fileID: 11400000, guid: 5e199fec87f22d64cb032c10f46a0f68, type: 2}
     Count: 2
+  _careSystem: {fileID: 0}

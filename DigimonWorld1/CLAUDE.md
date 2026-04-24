@@ -16,14 +16,15 @@ Status: Phases 0–4 complete. Working: bootstrap, scene flow, input, player mov
 - **Tests:** none written yet. Test Framework available via `Window → General → Test Runner`.
 - **Linting/formatting:** none configured.
 
-## Architecture: bootstrap + singletons
+## Architecture: bootstrap + GameplayManager
 
 - `_Bootstrap.unity` is the persistent scene, auto-loaded by [Bootstrapper.cs](Assets/_Project/Scripts/Bootstrapper.cs) (`[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]`). Scene paths come from [BootstrapConfig.cs](Assets/_Project/Scripts/BootstrapConfig.cs) in `Resources/`.
-- One singleton base class: [Singleton.cs](Assets/_Project/Scripts/Singleton.cs). No `DontDestroyOnLoad` — services live as long as their scene. `OnDestroy()` nulls the static instance.
+- Singleton base class: [Singleton.cs](Assets/_Project/Scripts/Singleton.cs). No `DontDestroyOnLoad` — services live as long as their scene. `OnDestroy()` nulls the static instance.
+- **Bootstrap singletons** (GameManager, SceneLoader, ScreenFader, AudioSystem) use `Singleton<T>` directly.
+- **Gameplay systems** are plain MonoBehaviours wired via `[SerializeField]` references. One singleton in `_Gameplay`: [GameplayManager.cs](Assets/_Project/Scripts/GameplayManager.cs) holds refs to all systems. External consumers (zone-scene scripts) access systems via `GameplayManager.Instance.X` (e.g., `GameplayManager.Instance.InputManager`).
 - **No service locator, no DI framework, no `I<Name>Service` interfaces.** Extract an interface only when a second implementation shows up.
 - Prefabs organized under `Assets/_Project/Prefabs/`: `Services/`, `UI/`, `Controllers/`, `Characters/`, `Interactables/`.
 - Service `Awake` order is unspecified. If service A needs B during `Awake`, resolve in `Start` or set Script Execution Order.
-- **Teardown gotcha:** `Singleton.Instance` logs an error if the instance is already destroyed. In `OnDestroy`, use `FindFirstObjectByType<T>()` directly instead of `T.Instance` to avoid errors when exit-order is nondeterministic. Proper teardown ordering is deferred to Phase 6.
 
 ### _Bootstrap services
 
@@ -31,17 +32,19 @@ Status: Phases 0–4 complete. Working: bootstrap, scene flow, input, player mov
 
 ### _Gameplay services & systems
 
-`_Gameplay.unity` holds gameplay-scoped singletons + player + partner + camera. Zone scenes load additively on top.
+`_Gameplay.unity` holds one singleton (`GameplayManager`) + plain MonoBehaviour systems + player + partner + camera. Zone scenes load additively on top. All gameplay systems are wired via serialized references in the scene generator.
 
+- **GameplayManager** — the sole gameplay singleton. Holds refs to all systems below. External code accesses systems via `GameplayManager.Instance.X`.
 - **InputManager** — owns `InputSystem_Actions`. `SetPlayerInputEnabled(bool)` gates `PlayerController` without disabling the action map.
 - **TimeSystem** — in-game clock (1 real second = 1 in-game minute). `OnHourChanged` event. Uses `Time.deltaTime` so pauses with `timeScale = 0`.
-- **CareSystem** — subscribes to `OnHourChanged`. Ticks hunger/tiredness, manages sleep (21:00–06:00), tracks care mistakes. Exposes `Feed()`, `Praise()`, `Scold()`.
-- **Inventory** — stackable items (max 20 slots) + Bits currency. `UseItem` routes food through `CareSystem.Feed()`, non-food applies effects directly to `DigimonInstance`.
-- **DialogueManager** — bottom-screen panel, E key advances, disables player input while active.
-- **HUD** — top-right: time + day. Top-left: partner stats.
-- **InventoryScreen** (Tab/I), **StatusScreen** (C), **PauseScreen** (Escape) — toggleable UI screens, mutually exclusive. PauseScreen sets `timeScale = 0`.
-- **BattleSystem** — turn-based combat singleton. UI overlay (not a separate scene). `StartBattle(DigimonInstance, WildDigimonInstance, callback)` disables player input, pauses TimeSystem, hides HUD, shows BattleUI. Turn flow: player command → obedience check → status effects → execute → enemy AI → repeat. `EndBattle(BattleResult)` restores all state and invokes callback.
-- **BattleUI** — command menu (Attack/Technique/Item/Flee/Auto), technique and item submenus, battle log. Input: W/S navigate, E confirm, Q/ESC back.
+- **CareSystem** — subscribes to `OnHourChanged` (via serialized `_timeSystem` ref). Ticks hunger/tiredness, manages sleep (21:00–06:00), tracks care mistakes. Exposes `Feed()`, `Praise()`, `Scold()`.
+- **Inventory** — stackable items (max 20 slots) + Bits currency. `UseItem` routes food through `CareSystem.Feed()` (via serialized `_careSystem` ref), non-food applies effects directly to `DigimonInstance`.
+- **DialogueManager** — bottom-screen panel, E key advances, disables player input while active (via serialized `_inputManager` ref).
+- **HUD** — top-right: time + day (via serialized `_timeSystem` ref). Top-left: partner stats.
+- **ScreenManager** — owns toggle-key detection and mutual-exclusion for the three UI screens below. Guards against opening during battle or dialogue. Manages `SetPlayerInputEnabled` on open/close.
+- **InventoryScreen** (Tab/I), **StatusScreen** (C), **PauseScreen** (Escape) — toggleable UI screens managed by ScreenManager. PauseScreen sets `timeScale = 0`.
+- **BattleSystem** — turn-based combat. UI overlay (not a separate scene). `StartBattle(DigimonInstance, WildDigimonInstance, callback)` disables player input, pauses TimeSystem, hides HUD, shows BattleUI. Turn flow: player command → obedience check → status effects → execute → enemy AI → repeat. `EndBattle(BattleResult)` restores all state and invokes callback. Uses serialized refs to InputManager, TimeSystem, HUD, BattleUI, Inventory.
+- **BattleUI** — command menu (Attack/Technique/Item/Flee/Auto), technique and item submenus, battle log. Input: W/S navigate, E confirm, Q/ESC back. Uses serialized refs to BattleSystem, Inventory.
 
 ### Canvas sorting order
 
@@ -71,7 +74,7 @@ Each non-gameplay scene has a controller (`SplashscreenController`, `IntroContro
 
 **Battle:** `BattleSystem` manages turn-based 1v1 combat. Partner uses `DigimonInstance` directly (damage persists). Enemies use `WildDigimonInstance` (plain C# class with stat scaling). `BattleFormulas` (static) handles damage calc and type advantage. `EnemyBattleAI` (static) picks actions weighted by technique power, flees at low HP. Obedience check in `BattleSystem.ApplyObedienceCheck()` — scales with Brains/Discipline, disobey = random action. Status effects (Poison/Paralysis/Sleep/Confusion) tracked per-combatant in BattleSystem, tick each turn.
 
-**Overworld encounters:** `WildDigimon` MonoBehaviour with Patrol/Chase/Defeated states, `CharacterController`-based movement. `EncounterData` SO defines species + stat scale + bit reward. Contact triggers `BattleSystem.StartBattle()`.
+**Overworld encounters:** `WildDigimon` MonoBehaviour with Patrol/Chase/Defeated states, `CharacterController`-based movement. `EncounterData` SO defines species + stat scale + bit reward. Contact triggers `GameplayManager.Instance.BattleSystem.StartBattle()`.
 
 **Data model SOs:** `DigimonSpeciesData` (species identity + base stats + techniques), `TechniqueData` (name, category, MP cost, power, range, accuracy, status effect + chance), `ItemData` (flat effect fields), `TrainingData`, `DialogueData`, `EncounterData` (species + stat scale + bit reward). All use `[CreateAssetMenu(menuName = "DigimonWorld/...")]`. Assets in `Assets/_Project/Data/` subdirectories.
 
@@ -98,7 +101,7 @@ Key export settings: `axis_forward='-Z', axis_up='Y', use_space_transform=True, 
 ## Naming & conventions
 
 - **Namespaces:** not used.
-- **Services:** `PascalCase` MonoBehaviour inheriting `Singleton<Self>`.
+- **Services:** `PascalCase` MonoBehaviour. Only Bootstrap services + `GameplayManager` use `Singleton<Self>`. Gameplay systems are plain MonoBehaviours with serialized refs.
 - **Scenes:** `_PascalCase.unity` (non-gameplay), plain names in `Scenes/Zones/`.
 - **ScriptableObjects:** `PascalCaseData`.
 - **Private fields:** `_camelCase` with `[SerializeField] private`.

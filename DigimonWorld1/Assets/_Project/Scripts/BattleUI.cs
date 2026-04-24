@@ -3,9 +3,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class BattleUI : Singleton<BattleUI>
+public class BattleUI : MonoBehaviour
 {
     [SerializeField] private GameObject _battlePanel;
+    [SerializeField] private BattleSystem _battleSystem;
+    [SerializeField] private Inventory _inventory;
     [SerializeField] private TMP_Text _partnerNameText;
     [SerializeField] private TMP_Text _partnerHPText;
     [SerializeField] private TMP_Text _partnerMPText;
@@ -35,9 +37,8 @@ public class BattleUI : Singleton<BattleUI>
     private List<string> _logLines = new List<string>();
     private List<ItemData> _battleItems = new List<ItemData>();
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         if (_battlePanel != null)
             _battlePanel.SetActive(false);
     }
@@ -67,7 +68,7 @@ public class BattleUI : Singleton<BattleUI>
             _partnerNameText.text = partner.Species.SpeciesName;
             _partnerHPText.text = $"HP {partner.CurrentHP} / {partner.MaxHP}";
             _partnerMPText.text = $"MP {partner.CurrentMP} / {partner.MaxMP}";
-            _partnerStatusText.text = BattleSystem.Instance.GetPartnerStatusText();
+            _partnerStatusText.text = _battleSystem.GetPartnerStatusText();
         }
 
         if (enemy != null && enemy.Species != null)
@@ -75,7 +76,7 @@ public class BattleUI : Singleton<BattleUI>
             _enemyNameText.text = enemy.Species.SpeciesName;
             _enemyHPText.text = $"HP {enemy.CurrentHP} / {enemy.MaxHP}";
             _enemyMPText.text = $"MP {enemy.CurrentMP} / {enemy.MaxMP}";
-            _enemyStatusText.text = BattleSystem.Instance.GetEnemyStatusText();
+            _enemyStatusText.text = _battleSystem.GetEnemyStatusText();
         }
     }
 
@@ -162,7 +163,7 @@ public class BattleUI : Singleton<BattleUI>
         switch (_selectedIndex)
         {
             case 0: // Attack
-                BattleSystem.Instance.SelectAttack();
+                _battleSystem.SelectAttack();
                 break;
             case 1: // Technique
                 OpenTechniqueMenu();
@@ -171,10 +172,10 @@ public class BattleUI : Singleton<BattleUI>
                 OpenItemMenu();
                 break;
             case 3: // Flee
-                BattleSystem.Instance.SelectFlee();
+                _battleSystem.SelectFlee();
                 break;
             case 4: // Auto
-                BattleSystem.Instance.SelectAuto();
+                _battleSystem.SelectAuto();
                 break;
         }
     }
@@ -216,13 +217,13 @@ public class BattleUI : Singleton<BattleUI>
     {
         if (_partner == null || _selectedIndex >= _partner.KnownTechniques.Count) return;
         TechniqueData tech = _partner.KnownTechniques[_selectedIndex];
-        BattleSystem.Instance.SelectTechnique(tech);
+        _battleSystem.SelectTechnique(tech);
     }
 
     private void ConfirmItem()
     {
         if (_selectedIndex >= _battleItems.Count) return;
-        BattleSystem.Instance.SelectItem(_battleItems[_selectedIndex]);
+        _battleSystem.SelectItem(_battleItems[_selectedIndex]);
     }
 
     private int GetMaxIndex()
@@ -283,7 +284,7 @@ public class BattleUI : Singleton<BattleUI>
         for (int i = 0; i < _battleItems.Count; i++)
         {
             string marker = i == _selectedIndex ? "> " : "  ";
-            int count = Inventory.Instance.GetItemCount(_battleItems[i]);
+            int count = _inventory.GetItemCount(_battleItems[i]);
             sb.AppendLine($"{marker}{_battleItems[i].ItemName} x{count}");
         }
         _itemListText.text = sb.ToString();
@@ -294,9 +295,9 @@ public class BattleUI : Singleton<BattleUI>
         _battleItems.Clear();
         HashSet<ItemData> seen = new HashSet<ItemData>();
 
-        for (int i = 0; i < Inventory.Instance.SlotCount; i++)
+        for (int i = 0; i < _inventory.SlotCount; i++)
         {
-            InventorySlot slot = Inventory.Instance.GetSlot(i);
+            InventorySlot slot = _inventory.GetSlot(i);
             if (slot.Item == null) continue;
             if (seen.Contains(slot.Item)) continue;
             if (slot.Item.Category == ItemCategory.Recovery || slot.Item.Category == ItemCategory.Status)

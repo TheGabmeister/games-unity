@@ -1845,6 +1845,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUI
   _battlePanel: {fileID: 204539122594313140}
+  _battleSystem: {fileID: 0}
+  _inventory: {fileID: 0}
   _partnerNameText: {fileID: 1483176933272788001}
   _partnerHPText: {fileID: 2840783943965727535}
   _partnerMPText: {fileID: 5858291991225932783}

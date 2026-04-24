@@ -101,6 +101,7 @@ MonoBehaviour:
   _itemListText: {fileID: 4451204275151813031}
   _bitsText: {fileID: 7860352618783792749}
   _instructionsText: {fileID: 8076059822921857300}
+  _inventory: {fileID: 0}
 --- !u!1 &2322294323090296011
 GameObject:
   m_ObjectHideFlags: 0
