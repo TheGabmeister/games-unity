@@ -22,8 +22,14 @@ public class DigimonInstance : MonoBehaviour
     private int _virusGauge;
     private bool _isSleeping;
     private List<TechniqueData> _knownTechniques = new List<TechniqueData>();
+    private int _totalLives;
+    private int _inheritedBonusOffense;
+    private int _inheritedBonusDefense;
+    private int _inheritedBonusSpeed;
+    private int _inheritedBonusBrains;
 
     public DigimonSpeciesData Species => _species;
+    public int TotalLives => _totalLives;
     public IReadOnlyList<TechniqueData> KnownTechniques => _knownTechniques;
     public bool IsAlive => _currentHP > 0;
     public int CurrentHP => _currentHP;
@@ -187,5 +193,49 @@ public class DigimonInstance : MonoBehaviour
         if (technique == null || _knownTechniques.Contains(technique)) return;
         if (_knownTechniques.Count >= 4) return;
         _knownTechniques.Add(technique);
+    }
+
+    public void Evolve(DigimonSpeciesData newSpecies)
+    {
+        _species = newSpecies;
+        _currentHP = newSpecies.BaseHP + _bonusOffense;
+        _currentMP = newSpecies.BaseMP + _bonusBrains;
+
+        _knownTechniques.Clear();
+        if (newSpecies.LearnableTechniques != null)
+        {
+            int count = Mathf.Min(3, newSpecies.LearnableTechniques.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (newSpecies.LearnableTechniques[i] != null)
+                    _knownTechniques.Add(newSpecies.LearnableTechniques[i]);
+            }
+        }
+    }
+
+    public DigimonInheritance Die()
+    {
+        return new DigimonInheritance
+        {
+            BonusOffense = _bonusOffense,
+            BonusDefense = _bonusDefense,
+            BonusSpeed = _bonusSpeed,
+            BonusBrains = _bonusBrains,
+            TotalLives = _totalLives + 1
+        };
+    }
+
+    public void Reincarnate(DigimonSpeciesData freshSpecies, DigimonInheritance inheritance)
+    {
+        InitializeFromSpecies(freshSpecies);
+        _totalLives = inheritance.TotalLives;
+        _inheritedBonusOffense = inheritance.BonusOffense;
+        _inheritedBonusDefense = inheritance.BonusDefense;
+        _inheritedBonusSpeed = inheritance.BonusSpeed;
+        _inheritedBonusBrains = inheritance.BonusBrains;
+        _bonusOffense = _inheritedBonusOffense / 4;
+        _bonusDefense = _inheritedBonusDefense / 4;
+        _bonusSpeed = _inheritedBonusSpeed / 4;
+        _bonusBrains = _inheritedBonusBrains / 4;
     }
 }

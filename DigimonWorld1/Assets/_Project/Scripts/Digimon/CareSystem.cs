@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CareSystem : MonoBehaviour
@@ -14,6 +15,11 @@ public class CareSystem : MonoBehaviour
     private DigimonInstance _partner;
     private bool _hungerWarningActive;
     private bool _tirednessWarningActive;
+    private bool _evolutionPending;
+    private bool _deathPending;
+
+    public event Action<DigimonSpeciesData> OnEvolutionReady;
+    public event Action OnPartnerDied;
 
     private void Start()
     {
@@ -32,6 +38,9 @@ public class CareSystem : MonoBehaviour
         if (partner == null) return;
 
         partner.IncrementAge();
+
+        if (CheckLifespan(partner)) return;
+        CheckEvolution(partner);
 
         if (partner.IsSleeping)
         {
@@ -142,6 +151,43 @@ public class CareSystem : MonoBehaviour
 
         partner.ModifyHappiness(-3);
         partner.ModifyDiscipline(5);
+    }
+
+    private void CheckEvolution(DigimonInstance partner)
+    {
+        if (_evolutionPending) return;
+
+        EvolutionTable table = partner.Species.EvolutionTable;
+        if (table == null) return;
+
+        DigimonSpeciesData target = table.CheckEvolution(partner);
+        if (target != null)
+        {
+            _evolutionPending = true;
+            OnEvolutionReady?.Invoke(target);
+        }
+    }
+
+    public void ClearEvolutionPending()
+    {
+        _evolutionPending = false;
+    }
+
+    private bool CheckLifespan(DigimonInstance partner)
+    {
+        if (_deathPending) return true;
+        if (partner.Species.LifespanHours > 0 && partner.Age >= partner.Species.LifespanHours)
+        {
+            _deathPending = true;
+            OnPartnerDied?.Invoke();
+            return true;
+        }
+        return false;
+    }
+
+    public void ClearDeathPending()
+    {
+        _deathPending = false;
     }
 
     private DigimonInstance GetPartner()

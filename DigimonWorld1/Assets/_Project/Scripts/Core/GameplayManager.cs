@@ -18,9 +18,11 @@ public class GameplayManager : Singleton<GameplayManager>
     [SerializeField] private GameplayCamera _gameplayCamera;
     [SerializeField] private ZoneData _startingZone;
     [SerializeField] private ZoneData[] _allZones;
+    [SerializeField] private DigimonSpeciesData _reincarnationSpecies;
 
     private ZoneData _currentZone;
     private bool _isTransitioning;
+    private DigimonInstance _partner;
 
     public InputManager InputManager => _inputManager;
     public TimeSystem TimeSystem => _timeSystem;
@@ -41,6 +43,10 @@ public class GameplayManager : Singleton<GameplayManager>
 
     private void Start()
     {
+        _partner = FindFirstObjectByType<DigimonInstance>();
+        _careSystem.OnEvolutionReady += OnEvolutionReady;
+        _careSystem.OnPartnerDied += OnPartnerDied;
+
         foreach (var zone in _allZones)
         {
             if (SceneManager.GetSceneByPath(zone.Scene.Path).isLoaded)
@@ -50,6 +56,16 @@ public class GameplayManager : Singleton<GameplayManager>
                 return;
             }
         }
+    }
+
+    protected override void OnDestroy()
+    {
+        if (_careSystem != null)
+        {
+            _careSystem.OnEvolutionReady -= OnEvolutionReady;
+            _careSystem.OnPartnerDied -= OnPartnerDied;
+        }
+        base.OnDestroy();
     }
 
     public async void LoadZone(ZoneData zone)
@@ -74,8 +90,59 @@ public class GameplayManager : Singleton<GameplayManager>
         _gameplayCamera.transform.position = zone.CameraPosition;
     }
 
+    private void OnEvolutionReady(DigimonSpeciesData newSpecies)
+    {
+        if (_partner == null || _isTransitioning) return;
+        HandleEvolution(newSpecies);
+    }
+
+    private async void HandleEvolution(DigimonSpeciesData newSpecies)
+    {
+        _isTransitioning = true;
+        _inputManager.SetPlayerInputEnabled(false);
+
+        string oldName = _partner.Species.SpeciesName;
+        await ScreenFader.Instance.FadeOut();
+        _partner.Evolve(newSpecies);
+        _careSystem.ClearEvolutionPending();
+        Debug.Log($"[Evolution] {oldName} evolved into {newSpecies.SpeciesName}!");
+        await ScreenFader.Instance.FadeIn();
+
+        _inputManager.SetPlayerInputEnabled(true);
+        _isTransitioning = false;
+    }
+
+    private void OnPartnerDied()
+    {
+        if (_partner == null || _isTransitioning) return;
+        HandleDeath();
+    }
+
+    private async void HandleDeath()
+    {
+        _isTransitioning = true;
+        _inputManager.SetPlayerInputEnabled(false);
+
+        string oldName = _partner.Species.SpeciesName;
+        await ScreenFader.Instance.FadeOut();
+
+        DigimonInheritance inheritance = _partner.Die();
+        if (_reincarnationSpecies != null)
+        {
+            _partner.Reincarnate(_reincarnationSpecies, inheritance);
+            _careSystem.ClearDeathPending();
+            Debug.Log($"[Death] {oldName} has passed away. Reborn as {_reincarnationSpecies.SpeciesName} (Life #{inheritance.TotalLives}).");
+        }
+
+        await ScreenFader.Instance.FadeIn();
+
+        _inputManager.SetPlayerInputEnabled(true);
+        _isTransitioning = false;
+    }
+
     private void Update()
     {
+        if (_isTransitioning) return;
         if (_battleSystem.InBattle) return;
         if (_dialogueManager.IsActive) return;
 

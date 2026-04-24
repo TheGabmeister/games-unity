@@ -25,6 +25,7 @@ public class GeneratorWindow : EditorWindow
             Button("Sample Items", GeneratePrefabs.GenerateSampleItems);
             Button("Sample Training", GeneratePrefabs.GenerateSampleTraining);
             Button("Sample Encounters", GeneratePrefabs.GenerateSampleEncounters);
+            Button("Evolution Tables", GeneratePrefabs.GenerateEvolutionTables);
         });
 
         Section("Prefabs — Services", () =>
@@ -120,6 +121,7 @@ public class GeneratorWindow : EditorWindow
         GeneratePrefabs.GenerateZoneData();
         GeneratePrefabs.GenerateSampleTechniques();
         GeneratePrefabs.GenerateSampleSpecies();
+        GeneratePrefabs.GenerateEvolutionTables();
         GeneratePrefabs.GenerateSampleItems();
         GeneratePrefabs.GenerateSampleTraining();
         GeneratePrefabs.GenerateSampleEncounters();

@@ -19,6 +19,9 @@ public class DigimonSpeciesData : ScriptableObject
     [Header("Lifespan")]
     [SerializeField] private int _lifespanHours;
 
+    [Header("Evolution")]
+    [SerializeField] private EvolutionTable _evolutionTable;
+
     [Header("Techniques")]
     [SerializeField] private TechniqueData[] _learnableTechniques;
 
@@ -32,5 +35,6 @@ public class DigimonSpeciesData : ScriptableObject
     public int BaseSpeed => _baseSpeed;
     public int BaseBrains => _baseBrains;
     public int LifespanHours => _lifespanHours;
+    public EvolutionTable EvolutionTable => _evolutionTable;
     public TechniqueData[] LearnableTechniques => _learnableTechniques;
 }

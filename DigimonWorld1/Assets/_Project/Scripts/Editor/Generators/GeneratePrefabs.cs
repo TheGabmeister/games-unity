@@ -13,6 +13,7 @@ public static class GeneratePrefabs
     private const string GameplayManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameplayManager.prefab";
     private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
     private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
+    private const string EvolutionDataDir = "Assets/_Project/Data/Evolution";
     private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
     private const string GameManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameManager.prefab";
     private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenFader.prefab";
@@ -116,6 +117,12 @@ public static class GeneratePrefabs
             so.FindProperty("_startingZone").objectReferenceValue = zone1;
         else
             Debug.LogWarning($"Zone1 data not found at {Zone1DataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
+
+        DigimonSpeciesData botamon = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/Botamon.asset");
+        if (botamon != null)
+            so.FindProperty("_reincarnationSpecies").objectReferenceValue = botamon;
+        else
+            Debug.LogWarning("Botamon species not found for reincarnation. Run 'Generate Sample Species' first.");
 
         SerializedProperty allZones = so.FindProperty("_allZones");
         int zoneCount = 0;
@@ -570,6 +577,122 @@ public static class GeneratePrefabs
 
         AssetDatabase.CreateAsset(species, path);
         Debug.Log($"Species asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Evolution Tables")]
+    public static void GenerateEvolutionTables()
+    {
+        PrefabGeneratorUtils.EnsureFolder(EvolutionDataDir);
+
+        CreateEvolutionTable("Botamon", new EvolutionEntry("Koromon", minAge: 6));
+        CreateEvolutionTable("Koromon", new EvolutionEntry("Agumon", minAge: 12, minOffense: 20));
+        CreateEvolutionTable("Agumon", new EvolutionEntry("Greymon", minAge: 72, minHP: 1500, minOffense: 100, maxCareMistakes: 5, minHappiness: 50));
+        CreateEvolutionTable("Greymon", new EvolutionEntry("MetalGreymon", minAge: 192, minHP: 3000, minOffense: 250, minSpeed: 200, maxCareMistakes: 3, minDiscipline: 60));
+
+        WireEvolutionTablesToSpecies();
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Evolution table assets generated and wired to species.");
+    }
+
+    private struct EvolutionEntry
+    {
+        public string TargetSpecies;
+        public int MinAge;
+        public int MinHP, MinMP, MinOffense, MinDefense, MinSpeed, MinBrains;
+        public int MaxCareMistakes;
+        public int MinWeight, MaxWeight;
+        public int MinHappiness, MinDiscipline;
+
+        public EvolutionEntry(string target, int minAge = 0, int minHP = 0, int minMP = 0,
+            int minOffense = 0, int minDefense = 0, int minSpeed = 0, int minBrains = 0,
+            int maxCareMistakes = -1, int minWeight = 0, int maxWeight = 0,
+            int minHappiness = 0, int minDiscipline = 0)
+        {
+            TargetSpecies = target;
+            MinAge = minAge;
+            MinHP = minHP;
+            MinMP = minMP;
+            MinOffense = minOffense;
+            MinDefense = minDefense;
+            MinSpeed = minSpeed;
+            MinBrains = minBrains;
+            MaxCareMistakes = maxCareMistakes;
+            MinWeight = minWeight;
+            MaxWeight = maxWeight;
+            MinHappiness = minHappiness;
+            MinDiscipline = minDiscipline;
+        }
+    }
+
+    private static void CreateEvolutionTable(string fromSpeciesName, params EvolutionEntry[] entries)
+    {
+        string path = $"{EvolutionDataDir}/{fromSpeciesName}Evolution.asset";
+
+        EvolutionTable table = ScriptableObject.CreateInstance<EvolutionTable>();
+
+        SerializedObject so = new SerializedObject(table);
+
+        DigimonSpeciesData fromSpecies = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/{fromSpeciesName}.asset");
+        if (fromSpecies != null)
+            so.FindProperty("_fromSpecies").objectReferenceValue = fromSpecies;
+        else
+            Debug.LogWarning($"Species {fromSpeciesName} not found. Run 'Generate Sample Species' first.");
+
+        SerializedProperty requirements = so.FindProperty("_requirements");
+        requirements.arraySize = entries.Length;
+
+        for (int i = 0; i < entries.Length; i++)
+        {
+            SerializedProperty req = requirements.GetArrayElementAtIndex(i);
+            EvolutionEntry entry = entries[i];
+
+            DigimonSpeciesData targetSpecies = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/{entry.TargetSpecies}.asset");
+            if (targetSpecies != null)
+                req.FindPropertyRelative("_targetSpecies").objectReferenceValue = targetSpecies;
+            else
+                Debug.LogWarning($"Target species {entry.TargetSpecies} not found.");
+
+            req.FindPropertyRelative("_minAge").intValue = entry.MinAge;
+            req.FindPropertyRelative("_minHP").intValue = entry.MinHP;
+            req.FindPropertyRelative("_minMP").intValue = entry.MinMP;
+            req.FindPropertyRelative("_minOffense").intValue = entry.MinOffense;
+            req.FindPropertyRelative("_minDefense").intValue = entry.MinDefense;
+            req.FindPropertyRelative("_minSpeed").intValue = entry.MinSpeed;
+            req.FindPropertyRelative("_minBrains").intValue = entry.MinBrains;
+            req.FindPropertyRelative("_maxCareMistakes").intValue = entry.MaxCareMistakes;
+            req.FindPropertyRelative("_minWeight").intValue = entry.MinWeight;
+            req.FindPropertyRelative("_maxWeight").intValue = entry.MaxWeight;
+            req.FindPropertyRelative("_minHappiness").intValue = entry.MinHappiness;
+            req.FindPropertyRelative("_minDiscipline").intValue = entry.MinDiscipline;
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(table, path);
+        Debug.Log($"Evolution table generated at {path}");
+    }
+
+    private static void WireEvolutionTablesToSpecies()
+    {
+        string[] speciesNames = { "Botamon", "Koromon", "Agumon", "Greymon" };
+        foreach (string name in speciesNames)
+        {
+            string speciesPath = $"{DigimonDataDir}/{name}.asset";
+            string tablePath = $"{EvolutionDataDir}/{name}Evolution.asset";
+
+            DigimonSpeciesData species = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>(speciesPath);
+            EvolutionTable table = AssetDatabase.LoadAssetAtPath<EvolutionTable>(tablePath);
+
+            if (species != null && table != null)
+            {
+                SerializedObject so = new SerializedObject(species);
+                so.FindProperty("_evolutionTable").objectReferenceValue = table;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(species);
+            }
+        }
     }
 
     [MenuItem("Tools/DigimonWorld/Data/Generate Sample Items")]
