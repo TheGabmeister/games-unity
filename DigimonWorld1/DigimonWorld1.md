@@ -30,7 +30,7 @@ Goal: walk a capsule around a test zone with a camera.
 3. **Player Movement** — third-person controller, walk/run, gravity, ground check.
 4. **Camera** — follow camera, look control, collision avoidance.
 5. **World & Map (one test zone)** — a single zone with walkable terrain and colliders.
-6. **Scene / Zone Loader** — async load/unload, scene references, progress hook. Introduced here because zone transitions need it. No loading screen yet (the UI framework doesn't exist — either hold the black frame or fade via a bare full-screen quad).
+6. **Scene / Zone Loader** — async load/unload, scene references. Introduced here because zone transitions need it. Transitions use a full-screen fade (ScreenFader).
 7. **Zone Transitions** — trigger volumes swap zones via the scene loader.
 8. **Interaction System** — raycast prompts, `IInteractable` interface, world-space label for the prompt. No UI framework required for a single floating "Press E" label.
 
@@ -38,7 +38,7 @@ Goal: walk a capsule around a test zone with a camera.
 
 Goal: partner follows you; NPCs talk; the world has time; the first real screens exist.
 
-9. **UI Framework** — `ScreenManager` stack (`Push`/`Pop`/`Replace`), `BaseScreen`, fullscreen fader, pause screen. Introduced here because dialogue, HUD, and pause all need consistent screens. The Phase 1 zone loader gets a proper `LoadingScreen` now that one can exist.
+9. **UI Framework** — `ScreenManager` stack (`Push`/`Pop`/`Replace`), `BaseScreen`, fullscreen fader, pause screen. Introduced here because dialogue, HUD, and pause all need consistent screens.
 10. **Partner Digimon Follow** — AI-controlled companion, pathfinding/follow, idle behaviours.
 11. **Dialogue System** — speaker data, branching trees, choice UI, conditional lines.
 12. **NPC Entities** — dialogue-ready NPCs with patrol/idle behaviour.
