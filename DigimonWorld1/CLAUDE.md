@@ -41,8 +41,7 @@ Status: Phases 0–4 complete. Working: bootstrap, scene flow, input, player mov
 - **Inventory** — stackable items (max 20 slots) + Bits currency. `UseItem` routes food through `CareSystem.Feed()` (via serialized `_careSystem` ref), non-food applies effects directly to `DigimonInstance`.
 - **DialogueManager** — bottom-screen panel, E key advances, disables player input while active (via serialized `_inputManager` ref).
 - **HUD** — top-right: time + day (via serialized `_timeSystem` ref). Top-left: partner stats.
-- **ScreenManager** — owns toggle-key detection and mutual-exclusion for the three UI screens below. Guards against opening during battle or dialogue. Manages `SetPlayerInputEnabled` on open/close.
-- **InventoryScreen** (Tab/I), **StatusScreen** (C), **PauseScreen** (Escape) — toggleable UI screens managed by ScreenManager. PauseScreen sets `timeScale = 0`.
+- **InventoryScreen** (Tab/I), **StatusScreen** (C), **PauseScreen** (Escape) — toggleable UI screens. GameplayManager owns toggle-key detection, mutual-exclusion guards (battle/dialogue), and `SetPlayerInputEnabled` on open/close. PauseScreen sets `timeScale = 0`.
 - **BattleSystem** — turn-based combat. UI overlay (not a separate scene). `StartBattle(DigimonInstance, WildDigimonInstance, callback)` disables player input, pauses TimeSystem, hides HUD, shows BattleUI. Turn flow: player command → obedience check → status effects → execute → enemy AI → repeat. `EndBattle(BattleResult)` restores all state and invokes callback. Uses serialized refs to InputManager, TimeSystem, HUD, BattleUI, Inventory.
 - **BattleUI** — command menu (Attack/Technique/Item/Flee/Auto), technique and item submenus, battle log. Input: W/S navigate, E confirm, Q/ESC back. Uses serialized refs to BattleSystem, Inventory.
 

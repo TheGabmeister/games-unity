@@ -11,7 +11,6 @@ public static class GeneratePrefabs
     private const string AudioSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/AudioSystem.prefab";
     private const string AudioMixerPath = "Assets/_Project/Audio/MainMixer.mixer";
     private const string GameplayManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameplayManager.prefab";
-    private const string ScreenManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenManager.prefab";
     private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
     private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
     private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
@@ -100,12 +99,6 @@ public static class GeneratePrefabs
     public static void GenerateGameplayManager()
     {
         PrefabGeneratorUtils.SavePrefab("GameplayManager", GameplayManagerPrefabPath, go => go.AddComponent<GameplayManager>());
-    }
-
-    [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenManager")]
-    public static void GenerateScreenManager()
-    {
-        PrefabGeneratorUtils.SavePrefab("ScreenManager", ScreenManagerPrefabPath, go => go.AddComponent<ScreenManager>());
     }
 
     [MenuItem("Tools/DigimonWorld/Prefabs/Generate BattleSystem")]

@@ -39,7 +39,6 @@ public class GeneratorWindow : EditorWindow
             Button("CareSystem", GeneratePrefabs.GenerateCareSystem);
             Button("Inventory", GeneratePrefabs.GenerateInventory);
             Button("GameplayManager", GeneratePrefabs.GenerateGameplayManager);
-            Button("ScreenManager", GeneratePrefabs.GenerateScreenManager);
             Button("BattleSystem", GeneratePrefabs.GenerateBattleSystem);
         });
 
@@ -135,7 +134,6 @@ public class GeneratorWindow : EditorWindow
         GeneratePrefabs.GenerateCareSystem();
         GeneratePrefabs.GenerateInventory();
         GeneratePrefabs.GenerateGameplayManager();
-        GeneratePrefabs.GenerateScreenManager();
         GeneratePrefabs.GenerateBattleSystem();
 
         GenerateDialoguePrefab.Generate();

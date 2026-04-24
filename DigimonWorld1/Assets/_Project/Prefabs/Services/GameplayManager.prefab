@@ -52,4 +52,6 @@ MonoBehaviour:
   _hud: {fileID: 0}
   _battleSystem: {fileID: 0}
   _battleUI: {fileID: 0}
-  _screenManager: {fileID: 0}
+  _inventoryScreen: {fileID: 0}
+  _pauseScreen: {fileID: 0}
+  _statusScreen: {fileID: 0}

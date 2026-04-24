@@ -38,7 +38,6 @@ public static class GenerateScenes
     private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
     private const string BattleUIPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/BattleUI.prefab";
     private const string GameplayManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameplayManager.prefab";
-    private const string ScreenManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenManager.prefab";
     private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
     private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
     private const string TrainingDataDir = "Assets/_Project/Data/Training";
@@ -208,13 +207,6 @@ public static class GenerateScenes
             return;
         }
 
-        GameObject screenManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ScreenManagerPrefabPath);
-        if (screenManagerPrefab == null)
-        {
-            Debug.LogError($"ScreenManager prefab not found at {ScreenManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate ScreenManager' first.");
-            return;
-        }
-
         PrefabGeneratorUtils.EnsureFolder(SceneDir);
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -229,7 +221,6 @@ public static class GenerateScenes
         GameObject pauseScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(pauseScreenPrefab, scene);
         GameObject statusScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(statusScreenPrefab, scene);
         GameObject gameplayManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(gameplayManagerPrefab, scene);
-        GameObject screenManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(screenManagerPrefab, scene);
 
         GameObject battleSystemGo = null;
         GameObject battleSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BattleSystemPrefabPath);
@@ -256,7 +247,6 @@ public static class GenerateScenes
         PauseScreen pauseScreen = pauseScreenGo.GetComponent<PauseScreen>();
         StatusScreen statusScreen = statusScreenGo.GetComponent<StatusScreen>();
         GameplayManager gameplayManager = gameplayManagerGo.GetComponent<GameplayManager>();
-        ScreenManager screenManager = screenManagerGo.GetComponent<ScreenManager>();
         BattleSystem battleSystem = battleSystemGo != null ? battleSystemGo.GetComponent<BattleSystem>() : null;
         BattleUI battleUI = battleUIGo != null ? battleUIGo.GetComponent<BattleUI>() : null;
 
@@ -306,16 +296,6 @@ public static class GenerateScenes
             battleUiSo.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        // ScreenManager -> screens, BattleSystem, DialogueManager, InputManager
-        SerializedObject screenMgrSo = new SerializedObject(screenManager);
-        screenMgrSo.FindProperty("_inventoryScreen").objectReferenceValue = inventoryScreen;
-        screenMgrSo.FindProperty("_pauseScreen").objectReferenceValue = pauseScreen;
-        screenMgrSo.FindProperty("_statusScreen").objectReferenceValue = statusScreen;
-        screenMgrSo.FindProperty("_battleSystem").objectReferenceValue = battleSystem;
-        screenMgrSo.FindProperty("_dialogueManager").objectReferenceValue = dialogueManager;
-        screenMgrSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
-        screenMgrSo.ApplyModifiedPropertiesWithoutUndo();
-
         // GameplayManager -> all systems
         SerializedObject gmSo = new SerializedObject(gameplayManager);
         gmSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
@@ -326,7 +306,9 @@ public static class GenerateScenes
         gmSo.FindProperty("_hud").objectReferenceValue = hud;
         gmSo.FindProperty("_battleSystem").objectReferenceValue = battleSystem;
         gmSo.FindProperty("_battleUI").objectReferenceValue = battleUI;
-        gmSo.FindProperty("_screenManager").objectReferenceValue = screenManager;
+        gmSo.FindProperty("_inventoryScreen").objectReferenceValue = inventoryScreen;
+        gmSo.FindProperty("_pauseScreen").objectReferenceValue = pauseScreen;
+        gmSo.FindProperty("_statusScreen").objectReferenceValue = statusScreen;
         gmSo.ApplyModifiedPropertiesWithoutUndo();
 
         // Camera
