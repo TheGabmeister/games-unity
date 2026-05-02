@@ -183,6 +183,21 @@ Skirmish default: **$10,000** (configurable). Campaign missions have variable st
 - Repairs drain credits continuously; pauses if funds run out
 - An **Engineer** entering a friendly building restores it to 100% instantly (consumes the Engineer)
 
+### Building Damage States
+
+- **Above 50% HP**: intact appearance.
+- **At or below 50% HP**: damaged — shows fire/smoke overlay.
+- **At or below 25% HP**: "red health" — Engineer capture becomes possible on enemy buildings.
+
+### Power System
+
+Each building produces or consumes power. Total base power = sum of all generators minus all consumers.
+
+- **Sufficient power**: everything functions normally.
+- **Brownout** (consumed > produced): Radar Dome goes offline (minimap disabled), Tesla Coils stop firing, AA Guns stop firing, Gap Generators stop re-shrouding. All `RequiresPower` buildings shut down.
+- **Sidebar indicator**: power bar shows green (surplus), yellow (tight), red (brownout).
+- Destroying or selling a Power Plant can trigger a brownout. AI sells buildings if power falls below 75%.
+
 ---
 
 ## Production Queues & Spawn Rules

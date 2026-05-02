@@ -7,6 +7,7 @@ High-level implementation plan for the Unity recreation of C&C: Red Alert. **Sin
 ## Table of Contents
 
 - [Guiding Principles](#guiding-principles)
+- [Player State](#player-state)
 - [Scene Layout](#scene-layout)
 - [Data Architecture](#data-architecture)
 - [Grid & Map System](#grid--map-system)
@@ -22,6 +23,7 @@ High-level implementation plan for the Unity recreation of C&C: Red Alert. **Sin
 - [Fog of War](#fog-of-war)
 - [Power System](#power-system)
 - [AI Opponent](#ai-opponent)
+- [Top Bar](#top-bar)
 - [Sidebar UI](#sidebar-ui)
 - [Minimap](#minimap)
 - [Campaign System](#campaign-system)
@@ -38,6 +40,30 @@ High-level implementation plan for the Unity recreation of C&C: Red Alert. **Sin
 - **Systems prefab.** Global managers (GameManager, SelectionManager, FogOfWar, etc.) live on the `Resources/Systems` prefab, instantiated by the Bootstrapper before any scene loads.
 - **Grid is king.** The map is a cell grid. Pathfinding, fog of war, building placement, ore fields, and terrain speed modifiers all operate on this grid.
 - **Singleplayer only.** No netcode, no lobby, no host/client split. The human is always Player 0; AI opponents are Player 1–5.
+- **Source code as reference.** The original C&C: Red Alert source is at `D:\CnC_Red_Alert\CODE\`. Grep it for exact values rather than hardcoding from memory.
+
+---
+
+## Player State
+
+Each player (human + AI) is represented by a `PlayerState` managed by a `PlayerManager` on the Systems prefab.
+
+```csharp
+public class PlayerState
+{
+    public int PlayerIndex;        // 0 = human, 1–5 = AI
+    public Faction Faction;
+    public Country Country;        // for skirmish bonuses
+    public int Credits;
+    public int StorageCapacity;
+    public int PowerProduced;
+    public int PowerConsumed;
+    public List<Entity> OwnedEntities;
+    public List<BuildingData> OwnedBuildingTypes; // for prerequisite checks
+}
+```
+
+The `PlayerManager` holds the array of `PlayerState` and provides lookups used by EconomyManager, PowerManager, tech tree checks, and fog of war.
 
 ---
 
@@ -98,15 +124,22 @@ public class UnitData : ScriptableObject
     public float Speed;
     public int Cost;
     public int SightRange;
+    public int ROT;                // body/turret rotation speed (higher = faster)
+    public bool HasTurret;
     public WeaponData PrimaryWeapon;
     public WeaponData SecondaryWeapon;
     public LocomotionType Locomotion; // Foot, Tracked, Wheeled, Float, Fly
     public BuildingData[] Prerequisites;
     public int PassengerCapacity;  // 0 for non-transports
+    public int Ammo;               // aircraft ammo, 0 = unlimited
+    public bool CanCrush;          // can crush infantry (not all tracked can)
+    public bool NoMovingFire;      // V2, Artillery — must stop to fire
     public bool SelfHeals;
     public float SelfHealThreshold; // e.g., 0.5 for Mammoth (heals to 50%)
     public bool Crewed;            // spawns infantry on death
     public bool ExplodesOnDeath;
+    public bool HasSensors;        // detects subs (Destroyer, Gunboat, Cruiser)
+    public bool Cloakable;         // submarine, camo pillbox
     public Sprite Icon;
     public GameObject Prefab;
 }
@@ -119,13 +152,29 @@ public class UnitData : ScriptableObject
 public class WeaponData : ScriptableObject
 {
     public int Damage;
-    public int RateOfFire;     // lower = faster
-    public float Range;        // in cells
+    public int RateOfFire;        // lower = faster
+    public float Range;           // in cells
     public WarheadData Warhead;
-    public int BurstCount;     // shots per attack cycle
+    public int BurstCount;        // shots per attack cycle
+    public ProjectileData Projectile;
+}
+```
+
+### ProjectileData SO
+
+```csharp
+[CreateAssetMenu(menuName = "RA/Projectile")]
+public class ProjectileData : ScriptableObject
+{
+    public ProjectileType Type;   // Invisible, Cannon, HeatSeeker, Ballistic, Torpedo, etc.
+    public float Speed;           // 0 = hitscan
+    public int HomingROT;         // 0 = no homing, 5 = slow tracking, 20 = fast tracking
+    public bool Inaccurate;       // applies scatter on launch
+    public float MaxScatter;      // max scatter in cells (2.0 for homing, 1.0 for ballistic)
     public bool AntiAir;
     public bool AntiGround;
-    public ProjectileType Projectile; // Invisible, Cannon, HeatSeeker, Ballistic, Torpedo, etc.
+    public bool AntiSub;          // ASW (depth charges, torpedoes)
+    public bool Arcing;           // ballistic arc (gravity = 3)
 }
 ```
 
@@ -140,8 +189,9 @@ public class WarheadData : ScriptableObject
     [Range(0f, 1f)] public float VsLight;
     [Range(0f, 1f)] public float VsHeavy;
     [Range(0f, 1f)] public float VsConcrete;
-    public bool Splash;        // area of effect
-    public float SplashRadius;
+    public int Spread;         // splash falloff (0=none, 3=small, 6=wide, 8=widest)
+    public bool DamagesWalls;  // only HE, AP, Nuke can damage walls
+    public bool DestroysOre;   // nuke warhead destroys ore fields
 }
 ```
 
@@ -165,6 +215,8 @@ public class BuildingData : ScriptableObject
     public bool Capturable;
     public bool WaterBound;    // Naval Yard, Sub Pen
     public Vector2Int FootprintSize; // e.g., 3x2 cells
+    public bool HasBib;        // concrete foundation pad extending 1 row below
+    public bool Crewed;        // spawns infantry when sold/destroyed
     public Sprite Icon;
     public GameObject Prefab;
     public UnitData FreeUnit;  // e.g., Ore Refinery gives free Ore Truck
@@ -203,7 +255,7 @@ public class MapManager : MonoBehaviour
     private int[] _oreDensity;      // 0 = empty, 1–4 density levels
     private int[] _gemDensity;
     private Entity[] _occupant;     // unit or building occupying the cell, null if empty
-    private byte[] _fogState;       // per-player: 0=shroud, 1=fog, 2=visible
+    private byte[,] _fogState;     // [cellIndex, playerIndex]: 0=shroud, 1=fog, 2=visible
 
     public TerrainData GetTerrain(Vector2Int cell) { ... }
     public bool IsPassable(Vector2Int cell, LocomotionType loco) { ... }
@@ -294,9 +346,12 @@ public enum UnitState
     Moving,
     Attacking,
     Harvesting,
-    Returning,
+    Returning,     // harvester returning to refinery
+    Depositing,    // harvester docked at refinery
     Guarding,
-    Entering,   // entering a transport or building
+    Entering,      // entering a transport or building
+    Rearming,      // aircraft landed on pad
+    Deploying,     // MCV deploying into Construction Yard
     Dead
 }
 ```
@@ -357,19 +412,24 @@ The `Attacker` component auto-targets the nearest enemy within weapon range. No 
 
 ### Attack Loop
 
-1. Check if target is in range.
-2. If not, issue a move-to-range order.
-3. If in range, check ROF cooldown.
-4. Fire: apply damage (instant for hitscan weapons like M1Carbine, TeslaZap) or spawn a projectile GO (for Cannon, HeatSeeker, Ballistic, Torpedo types).
-5. Burst weapons fire `BurstCount` times per cycle.
+1. If `NoMovingFire` and currently moving, stop first.
+2. Check if target is in range. If not, issue a move-to-range order.
+3. If turret-equipped, rotate turret toward target (at `ROT` speed). Wait until facing before firing non-homing projectiles. Homing projectiles can fire without precise aim.
+4. Check ROF cooldown.
+5. Fire: apply damage (instant for hitscan weapons like M1Carbine, TeslaZap) or spawn a projectile GO (for Cannon, HeatSeeker, Ballistic, Torpedo types).
+6. Burst weapons fire `BurstCount` times per cycle.
 
 ### Projectiles
 
 Non-hitscan weapons spawn a projectile prefab that travels toward the target. On arrival or collision, apply damage + splash if applicable. Ballistic projectiles (Artillery, Cruiser) use a parabolic arc and can miss if the target moves.
 
+### Splash & Friendly Fire
+
+All splash damage hits everything in radius (1.5 cells), **including friendly units**. Only the firing unit itself is excluded. Damage falls off with distance, controlled by the warhead's `Spread` value.
+
 ### Crushing
 
-Tracked vehicles moving through a cell occupied by enemy infantry kill the infantry instantly. Check on cell enter.
+Vehicles with `CanCrush=true` moving through a cell occupied by enemy infantry kill them instantly. Check on cell enter. Not all tracked vehicles can crush — V2, Artillery, and Ore Truck cannot.
 
 ### Death
 
@@ -387,7 +447,7 @@ Buildings are placed on the grid, occupying a footprint of cells (e.g., 3×2 for
 
 | Component | Responsibility |
 |---|---|
-| `Entity` | Identity, HP, owner. |
+| `Entity` | Identity, HP, owner, damage state (intact >50%, damaged ≤50%, critical ≤25%). |
 | `Selectable` | Click detection, health bar. |
 | `PowerSource` | Reports `PowerProduced` (positive or negative) to the PowerManager. |
 | `ProductionQueue` | Builds units. Has a queue of UnitData, tracks build progress. |
@@ -407,7 +467,7 @@ Buildings are placed on the grid, occupying a footprint of cells (e.g., 3×2 for
    - Within 2 cells of any existing friendly building.
    - All footprint cells are passable ground (or water for naval buildings).
    - No overlap with existing buildings or units.
-4. On click, the building spawns. On right-click, cancel placement (refund the cost).
+4. On click, the building spawns. On right-click, cancel placement (building returns to "READY" state — player can place it later).
 
 ### Selling
 
@@ -445,11 +505,11 @@ public class ConstructionManager : MonoBehaviour
 }
 ```
 
-### Unit Production (Per-Factory Queue)
+### Unit Production (Per-Category Queue)
 
-Each production building (Barracks, War Factory, Naval Yard, Airfield, Helipad, Kennel) has its own `ProductionQueue`. Multiple same-type buildings share a single queue and split build time (build speed doubles with 2 Barracks, etc.).
+One production queue per building **category** (Infantry, Vehicles, Naval, Aircraft — see SPEC.md). Only one unit builds at a time per category. Multiple same-type buildings act as a speed multiplier (2 Barracks = 2× infantry build speed), not parallel queues.
 
-When a unit finishes, it spawns at a rally point adjacent to the building.
+When a unit finishes, it spawns at the exit cell of the "primary building" (player-selectable when multiple factories of the same type exist). If the exit is blocked, the unit waits inside. There are no rally points in RA1.
 
 ---
 
@@ -614,7 +674,7 @@ A thin bar across the top of the screen:
 
 ## Sidebar UI
 
-The right-hand sidebar is the primary RTS interface. Built with **UI Toolkit** or **uGUI** Canvas.
+The right-hand sidebar is the primary RTS interface. Built with **uGUI** (Canvas + RectTransform).
 
 ### Layout
 
@@ -656,8 +716,8 @@ The right-hand sidebar is the primary RTS interface. Built with **UI Toolkit** o
 - Icons show the building/unit name. Only items whose prerequisites are met appear.
 - Clicking an icon starts construction. A progress bar fills over the icon as it builds.
 - When a structure finishes, the icon shows **"READY"** — clicking it enters placement mode.
-- When a unit finishes, it spawns immediately at the production building's rally point.
-- Only **one structure** and **one unit** can be in production at a time (per Construction Yard / per production building type).
+- When a unit finishes, it spawns at the primary building's exit cell. No rally points.
+- Only **one structure** and **one unit per category** can be in production at a time.
 
 ---
 
@@ -810,14 +870,14 @@ Buildings have two visual states: **intact** and **damaged** (below 50% HP, show
 - ConstructionManager (sidebar build queue, progress, placement mode).
 - Selling and repairing.
 - PowerManager (power produced vs consumed, brownout effects).
-- Populate all building stats from SPEC.md.
+- Populate all building stats from source code (`D:\CnC_Red_Alert\CODE\BDATA.CPP`).
 
 ### Phase 6 — Production & Tech Tree
 
 - ProductionQueue component on Barracks, War Factory, etc.
 - FactionData SOs with tech tree references.
-- Sidebar UI: structure tab, unit tab, build icons filtered by prerequisites.
-- Unit spawning at rally points.
+- Sidebar UI: two-column build grid (structures left, units right) filtered by prerequisites.
+- Unit spawning at primary building exit cell.
 - Multiple same-type buildings speed up production.
 
 ### Phase 7 — Fog of War
@@ -831,7 +891,7 @@ Buildings have two visual states: **intact** and **damaged** (below 50% HP, show
 
 ### Phase 8 — Full Unit & Building Roster
 
-- Create all UnitData and BuildingData SOs from SPEC.md values.
+- Create all UnitData and BuildingData SOs from source code values.
 - SVG sprites for every unit and building.
 - Unique behaviors: Spy (disguise, infiltrate), Tanya (C4), Engineer (capture), Attack Dog (instant kill, detect spies), Submarine (cloak), Aircraft (ammo, rearm at pad).
 - Transports (APC, Chinook, naval Transport).
