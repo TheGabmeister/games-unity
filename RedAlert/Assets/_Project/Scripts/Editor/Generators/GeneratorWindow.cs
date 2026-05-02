@@ -5,95 +5,34 @@ public class GeneratorWindow : EditorWindow
 {
     private Vector2 _scrollPos;
 
-    [MenuItem("Tools/DigimonWorld/Generator Window")]
+    [MenuItem("Tools/RedAlert/Generator Window")]
     public static void ShowWindow()
     {
-        GetWindow<GeneratorWindow>("DW1 Generators");
+        GetWindow<GeneratorWindow>("RA Generators");
     }
 
     private void OnGUI()
     {
         _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
-        Section("Data Assets", () =>
+        Section("Phase 1 — Foundation", () =>
         {
-            Button("BootstrapConfig", GeneratePrefabs.GenerateBootstrapConfig);
-            Button("TestDialogue", GeneratePrefabs.GenerateTestDialogue);
-            Button("ZoneData Assets", GeneratePrefabs.GenerateZoneData);
-            Button("Sample Techniques", GeneratePrefabs.GenerateSampleTechniques);
-            Button("Sample Species", GeneratePrefabs.GenerateSampleSpecies);
-            Button("Sample Items", GeneratePrefabs.GenerateSampleItems);
-            Button("Sample Training", GeneratePrefabs.GenerateSampleTraining);
-            Button("Sample Encounters", GeneratePrefabs.GenerateSampleEncounters);
-            Button("Evolution Tables", GeneratePrefabs.GenerateEvolutionTables);
+            Button("Terrain Tile Sprites + Tiles", GenerateTerrainTiles.Generate);
+            Button("Test Map (40x40)", GenerateTestMap.Generate);
+            Button("Unit Sprites", GenerateUnitPrefab.GenerateSprites);
+            Button("Unit Prefab", GenerateUnitPrefab.GeneratePrefab);
+            Button("Systems Prefab", GenerateSystemsPrefab.Generate);
+            Button("Scenes (Init + Gameplay)", GenerateScenes.GenerateAll);
         });
 
-        Section("Prefabs — Services", () =>
+        Section("Generate All (Phase 1)", () =>
         {
-            Button("Bootstrapper", GeneratePrefabs.GenerateBootstrapper);
-            Button("AudioSystem", GeneratePrefabs.GenerateAudioSystem);
-            Button("SceneLoader", GeneratePrefabs.GenerateSceneLoader);
-            Button("ScreenFader", GeneratePrefabs.GenerateScreenFader);
-            Button("GameManager", GeneratePrefabs.GenerateGameManager);
-            Button("InputManager", GeneratePrefabs.GenerateInputManager);
-            Button("TimeSystem", GeneratePrefabs.GenerateTimeSystem);
-            Button("CareSystem", GeneratePrefabs.GenerateCareSystem);
-            Button("Inventory", GeneratePrefabs.GenerateInventory);
-            Button("GameplayManager", GeneratePrefabs.GenerateGameplayManager);
-            Button("BattleSystem", GeneratePrefabs.GenerateBattleSystem);
-        });
-
-        Section("Prefabs — UI", () =>
-        {
-            Button("DialogueManager", GenerateDialoguePrefab.Generate);
-            Button("HUD", GenerateHUDPrefab.Generate);
-            Button("InventoryScreen", GenerateInventoryScreenPrefab.Generate);
-            Button("PauseScreen", GeneratePauseScreenPrefab.Generate);
-            Button("StatusScreen", GenerateStatusScreenPrefab.Generate);
-            Button("BattleUI", GenerateBattleUIPrefab.Generate);
-        });
-
-        Section("Prefabs — Controllers", () =>
-        {
-            Button("SplashscreenController", GeneratePrefabs.GenerateSplashscreenController);
-            Button("IntroController", GeneratePrefabs.GenerateIntroController);
-            Button("MainMenuController", GenerateMainMenuPrefab.Generate);
-            Button("NameController", GenerateNamePrefab.Generate);
-        });
-
-        Section("Prefabs — Characters", () =>
-        {
-            Button("Player", GeneratePrefabs.GeneratePlayer);
-            Button("PartnerDigimon", GeneratePrefabs.GeneratePartnerDigimon);
-            Button("NPC", GeneratePrefabs.GenerateNPC);
-            Button("WildDigimon", GeneratePrefabs.GenerateWildDigimon);
-        });
-
-        Section("Prefabs — Interactables", () =>
-        {
-            Button("TrainingFacility", GeneratePrefabs.GenerateTrainingFacility);
-        });
-
-        Section("Scenes", () =>
-        {
-            Button("Bootstrap", GenerateScenes.GenerateBootstrap);
-            Button("Splashscreen", GenerateScenes.GenerateSplashscreen);
-            Button("Intro", GenerateScenes.GenerateIntro);
-            Button("MainMenu", GenerateScenes.GenerateMainMenu);
-            Button("Name", GenerateScenes.GenerateName);
-            Button("Gameplay", GenerateScenes.GenerateGameplay);
-            Button("Zone1", GenerateScenes.GenerateZone1);
-            Button("Zone2", GenerateScenes.GenerateZone2);
-            EditorGUILayout.Space(5);
-            if (GUILayout.Button("Generate All Scenes", GUILayout.Height(28)))
-                GenerateScenes.GenerateAll();
-        });
-
-        Section("Generate Everything", () =>
-        {
-            EditorGUILayout.HelpBox("Runs all data, prefab, and scene generators in the correct order.", MessageType.Info);
+            EditorGUILayout.HelpBox(
+                "Runs all Phase 1 generators in order:\n" +
+                "Terrain tiles → Test map → Unit sprites → Unit prefab → Systems prefab → Scenes",
+                MessageType.Info);
             if (GUILayout.Button("Generate All", GUILayout.Height(30)))
-                GenerateAll();
+                GenerateAllPhase1();
         });
 
         EditorGUILayout.EndScrollView();
@@ -114,49 +53,13 @@ public class GeneratorWindow : EditorWindow
             action();
     }
 
-    private static void GenerateAll()
+    private static void GenerateAllPhase1()
     {
-        GeneratePrefabs.GenerateBootstrapConfig();
-        GeneratePrefabs.GenerateTestDialogue();
-        GeneratePrefabs.GenerateZoneData();
-        GeneratePrefabs.GenerateSampleTechniques();
-        GeneratePrefabs.GenerateSampleSpecies();
-        GeneratePrefabs.GenerateEvolutionTables();
-        GeneratePrefabs.GenerateSampleItems();
-        GeneratePrefabs.GenerateSampleTraining();
-        GeneratePrefabs.GenerateSampleEncounters();
-
-        GeneratePrefabs.GenerateBootstrapper();
-        GeneratePrefabs.GenerateAudioSystem();
-        GeneratePrefabs.GenerateSceneLoader();
-        GeneratePrefabs.GenerateScreenFader();
-        GeneratePrefabs.GenerateGameManager();
-        GeneratePrefabs.GenerateInputManager();
-        GeneratePrefabs.GenerateTimeSystem();
-        GeneratePrefabs.GenerateCareSystem();
-        GeneratePrefabs.GenerateInventory();
-        GeneratePrefabs.GenerateGameplayManager();
-        GeneratePrefabs.GenerateBattleSystem();
-
-        GenerateDialoguePrefab.Generate();
-        GenerateHUDPrefab.Generate();
-        GenerateInventoryScreenPrefab.Generate();
-        GeneratePauseScreenPrefab.Generate();
-        GenerateStatusScreenPrefab.Generate();
-        GenerateBattleUIPrefab.Generate();
-
-        GeneratePrefabs.GenerateSplashscreenController();
-        GeneratePrefabs.GenerateIntroController();
-        GenerateMainMenuPrefab.Generate();
-        GenerateNamePrefab.Generate();
-
-        GeneratePrefabs.GeneratePlayer();
-        GeneratePrefabs.GeneratePartnerDigimon();
-        GeneratePrefabs.GenerateNPC();
-        GeneratePrefabs.GenerateWildDigimon();
-
-        GeneratePrefabs.GenerateTrainingFacility();
-
+        GenerateTerrainTiles.Generate();
+        GenerateTestMap.Generate();
+        GenerateUnitPrefab.GenerateSprites();
+        GenerateUnitPrefab.GeneratePrefab();
+        GenerateSystemsPrefab.Generate();
         GenerateScenes.GenerateAll();
     }
 }

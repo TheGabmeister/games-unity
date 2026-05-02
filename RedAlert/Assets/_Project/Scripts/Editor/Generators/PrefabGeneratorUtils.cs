@@ -8,11 +8,7 @@ using UnityEngine.UI;
 public static class PrefabGeneratorUtils
 {
     public const string PrefabDir = "Assets/_Project/Prefabs";
-    public const string ServicesPrefabDir = PrefabDir + "/Services";
-    public const string UIPrefabDir = PrefabDir + "/UI";
-    public const string ControllersPrefabDir = PrefabDir + "/Controllers";
-    public const string CharactersPrefabDir = PrefabDir + "/Characters";
-    public const string InteractablesPrefabDir = PrefabDir + "/Interactables";
+    public const string UnitsPrefabDir = PrefabDir + "/Units";
 
     public static void SavePrefab(string name, string path, System.Action<GameObject> configure)
     {
@@ -110,111 +106,6 @@ public static class PrefabGeneratorUtils
         rt.anchoredPosition = position;
         rt.sizeDelta = size;
         return tmp;
-    }
-
-    public static TMP_InputField CreateInputField(string name, Transform parent,
-        Vector2 position, Vector2 size)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-
-        Image bg = go.AddComponent<Image>();
-        bg.color = new Color(0.15f, 0.15f, 0.15f, 1f);
-
-        TMP_InputField inputField = go.AddComponent<TMP_InputField>();
-
-        GameObject textArea = new GameObject("Text Area", typeof(RectTransform));
-        textArea.transform.SetParent(go.transform, false);
-        RectTransform textAreaRt = textArea.GetComponent<RectTransform>();
-        textAreaRt.anchorMin = Vector2.zero;
-        textAreaRt.anchorMax = Vector2.one;
-        textAreaRt.offsetMin = new Vector2(10f, 0f);
-        textAreaRt.offsetMax = new Vector2(-10f, 0f);
-        textArea.AddComponent<RectMask2D>();
-
-        GameObject placeholderGo = new GameObject("Placeholder", typeof(RectTransform));
-        placeholderGo.transform.SetParent(textArea.transform, false);
-        TextMeshProUGUI placeholder = placeholderGo.AddComponent<TextMeshProUGUI>();
-        placeholder.text = "Enter name...";
-        placeholder.fontSize = 24;
-        placeholder.fontStyle = FontStyles.Italic;
-        placeholder.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-        placeholder.alignment = TextAlignmentOptions.MidlineLeft;
-        RectTransform placeholderRt = placeholderGo.GetComponent<RectTransform>();
-        placeholderRt.anchorMin = Vector2.zero;
-        placeholderRt.anchorMax = Vector2.one;
-        placeholderRt.offsetMin = Vector2.zero;
-        placeholderRt.offsetMax = Vector2.zero;
-
-        GameObject textGo = new GameObject("Text", typeof(RectTransform));
-        textGo.transform.SetParent(textArea.transform, false);
-        TextMeshProUGUI inputText = textGo.AddComponent<TextMeshProUGUI>();
-        inputText.fontSize = 24;
-        inputText.color = Color.white;
-        inputText.alignment = TextAlignmentOptions.MidlineLeft;
-        RectTransform textRt = textGo.GetComponent<RectTransform>();
-        textRt.anchorMin = Vector2.zero;
-        textRt.anchorMax = Vector2.one;
-        textRt.offsetMin = Vector2.zero;
-        textRt.offsetMax = Vector2.zero;
-
-        inputField.textViewport = textAreaRt;
-        inputField.textComponent = inputText;
-        inputField.placeholder = placeholder;
-        inputField.characterLimit = 8;
-
-        RectTransform rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = new Vector2(0.5f, 0.5f);
-        rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = position;
-        rt.sizeDelta = size;
-
-        return inputField;
-    }
-
-    public static void SetSceneReference(SerializedObject so, string fieldName, string scenePath)
-    {
-        string guid = AssetDatabase.AssetPathToGUID(scenePath);
-        if (string.IsNullOrEmpty(guid))
-        {
-            Debug.LogWarning($"Scene not found at {scenePath} — {fieldName} will be empty. Generate scenes first.");
-            return;
-        }
-
-        SerializedProperty prop = so.FindProperty(fieldName);
-        SerializedProperty guidProp = prop.FindPropertyRelative("guid");
-        SerializedProperty assetProp = prop.FindPropertyRelative("asset");
-
-        guidProp.stringValue = guid;
-        assetProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-    }
-
-    public static Material CreateOrLoadMaterial(string path, Color color)
-    {
-        string dir = System.IO.Path.GetDirectoryName(path).Replace("\\", "/");
-        EnsureFolder(dir);
-
-        Material existing = AssetDatabase.LoadAssetAtPath<Material>(path);
-        if (existing != null)
-        {
-            existing.color = color;
-            EditorUtility.SetDirty(existing);
-            AssetDatabase.SaveAssets();
-            return existing;
-        }
-
-        Shader shader = Shader.Find("Universal Render Pipeline/Lit");
-        Material mat = new Material(shader);
-        mat.SetColor("_BaseColor", color);
-        AssetDatabase.CreateAsset(mat, path);
-        AssetDatabase.SaveAssets();
-        return mat;
-    }
-
-    public static void ApplyMaterialToRenderers(GameObject root, Material material)
-    {
-        foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>())
-            renderer.sharedMaterial = material;
     }
 
     public static void EnsureFolder(string path)

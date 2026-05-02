@@ -1,706 +1,108 @@
-using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public static class GenerateScenes
 {
-    private const string SceneDir = "Assets/_Project/Scenes";
-    private const string BootstrapScenePath = SceneDir + "/_Bootstrap.unity";
-    private const string SplashscreenScenePath = SceneDir + "/_Splashscreen.unity";
-    private const string IntroScenePath = SceneDir + "/_Intro.unity";
-    private const string MainMenuScenePath = SceneDir + "/_MainMenu.unity";
-    private const string NameScenePath = SceneDir + "/_Name.unity";
-    private const string GameplayScenePath = SceneDir + "/_Gameplay.unity";
-    private const string ZoneDir = SceneDir + "/Zones";
-    private const string Zone1ScenePath = ZoneDir + "/Zone1.unity";
-    private const string Zone2ScenePath = ZoneDir + "/Zone2.unity";
-    private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
-    private const string Zone2DataPath = "Assets/_Project/Data/Zones/Zone2.asset";
-
-    private const string AudioSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/AudioSystem.prefab";
-    private const string GameManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameManager.prefab";
-    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenFader.prefab";
-    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/SceneLoader.prefab";
-    private const string InputManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/InputManager.prefab";
-    private const string DialogueManagerPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/DialogueManager.prefab";
-    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/TimeSystem.prefab";
-    private const string HUDPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/HUD.prefab";
-    private const string CareSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/CareSystem.prefab";
-    private const string InventoryPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/Inventory.prefab";
-    private const string InventoryScreenPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/InventoryScreen.prefab";
-    private const string PauseScreenPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/PauseScreen.prefab";
-    private const string StatusScreenPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/StatusScreen.prefab";
-    private const string NPCPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/NPC.prefab";
-    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.InteractablesPrefabDir + "/TrainingFacility.prefab";
-    private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
-    private const string BattleUIPrefabPath = PrefabGeneratorUtils.UIPrefabDir + "/BattleUI.prefab";
-    private const string GameplayManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameplayManager.prefab";
-    private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
-    private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
-    private const string TrainingDataDir = "Assets/_Project/Data/Training";
-    private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/SplashscreenController.prefab";
-    private const string IntroControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/IntroController.prefab";
-    private const string MainMenuControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/MainMenuController.prefab";
-    private const string NameControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/NameController.prefab";
-    private const string PlayerPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/Player.prefab";
-    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/PartnerDigimon.prefab";
-
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Bootstrap Scene")]
-    public static void GenerateBootstrap()
+    public static void GenerateInit()
     {
-        GameObject audioSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AudioSystemPrefabPath);
-        if (audioSystemPrefab == null)
-        {
-            Debug.LogError($"AudioSystem prefab not found at {AudioSystemPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate AudioSystem' first.");
-            return;
-        }
+        string path = "Assets/_Project/Scenes/Init.unity";
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Scenes");
 
-        GameObject gameManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameManagerPrefabPath);
-        if (gameManagerPrefab == null)
-        {
-            Debug.LogError($"GameManager prefab not found at {GameManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate GameManager' first.");
-            return;
-        }
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-        GameObject screenFaderPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ScreenFaderPrefabPath);
-        if (screenFaderPrefab == null)
-        {
-            Debug.LogError($"ScreenFader prefab not found at {ScreenFaderPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate ScreenFader' first.");
-            return;
-        }
+        var camGO = new GameObject("Camera");
+        var cam = camGO.AddComponent<Camera>();
+        cam.orthographic = true;
+        cam.orthographicSize = 5;
+        cam.backgroundColor = Color.black;
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        camGO.transform.position = new Vector3(0, 0, -10);
+        camGO.tag = "MainCamera";
 
-        GameObject sceneLoaderPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SceneLoaderPrefabPath);
-        if (sceneLoaderPrefab == null)
-        {
-            Debug.LogError($"SceneLoader prefab not found at {SceneLoaderPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate SceneLoader' first.");
-            return;
-        }
-
-        PrefabGeneratorUtils.EnsureFolder(SceneDir);
-
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        PrefabUtility.InstantiatePrefab(audioSystemPrefab, scene);
-        PrefabUtility.InstantiatePrefab(gameManagerPrefab, scene);
-        PrefabUtility.InstantiatePrefab(screenFaderPrefab, scene);
-        PrefabUtility.InstantiatePrefab(sceneLoaderPrefab, scene);
-
-        if (!SaveScene(scene, BootstrapScenePath)) return;
-
-        AddSceneToBuildSettingsAtIndex(BootstrapScenePath, 0);
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"Bootstrap scene generated at {BootstrapScenePath}");
+        EditorSceneManager.SaveScene(scene, path);
+        Debug.Log($"Init scene created at {path}");
     }
 
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Splashscreen Scene")]
-    public static void GenerateSplashscreen()
-    {
-        GenerateSceneWithPrefab(SplashscreenScenePath, SplashscreenControllerPrefabPath, "_Splashscreen");
-    }
-
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Intro Scene")]
-    public static void GenerateIntro()
-    {
-        GenerateSceneWithPrefab(IntroScenePath, IntroControllerPrefabPath, "_Intro");
-    }
-
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate MainMenu Scene")]
-    public static void GenerateMainMenu()
-    {
-        GenerateSceneWithPrefab(MainMenuScenePath, MainMenuControllerPrefabPath, "_MainMenu");
-    }
-
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Name Scene")]
-    public static void GenerateName()
-    {
-        GenerateSceneWithPrefab(NameScenePath, NameControllerPrefabPath, "_Name");
-    }
-
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Gameplay Scene")]
     public static void GenerateGameplay()
     {
-        GameObject inputManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InputManagerPrefabPath);
-        if (inputManagerPrefab == null)
+        string path = "Assets/_Project/Scenes/Gameplay.unity";
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Scenes");
+
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        var camGO = new GameObject("Main Camera");
+        var cam = camGO.AddComponent<Camera>();
+        cam.orthographic = true;
+        cam.orthographicSize = 10;
+        cam.backgroundColor = new Color(0.1f, 0.1f, 0.1f);
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        camGO.transform.position = new Vector3(20, 20, -10);
+        camGO.tag = "MainCamera";
+        camGO.AddComponent<RTSCamera>();
+
+        var gridGO = new GameObject("Grid");
+        gridGO.AddComponent<Grid>();
+
+        var tilemapGO = new GameObject("Tilemap");
+        tilemapGO.transform.SetParent(gridGO.transform, false);
+        tilemapGO.AddComponent<Tilemap>();
+        var renderer = tilemapGO.AddComponent<TilemapRenderer>();
+        renderer.sortingOrder = 0;
+
+        var unitPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Units/PlaceholderUnit.prefab");
+        if (unitPrefab != null)
         {
-            Debug.LogError($"InputManager prefab not found at {InputManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate InputManager' first.");
-            return;
+            SpawnUnit(unitPrefab, new Vector3(5.5f, 5.5f, 0f), 0);
+            SpawnUnit(unitPrefab, new Vector3(7.5f, 5.5f, 0f), 0);
+            SpawnUnit(unitPrefab, new Vector3(6.5f, 7.5f, 0f), 0);
+
+            SpawnUnit(unitPrefab, new Vector3(33.5f, 33.5f, 0f), 1);
+            SpawnUnit(unitPrefab, new Vector3(35.5f, 33.5f, 0f), 1);
+            SpawnUnit(unitPrefab, new Vector3(34.5f, 35.5f, 0f), 1);
         }
 
-        GameObject dialogueManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DialogueManagerPrefabPath);
-        if (dialogueManagerPrefab == null)
-        {
-            Debug.LogError($"DialogueManager prefab not found at {DialogueManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate DialogueManager' first.");
-            return;
-        }
-
-        GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
-        if (playerPrefab == null)
-        {
-            Debug.LogError($"Player prefab not found at {PlayerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate Player' first.");
-            return;
-        }
-
-        GameObject partnerDigimonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PartnerDigimonPrefabPath);
-        if (partnerDigimonPrefab == null)
-        {
-            Debug.LogError($"PartnerDigimon prefab not found at {PartnerDigimonPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate PartnerDigimon' first.");
-            return;
-        }
-
-        GameObject timeSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TimeSystemPrefabPath);
-        if (timeSystemPrefab == null)
-        {
-            Debug.LogError($"TimeSystem prefab not found at {TimeSystemPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate TimeSystem' first.");
-            return;
-        }
-
-        GameObject hudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(HUDPrefabPath);
-        if (hudPrefab == null)
-        {
-            Debug.LogError($"HUD prefab not found at {HUDPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate HUD' first.");
-            return;
-        }
-
-        GameObject careSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(CareSystemPrefabPath);
-        if (careSystemPrefab == null)
-        {
-            Debug.LogError($"CareSystem prefab not found at {CareSystemPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate CareSystem' first.");
-            return;
-        }
-
-        GameObject inventoryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InventoryPrefabPath);
-        if (inventoryPrefab == null)
-        {
-            Debug.LogError($"Inventory prefab not found at {InventoryPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate Inventory' first.");
-            return;
-        }
-
-        GameObject inventoryScreenPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InventoryScreenPrefabPath);
-        if (inventoryScreenPrefab == null)
-        {
-            Debug.LogError($"InventoryScreen prefab not found at {InventoryScreenPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate InventoryScreen' first.");
-            return;
-        }
-
-        GameObject pauseScreenPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PauseScreenPrefabPath);
-        if (pauseScreenPrefab == null)
-        {
-            Debug.LogError($"PauseScreen prefab not found at {PauseScreenPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate PauseScreen' first.");
-            return;
-        }
-
-        GameObject statusScreenPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(StatusScreenPrefabPath);
-        if (statusScreenPrefab == null)
-        {
-            Debug.LogError($"StatusScreen prefab not found at {StatusScreenPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate StatusScreen' first.");
-            return;
-        }
-
-        GameObject gameplayManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameplayManagerPrefabPath);
-        if (gameplayManagerPrefab == null)
-        {
-            Debug.LogError($"GameplayManager prefab not found at {GameplayManagerPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate GameplayManager' first.");
-            return;
-        }
-
-        PrefabGeneratorUtils.EnsureFolder(SceneDir);
-
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-
-        GameObject inputManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(inputManagerPrefab, scene);
-        GameObject dialogueManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(dialogueManagerPrefab, scene);
-        GameObject timeSystemGo = (GameObject)PrefabUtility.InstantiatePrefab(timeSystemPrefab, scene);
-        GameObject hudGo = (GameObject)PrefabUtility.InstantiatePrefab(hudPrefab, scene);
-        GameObject careSystemGo = (GameObject)PrefabUtility.InstantiatePrefab(careSystemPrefab, scene);
-        GameObject inventoryGo = (GameObject)PrefabUtility.InstantiatePrefab(inventoryPrefab, scene);
-        GameObject inventoryScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(inventoryScreenPrefab, scene);
-        GameObject pauseScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(pauseScreenPrefab, scene);
-        GameObject statusScreenGo = (GameObject)PrefabUtility.InstantiatePrefab(statusScreenPrefab, scene);
-        GameObject gameplayManagerGo = (GameObject)PrefabUtility.InstantiatePrefab(gameplayManagerPrefab, scene);
-
-        GameObject battleSystemGo = null;
-        GameObject battleSystemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BattleSystemPrefabPath);
-        if (battleSystemPrefab != null)
-            battleSystemGo = (GameObject)PrefabUtility.InstantiatePrefab(battleSystemPrefab, scene);
-        else
-            Debug.LogWarning($"BattleSystem prefab not found at {BattleSystemPrefabPath}. Run 'Generate BattleSystem' first.");
-
-        GameObject battleUIGo = null;
-        GameObject battleUIPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BattleUIPrefabPath);
-        if (battleUIPrefab != null)
-            battleUIGo = (GameObject)PrefabUtility.InstantiatePrefab(battleUIPrefab, scene);
-        else
-            Debug.LogWarning($"BattleUI prefab not found at {BattleUIPrefabPath}. Run 'Generate BattleUI' first.");
-
-        // Wire cross-references between systems
-        InputManager inputManager = inputManagerGo.GetComponent<InputManager>();
-        TimeSystem timeSystem = timeSystemGo.GetComponent<TimeSystem>();
-        CareSystem careSystem = careSystemGo.GetComponent<CareSystem>();
-        Inventory inventory = inventoryGo.GetComponent<Inventory>();
-        DialogueManager dialogueManager = dialogueManagerGo.GetComponent<DialogueManager>();
-        HUD hud = hudGo.GetComponent<HUD>();
-        InventoryScreen inventoryScreen = inventoryScreenGo.GetComponent<InventoryScreen>();
-        PauseScreen pauseScreen = pauseScreenGo.GetComponent<PauseScreen>();
-        StatusScreen statusScreen = statusScreenGo.GetComponent<StatusScreen>();
-        GameplayManager gameplayManager = gameplayManagerGo.GetComponent<GameplayManager>();
-        BattleSystem battleSystem = battleSystemGo != null ? battleSystemGo.GetComponent<BattleSystem>() : null;
-        BattleUI battleUI = battleUIGo != null ? battleUIGo.GetComponent<BattleUI>() : null;
-
-        // CareSystem -> TimeSystem
-        SerializedObject careSystemSo = new SerializedObject(careSystem);
-        careSystemSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
-        careSystemSo.ApplyModifiedPropertiesWithoutUndo();
-
-        // Inventory -> CareSystem
-        SerializedObject inventorySo = new SerializedObject(inventory);
-        inventorySo.FindProperty("_careSystem").objectReferenceValue = careSystem;
-        inventorySo.ApplyModifiedPropertiesWithoutUndo();
-
-        // DialogueManager -> InputManager
-        SerializedObject dialogueSo = new SerializedObject(dialogueManager);
-        dialogueSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
-        dialogueSo.ApplyModifiedPropertiesWithoutUndo();
-
-        // HUD -> TimeSystem
-        SerializedObject hudSo = new SerializedObject(hud);
-        hudSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
-        hudSo.ApplyModifiedPropertiesWithoutUndo();
-
-        // InventoryScreen -> Inventory
-        SerializedObject invScreenSo = new SerializedObject(inventoryScreen);
-        invScreenSo.FindProperty("_inventory").objectReferenceValue = inventory;
-        invScreenSo.ApplyModifiedPropertiesWithoutUndo();
-
-        // BattleSystem -> InputManager, TimeSystem, HUD, BattleUI, Inventory
-        if (battleSystem != null)
-        {
-            SerializedObject battleSysSo = new SerializedObject(battleSystem);
-            battleSysSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
-            battleSysSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
-            battleSysSo.FindProperty("_hud").objectReferenceValue = hud;
-            battleSysSo.FindProperty("_battleUI").objectReferenceValue = battleUI;
-            battleSysSo.FindProperty("_inventory").objectReferenceValue = inventory;
-            battleSysSo.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        // BattleUI -> BattleSystem, Inventory
-        if (battleUI != null)
-        {
-            SerializedObject battleUiSo = new SerializedObject(battleUI);
-            battleUiSo.FindProperty("_battleSystem").objectReferenceValue = battleSystem;
-            battleUiSo.FindProperty("_inventory").objectReferenceValue = inventory;
-            battleUiSo.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        // GameplayManager -> all systems
-        SerializedObject gmSo = new SerializedObject(gameplayManager);
-        gmSo.FindProperty("_inputManager").objectReferenceValue = inputManager;
-        gmSo.FindProperty("_timeSystem").objectReferenceValue = timeSystem;
-        gmSo.FindProperty("_careSystem").objectReferenceValue = careSystem;
-        gmSo.FindProperty("_inventory").objectReferenceValue = inventory;
-        gmSo.FindProperty("_dialogueManager").objectReferenceValue = dialogueManager;
-        gmSo.FindProperty("_hud").objectReferenceValue = hud;
-        gmSo.FindProperty("_battleSystem").objectReferenceValue = battleSystem;
-        gmSo.FindProperty("_battleUI").objectReferenceValue = battleUI;
-        gmSo.FindProperty("_inventoryScreen").objectReferenceValue = inventoryScreen;
-        gmSo.FindProperty("_pauseScreen").objectReferenceValue = pauseScreen;
-        gmSo.FindProperty("_statusScreen").objectReferenceValue = statusScreen;
-
-        // Camera
-        GameObject camGo = CreateCamera(scene);
-        camGo.transform.position = new Vector3(0f, 10f, -10f);
-        GameplayCamera gameCam = camGo.AddComponent<GameplayCamera>();
-        gmSo.FindProperty("_gameplayCamera").objectReferenceValue = gameCam;
-        gmSo.ApplyModifiedPropertiesWithoutUndo();
-
-        GameObject playerGo = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, scene);
-        playerGo.transform.position = Vector3.zero;
-        PlayerController playerCtrl = playerGo.GetComponent<PlayerController>();
-
-        SerializedObject camSo = new SerializedObject(gameCam);
-        camSo.FindProperty("_target").objectReferenceValue = playerGo.transform;
-        camSo.ApplyModifiedPropertiesWithoutUndo();
-
-        SerializedObject playerSo = new SerializedObject(playerCtrl);
-        playerSo.FindProperty("_cameraTransform").objectReferenceValue = camGo.transform;
-        playerSo.ApplyModifiedPropertiesWithoutUndo();
-
-        // Partner Digimon
-        GameObject partnerGo = (GameObject)PrefabUtility.InstantiatePrefab(partnerDigimonPrefab, scene);
-        partnerGo.transform.position = new Vector3(-1.5f, 0f, -1f);
-        DigimonFollow digimonFollow = partnerGo.GetComponent<DigimonFollow>();
-
-        SerializedObject digimonSo = new SerializedObject(digimonFollow);
-        digimonSo.FindProperty("_target").objectReferenceValue = playerGo.transform;
-        digimonSo.ApplyModifiedPropertiesWithoutUndo();
-
-        if (!SaveScene(scene, GameplayScenePath)) return;
-
-        AppendSceneToBuildSettings(GameplayScenePath);
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"_Gameplay scene generated at {GameplayScenePath}");
+        EditorSceneManager.SaveScene(scene, path);
+        Debug.Log($"Gameplay scene created at {path}");
     }
 
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Zone1 Scene")]
-    public static void GenerateZone1()
+    static void SpawnUnit(GameObject prefab, Vector3 position, int playerIndex)
     {
-        GameObject npcPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(NPCPrefabPath);
-        if (npcPrefab == null)
+        var unit = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        unit.transform.position = position;
+
+        var so = new SerializedObject(unit.GetComponent<Entity>());
+        so.FindProperty("_ownerPlayerIndex").intValue = playerIndex;
+        so.FindProperty("_entityName").stringValue = "Placeholder";
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        var sr = unit.GetComponent<SpriteRenderer>();
+        if (sr != null)
         {
-            Debug.LogError($"NPC prefab not found at {NPCPrefabPath}. Run 'Tools/DigimonWorld/Prefabs/Generate NPC' first.");
-            return;
+            Color color = playerIndex == 0
+                ? new Color(0.2f, 0.6f, 1f)
+                : new Color(1f, 0.3f, 0.3f);
+            sr.color = color;
         }
-
-        PrefabGeneratorUtils.EnsureFolder(ZoneDir);
-
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-
-        // Red ground
-        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        ground.name = "Ground";
-        ground.transform.localScale = new Vector3(3f, 1f, 3f);
-        ground.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone1Ground.mat", new Color(0.7f, 0.2f, 0.2f));
-        SceneManager.MoveGameObjectToScene(ground, scene);
-
-        // Tall cylinders
-        for (int i = 0; i < 5; i++)
-        {
-            GameObject cyl = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            cyl.name = $"Pillar_{i}";
-            cyl.transform.position = new Vector3(-4f + i * 2f, 1.5f, 3f);
-            cyl.transform.localScale = new Vector3(0.5f, 3f, 0.5f);
-            cyl.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone1Pillar.mat", new Color(0.9f, 0.5f, 0.1f));
-            SceneManager.MoveGameObjectToScene(cyl, scene);
-        }
-
-        // Large sphere landmark
-        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.name = "Landmark";
-        sphere.transform.position = new Vector3(0f, 2f, 8f);
-        sphere.transform.localScale = new Vector3(4f, 4f, 4f);
-        sphere.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone1Landmark.mat", new Color(0.9f, 0.1f, 0.1f));
-        SceneManager.MoveGameObjectToScene(sphere, scene);
-
-        // Test Interactable
-        GameObject interactable = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        interactable.name = "TestInteractable";
-        interactable.transform.position = new Vector3(0f, 0.5f, 3f);
-        SceneManager.MoveGameObjectToScene(interactable, scene);
-
-        TestInteractable testInteractable = interactable.AddComponent<TestInteractable>();
-
-        GameObject promptGo = new GameObject("PromptText");
-        promptGo.transform.SetParent(interactable.transform, false);
-        promptGo.transform.localPosition = new Vector3(0f, 1.2f, 0f);
-
-        TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
-        tmp.text = "Press E";
-        tmp.fontSize = 4;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
-        tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
-
-        SerializedObject testSo = new SerializedObject(testInteractable);
-        testSo.FindProperty("_promptText").objectReferenceValue = tmp;
-        testSo.ApplyModifiedPropertiesWithoutUndo();
-
-        // NPC
-        GameObject npcGo = (GameObject)PrefabUtility.InstantiatePrefab(npcPrefab, scene);
-        npcGo.transform.position = new Vector3(5f, 0f, 3f);
-
-        // Training facilities
-        GameObject trainingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TrainingFacilityPrefabPath);
-        if (trainingPrefab != null)
-        {
-            CreateTrainingInstance(trainingPrefab, scene, "OffenseTraining", new Vector3(6f, 0f, -4f));
-            CreateTrainingInstance(trainingPrefab, scene, "DefenseTraining", new Vector3(8f, 0f, -4f));
-            CreateTrainingInstance(trainingPrefab, scene, "SpeedTraining", new Vector3(10f, 0f, -4f));
-        }
-        else
-        {
-            Debug.LogWarning($"TrainingFacility prefab not found. Run 'Generate TrainingFacility' first. Skipping training facilities.");
-        }
-
-        // Wild Digimon encounters
-        GameObject wildDigimonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(WildDigimonPrefabPath);
-        if (wildDigimonPrefab != null)
-        {
-            CreateWildDigimonInstance(wildDigimonPrefab, scene, "WildAgumon", new Vector3(-5f, 0f, 8f));
-            CreateWildDigimonInstance(wildDigimonPrefab, scene, "WildPalmon", new Vector3(8f, 0f, 6f));
-        }
-        else
-        {
-            Debug.LogWarning($"WildDigimon prefab not found. Run 'Generate WildDigimon' first.");
-        }
-
-        // Zone trigger to Zone2
-        CreateZoneTrigger(scene, "To Zone2", new Vector3(-10f, 1f, 0f), Zone2DataPath,
-            new Color(0.2f, 0.4f, 0.9f, 0.5f));
-
-        if (!SaveScene(scene, Zone1ScenePath)) return;
-        AppendSceneToBuildSettings(Zone1ScenePath);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"Zone1 scene generated at {Zone1ScenePath}");
     }
 
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate Zone2 Scene")]
-    public static void GenerateZone2()
+    public static void UpdateBuildSettings()
     {
-        PrefabGeneratorUtils.EnsureFolder(ZoneDir);
-
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-
-        // Blue ground
-        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        ground.name = "Ground";
-        ground.transform.localScale = new Vector3(3f, 1f, 3f);
-        ground.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Ground.mat", new Color(0.2f, 0.2f, 0.7f));
-        SceneManager.MoveGameObjectToScene(ground, scene);
-
-        // Scattered cubes
-        for (int i = 0; i < 6; i++)
+        var scenes = new List<EditorBuildSettingsScene>
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.name = $"Block_{i}";
-            float x = (i % 3 - 1) * 4f;
-            float z = (i / 3) * 5f + 2f;
-            cube.transform.position = new Vector3(x, 0.5f, z);
-            cube.transform.localScale = new Vector3(1.5f, 1f + i * 0.3f, 1.5f);
-            cube.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Block.mat", new Color(0.1f, 0.7f, 0.9f));
-            SceneManager.MoveGameObjectToScene(cube, scene);
-        }
-
-        // Capsule tower landmark
-        GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        capsule.name = "Landmark";
-        capsule.transform.position = new Vector3(0f, 3f, 10f);
-        capsule.transform.localScale = new Vector3(2f, 6f, 2f);
-        capsule.GetComponent<Renderer>().sharedMaterial = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/Zone2Landmark.mat", new Color(0.1f, 0.1f, 0.9f));
-        SceneManager.MoveGameObjectToScene(capsule, scene);
-
-        // Wild Digimon encounters
-        GameObject wildDigimonPrefab2 = AssetDatabase.LoadAssetAtPath<GameObject>(WildDigimonPrefabPath);
-        if (wildDigimonPrefab2 != null)
-        {
-            CreateWildDigimonInstance(wildDigimonPrefab2, scene, "WildGabumon", new Vector3(3f, 0f, 5f));
-        }
-        else
-        {
-            Debug.LogWarning($"WildDigimon prefab not found. Run 'Generate WildDigimon' first.");
-        }
-
-        // Zone trigger to Zone1
-        CreateZoneTrigger(scene, "To Zone1", new Vector3(-10f, 1f, 0f), Zone1DataPath,
-            new Color(0.9f, 0.2f, 0.2f, 0.5f));
-
-        if (!SaveScene(scene, Zone2ScenePath)) return;
-        AppendSceneToBuildSettings(Zone2ScenePath);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"Zone2 scene generated at {Zone2ScenePath}");
+            new("Assets/_Project/Scenes/Init.unity", true),
+            new("Assets/_Project/Scenes/Gameplay.unity", true)
+        };
+        EditorBuildSettings.scenes = scenes.ToArray();
+        Debug.Log("Build settings updated: Init (0), Gameplay (1)");
     }
 
-    [MenuItem("Tools/DigimonWorld/Scenes/Generate All Scenes")]
     public static void GenerateAll()
     {
-        GenerateBootstrap();
-        GenerateSplashscreen();
-        GenerateIntro();
-        GenerateMainMenu();
-        GenerateName();
+        GenerateInit();
         GenerateGameplay();
-        GenerateZone1();
-        GenerateZone2();
-    }
-
-    private static void GenerateSceneWithPrefab(string scenePath, string prefabPath, string displayName)
-    {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-        if (prefab == null)
-        {
-            Debug.LogError($"Prefab not found at {prefabPath}. Generate prefabs first.");
-            return;
-        }
-
-        PrefabGeneratorUtils.EnsureFolder(SceneDir);
-
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        CreateCamera(scene);
-        PrefabUtility.InstantiatePrefab(prefab, scene);
-
-        if (!SaveScene(scene, scenePath)) return;
-
-        AppendSceneToBuildSettings(scenePath);
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"{displayName} scene generated at {scenePath}");
-    }
-
-    private static void GenerateEmptyScene(string scenePath, string displayName)
-    {
-        PrefabGeneratorUtils.EnsureFolder(SceneDir);
-
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        CreateCamera(scene);
-
-        if (!SaveScene(scene, scenePath)) return;
-
-        AppendSceneToBuildSettings(scenePath);
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"{displayName} scene generated at {scenePath}");
-    }
-
-    private static GameObject CreateCamera(Scene scene)
-    {
-        GameObject camGo = new GameObject("Main Camera");
-        camGo.tag = "MainCamera";
-        Camera cam = camGo.AddComponent<Camera>();
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = Color.black;
-        camGo.AddComponent<UniversalAdditionalCameraData>();
-        SceneManager.MoveGameObjectToScene(camGo, scene);
-        return camGo;
-    }
-
-    private static bool SaveScene(Scene scene, string scenePath)
-    {
-        bool saved = EditorSceneManager.SaveScene(scene, scenePath);
-        if (!saved)
-        {
-            Debug.LogError($"Failed to save scene at {scenePath}");
-        }
-        return saved;
-    }
-
-    private static void AddSceneToBuildSettingsAtIndex(string scenePath, int index)
-    {
-        var scenes = EditorBuildSettings.scenes;
-        for (int i = 0; i < scenes.Length; i++)
-        {
-            if (scenes[i].path == scenePath)
-            {
-                if (!scenes[i].enabled)
-                {
-                    scenes[i].enabled = true;
-                    EditorBuildSettings.scenes = scenes;
-                }
-                return;
-            }
-        }
-
-        var newScenes = new EditorBuildSettingsScene[scenes.Length + 1];
-        if (index > 0)
-            System.Array.Copy(scenes, 0, newScenes, 0, index);
-        newScenes[index] = new EditorBuildSettingsScene(scenePath, true);
-        if (index < scenes.Length)
-            System.Array.Copy(scenes, index, newScenes, index + 1, scenes.Length - index);
-        EditorBuildSettings.scenes = newScenes;
-    }
-
-    private static void AppendSceneToBuildSettings(string scenePath)
-    {
-        var scenes = EditorBuildSettings.scenes;
-        foreach (var entry in scenes)
-        {
-            if (entry.path == scenePath)
-            {
-                if (!entry.enabled)
-                {
-                    entry.enabled = true;
-                    EditorBuildSettings.scenes = scenes;
-                }
-                return;
-            }
-        }
-
-        var newScenes = new EditorBuildSettingsScene[scenes.Length + 1];
-        System.Array.Copy(scenes, 0, newScenes, 0, scenes.Length);
-        newScenes[scenes.Length] = new EditorBuildSettingsScene(scenePath, true);
-        EditorBuildSettings.scenes = newScenes;
-    }
-
-    private static void CreateZoneTrigger(Scene scene, string name, Vector3 position,
-        string zoneDataPath, Color color)
-    {
-        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        go.name = name;
-        go.transform.position = position;
-        go.transform.localScale = new Vector3(2f, 3f, 2f);
-        SceneManager.MoveGameObjectToScene(go, scene);
-
-        BoxCollider col = go.GetComponent<BoxCollider>();
-        col.isTrigger = true;
-
-        Material mat = PrefabGeneratorUtils.CreateOrLoadMaterial(
-            $"Assets/_Project/Props/{name.Replace(" ", "")}.mat", color);
-        go.GetComponent<Renderer>().sharedMaterial = mat;
-
-        ZoneTrigger trigger = go.AddComponent<ZoneTrigger>();
-
-        ZoneData zoneData = AssetDatabase.LoadAssetAtPath<ZoneData>(zoneDataPath);
-        if (zoneData != null)
-        {
-            SerializedObject so = new SerializedObject(trigger);
-            so.FindProperty("_destinationZone").objectReferenceValue = zoneData;
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-        else
-        {
-            Debug.LogWarning($"ZoneData not found at {zoneDataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
-        }
-    }
-
-    private static void CreateWildDigimonInstance(GameObject prefab, Scene scene,
-        string encounterName, Vector3 position)
-    {
-        GameObject go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
-        go.name = encounterName;
-        go.transform.position = position;
-
-        string dataPath = $"{EncounterDataDir}/{encounterName}.asset";
-        EncounterData data = AssetDatabase.LoadAssetAtPath<EncounterData>(dataPath);
-        if (data != null)
-        {
-            WildDigimon wild = go.GetComponent<WildDigimon>();
-            SerializedObject so = new SerializedObject(wild);
-            so.FindProperty("_encounter").objectReferenceValue = data;
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-        else
-        {
-            Debug.LogWarning($"EncounterData not found at {dataPath}. Run 'Generate Sample Encounters' first.");
-        }
-    }
-
-    private static void CreateTrainingInstance(GameObject prefab, Scene scene,
-        string trainingDataName, Vector3 position)
-    {
-        GameObject go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
-        go.name = trainingDataName;
-        go.transform.position = position;
-
-        string dataPath = $"{TrainingDataDir}/{trainingDataName}.asset";
-        TrainingData data = AssetDatabase.LoadAssetAtPath<TrainingData>(dataPath);
-        if (data != null)
-        {
-            TrainingFacility facility = go.GetComponent<TrainingFacility>();
-            SerializedObject so = new SerializedObject(facility);
-            so.FindProperty("_training").objectReferenceValue = data;
-            so.ApplyModifiedPropertiesWithoutUndo();
-        }
-        else
-        {
-            Debug.LogWarning($"TrainingData not found at {dataPath}. Run 'Generate Sample Training' first.");
-        }
+        UpdateBuildSettings();
     }
 }

@@ -9,6 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2508440362270240017}
+  - component: {fileID: 5194262838722702499}
+  - component: {fileID: 4115141950772343733}
+  - component: {fileID: 5022583159828480484}
+  - component: {fileID: 1066326887532956304}
+  - component: {fileID: 5392965492696899989}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -31,3 +36,83 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5194262838722702499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 221b911010f657045bc015bd0fd97490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
+  _inputActions: {fileID: -944628639613478452, guid: d8ccf722d1d75924b86e4ce6910b56c5, type: 3}
+--- !u!114 &4115141950772343733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a37941e39171f048a88468e2dc4c067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
+  _players:
+  - PlayerIndex: 0
+    Faction: 0
+    Color: {r: 0.2, g: 0.6, b: 1, a: 1}
+    OwnedEntities: []
+  - PlayerIndex: 1
+    Faction: 1
+    Color: {r: 1, g: 0.3, b: 0.3, a: 1}
+    OwnedEntities: []
+  _localPlayerIndex: 0
+--- !u!114 &5022583159828480484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d568cc53962f6a04c95a40903e6f87df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapManager
+  _mapData: {fileID: 11400000, guid: 5cabec9ca7547884fada309fb3689730, type: 2}
+  _clearTile: {fileID: 11400000, guid: dad3ad8ae2910cd449ff3e1e5b649672, type: 2}
+  _roadTile: {fileID: 11400000, guid: 8c7bfd8f8e379f149be437fba5642a05, type: 2}
+  _roughTile: {fileID: 11400000, guid: fcd90cdc13def0842bd8766d6d23a128, type: 2}
+  _sandTile: {fileID: 11400000, guid: 7e36cff1826446b46993d88eabe6a1df, type: 2}
+  _waterTile: {fileID: 11400000, guid: 0b812710aafdfa94b961d2df4fd64b59, type: 2}
+  _oreTile: {fileID: 11400000, guid: 817a6cf5e81648f4fabcf578b6b9de0b, type: 2}
+  _gemsTile: {fileID: 11400000, guid: f8b4090446d8270488740341f264cab2, type: 2}
+--- !u!114 &1066326887532956304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a840f5a7561463439ae96c65708b3e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SelectionManager
+--- !u!114 &5392965492696899989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6fafb92924959841bb7b14b9145c14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
+  _firstScene: 1
