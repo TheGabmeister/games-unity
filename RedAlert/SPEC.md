@@ -1380,3 +1380,65 @@ Difficulty only changes **unit/structure stat multipliers** (HP, damage). It doe
 - Up to **8 players** (6 originally, 8 with patches/expansions)
 - Connection types: LAN (IPX/SPX), Serial/Modem, Internet (Westwood Online; today CnCNet)
 - Victory condition: annihilation only (no alternate win conditions in the original)
+
+---
+
+## References
+
+### Primary Data Sources
+
+- [OpenRA raclassic Rules.ini](https://github.com/OpenRA/raclassic/blob/master/ref/Rules.ini) — original game configuration file with all unit/building/weapon stats
+- [PortableRA rules_.ini](https://github.com/mvdhout1992/PortableRA/blob/master/rules_.ini) — alternate rules.ini reference
+- [Red Alert Remastered Mod Toolkit — default_rules.ini](https://github.com/DavidWalshe93/Red-Alert-Remastered-Mod-Toolkit/blob/master/default_rules.ini) — remastered edition data
+
+### Unit & Building Stats
+
+- [Unit Statistics — Red Alert](https://unitstatistics.com/red-alert/) — community stat database
+- [CNCNZ — Allied Units](https://cncnz.com/games/red-alert/allied-units/)
+- [CNCNZ — Soviet Units](https://cncnz.com/games/red-alert/soviet-units/)
+- [CNCNZ — Allied Structures](https://cncnz.com/games/red-alert/allied-structures/)
+- [CNCNZ — Soviet Structures](https://cncnz.com/games/red-alert/soviet-structures/)
+- [CnCNet Forums — Tank Comparison Table](https://forums.cncnet.org/topic/2384-tank-comparison-table/)
+- [Steam Community — Red Alert Tank Breakdown](https://steamcommunity.com/sharedfiles/filedetails/?id=2125164149)
+
+### Wiki & General Reference
+
+- [C&C Wiki — Red Alert 1 Allied Arsenal](https://cnc.fandom.com/wiki/Category:Red_Alert_1_Allied_arsenal)
+- [C&C Wiki — Red Alert 1 Soviet Arsenal](https://cnc.fandom.com/wiki/Category:Red_Alert_1_Soviet_arsenal)
+- [C&C Wiki — Red Alert 1 Allied Missions](https://cnc.fandom.com/wiki/Category:Red_Alert_1_Allied_missions)
+- [C&C Wiki — Red Alert 1 Soviet Missions](https://cnc.fandom.com/wiki/Category:Red_Alert_1_Soviet_missions)
+- [C&C Wiki — Superweapons (Red Alert)](https://cnc.fandom.com/wiki/Superweapon_(Red_Alert))
+- [C&C Wiki — Chronosphere (Red Alert 1)](https://cnc.fandom.com/wiki/Chronosphere_(Red_Alert_1))
+- [C&C Wiki — Iron Curtain (Red Alert 1)](https://cnc.fandom.com/wiki/Iron_Curtain_(Red_Alert_1))
+- [C&C Wiki — Nuclear Missile Silo (Red Alert 1)](https://cnc.fandom.com/wiki/Nuclear_missile_silo_(Red_Alert_1))
+- [C&C Wiki — Crate](https://cnc.fandom.com/wiki/Crate)
+- [C&C Wiki — Fog of War](https://cnc.fandom.com/wiki/Fog_of_war)
+- [C&C Wiki — Build Time](https://cnc.fandom.com/wiki/Build_time)
+- [C&C Wiki — Construction Yard (Red Alert 1)](https://cnc.fandom.com/wiki/Construction_Yard_(Red_Alert_1))
+- [C&C Wiki — Command & Conquer: Red Alert](https://cnc.fandom.com/wiki/Command_%26_Conquer:_Red_Alert)
+- [Wikipedia — Command & Conquer: Red Alert](https://en.wikipedia.org/wiki/Command_%26_Conquer:_Red_Alert)
+- [StrategyWiki — Command & Conquer: Red Alert](https://strategywiki.org/wiki/Command_&_Conquer:_Red_Alert)
+- [ModEnc — Armor Types](https://modenc.renegadeprojects.com/Armor)
+
+### Gameplay & Strategy Guides
+
+- [GameFAQs — Red Alert Strategy Guide](https://gamefaqs.gamespot.com/pc/196962-command-and-conquer-red-alert/faqs/1699)
+- [Cheatbook — Red Alert rules.ini Walkthrough](https://www.cheatbook.de/wfiles/ccredrin.htm)
+- [Gamer Walkthroughs — Red Alert](https://gamerwalkthroughs.com/command-and-conquer-red-alert/)
+- [KeenGamer — Allies Campaign Walkthrough](https://www.keengamer.com/articles/guides/command-and-conquer-remastered-allies-campaign-walkthrough-guide/)
+- [KeenGamer — Soviet Campaign Walkthrough](https://www.keengamer.com/articles/guides/command-and-conquer-remastered-soviet-campaign-walkthrough-guide/)
+
+### AI & Mechanics
+
+- [Andrew Armstrong — Red Alert Gameplay and Singleplayer AI](https://aarmstrong.org/journal/2008/09/07/red-alert-gameplay-and-singleplayer-ai)
+- [Steam Discussions — Skirmish AI Behavior](https://steamcommunity.com/app/1213210/discussions/0/2965021152080984393/)
+- [Steam Discussions — AI Difficulty Only Changes Stats](https://steamcommunity.com/app/1213210/discussions/0/2641874742490185100/)
+- [CnCNet Forums — Country Bonuses](https://forums.cncnet.org/topic/3845-countries-bonuses/)
+
+### Controls & Multiplayer
+
+- [CnCNet Hotkeys Reference](https://downloads.cncnet.org/Games/RedAlert/Hotkeys.txt)
+- [Steam Community — Red Alert Hotkeys Discussion](https://steamcommunity.com/app/1213210/discussions/0/2290590708533538626/)
+- [CnCNet Forums — Map Size](https://forums.cncnet.org/topic/4553-map-size/)
+- [C&C Wiki — Skirmish](https://cnc.fandom.com/wiki/Skirmish)
+- [CNCNZ — Red Alert Terrain Editor Tips](https://cncnz.com/features/technical-support-help-guides/red-alert-terrain-editor-basic-tricks-and-tips/)
