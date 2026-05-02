@@ -14,6 +14,11 @@ public class HealthBar : MonoBehaviour
 
     public System.Action OnDeath;
 
+    void OnEnable()
+    {
+        UpdateBar();
+    }
+
     public void Initialize(float maxHP)
     {
         _maxHP = maxHP;
@@ -34,7 +39,11 @@ public class HealthBar : MonoBehaviour
     {
         float ratio = _currentHP / _maxHP;
         if (_barFill != null)
+        {
             _barFill.localScale = new Vector3(ratio, 1f, 1f);
+            const float HalfWidth = 0.375f;
+            _barFill.localPosition = new Vector3(HalfWidth * (ratio - 1f), 0f, 0f);
+        }
 
         if (_fillRenderer != null)
         {

@@ -19,7 +19,7 @@ public static class GenerateUnitPrefab
         ImportAsSprite($"{uiDir}/HealthBarBG.png", 64, new Vector2(0.5f, 0.5f));
 
         CreateSolidPNG($"{uiDir}/HealthBarFill.png", 48, 6, Color.white);
-        ImportAsSprite($"{uiDir}/HealthBarFill.png", 64, new Vector2(0f, 0.5f));
+        ImportAsSprite($"{uiDir}/HealthBarFill.png", 64, new Vector2(0.5f, 0.5f));
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -67,7 +67,7 @@ public static class GenerateUnitPrefab
 
             var fillGO = new GameObject("Fill");
             fillGO.transform.SetParent(healthBarGO.transform, false);
-            fillGO.transform.localPosition = new Vector3(-0.375f, 0f, 0f);
+            fillGO.transform.localPosition = Vector3.zero;
             var fillSR = fillGO.AddComponent<SpriteRenderer>();
             fillSR.sprite = barFillSprite;
             fillSR.color = Color.green;

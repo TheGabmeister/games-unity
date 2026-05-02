@@ -70,7 +70,7 @@ public static class GenerateUnitPrefabs
 
             var fillGO = new GameObject("Fill");
             fillGO.transform.SetParent(healthBarGO.transform, false);
-            fillGO.transform.localPosition = new Vector3(-0.375f, 0f, 0f);
+            fillGO.transform.localPosition = Vector3.zero;
             var fillSR = fillGO.AddComponent<SpriteRenderer>();
             fillSR.sprite = barFillSprite;
             fillSR.color = Color.green;
