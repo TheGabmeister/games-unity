@@ -16,7 +16,7 @@ public class Entity : MonoBehaviour
 
     void Awake()
     {
-        _healthBar = GetComponentInChildren<HealthBar>();
+        _healthBar = GetComponentInChildren<HealthBar>(true);
     }
 
     void Start()

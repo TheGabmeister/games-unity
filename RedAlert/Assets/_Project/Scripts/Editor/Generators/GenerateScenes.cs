@@ -22,6 +22,7 @@ public static class GenerateScenes
         camGO.transform.position = new Vector3(20, 20, -10);
         camGO.tag = "MainCamera";
         camGO.AddComponent<RTSCamera>();
+        camGO.AddComponent<AudioListener>();
 
         var gridGO = new GameObject("Grid");
         gridGO.AddComponent<Grid>();
