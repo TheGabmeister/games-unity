@@ -8,10 +8,8 @@ public static class GenerateUnitPrefab
     {
         string unitDir = "Assets/_Project/Sprites/Units";
         string uiDir = "Assets/_Project/Sprites/UI";
-        PrefabGeneratorUtils.EnsureFolder(unitDir);
         PrefabGeneratorUtils.EnsureFolder(uiDir);
 
-        CreateSolidPNG($"{unitDir}/Placeholder.png", 64, 64, Color.white);
         ImportAsSprite($"{unitDir}/Placeholder.png", 64, new Vector2(0.5f, 0.5f));
 
         CreateCirclePNG($"{uiDir}/SelectionCircle.png", 64, new Color(0.2f, 1f, 0.2f), 2);
@@ -25,7 +23,7 @@ public static class GenerateUnitPrefab
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("Generated unit sprites");
+        Debug.Log("Generated unit + UI sprites");
     }
 
     public static void GeneratePrefab()

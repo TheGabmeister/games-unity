@@ -22,7 +22,9 @@
       "WebFetch(domain:breezewiki.com)",
       "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\\\\Editor\\\\Generators\\\\\" -File)",
       "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\" -Recurse -File)",
-      "Bash(Select-Object -ExpandProperty FullName)"
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(\"/c/Program Files/Inkscape/bin/inkscape.exe\" --version)",
+      "Bash(bash Tools/export_sprites.sh)"
     ]
   }
 }
