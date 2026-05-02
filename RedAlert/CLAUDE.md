@@ -30,6 +30,10 @@ Two scenes are configured in build settings:
 ### Project Layout
 All game content goes under `Assets/_Project/`. Editor-only scripts are in `Assets/_Project/Scripts/Editor/`. URP and rendering settings are in `Assets/_Project/Settings/`.
 
+## Scope
+
+This is the RedAlert project. Do not read, reference, or borrow code from other projects in this repo or parent directories. Only use files within `c:\dev\games-unity\RedAlert\` and the reference source at `D:\CnC_Red_Alert\CODE\`.
+
 ## Conventions
 
 - Scripts use the global namespace (no C# namespaces).

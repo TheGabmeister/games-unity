@@ -20,7 +20,9 @@
       "WebFetch(domain:cnc-central.fandom.com)",
       "WebFetch(domain:www.moddb.com)",
       "WebFetch(domain:breezewiki.com)",
-      "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\\\\Editor\\\\Generators\\\\\" -File)"
+      "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\\\\Editor\\\\Generators\\\\\" -File)",
+      "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\" -Recurse -File)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }
