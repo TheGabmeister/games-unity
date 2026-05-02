@@ -37,7 +37,7 @@ High-level implementation plan for the Unity recreation of C&C: Red Alert. **Sin
 
 - **One source of truth per stat.** Every unit/building stat lives in a ScriptableObject. No magic numbers in MonoBehaviours.
 - **Composition over inheritance.** Units are GameObjects with mix-and-match components (Health, Weapon, Mover, Harvester, etc.), not a deep class hierarchy.
-- **Systems prefab.** Global managers (InputManager, PlayerManager, MapManager, SelectionManager, CommandManager) live on the `Assets/_Project/Prefabs/Systems` prefab, placed directly in the Gameplay scene. No Bootstrapper.
+- **Systems prefab.** Global managers (InputManager, PlayerManager, MapManager, SelectionManager, CommandManager, SfxManager) live on the `Assets/_Project/Prefabs/Systems` prefab, placed directly in the Gameplay scene. No Bootstrapper.
 - **Grid is king.** The map is a cell grid. Pathfinding, fog of war, building placement, ore fields, and terrain speed modifiers all operate on this grid.
 - **Singleplayer only.** No netcode, no lobby, no host/client split. The human is always Player 0; AI opponents are Player 1–5.
 - **Source code as reference.** The original C&C: Red Alert source is at `D:\CnC_Red_Alert\CODE\`. Grep it for exact values rather than hardcoding from memory.
@@ -106,85 +106,84 @@ Assets/_Project/Data/
 ### UnitData SO
 
 ```csharp
-[CreateAssetMenu(menuName = "RA/Unit")]
+[CreateAssetMenu(menuName = "Red Alert/Unit Data")]
 public class UnitData : ScriptableObject
 {
     public string DisplayName;
-    public Faction Faction;        // Allied, Soviet, Both
-    public UnitCategory Category;  // Infantry, Vehicle, Naval, Aircraft
-    public int MaxHealth;
-    public ArmorType Armor;        // None, Wood, Light, Heavy, Concrete
-    public float Speed;
-    public int Cost;
-    public int SightRange;
-    public int ROT;                // body/turret rotation speed (higher = faster)
-    public bool HasTurret;
-    public WeaponData PrimaryWeapon;
-    public WeaponData SecondaryWeapon;
+    public Sprite Sprite;
+    public UnitCategory Category;  // Infantry, Vehicle, Building, Naval, Aircraft
+    public Faction Faction;        // Allied, Soviet
+
     public LocomotionType Locomotion; // Foot, Tracked, Wheeled, Float, Fly
-    public BuildingData[] Prerequisites;
-    public int PassengerCapacity;  // 0 for non-transports
-    public int Ammo;               // aircraft ammo, 0 = unlimited
-    public bool CanCrush;          // can crush infantry (not all tracked can)
+    public float BaseSpeed;
+
+    public int MaxHP;
+    public ArmorType Armor;        // None, Wood, Light, Heavy, Concrete
+    public WeaponData PrimaryWeapon;
+    public float SightRange;
+
+    public bool IsCrusher;         // can crush infantry (not all tracked can)
     public bool NoMovingFire;      // V2, Artillery — must stop to fire
-    public bool SelfHeals;
-    public float SelfHealThreshold; // e.g., 0.5 for Mammoth (heals to 50%)
-    public bool Crewed;            // spawns infantry on death
+    public bool IsCrewedVehicle;   // spawns BailOutUnit on death
     public bool ExplodesOnDeath;
-    public bool HasSensors;        // detects subs (Destroyer, Gunboat, Cruiser)
-    public bool Cloakable;         // submarine, camo pillbox
-    public Sprite Icon;
-    public GameObject Prefab;
+    public WarheadData DeathWarhead;
+
+    public AudioClip DeathSound;
+    public UnitData BailOutUnit;   // unit to spawn on crewed vehicle death
+    public GameObject Prefab;      // self-reference for runtime instantiation (bail-out)
+
+    // Future phases will add: Cost, SecondaryWeapon, ROT, HasTurret, SelfHeals,
+    // SelfHealThreshold, Prerequisites, PassengerCapacity, Ammo, HasSensors,
+    // Cloakable, Icon
 }
 ```
 
 ### WeaponData SO
 
 ```csharp
-[CreateAssetMenu(menuName = "RA/Weapon")]
+[CreateAssetMenu(menuName = "Red Alert/Weapon Data")]
 public class WeaponData : ScriptableObject
 {
+    public string DisplayName;
     public int Damage;
-    public int RateOfFire;        // lower = faster
     public float Range;           // in cells
-    public WarheadData Warhead;
-    public int BurstCount;        // shots per attack cycle
+    public float ROF;             // seconds between attack cycles
+    public int Burst;             // shots per attack cycle
     public ProjectileData Projectile;
+    public WarheadData Warhead;
+    public AudioClip FireSound;
 }
 ```
 
 ### ProjectileData SO
 
 ```csharp
-[CreateAssetMenu(menuName = "RA/Projectile")]
+[CreateAssetMenu(menuName = "Red Alert/Projectile Data")]
 public class ProjectileData : ScriptableObject
 {
-    public ProjectileType Type;   // Invisible, Cannon, HeatSeeker, Ballistic, Torpedo, etc.
-    public float Speed;           // 0 = hitscan
-    public int HomingROT;         // 0 = no homing, 5 = slow tracking, 20 = fast tracking
-    public bool Inaccurate;       // applies scatter on launch
-    public float MaxScatter;      // max scatter in cells (2.0 for homing, 1.0 for ballistic)
+    public string DisplayName;
+    public ProjectileType Type;   // Hitscan, Direct, Homing, Ballistic
+    public float Speed;
+    public float Scatter;         // max scatter in cells
     public bool AntiAir;
     public bool AntiGround;
-    public bool AntiSub;          // ASW (depth charges, torpedoes)
-    public bool Arcing;           // ballistic arc (gravity = 3)
+    public Sprite Sprite;
+    // Future phases will add: AntiSub
 }
 ```
 
 ### WarheadData SO
 
 ```csharp
-[CreateAssetMenu(menuName = "RA/Warhead")]
+[CreateAssetMenu(menuName = "Red Alert/Warhead Data")]
 public class WarheadData : ScriptableObject
 {
-    [Range(0f, 1f)] public float VsNone;     // infantry
-    [Range(0f, 1f)] public float VsWood;     // buildings
-    [Range(0f, 1f)] public float VsLight;
-    [Range(0f, 1f)] public float VsHeavy;
-    [Range(0f, 1f)] public float VsConcrete;
-    public int Spread;         // splash falloff (0=none, 3=small, 6=wide, 8=widest)
-    public bool DamagesWalls;  // only HE, AP, Nuke can damage walls
-    public bool DestroysOre;   // nuke warhead destroys ore fields
+    public string DisplayName;
+    public float ModNone, ModWood, ModLight, ModHeavy, ModConcrete; // armor modifiers
+    public int SpreadFactor;   // splash falloff (0=none, 3=small, 6=wide, 8=widest)
+    public bool WallDestroyer;
+    public AudioClip ImpactSound;
+    // Future phases will add: DestroysOre
 }
 ```
 
@@ -227,8 +226,8 @@ The map is a 2D cell grid backed by Unity's **Tilemap**. One cell = one game til
 Maps are **hand-painted** in Unity's Tile Palette editor. An editor window (`Tools/RedAlert/Generator Window`) provides buttons for generating prefabs, SOs, and scene scaffolding — following the same pattern as `Assets/_Project/Scripts/Editor/Generators/` from previous projects:
 
 - `PrefabGeneratorUtils.cs` — shared helpers: `SavePrefab()`, `EnsureFolder()`, `CreateCanvasRoot()`, `CreatePanel()`.
-- `GeneratorWindow.cs` — single `EditorWindow` with categorized buttons (Data, Prefabs, Scenes). Each button calls a static `Generate()` method. Has a "Generate All" that runs them in dependency order.
-- Generator classes (e.g., `GenerateUnitPrefab.cs`) — each follows the pattern: create temp GO → configure components → wire references via `SerializedObject` → `PrefabUtility.SaveAsPrefabAsset()` → `DestroyImmediate()` in `finally` block.
+- `GeneratorWindow.cs` — single `EditorWindow` with categorized buttons (Terrain, Sprites, Data, Prefabs, Scenes). Each button calls a static `Generate()` method. Has a "Generate All" that runs them in dependency order.
+- Generator classes (e.g., `GenerateUnitPrefabs.cs`, `GenerateCombatData.cs`) — each follows the pattern: create temp GO → configure components → wire references via `SerializedObject` → `PrefabUtility.SaveAsPrefabAsset()` → `DestroyImmediate()` in `finally` block.
 - Scene generators use `EditorSceneManager.NewScene()` → instantiate prefabs → wire cross-references → save.
 
 ### Layers
@@ -270,21 +269,21 @@ Replace the default InputSystem_Actions with an **RTS-specific Input Action Asse
 
 | Action | Binding | Notes |
 |--------|---------|-------|
-| Select | Left Click | Context: select unit, place building |
-| Command | Right Click | Context: move, attack, harvest, enter building |
-| DragSelect | Left Click + Drag | Box selection |
-| ForceAttack | Ctrl + Left Click | Force fire on ground/friendly |
-| ForceMove | Alt + Left Click | Move without engaging |
+| Select | Left Click | Click: select unit (friendly = full select, enemy = inspect health only). Drag: box select (friendly only). |
+| Command | Right Click | Context-sensitive: right-click enemy = attack, right-click ground = move |
+| ForceAttack | Ctrl + Right Click | Force fire on ground/friendly/trees |
+| ForceMove | Alt + Right Click | Move without engaging |
+| AttackMove | Q + Right Click | Move to destination, engage enemies en route |
 | Stop | S | Stop all selected units |
-| Guard | G | Area guard |
-| Scatter | X | Units spread out |
+| Guard | G | Hold position, fire at enemies in range |
+| Scatter | X | Units spread to random adjacent cells |
 | ControlGroup Assign | Ctrl + 1–9 | Assign control group |
 | ControlGroup Select | 1–9 | Recall control group |
 | ControlGroup Jump | Alt + 1–9 | Jump camera to group |
-| SelectAll | E | Select all visible units |
+| SelectAll | E | Select all visible friendly units |
 | CameraPan | WASD / Arrow Keys | Camera movement |
-| Sell | (sidebar button) | Sell mode toggle |
-| Repair | (sidebar button) | Repair mode toggle |
+| Sell | (sidebar button) | Sell mode toggle (future) |
+| Repair | (sidebar button) | Repair mode toggle (future) |
 
 ---
 
@@ -294,46 +293,31 @@ Each unit is a prefab: a root GameObject with a `SpriteRenderer` and a collectio
 
 ### Component Breakdown
 
-| Component | Responsibility |
-|---|---|
-| `Entity` | Identity: owner (player index), UnitData/BuildingData ref, current HP. Shared by units and buildings. |
-| `Selectable` | Handles selection highlight, click detection, health bar display. |
-| `Mover` | Pathfinding movement. Reads `LocomotionType` and speed from UnitData. Applies terrain speed modifiers. |
-| `Attacker` | Fires weapons. Handles ROF cooldown, range checking, target acquisition, burst fire. |
-| `Harvester` | Ore truck behavior: find ore → harvest → return to refinery → deposit → repeat. |
-| `Transport` | Passenger loading/unloading. Tracks list of carried Entities. |
-| `Aircraft` | Flight behavior: takeoff, fly to target, return to Helipad/Airfield for rearming. Ammo tracking. |
-| `Submarine` | Cloak/surfacing logic. Only visible to enemies with Sensors. |
-| `Engineer` | Capture/repair building on enter. |
-| `Spy` | Disguise logic. Infiltration effects per building type. |
-| `SelfHeal` | Regenerate HP up to a threshold over time (Mammoth Tank, Ore Truck). |
+| Component | Responsibility | Status |
+|---|---|---|
+| `Entity` | Identity: owner (player index), UnitData ref, cell position. Delegates damage to Health. Handles death (bail-out, explode-on-death). Shared by units and buildings. | ✅ |
+| `Health` | HP state (MaxHP, CurrentHP, IsDead). TakeDamage, OnHealthChanged event, OnDeath event. Lives on root GO alongside Entity. | ✅ |
+| `HealthBar` | Purely visual — subscribes to Health.OnHealthChanged. Renders fill bar with color (green/yellow/red). Child GO. | ✅ |
+| `Selectable` | Selection highlight (circle sprite), health bar visibility toggle. | ✅ |
+| `Mover` | Pathfinding movement. Reads `LocomotionType` and speed from UnitData. Applies terrain speed modifiers. Handles crushing. | ✅ |
+| `Attacker` | Fires weapons. Handles ROF cooldown, range checking, target acquisition, burst fire, guard, force-fire, attack-move. | ✅ |
+| `Harvester` | Ore truck behavior: find ore → harvest → return to refinery → deposit → repeat. | Planned (Phase 4) |
+| `Transport` | Passenger loading/unloading. Tracks list of carried Entities. | Planned (Phase 7) |
+| `Aircraft` | Flight behavior: takeoff, fly to target, return to Helipad/Airfield for rearming. Ammo tracking. | Planned (Phase 7) |
+| `Submarine` | Cloak/surfacing logic. Only visible to enemies with Sensors. | Planned (Phase 7) |
+| `Engineer` | Capture/repair building on enter. | Planned (Phase 7) |
+| `Spy` | Disguise logic. Infiltration effects per building type. | Planned (Phase 7) |
+| `SelfHeal` | Regenerate HP up to a threshold over time (Mammoth Tank, Ore Truck). | Planned (Phase 7) |
 
-### Unit State Machine
+### Unit Behavior
 
-Each unit has a simple FSM for its current order:
+No explicit state machine enum. Each component manages its own state internally:
 
-```
-Idle → MoveTo → AttackTarget → ReturnToBase → Guard → ...
-```
+- **Mover**: tracks a path and walks it. `IsMoving` property. `MoveTo(cell)` / `Stop()`.
+- **Attacker**: tracks target, cooldown, burst count, guard position, force-fire cell, attack-move destination. Auto-targets nearest enemy in weapon range. `AttackTarget(entity)` / `ForceFireAt(cell)` / `SetGuard()` / `AttackMoveTo(cell)` / `ClearOrders()`.
+- **CommandManager** orchestrates: right-click on enemy → `Attacker.AttackTarget`, right-click on ground → `Mover.MoveTo` + `Attacker.ClearOrders`.
 
-States are an enum, not separate MonoBehaviours. The `Mover` and `Attacker` components check the current state each frame.
-
-```csharp
-public enum UnitState
-{
-    Idle,
-    Moving,
-    Attacking,
-    Harvesting,
-    Returning,     // harvester returning to refinery
-    Depositing,    // harvester docked at refinery
-    Guarding,
-    Entering,      // entering a transport or building
-    Rearming,      // aircraft landed on pad
-    Deploying,     // MCV deploying into Construction Yard
-    Dead
-}
-```
+Future components (Harvester, Transport, Aircraft) will manage their own internal state similarly.
 
 ### Selection System
 
@@ -388,15 +372,18 @@ This project does **not** use Unity's Physics2D system. No Rigidbody2D, no Colli
 
 ### Damage Formula
 
+Implemented in `DamageSystem` (static class):
+
 ```csharp
-public static int CalculateDamage(WeaponData weapon, ArmorType targetArmor)
-{
-    float modifier = weapon.Warhead.GetModifier(targetArmor);
-    return Mathf.RoundToInt(weapon.Damage * modifier);
-}
+// Direct damage
+effective = RoundToInt(baseDamage * warhead.GetModifier(target.UnitData.Armor));
+
+// Splash — scans 3×3 grid around impact, 1.5 cell radius
+// falloff = max(0, 1 - distance / (spreadFactor * 0.5))
+// effective = RoundToInt(baseDamage * armorModifier * falloff)
 ```
 
-Where `GetModifier` reads the appropriate field (`VsNone`, `VsWood`, `VsLight`, `VsHeavy`, `VsConcrete`) from the WarheadData SO.
+`ApplyDamageAtPoint` dispatches: if `SpreadFactor > 0` → splash (hits everything in radius including friendlies, excludes shooter). If `SpreadFactor == 0` → direct damage on target only (Organic warhead).
 
 ### Target Acquisition
 
@@ -773,7 +760,7 @@ Campaign missions use trigger zones and timers for events (reinforcement arrival
 
 ### Sound Effects
 
-Generated with rfxgen per the asset pipeline in CLAUDE.md. Key categories:
+Combat sounds generated with Python script (`Tools/generate_combat_sounds.py`) using synthesized waveforms (noise bursts, frequency sweeps, envelopes). rfxgen available for interactive sound design via its GUI. Key categories:
 - Unit acknowledgements (select, move, attack)
 - Weapon fire sounds (per weapon type)
 - Explosions (small, medium, large)
@@ -822,7 +809,7 @@ Sprites are created **incrementally** as each phase needs them, not all at once:
 | Phase | Sprites Needed |
 |-------|---------------|
 | 1–2 — Foundation + Movement | Terrain tiles (7 types), Rifle Infantry, Light Tank, Ranger, selection circle, health bar ✅ |
-| 3 — Combat | Additional units (e.g., Heavy Tank, Rocket Soldier) + projectiles |
+| 3 — Combat | Heavy Tank, Rocket Soldier, Artillery + projectile sprites (bullet, shell, rocket, fireball) ✅ |
 | 4 — Economy | Ore Truck, Ore Refinery, Ore Silo, ore/gem density overlays |
 | 5 — Buildings | All buildings (intact + damaged overlay) + sidebar icons (48×48) |
 | 7 — Unit Roster | All remaining units (every infantry, vehicle, naval, aircraft — full 8 rotations + animations) |
@@ -833,57 +820,15 @@ Sprites are created **incrementally** as each phase needs them, not all at once:
 
 ### Phase 1 — Foundation ✅
 
-Editor tooling, core infrastructure, and a playable test map.
-
-- GeneratorWindow + PrefabGeneratorUtils (editor tooling framework).
-- RTS Input Action Asset (keyboard + mouse only): Select, Command, ForceAttack, ForceMove, Stop, Guard, Scatter, control groups, camera pan.
-- PlayerState + PlayerManager (player index, faction, owned entities).
-- MapManager with cell grid (MapData SO), terrain data, Tilemap rendering.
-- **Sprites**: terrain tiles (SVG → PNG via Inkscape) — grass, road, rough, sand, water, ore, gems.
-- Test map (40×40 MapData SO) with mixed terrain, generated via editor script.
-- RTS camera (WASD/arrow pan, edge scroll, fixed zoom, clamp to map). No zoom — matches original.
-- Entity + Selectable + HealthBar components.
-- SelectionManager (click, box select, double-click same-type, E for all, Ctrl+1-9 / 1-9 / Alt+1-9 control groups, drag rectangle visual).
-
-**Done**: Units on the test map, selectable, camera pans around.
+Editor tooling, terrain, camera, selection. Units on the test map, selectable, camera pans around.
 
 ### Phase 2 — Movement & Pathfinding ✅
 
-- A* pathfinder on the cell grid (static class, single-threaded, 8-directional, octile heuristic).
-- Diagonal corner-cutting prevention (both adjacent cardinal cells must be passable).
-- Mover component: follow path cell-by-cell with smooth Vector3.MoveTowards interpolation.
-- TerrainMovement static lookup table: (LocomotionType, TerrainType) → speed multiplier.
-- UnitData SO: display name, sprite, locomotion type, base speed.
-- Three unit types: Rifle Infantry (Foot/3), Light Tank (Tracked/5), Ranger (Wheeled/7) — distinct SVG sprites.
-- Entity references UnitData; sets sprite from UnitData.Sprite at Start.
-- CommandManager: right-click issues move orders, S stops selected units.
-- Basic unit avoidance (occupied cells block pathfinding, wait 0.5s then repath).
+A* pathfinding, Mover, terrain speed modifiers, 3 unit types. Select units, right-click to move.
 
-**Done**: Select units, right-click to move. Different locomotion types show speed differences across terrain.
+### Phase 3 — Combat ✅
 
-### Phase 3 — Combat
-
-- **Sprites**: additional unit SVGs as needed (e.g., Heavy Tank, Rocket Soldier). 8 rotations deferred until Phase 7.
-- **Sprites**: projectiles (bullet, shell, rocket, fireball) — simple shapes.
-- WeaponData, ProjectileData, WarheadData SOs.
-- Attacker component: auto-target nearest enemy in range, ROF cooldown, burst fire.
-- ~~Turret rotation (ROT speed) — wait for facing before firing non-homing projectiles.~~ Deferred to Phase 7.
-- NoMovingFire — V2/Artillery stop before shooting.
-- Damage calculation: `damage × warhead modifier[armor type]`.
-- Hitscan weapons (instant damage) vs projectile weapons (spawn GO, travel, impact).
-- Splash damage hitting everything in 1.5-cell radius including friendlies. Falloff by Spread value.
-- Crushing: `CanCrush` vehicles kill infantry on cell enter.
-- Unit death: crewed bail-out (spawn Rifle Infantry), explodes-on-death (Grenadier/Flamethrower AoE).
-- Force fire (Ctrl+click — target ground/friendlies/trees).
-- Stop (S), Guard (G), Scatter (X) commands.
-- Attack-move (Q+click — move to destination, engage enemies en route).
-- SfxManager singleton for combat sounds (rifle, cannon, rocket, explosions, death).
-- Individual unit prefabs: RifleInfantry, RocketSoldier, LightTank, Ranger, HeavyTank, Artillery.
-- ~~Secondary weapons~~ Deferred to Phase 7.
-
-**Testable**: Place Allied and Soviet units, watch them auto-engage. Test splash friendly fire, crushing, force fire on ground.
-
-**Done**: In Unity, run Tools > RedAlert > Generator Window > Phase 3 buttons (All Combat Data → Unit Prefabs → Systems Prefab). Place Allied (player 0) and Soviet (player 1) units in the scene. Units auto-target nearest enemy, fire weapons (hitscan rifles, cannon shells, homing rockets, lobbed artillery). Splash damage hits friendlies. Tanks crush enemy infantry. Crewed vehicles bail out Rifle Infantry on death. Force fire (Ctrl+right-click) attacks ground/friendlies. Guard (G) holds position. Scatter (X) spreads units. Attack-move (Q+right-click) engages targets while moving to destination.
+WeaponData/ProjectileData/WarheadData SOs, Attacker, DamageSystem, Health/HealthBar split, Projectile, SfxManager, crushing, death (bail-out + explode-on-death), 6 unit prefabs (RifleInfantry, RocketSoldier, LightTank, Ranger, HeavyTank, Artillery). Commands: context-sensitive right-click, force fire (Ctrl), force move (Alt), attack-move (Q), guard (G), scatter (X). Turret rotation and secondary weapons deferred to Phase 7.
 
 ### Phase 4 — Economy & Harvesting
 
