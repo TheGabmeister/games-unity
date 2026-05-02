@@ -14,5 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Ranger
   Sprite: {fileID: -5081659279774951377, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  Category: 1
+  Faction: 0
   Locomotion: 2
   BaseSpeed: 7
+  MaxHP: 150
+  Armor: 2
+  PrimaryWeapon: {fileID: 11400000, guid: f8c6978aeede1ff4fb78db815138b390, type: 2}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 1
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 11400000, guid: 4a67bfa78c8a15f48a9ddaa55dc5b38a, type: 2}

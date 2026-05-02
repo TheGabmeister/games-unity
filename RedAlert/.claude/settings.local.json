@@ -24,7 +24,22 @@
       "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\" -Recurse -File)",
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(\"/c/Program Files/Inkscape/bin/inkscape.exe\" --version)",
-      "Bash(bash Tools/export_sprites.sh)"
+      "Bash(bash Tools/export_sprites.sh)",
+      "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\\\\\" -Recurse -Filter *.cs | Select-Object -ExpandProperty Name | Sort-Object)",
+      "Bash(Get-ChildItem -Path \"D:\\\\CnC_Red_Alert\\\\CODE\\\\\" -ErrorAction SilentlyContinue | Select-Object Name | Head -20)",
+      "Bash(Get-ChildItem -Path \"D:\\\\CnC_Red_Alert\\\\CODE\\\\\" -Name | head -30)",
+      "Read(//d/CnC_Red_Alert/CODE/**)",
+      "Bash(Get-ChildItem -Path \"D:\\\\CnC_Red_Alert\\\\CODE\\\\\" -Name | Select-Object -First 30)",
+      "Read(//d/CnC_Red_Alert/**)",
+      "Read(//mnt/d/CnC_Red_Alert/**)",
+      "Bash(xargs grep *)",
+      "Bash(grep -E \"^[A-Z].*\\\\.H$\")",
+      "Bash(bash \"c:/dev/games-unity/RedAlert/Tools/export_sprites.sh\")",
+      "Bash(mkdir -p \"c:/dev/games-unity/RedAlert/Assets/_Project/Sounds/Combat\")",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g laser -o RifleFire.wav)",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o CannonFire.wav)",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o RocketFire.wav)",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o ExplosionSmall.wav)"
     ]
   }
 }

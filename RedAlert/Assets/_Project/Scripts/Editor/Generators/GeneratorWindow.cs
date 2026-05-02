@@ -15,27 +15,44 @@ public class GeneratorWindow : EditorWindow
     {
         _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
-        Section("Phase 1 — Foundation", () =>
+        Section("Terrain", () =>
         {
-            Button("Terrain Tile Sprites + Tiles", GenerateTerrainTiles.Generate);
+            Button("Tile Sprites + Tiles", GenerateTerrainTiles.Generate);
             Button("Test Map (40x40)", GenerateTestMap.Generate);
-            Button("Unit Sprites", GenerateUnitPrefab.GenerateSprites);
-            Button("Unit Prefab", GenerateUnitPrefab.GeneratePrefab);
-            Button("Systems Prefab", GenerateSystemsPrefab.Generate);
-            Button("Gameplay Scene", GenerateScenes.GenerateAll);
         });
 
-        Section("Phase 2 — Movement", () =>
+        Section("Sprites", () =>
         {
-            Button("Unit Data (Rifle, Tank, Ranger)", GenerateUnitData.Generate);
+            Button("Unit Sprites (UI)", GenerateUnitPrefab.GenerateSprites);
+            Button("Projectile Sprites", GenerateCombatData.GenerateProjectileSprites);
+        });
+
+        Section("Data", () =>
+        {
+            Button("Warheads (8)", GenerateCombatData.GenerateWarheads);
+            Button("Projectiles (6)", GenerateCombatData.GenerateProjectiles);
+            Button("Weapons (5)", GenerateCombatData.GenerateWeapons);
+            Button("Unit Data (6 units)", GenerateCombatData.GenerateUnitData);
+            Button("All Combat Data", GenerateCombatData.GenerateAll);
+        });
+
+        Section("Prefabs", () =>
+        {
+            Button("Placeholder Unit Prefab", GenerateUnitPrefab.GeneratePrefab);
+            Button("Unit Prefabs (individual)", GenerateUnitPrefabs.Generate);
+            Button("Systems Prefab", GenerateSystemsPrefab.Generate);
+        });
+
+        Section("Scenes", () =>
+        {
+            Button("Gameplay Scene", GenerateScenes.GenerateAll);
         });
 
         Section("Generate All", () =>
         {
             EditorGUILayout.HelpBox(
                 "Runs all generators in order:\n" +
-                "Terrain tiles → Test map → Unit sprites → Unit data →\n" +
-                "Unit prefab → Systems prefab → Gameplay scene",
+                "Terrain → Sprites → Data → Prefabs → Scene",
                 MessageType.Info);
             if (GUILayout.Button("Generate All", GUILayout.Height(30)))
                 GenerateAll();
@@ -64,8 +81,9 @@ public class GeneratorWindow : EditorWindow
         GenerateTerrainTiles.Generate();
         GenerateTestMap.Generate();
         GenerateUnitPrefab.GenerateSprites();
-        GenerateUnitData.Generate();
+        GenerateCombatData.GenerateAll();
         GenerateUnitPrefab.GeneratePrefab();
+        GenerateUnitPrefabs.Generate();
         GenerateSystemsPrefab.Generate();
         GenerateScenes.GenerateAll();
     }

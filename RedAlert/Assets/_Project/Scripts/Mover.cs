@@ -46,15 +46,24 @@ public class Mover : MonoBehaviour
         Entity occupant = MapManager.Instance.GetEntityAt(nextCell);
         if (occupant != null && occupant != _entity)
         {
-            _waitTimer += Time.deltaTime;
-            if (_waitTimer >= WaitBeforeRepath)
+            if (_entity.UnitData != null && _entity.UnitData.IsCrusher
+                && occupant.UnitData != null && occupant.UnitData.Category == UnitCategory.Infantry
+                && PlayerManager.Instance.AreEnemies(_entity.OwnerPlayerIndex, occupant.OwnerPlayerIndex))
             {
-                _waitTimer = 0f;
-                var goal = _path[^1];
-                _path = null;
-                MoveTo(goal);
+                occupant.Die();
             }
-            return;
+            else
+            {
+                _waitTimer += Time.deltaTime;
+                if (_waitTimer >= WaitBeforeRepath)
+                {
+                    _waitTimer = 0f;
+                    var goal = _path[^1];
+                    _path = null;
+                    MoveTo(goal);
+                }
+                return;
+            }
         }
 
         _waitTimer = 0f;

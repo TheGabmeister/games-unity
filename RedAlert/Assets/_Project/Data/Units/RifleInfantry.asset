@@ -14,5 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Rifle Infantry
   Sprite: {fileID: -4418884546393760298, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  Category: 0
+  Faction: 0
   Locomotion: 0
   BaseSpeed: 3
+  MaxHP: 50
+  Armor: 0
+  PrimaryWeapon: {fileID: 11400000, guid: f8c6978aeede1ff4fb78db815138b390, type: 2}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 0}

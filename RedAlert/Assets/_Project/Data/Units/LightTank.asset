@@ -14,5 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Light Tank
   Sprite: {fileID: -8506272095534995724, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  Category: 1
+  Faction: 0
   Locomotion: 1
   BaseSpeed: 5
+  MaxHP: 300
+  Armor: 3
+  PrimaryWeapon: {fileID: 11400000, guid: 53a887c92c8ca944599fd46433db7689, type: 2}
+  SightRange: 5
+  IsCrusher: 1
+  NoMovingFire: 0
+  IsCrewedVehicle: 1
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 11400000, guid: 4a67bfa78c8a15f48a9ddaa55dc5b38a, type: 2}

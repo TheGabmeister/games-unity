@@ -867,7 +867,7 @@ Editor tooling, core infrastructure, and a playable test map.
 - **Sprites**: projectiles (bullet, shell, rocket, fireball) — simple shapes.
 - WeaponData, ProjectileData, WarheadData SOs.
 - Attacker component: auto-target nearest enemy in range, ROF cooldown, burst fire.
-- Turret rotation (ROT speed) — wait for facing before firing non-homing projectiles.
+- ~~Turret rotation (ROT speed) — wait for facing before firing non-homing projectiles.~~ Deferred to Phase 7.
 - NoMovingFire — V2/Artillery stop before shooting.
 - Damage calculation: `damage × warhead modifier[armor type]`.
 - Hitscan weapons (instant damage) vs projectile weapons (spawn GO, travel, impact).
@@ -876,8 +876,14 @@ Editor tooling, core infrastructure, and a playable test map.
 - Unit death: crewed bail-out (spawn Rifle Infantry), explodes-on-death (Grenadier/Flamethrower AoE).
 - Force fire (Ctrl+click — target ground/friendlies/trees).
 - Stop (S), Guard (G), Scatter (X) commands.
+- Attack-move (Q+click — move to destination, engage enemies en route).
+- SfxManager singleton for combat sounds (rifle, cannon, rocket, explosions, death).
+- Individual unit prefabs: RifleInfantry, RocketSoldier, LightTank, Ranger, HeavyTank, Artillery.
+- ~~Secondary weapons~~ Deferred to Phase 7.
 
 **Testable**: Place Allied and Soviet units, watch them auto-engage. Test splash friendly fire, crushing, force fire on ground.
+
+**Done**: In Unity, run Tools > RedAlert > Generator Window > Phase 3 buttons (All Combat Data → Unit Prefabs → Systems Prefab). Place Allied (player 0) and Soviet (player 1) units in the scene. Units auto-target nearest enemy, fire weapons (hitscan rifles, cannon shells, homing rockets, lobbed artillery). Splash damage hits friendlies. Tanks crush enemy infantry. Crewed vehicles bail out Rifle Infantry on death. Force fire (Ctrl+right-click) attacks ground/friendlies. Guard (G) holds position. Scatter (X) spreads units. Attack-move (Q+right-click) engages targets while moving to destination.
 
 ### Phase 4 — Economy & Harvesting
 

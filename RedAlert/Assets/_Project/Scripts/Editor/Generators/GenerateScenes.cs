@@ -36,37 +36,46 @@ public static class GenerateScenes
         if (systemsPrefab != null)
             PrefabUtility.InstantiatePrefab(systemsPrefab);
 
-        var unitPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Units/PlaceholderUnit.prefab");
-        var rifleData = AssetDatabase.LoadAssetAtPath<UnitData>("Assets/_Project/Data/Units/RifleInfantry.asset");
-        var tankData = AssetDatabase.LoadAssetAtPath<UnitData>("Assets/_Project/Data/Units/LightTank.asset");
-        var rangerData = AssetDatabase.LoadAssetAtPath<UnitData>("Assets/_Project/Data/Units/Ranger.asset");
+        string prefabDir = "Assets/_Project/Prefabs/Units";
+        var riflePrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/RifleInfantry.prefab");
+        var rocketPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/RocketSoldier.prefab");
+        var ltankPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/LightTank.prefab");
+        var rangerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/Ranger.prefab");
+        var htankPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/HeavyTank.prefab");
+        var artyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/Artillery.prefab");
 
-        if (unitPrefab != null)
-        {
-            SpawnUnit(unitPrefab, new Vector3(5.5f, 5.5f, 0f), 0, rifleData);
-            SpawnUnit(unitPrefab, new Vector3(7.5f, 5.5f, 0f), 0, tankData);
-            SpawnUnit(unitPrefab, new Vector3(6.5f, 7.5f, 0f), 0, rangerData);
+        // Allied forces (player 0) — west side
+        if (riflePrefab != null) SpawnUnit(riflePrefab, new Vector3(8.5f, 18.5f, 0f), 0);
+        if (riflePrefab != null) SpawnUnit(riflePrefab, new Vector3(8.5f, 20.5f, 0f), 0);
+        if (rocketPrefab != null) SpawnUnit(rocketPrefab, new Vector3(8.5f, 22.5f, 0f), 0);
+        if (ltankPrefab != null) SpawnUnit(ltankPrefab, new Vector3(10.5f, 19.5f, 0f), 0);
+        if (ltankPrefab != null) SpawnUnit(ltankPrefab, new Vector3(10.5f, 21.5f, 0f), 0);
+        if (rangerPrefab != null) SpawnUnit(rangerPrefab, new Vector3(9.5f, 23.5f, 0f), 0);
 
-            SpawnUnit(unitPrefab, new Vector3(33.5f, 33.5f, 0f), 1, rifleData);
-            SpawnUnit(unitPrefab, new Vector3(35.5f, 33.5f, 0f), 1, tankData);
-            SpawnUnit(unitPrefab, new Vector3(34.5f, 35.5f, 0f), 1, rangerData);
-        }
+        // Soviet forces (player 1) — east side
+        if (riflePrefab != null) SpawnUnit(riflePrefab, new Vector3(30.5f, 18.5f, 0f), 1);
+        if (riflePrefab != null) SpawnUnit(riflePrefab, new Vector3(30.5f, 20.5f, 0f), 1);
+        if (riflePrefab != null) SpawnUnit(riflePrefab, new Vector3(30.5f, 22.5f, 0f), 1);
+        if (htankPrefab != null) SpawnUnit(htankPrefab, new Vector3(28.5f, 19.5f, 0f), 1);
+        if (htankPrefab != null) SpawnUnit(htankPrefab, new Vector3(28.5f, 21.5f, 0f), 1);
+        if (artyPrefab != null) SpawnUnit(artyPrefab, new Vector3(32.5f, 20.5f, 0f), 1);
 
         EditorSceneManager.SaveScene(scene, path);
         Debug.Log($"Gameplay scene created at {path}");
     }
 
-    static void SpawnUnit(GameObject prefab, Vector3 position, int playerIndex, UnitData unitData)
+    static void SpawnUnit(GameObject prefab, Vector3 position, int playerIndex)
     {
         var unit = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         unit.transform.position = position;
 
-        if (unitData != null)
-            unit.name = $"{unitData.DisplayName} (P{playerIndex})";
+        var entity = unit.GetComponent<Entity>();
+        var unitData = entity != null ? new SerializedObject(entity).FindProperty("_unitData").objectReferenceValue as UnitData : null;
+        string displayName = unitData != null ? unitData.DisplayName : prefab.name;
+        unit.name = $"{displayName} (P{playerIndex})";
 
-        var so = new SerializedObject(unit.GetComponent<Entity>());
+        var so = new SerializedObject(entity);
         so.FindProperty("_ownerPlayerIndex").intValue = playerIndex;
-        so.FindProperty("_unitData").objectReferenceValue = unitData;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         var sr = unit.GetComponent<SpriteRenderer>();

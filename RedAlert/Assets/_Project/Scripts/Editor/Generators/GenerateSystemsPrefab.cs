@@ -29,6 +29,11 @@ public static class GenerateSystemsPrefab
             AddIfMissing<MapManager>(instance);
             AddIfMissing<SelectionManager>(instance);
             AddIfMissing<CommandManager>(instance);
+            AddIfMissing<SfxManager>(instance);
+
+            var sfx = instance.GetComponent<SfxManager>();
+            if (sfx.GetComponent<AudioSource>() == null)
+                sfx.gameObject.AddComponent<AudioSource>();
 
             var inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(
                 "Assets/_Project/Input/InputSystem_Actions.inputactions");

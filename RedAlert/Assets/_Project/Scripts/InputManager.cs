@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
     public InputAction Stop { get; private set; }
     public InputAction Guard { get; private set; }
     public InputAction Scatter { get; private set; }
+    public InputAction ModifierAttackMove { get; private set; }
     public InputAction SelectAll { get; private set; }
     public InputAction[] Groups { get; private set; } = new InputAction[9];
 
@@ -24,6 +25,7 @@ public class InputManager : MonoBehaviour
     public Vector2 MousePosition => Point.ReadValue<Vector2>();
     public bool IsCtrlHeld => ModifierCtrl.IsPressed();
     public bool IsAltHeld => ModifierAlt.IsPressed();
+    public bool IsAttackMoveHeld => ModifierAttackMove.IsPressed();
 
     void Awake()
     {
@@ -39,6 +41,7 @@ public class InputManager : MonoBehaviour
         Stop = _playerMap.FindAction("Stop");
         Guard = _playerMap.FindAction("Guard");
         Scatter = _playerMap.FindAction("Scatter");
+        ModifierAttackMove = _playerMap.FindAction("ModifierAttackMove");
         SelectAll = _playerMap.FindAction("SelectAll");
 
         for (int i = 0; i < 9; i++)

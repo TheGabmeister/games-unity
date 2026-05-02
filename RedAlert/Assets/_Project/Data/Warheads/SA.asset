@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef046d8cbd8851e4ab6a8f1c662f38f8, type: 3}
+  m_Name: SA
+  m_EditorClassIdentifier: Assembly-CSharp::WarheadData
+  DisplayName: Small Arms
+  ModNone: 1
+  ModWood: 0.6
+  ModLight: 0.6
+  ModHeavy: 0.4
+  ModConcrete: 0.3
+  SpreadFactor: 3
+  WallDestroyer: 0
+  ImpactSound: {fileID: 0}

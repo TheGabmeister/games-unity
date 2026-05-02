@@ -10,6 +10,9 @@ public class HealthBar : MonoBehaviour
 
     public float CurrentHP => _currentHP;
     public float MaxHP => _maxHP;
+    public bool IsDead => _currentHP <= 0f;
+
+    public System.Action OnDeath;
 
     public void Initialize(float maxHP)
     {
@@ -20,8 +23,11 @@ public class HealthBar : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (IsDead) return;
         _currentHP = Mathf.Max(0, _currentHP - damage);
         UpdateBar();
+        if (_currentHP <= 0f)
+            OnDeath?.Invoke();
     }
 
     void UpdateBar()

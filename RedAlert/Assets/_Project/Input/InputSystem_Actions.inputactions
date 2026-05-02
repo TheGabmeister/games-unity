@@ -87,6 +87,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ModifierAttackMove",
+                    "type": "Button",
+                    "id": "a1b2c3d4-0001-4000-8000-00000000001b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "SelectAll",
                     "type": "Button",
                     "id": "a1b2c3d4-0001-4000-8000-00000000001a",
@@ -373,6 +382,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Scatter",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b000000d-0001-4000-8000-000000000001",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ModifierAttackMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
