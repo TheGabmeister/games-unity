@@ -37,7 +37,7 @@ High-level implementation plan for the Unity recreation of C&C: Red Alert. **Sin
 
 - **One source of truth per stat.** Every unit/building stat lives in a ScriptableObject. No magic numbers in MonoBehaviours.
 - **Composition over inheritance.** Units are GameObjects with mix-and-match components (Health, Weapon, Mover, Harvester, etc.), not a deep class hierarchy.
-- **Systems prefab.** Global managers (GameManager, SelectionManager, FogOfWar, etc.) live on the `Resources/Systems` prefab, instantiated by the Bootstrapper before any scene loads.
+- **Systems prefab.** Global managers (InputManager, PlayerManager, MapManager, SelectionManager, CommandManager) live on the `Assets/_Project/Prefabs/Systems` prefab, placed directly in the Gameplay scene. No Bootstrapper.
 - **Grid is king.** The map is a cell grid. Pathfinding, fog of war, building placement, ore fields, and terrain speed modifiers all operate on this grid.
 - **Singleplayer only.** No netcode, no lobby, no host/client split. The human is always Player 0; AI opponents are Player 1–5.
 - **Source code as reference.** The original C&C: Red Alert source is at `D:\CnC_Red_Alert\CODE\`. Grep it for exact values rather than hardcoding from memory.
@@ -49,31 +49,24 @@ High-level implementation plan for the Unity recreation of C&C: Red Alert. **Sin
 Each player (human + AI) is represented by a `PlayerState` managed by a `PlayerManager` on the Systems prefab.
 
 ```csharp
+[System.Serializable]
 public class PlayerState
 {
-    public int PlayerIndex;        // 0 = human, 1–5 = AI
+    public int PlayerIndex;        // 0 = human, 1+ = AI
     public Faction Faction;
-    public Country Country;        // for skirmish bonuses
-    public int Credits;
-    public int StorageCapacity;
-    public int PowerProduced;
-    public int PowerConsumed;
+    public Color Color;
     public List<Entity> OwnedEntities;
-    public List<BuildingData> OwnedBuildingTypes; // for prerequisite checks
+    // Future phases will add: Country, Credits, StorageCapacity, PowerProduced/Consumed, OwnedBuildingTypes
 }
 ```
 
-The `PlayerManager` holds the array of `PlayerState` and provides lookups used by EconomyManager, PowerManager, tech tree checks, and fog of war.
+The `PlayerManager` holds the array of `PlayerState`, exposes `LocalPlayer` and `GetPlayer(int)`, and provides `AreEnemies(int, int)` (currently: different index = enemy).
 
 ---
 
 ## Scene Layout
 
-**Init** (build index 0) — Main menu, campaign select, skirmish setup. Loads Gameplay scene when the player starts a match.
-
-**Gameplay** (build index 1) — The RTS match. Contains the Tilemap, Camera rig, UI Canvas, and per-match managers. Cleaned up and reloaded for each new match.
-
-The `Systems` prefab (loaded by Bootstrapper) persists across both scenes via `DontDestroyOnLoad` and holds global managers that don't need per-match state.
+**Gameplay** (build index 0) — The RTS match. Contains the Tilemap, Camera, Systems prefab instance, and unit instances. Additional scenes (Init/menu) will be added in later phases as needed.
 
 ---
 
@@ -251,26 +244,9 @@ Multiple Tilemaps stacked on one Grid:
 
 ### MapManager
 
-A component on the Systems prefab that owns the grid data:
+A component on the Systems prefab that owns the grid data. Loads from a `MapData` ScriptableObject (stores `TerrainType[]` cells, width, height). In Awake, builds a `TerrainType[,]` grid and renders it onto a Tilemap found in the scene. Tracks entity positions via `Dictionary<Vector2Int, Entity>`.
 
-```csharp
-public class MapManager : MonoBehaviour
-{
-    public int Width;
-    public int Height;
-
-    // Per-cell data, indexed by [x + y * Width]
-    private TerrainData[] _terrain;
-    private int[] _oreDensity;      // 0 = empty, 1–4 density levels
-    private int[] _gemDensity;
-    private Entity[] _occupant;     // unit or building occupying the cell, null if empty
-    private byte[,] _fogState;     // [cellIndex, playerIndex]: 0=shroud, 1=fog, 2=visible
-
-    public TerrainData GetTerrain(Vector2Int cell) { ... }
-    public bool IsPassable(Vector2Int cell, LocomotionType loco) { ... }
-    public float GetSpeedModifier(Vector2Int cell, LocomotionType loco) { ... }
-}
-```
+Key methods: `GetTerrain(Vector2Int)`, `CellToWorld(Vector2Int)` (returns cell center at +0.5, +0.5), `WorldToCell(Vector3)` (floors to int), `RegisterEntity/UnregisterEntity/GetEntityAt`.
 
 ### Ore Regrowth
 
@@ -280,16 +256,11 @@ A coroutine or timer in MapManager. Every 2 minutes (matching `GrowthRate=2` fro
 
 ## Camera
 
-Top-down RTS camera. Orthographic. Controlled by edge-of-screen panning, WASD/arrow keys, and scroll-wheel zoom.
+Top-down RTS camera. Orthographic. Fixed zoom (no scroll-wheel zoom, matching the original game). Target resolution 1920×1080.
 
-```
-Camera rig (empty GO)
-  └── Main Camera (orthographic, URP 2D Renderer)
-```
-
-- **Pan**: Edge scroll (mouse near screen border) + keyboard. Clamped to map bounds.
-- **Zoom**: Scroll wheel. Clamp between a close zoom (seeing ~20 cells wide) and a far zoom (~60 cells wide).
+- **Pan**: Edge scroll (mouse near screen border) + WASD/arrow keys. Clamped to map bounds.
 - **Jump to group**: Alt+1–9 snaps camera to the control group's centroid.
+- RTSCamera component lives directly on the Main Camera GameObject in the scene.
 
 ---
 
@@ -312,7 +283,6 @@ Replace the default InputSystem_Actions with an **RTS-specific Input Action Asse
 | ControlGroup Jump | Alt + 1–9 | Jump camera to group |
 | SelectAll | E | Select all visible units |
 | CameraPan | WASD / Arrow Keys | Camera movement |
-| CameraZoom | Scroll Wheel | Zoom in/out |
 | Sell | (sidebar button) | Sell mode toggle |
 | Repair | (sidebar button) | Repair mode toggle |
 
@@ -369,9 +339,9 @@ public enum UnitState
 
 A `SelectionManager` on the Systems prefab:
 
-- Tracks a `List<Entity> Selected`.
-- **Click select**: Raycast at mouse position → find Entity.
-- **Box select**: On drag, cast into the grid area → collect all owned Entities in the rect.
+- Tracks a `List<Selectable> Selected`.
+- **Click select**: Convert mouse screen position to cell coordinate via `Camera.ScreenToWorldPoint` → `MapManager.WorldToCell`. Look up entity via `MapManager.GetEntityAt`.
+- **Box select**: On drag, project all entity positions to screen space and check against the drag rect.
 - **Double-click**: Select all same-type units on screen.
 - **E key**: Select all owned units on screen.
 - **Ctrl+1–9**: Assign selected to group. **1–9**: Recall group.
@@ -384,12 +354,13 @@ A `SelectionManager` on the Systems prefab:
 
 ### Implementation
 
-- A `Pathfinder` static class or System-prefab component.
+- `Pathfinder` is a static class.
 - Input: start cell, goal cell, `LocomotionType`.
-- Output: `List<Vector2Int>` waypoints.
-- Passability check: `MapManager.IsPassable(cell, loco)`. Water cells are passable only for `Float`; land cells only for `Foot`/`Tracked`/`Wheeled`.
-- Cost: inverse of speed modifier (slower terrain = higher cost). This makes units prefer roads naturally.
-- Buildings and other units block cells (dynamic obstacles). Recalculate on demand.
+- Output: `List<Vector2Int>` path cells (excluding start), or null if unreachable.
+- 8-directional movement with octile distance heuristic. Diagonal corner-cutting prevented (both adjacent cardinal cells must be passable).
+- Passability: `TerrainMovement.IsPassable(locomotion, terrain)`. Speed table is a static `float[,]` indexed by `[TerrainType, LocomotionType]`.
+- Cost per cell: `directionCost / speedMultiplier` (1.0 cardinal, 1.414 diagonal). Slower terrain = higher cost, so units prefer roads.
+- Occupied cells (other entities) treated as impassable, except the goal cell.
 
 ### Steering
 
@@ -850,8 +821,8 @@ Sprites are created **incrementally** as each phase needs them, not all at once:
 
 | Phase | Sprites Needed |
 |-------|---------------|
-| 1 — Foundation | Terrain tiles (placeholder colors OK), generic unit placeholder square |
-| 3 — Combat | A few distinct units (e.g., Rifle Infantry, Light Tank, Heavy Tank) + projectiles |
+| 1–2 — Foundation + Movement | Terrain tiles (7 types), Rifle Infantry, Light Tank, Ranger, selection circle, health bar ✅ |
+| 3 — Combat | Additional units (e.g., Heavy Tank, Rocket Soldier) + projectiles |
 | 4 — Economy | Ore Truck, Ore Refinery, Ore Silo, ore/gem density overlays |
 | 5 — Buildings | All buildings (intact + damaged overlay) + sidebar icons (48×48) |
 | 7 — Unit Roster | All remaining units (every infantry, vehicle, naval, aircraft — full 8 rotations + animations) |
@@ -860,37 +831,39 @@ Sprites are created **incrementally** as each phase needs them, not all at once:
 
 ## Implementation Phases
 
-### Phase 1 — Foundation
+### Phase 1 — Foundation ✅
 
 Editor tooling, core infrastructure, and a playable test map.
 
 - GeneratorWindow + PrefabGeneratorUtils (editor tooling framework).
-- RTS Input Action Asset (keyboard + mouse only): Select, Command, DragSelect, ForceAttack, ForceMove, Stop, Guard, Scatter, control groups, camera pan/zoom.
+- RTS Input Action Asset (keyboard + mouse only): Select, Command, ForceAttack, ForceMove, Stop, Guard, Scatter, control groups, camera pan.
 - PlayerState + PlayerManager (player index, faction, owned entities).
-- MapManager with cell grid, terrain data, tilemap rendering.
-- **Sprites**: terrain tiles (grass, road, rough, sand, water, ore, gems) — placeholder colors are fine.
-- Hand-paint a small test map (~40×40) with mixed terrain.
-- RTS camera (pan, zoom, edge scroll, clamp to map).
-- Entity + Selectable components.
-- SelectionManager (click, box select, double-click same-type, E for all, control groups).
-- **Sprites**: placeholder unit (colored square per faction) that can be selected and shows a health bar.
+- MapManager with cell grid (MapData SO), terrain data, Tilemap rendering.
+- **Sprites**: terrain tiles (SVG → PNG via Inkscape) — grass, road, rough, sand, water, ore, gems.
+- Test map (40×40 MapData SO) with mixed terrain, generated via editor script.
+- RTS camera (WASD/arrow pan, edge scroll, fixed zoom, clamp to map). No zoom — matches original.
+- Entity + Selectable + HealthBar components.
+- SelectionManager (click, box select, double-click same-type, E for all, Ctrl+1-9 / 1-9 / Alt+1-9 control groups, drag rectangle visual).
 
-**Testable**: Place units on the test map, select them, move camera around.
+**Done**: Units on the test map, selectable, camera pans around.
 
-### Phase 2 — Movement & Pathfinding
+### Phase 2 — Movement & Pathfinding ✅
 
-- A* pathfinder on the cell grid (single-threaded).
-- Mover component: follow path cell-by-cell with smooth interpolation.
-- Terrain speed modifiers applied per locomotion type (Foot/Tracked/Wheeled).
-- Right-click to move.
-- Basic unit avoidance (occupied cells block, wait then repath).
-- Force move (Alt+click — move without engaging).
+- A* pathfinder on the cell grid (static class, single-threaded, 8-directional, octile heuristic).
+- Diagonal corner-cutting prevention (both adjacent cardinal cells must be passable).
+- Mover component: follow path cell-by-cell with smooth Vector3.MoveTowards interpolation.
+- TerrainMovement static lookup table: (LocomotionType, TerrainType) → speed multiplier.
+- UnitData SO: display name, sprite, locomotion type, base speed.
+- Three unit types: Rifle Infantry (Foot/3), Light Tank (Tracked/5), Ranger (Wheeled/7) — distinct SVG sprites.
+- Entity references UnitData; sets sprite from UnitData.Sprite at Start.
+- CommandManager: right-click issues move orders, S stops selected units.
+- Basic unit avoidance (occupied cells block pathfinding, wait 0.5s then repath).
 
-**Testable**: Place different unit types, right-click to move them across varied terrain, watch them prefer roads.
+**Done**: Select units, right-click to move. Different locomotion types show speed differences across terrain.
 
 ### Phase 3 — Combat
 
-- **Sprites**: a few distinct unit SVGs (e.g., Rifle Infantry, Light Tank, Heavy Tank) so combat is visually readable. 8 rotations each.
+- **Sprites**: additional unit SVGs as needed (e.g., Heavy Tank, Rocket Soldier). 8 rotations deferred until Phase 7.
 - **Sprites**: projectiles (bullet, shell, rocket, fireball) — simple shapes.
 - WeaponData, ProjectileData, WarheadData SOs.
 - Attacker component: auto-target nearest enemy in range, ROF cooldown, burst fire.
