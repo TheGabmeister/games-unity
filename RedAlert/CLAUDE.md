@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Singleplayer recreation of C&C: Red Alert (1996) in Unity 6 (6000.3.12f1). 2D top-down RTS using Universal Render Pipeline with the 2D Renderer, New Input System (keyboard + mouse only, no gamepad), PrimeTween, and uGUI. See `SPEC.md` for gameplay design and `IMPL.md` for implementation plan.
+Singleplayer recreation of C&C: Red Alert (1996) in Unity 6 (6000.3.12f1). 2D top-down RTS using Universal Render Pipeline with the 2D Renderer, New Input System (keyboard + mouse only, no gamepad), PrimeTween, and uGUI. Target resolution 1920×1080. See `SPEC.md` for gameplay design and `IMPL.md` for implementation plan.
 
 ## Build & Run
 
@@ -13,21 +13,44 @@ This is a Unity project — there is no CLI build. Open in Unity 6 (6000.3.12f1+
 ## Architecture
 
 ### Systems Prefab
-`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, SelectionManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder.
+`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, SelectionManager, CommandManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder.
 
 ### Scene Structure
 One scene in build settings:
 - **Gameplay** (index 0) — `Assets/_Project/Scenes/Gameplay.unity`
 
+### Singleton Pattern
+Managers use a static `Instance` property set in `Awake`. All `Awake` calls run before any `Start`, so singletons are safe to access from `Start` onward. `Update`/`LateUpdate` methods guard with `if (SomeManager.Instance == null) return;`. Camera.main is cached in `Awake` (not called per-frame) by SelectionManager and CommandManager.
+
+### Initialization Order
+1. **Awake** — all managers set `Instance`, MapManager builds the grid and renders the tilemap
+2. **Start** — Entity registers itself with MapManager and PlayerManager, applies UnitData sprite
+3. **Update** — SelectionManager polls input for selection, CommandManager polls for orders, Mover follows paths
+4. **LateUpdate** — RTSCamera reads input for panning and clamps to map bounds
+
 ### Key Design Decisions
 - **Grid is king.** All gameplay (pathfinding, fog of war, building placement, targeting, selection) operates on a cell grid via MapManager. No Unity Physics2D — no Rigidbody2D, no Collider2D, no collision layers.
 - **Composition over inheritance.** Units are GameObjects with mix-and-match components (Entity, Mover, Attacker, Harvester, etc.), not a class hierarchy.
-- **ScriptableObjects for data.** All unit/building/weapon stats live in SOs. Runtime mutable state lives on MonoBehaviour components.
+- **ScriptableObjects for data.** All unit/building/weapon stats live in SOs (UnitData, MapData). Runtime mutable state lives on MonoBehaviour components.
 - **Editor generators** in `Assets/_Project/Scripts/Editor/Generators/` follow a pattern: GeneratorWindow with categorized buttons → static `Generate()` methods → temp GO → configure → SerializedObject wiring → SaveAsPrefabAsset → DestroyImmediate in finally block.
-- SVG source files live in `Tools/`. Inkscape exports to PNG in `Assets/_Project/Sprites/`. Unity only sees PNGs.
+- **SVG → PNG pipeline.** SVG source files live in `Tools/sprites/`. Inkscape exports to PNG in `Assets/_Project/Sprites/`. Unity only sees PNGs. Run `bash Tools/export_sprites.sh` to re-export all.
+- **No camera zoom.** Fixed orthographic size, matching the original game.
 
 ### Project Layout
 All game content goes under `Assets/_Project/`. Editor-only scripts are in `Assets/_Project/Scripts/Editor/`. URP and rendering settings are in `Assets/_Project/Settings/`.
+
+### Data Flow: Selection → Command → Movement
+1. SelectionManager tracks selected units (click, box drag, double-click, E, control groups)
+2. CommandManager listens for right-click → converts screen position to cell via MapManager.WorldToCell
+3. CommandManager calls Mover.MoveTo on each selected unit
+4. Mover calls Pathfinder.FindPath (static A*, 8-directional, octile heuristic) → walks path cell-by-cell
+5. Entity.SetCell updates the MapManager entity grid as the unit crosses cell boundaries
+
+### Grid Coordinate System
+- 1 cell = 1 Unity unit. Sprites are 64×64 px at 64 PPU.
+- `MapManager.CellToWorld(cell)` returns cell center at `(cell.x + 0.5, cell.y + 0.5)`.
+- `MapManager.WorldToCell(world)` floors to int.
+- Terrain speed lookup: `TerrainMovement.GetSpeedMultiplier(LocomotionType, TerrainType)` — static table, 0 = impassable.
 
 ## Scope
 
@@ -60,9 +83,9 @@ The original C&C: Red Alert source code (EA GPL release) is at `D:\CnC_Red_Alert
 
 ## Asset Pipeline
 
-- **Sprites**: SVG source files exported to PNG via Inkscape. Sprite size is 64×64 px. Sprite sheets are horizontal strips (e.g., 512×64 for 8 frames).
+- **Sprites**: SVG source files in `Tools/sprites/` exported to PNG via Inkscape. Sprite size is 64×64 px at 64 PPU. Sprite sheets are horizontal strips (e.g., 512×64 for 8 frames).
   - Inkscape path: `"/c/Program Files/Inkscape/bin/inkscape.exe"`
-  - Batch export: `bash Tools/export_sprites.sh` (re-exports all SVGs)
+  - Batch export: `bash Tools/export_sprites.sh` (re-exports all SVGs from `Tools/sprites/` to `Assets/_Project/Sprites/`)
   - Python: C:/Users/Admin/AppData/Local/Python/pythoncore-3.14-64/python.exe
 - **Sounds**: generate with rfxgen (`"D:/rfxgen_v5.0_win_x64/rfxgen.exe" -g coin -o sound.wav`)
 - **Music**: Python scripts in `Tools/music/` use `midiutil` to generate MIDI → FluidSynth renders with a soundfont to WAV → ffmpeg converts to OGG. Tool paths: `D:/fluidsynth-v2.5.4-win10-x64-cpp11/bin/fluidsynth.exe`, `D:/ffmpeg-8.1-essentials_build/bin/ffmpeg.exe`, soundfont `D:/GeneralUser-GS/GeneralUser-GS.sf2`
