@@ -27,6 +27,11 @@ public class SelectionManager : MonoBehaviour
             _controlGroups[i] = new List<Selectable>();
     }
 
+    void LateUpdate()
+    {
+        _selected.RemoveAll(s => s == null);
+    }
+
     void Update()
     {
         if (InputManager.Instance == null) return;
