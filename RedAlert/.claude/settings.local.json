@@ -39,7 +39,15 @@
       "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g laser -o RifleFire.wav)",
       "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o CannonFire.wav)",
       "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o RocketFire.wav)",
-      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o ExplosionSmall.wav)"
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o ExplosionSmall.wav)",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" --help)",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -h)",
+      "Bash(\"C:/Users/Admin/AppData/Local/Python/pythoncore-3.14-64/python.exe\" \"c:/dev/games-unity/RedAlert/Tools/generate_combat_sounds.py\")",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o test_format.rfx)",
+      "Bash(ls -la test_format.*)",
+      "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o test_explosion.wav)",
+      "Bash(xxd -l 64 test_explosion.wav)",
+      "Read(//d/rfxgen_v5.0_win_x64/**)"
     ]
   }
 }

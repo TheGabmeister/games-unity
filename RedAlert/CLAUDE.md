@@ -87,5 +87,5 @@ The original C&C: Red Alert source code (EA GPL release) is at `D:\CnC_Red_Alert
   - Inkscape path: `"/c/Program Files/Inkscape/bin/inkscape.exe"`
   - Batch export: `bash Tools/export_sprites.sh` (re-exports all SVGs from `Tools/sprites/` to `Assets/_Project/Sprites/`)
   - Python: C:/Users/Admin/AppData/Local/Python/pythoncore-3.14-64/python.exe
-- **Sounds**: generate with rfxgen (`"D:/rfxgen_v5.0_win_x64/rfxgen.exe" -g coin -o sound.wav`)
+- **Sounds**: generate .wav using python scripts
 - **Music**: Python scripts in `Tools/music/` use `midiutil` to generate MIDI → FluidSynth renders with a soundfont to WAV → ffmpeg converts to OGG. Tool paths: `D:/fluidsynth-v2.5.4-win10-x64-cpp11/bin/fluidsynth.exe`, `D:/ffmpeg-8.1-essentials_build/bin/ffmpeg.exe`, soundfont `D:/GeneralUser-GS/GeneralUser-GS.sf2`
