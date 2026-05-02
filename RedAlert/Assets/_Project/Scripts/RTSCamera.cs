@@ -40,8 +40,11 @@ public class RTSCamera : MonoBehaviour
     void HandleEdgeScroll()
     {
         Vector2 mouse = InputManager.Instance.MousePosition;
-        Vector3 move = Vector3.zero;
         float viewportRight = Screen.width * (1f - _sidebarWidthFraction);
+
+        if (mouse.x > viewportRight) return;
+
+        Vector3 move = Vector3.zero;
 
         if (mouse.x <= _edgeScrollThreshold) move.x -= 1f;
         else if (mouse.x >= viewportRight - _edgeScrollThreshold) move.x += 1f;

@@ -147,7 +147,10 @@ public class PlacementManager : MonoBehaviour
             return;
         }
 
-        Vector3 pos = MapManager.Instance.CellToWorld(cell);
+        Vector3 pos = new Vector3(
+            cell.x + _placingItem.FootprintX * 0.5f,
+            cell.y + _placingItem.FootprintY * 0.5f,
+            0f);
         var go = Object.Instantiate(_placingItem.Prefab, pos, Quaternion.identity);
         go.name = $"{_placingItem.DisplayName} (P{_placingPlayer})";
 

@@ -29,10 +29,14 @@ public class SidebarUI : MonoBehaviour
     private readonly List<BuildSlot> _unitSlots = new();
 
     private static readonly Color ActiveButtonColor = new(0.3f, 1f, 0.3f);
-    private static readonly Color InactiveButtonColor = Color.white;
+    private Color _sellDefaultColor;
+    private Color _repairDefaultColor;
 
     void Start()
     {
+        if (_sellButtonImage != null) _sellDefaultColor = _sellButtonImage.color;
+        if (_repairButtonImage != null) _repairDefaultColor = _repairButtonImage.color;
+
         _sellButton.onClick.AddListener(() => SellRepairManager.Instance?.ToggleSellMode());
         _repairButton.onClick.AddListener(() => SellRepairManager.Instance?.ToggleRepairMode());
 
@@ -102,9 +106,9 @@ public class SidebarUI : MonoBehaviour
     {
         if (SellRepairManager.Instance == null) return;
         if (_sellButtonImage != null)
-            _sellButtonImage.color = SellRepairManager.Instance.SellMode ? ActiveButtonColor : InactiveButtonColor;
+            _sellButtonImage.color = SellRepairManager.Instance.SellMode ? ActiveButtonColor : _sellDefaultColor;
         if (_repairButtonImage != null)
-            _repairButtonImage.color = SellRepairManager.Instance.RepairMode ? ActiveButtonColor : InactiveButtonColor;
+            _repairButtonImage.color = SellRepairManager.Instance.RepairMode ? ActiveButtonColor : _repairDefaultColor;
     }
 
     void RefreshBuildGrid()
@@ -155,7 +159,6 @@ public class SidebarUI : MonoBehaviour
                 else
                 {
                     icon.color = new Color(0.4f, 0.4f, 0.4f);
-                    Debug.LogWarning($"No sprite for build slot: {item.DisplayName}");
                 }
             }
 
