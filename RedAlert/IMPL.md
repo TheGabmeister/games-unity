@@ -544,9 +544,11 @@ public static bool ArePrerequisitesMet(BuildingData[] prereqs, List<BuildingData
 
 ## Fog of War
 
-Two-layer system rendered as a Tilemap overlay.
+Human-player-only system. AI opponents have full map vision (singleplayer simplification). Rendered as a Tilemap overlay created programmatically by `FogManager`.
 
-### Per-Cell State (per player)
+### Per-Cell State
+
+A single flat `byte[]` grid (indexed `y * width + x`) for the human player only.
 
 ```csharp
 public enum FogState : byte
@@ -559,23 +561,23 @@ public enum FogState : byte
 
 ### Update Loop
 
-Each frame (or every few frames for performance):
+Runs every 4 frames (~15 Hz at 60 fps):
 
 1. Set all `Visible` cells to `Fog`.
-2. For each friendly unit and building, mark all cells within their `SightRange` as `Visible`.
-3. Apply Gap Generator effect: for each enemy Gap Generator, force cells in its radius back to `Shroud` for the current player.
-4. Update the Fog tilemap's tiles to match.
+2. For each human-owned unit and building, mark all cells within their `SightRange` as `Visible` (precomputed circle offsets per integer radius).
+3. Apply Gap Generator effect: for each enemy Gap Generator with power, force cells in its 10-cell radius back to `Shroud`.
+4. Sync only changed cells to the fog tilemap (track dirty cells).
 
 ### Rendering
 
-A dedicated Tilemap layer on top of everything. Cell-snapped tiles:
+`FogManager` creates a Tilemap + TilemapRenderer at runtime on a child GameObject, sorted above all gameplay layers. Simple square tiles:
 - **Shroud tile** — fully black, opaque.
 - **Fog tile** — semi-transparent dark overlay.
-- **Visible** — no tile (transparent).
+- **Visible** — null tile (transparent).
 
 ### Entity Visibility
 
-Units and buildings owned by enemies are hidden (`SpriteRenderer.enabled = false`) when their cell is `Shroud` or `Fog` for the human player. Buildings in `Fog` remain visible as "last seen" ghosts (stale sprite, no health bar).
+Enemy units and buildings are hidden (`SpriteRenderer.enabled = false`) when their cell is `Shroud` or `Fog`. Buildings in `Fog` remain visible as "last seen" ghosts (stale sprite, no health bar updates).
 
 ---
 
@@ -830,7 +832,7 @@ A* pathfinding, Mover, terrain speed modifiers, 3 unit types. Select units, righ
 
 WeaponData/ProjectileData/WarheadData SOs, Attacker, DamageSystem, Health/HealthBar split, Projectile, SfxManager, crushing, death (bail-out + explode-on-death), 6 unit prefabs (RifleInfantry, RocketSoldier, LightTank, Ranger, HeavyTank, Artillery). Commands: context-sensitive right-click, force fire (Ctrl), force move (Alt), attack-move (Q), guard (G), scatter (X). Turret rotation and secondary weapons deferred to Phase 7.
 
-### Phase 4 — Economy & Harvesting
+### Phase 4 — Economy & Harvesting ✅
 
 - **Sprites**: Ore Truck, Ore Refinery, Ore Silo. Ore/gem tile overlays (4 density levels each).
 - EconomyManager (per-player credits, storage capacity).
@@ -844,7 +846,7 @@ WeaponData/ProjectileData/WarheadData SOs, Attacker, DamageSystem, Health/Health
 
 **Testable**: Place a refinery + ore field, watch harvester loop. Destroy the refinery, verify retargeting. Fill storage, verify overflow.
 
-### Phase 5 — Buildings, Construction & Sidebar
+### Phase 5 — Buildings, Construction & Sidebar ✅
 
 Buildings, construction, production, and the sidebar are tightly coupled — build them together.
 
@@ -871,11 +873,12 @@ Buildings, construction, production, and the sidebar are tightly coupled — bui
 
 ### Phase 6 — Fog of War
 
-- FogState grid: per-player, per-cell (Shroud/Fog/Visible).
-- Sight range update loop (every few frames for performance).
-- Fog tilemap rendering: shroud (black), fog (semi-transparent), visible (no tile).
-- Entity visibility: enemies hidden in shroud/fog. Buildings in fog shown as "last seen" ghost.
-- Gap Generator: re-shrouds 10-cell radius, 6-second refresh.
+- FogManager on Systems prefab. Single `byte[]` grid for human player only (AI has full vision).
+- Tilemap created programmatically at runtime, sorted above all gameplay layers. Square tiles (shroud=black, fog=semi-transparent, visible=null).
+- Sight range update every 4 frames. Precomputed circle offsets per integer radius.
+- Dirty-cell tracking: only sync changed cells to tilemap each update.
+- Entity visibility: enemy sprites hidden in shroud/fog. Buildings in fog shown as stale "last seen" ghost.
+- Gap Generator: re-shrouds 10-cell radius when powered.
 
 **Testable**: Move units around, watch shroud reveal. Walk away, see fog. Place a Gap Generator, verify re-shrouding.
 
@@ -968,3 +971,6 @@ Create all remaining UnitData SOs from source code. **Sprites**: all remaining u
 - Screen shake on large explosions.
 - Victory/defeat fanfare.
 - Country bonuses for skirmish (damage, armor, speed, cost, ROF multipliers).
+- **Power degradation**: Power plants produce power proportional to HP ratio (damaged plant = less output), matching original behavior.
+- **Infantry sub-positions**: Up to 5 infantry share a cell at distinct sub-positions (center, NW, NE, SW, SE), matching the original's cell model.
+- **Threat-based targeting**: Attacker prioritizes most dangerous enemy (weapon damage, proximity, target type) rather than simply nearest, matching the original's `Greatest_Threat` evaluation.

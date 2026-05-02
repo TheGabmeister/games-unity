@@ -3,6 +3,65 @@ using System.Collections.Generic;
 
 public static class Pathfinder
 {
+    private struct MinHeap
+    {
+        private List<(Vector2Int cell, float priority)> _data;
+
+        public int Count => _data.Count;
+
+        public MinHeap(int capacity)
+        {
+            _data = new List<(Vector2Int, float)>(capacity);
+        }
+
+        public void Enqueue(Vector2Int cell, float priority)
+        {
+            _data.Add((cell, priority));
+            BubbleUp(_data.Count - 1);
+        }
+
+        public Vector2Int Dequeue()
+        {
+            var result = _data[0].cell;
+            int last = _data.Count - 1;
+            _data[0] = _data[last];
+            _data.RemoveAt(last);
+            if (_data.Count > 0) BubbleDown(0);
+            return result;
+        }
+
+        private void BubbleUp(int i)
+        {
+            while (i > 0)
+            {
+                int parent = (i - 1) / 2;
+                if (_data[i].priority < _data[parent].priority)
+                {
+                    (_data[i], _data[parent]) = (_data[parent], _data[i]);
+                    i = parent;
+                }
+                else break;
+            }
+        }
+
+        private void BubbleDown(int i)
+        {
+            int count = _data.Count;
+            while (true)
+            {
+                int smallest = i;
+                int left = 2 * i + 1;
+                int right = 2 * i + 2;
+                if (left < count && _data[left].priority < _data[smallest].priority)
+                    smallest = left;
+                if (right < count && _data[right].priority < _data[smallest].priority)
+                    smallest = right;
+                if (smallest == i) break;
+                (_data[i], _data[smallest]) = (_data[smallest], _data[i]);
+                i = smallest;
+            }
+        }
+    }
     private static readonly Vector2Int[] Directions =
     {
         new(0, 1), new(1, 1), new(1, 0), new(1, -1),
@@ -23,21 +82,23 @@ public static class Pathfinder
         if (!map.IsInBounds(goal)) return null;
         if (!TerrainMovement.IsPassable(locomotion, map.GetTerrain(goal))) return null;
 
-        var openSet = new List<Vector2Int> { start };
+        var openQueue = new MinHeap(64);
         var closedSet = new HashSet<Vector2Int>();
         var cameFrom = new Dictionary<Vector2Int, Vector2Int>();
         var gScore = new Dictionary<Vector2Int, float> { [start] = 0f };
-        var fScore = new Dictionary<Vector2Int, float> { [start] = Heuristic(start, goal) };
 
-        while (openSet.Count > 0)
+        openQueue.Enqueue(start, Heuristic(start, goal));
+
+        while (openQueue.Count > 0)
         {
-            Vector2Int current = GetLowestF(openSet, fScore);
+            Vector2Int current = openQueue.Dequeue();
 
             if (current == goal)
                 return ReconstructPath(cameFrom, current);
 
-            openSet.Remove(current);
-            closedSet.Add(current);
+            if (!closedSet.Add(current)) continue;
+
+            float currentG = gScore[current];
 
             for (int i = 0; i < 8; i++)
             {
@@ -56,16 +117,13 @@ public static class Pathfinder
                     continue;
 
                 float moveCost = DirectionCosts[i] / speedMult;
-                float tentativeG = gScore[current] + moveCost;
+                float tentativeG = currentG + moveCost;
 
-                if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
+                if (!gScore.TryGetValue(neighbor, out float existingG) || tentativeG < existingG)
                 {
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeG;
-                    fScore[neighbor] = tentativeG + Heuristic(neighbor, goal);
-
-                    if (!openSet.Contains(neighbor))
-                        openSet.Add(neighbor);
+                    openQueue.Enqueue(neighbor, tentativeG + Heuristic(neighbor, goal));
                 }
             }
         }
@@ -78,24 +136,6 @@ public static class Pathfinder
         int dx = Mathf.Abs(a.x - b.x);
         int dy = Mathf.Abs(a.y - b.y);
         return Mathf.Max(dx, dy) + (1.414f - 1f) * Mathf.Min(dx, dy);
-    }
-
-    static Vector2Int GetLowestF(List<Vector2Int> openSet, Dictionary<Vector2Int, float> fScore)
-    {
-        Vector2Int best = openSet[0];
-        float bestF = fScore.GetValueOrDefault(best, float.MaxValue);
-
-        for (int i = 1; i < openSet.Count; i++)
-        {
-            float f = fScore.GetValueOrDefault(openSet[i], float.MaxValue);
-            if (f < bestF)
-            {
-                bestF = f;
-                best = openSet[i];
-            }
-        }
-
-        return best;
     }
 
     static bool IsDiagonal(int dirIndex) => dirIndex % 2 == 1;
