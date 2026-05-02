@@ -2,7 +2,23 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\" -Depth 0)",
-      "Bash(Select-Object Name, Mode)"
+      "Bash(Select-Object Name, Mode)",
+      "WebSearch",
+      "WebFetch(domain:cncnz.com)",
+      "WebFetch(domain:unitstatistics.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.cheatbook.de)",
+      "WebFetch(domain:strategywiki.org)",
+      "WebFetch(domain:cnc.fandom.com)",
+      "WebFetch(domain:gamefaqs.gamespot.com)",
+      "WebFetch(domain:modenc.renegadeprojects.com)",
+      "WebFetch(domain:forums.cncnet.org)",
+      "WebFetch(domain:steamcommunity.com)",
+      "WebFetch(domain:openra-red-alert.fandom.com)",
+      "WebFetch(domain:forums.cncnz.com)",
+      "WebFetch(domain:cnc-central.fandom.com)",
+      "WebFetch(domain:www.moddb.com)"
     ]
   }
 }
