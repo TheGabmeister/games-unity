@@ -7,6 +7,7 @@ public class UnitData : ScriptableObject
     public Sprite Sprite;
     public UnitCategory Category = UnitCategory.Vehicle;
     public Faction Faction = Faction.Allied;
+    public int Cost;
 
     [Header("Movement")]
     public LocomotionType Locomotion;
@@ -28,6 +29,13 @@ public class UnitData : ScriptableObject
     [Header("Death")]
     public AudioClip DeathSound;
     public UnitData BailOutUnit;
+
+    [Header("Building")]
+    public int FootprintX = 1;
+    public int FootprintY = 1;
+    public int StorageCapacity;
+    public bool RequiresPower;
+    public UnitData FreeUnit;
 
     [Header("Prefab")]
     public GameObject Prefab;

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <g fill="#7040c0">
+    <polygon points="6,14 10,4 14,14 10,18" transform="rotate(-10 10 11)"/>
+    <polygon points="28,10 32,0 36,10 32,14" transform="rotate(5 32 7)"/>
+    <polygon points="50,16 53,8 56,16 53,19" transform="rotate(-8 53 13)"/>
+    <polygon points="14,34 18,24 22,34 18,38" transform="rotate(12 18 31)"/>
+    <polygon points="38,30 42,20 46,30 42,34" transform="rotate(-6 42 27)"/>
+    <polygon points="4,52 8,42 12,52 8,56" transform="rotate(8 8 49)"/>
+    <polygon points="24,50 28,40 32,50 28,54" transform="rotate(-4 28 47)"/>
+    <polygon points="46,52 50,42 54,52 50,56" transform="rotate(6 50 49)"/>
+  </g>
+  <g fill="#9060e0" opacity="0.6">
+    <polygon points="18,58 20,54 22,58"/>
+    <polygon points="54,36 56,32 58,36"/>
+    <polygon points="10,22 12,18 14,22"/>
+    <polygon points="40,46 42,42 44,46"/>
+  </g>
+  <g fill="#b080ff" opacity="0.3">
+    <circle cx="32" cy="56" r="2"/>
+    <circle cx="56" cy="52" r="1.5"/>
+  </g>
+</svg>

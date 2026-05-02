@@ -47,7 +47,14 @@
       "Bash(ls -la test_format.*)",
       "Bash(\"D:/rfxgen_v5.0_win_x64/rfxgen.exe\" -g explosion -o test_explosion.wav)",
       "Bash(xxd -l 64 test_explosion.wav)",
-      "Read(//d/rfxgen_v5.0_win_x64/**)"
+      "Read(//d/rfxgen_v5.0_win_x64/**)",
+      "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Scripts\\\\\" -Recurse -Filter \"*.cs\" | Select-Object -ExpandProperty FullName | Sort-Object)",
+      "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\Prefabs\\\\\" -Recurse | Select-Object -ExpandProperty Name)",
+      "Bash(dir \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\\\\\" | head -20)",
+      "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\\\\Assets\\\\_Project\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"D:\\\\CnC_Red_Alert\\\\CODE\\\\\" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 20)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }

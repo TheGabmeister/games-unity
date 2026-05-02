@@ -9,6 +9,8 @@ SPRITE_DIR="$PROJECT_DIR/Assets/_Project/Sprites"
 
 mkdir -p "$SPRITE_DIR/Terrain"
 mkdir -p "$SPRITE_DIR/Units"
+mkdir -p "$SPRITE_DIR/Buildings"
+mkdir -p "$SPRITE_DIR/Overlays"
 mkdir -p "$SPRITE_DIR/UI"
 
 echo "Exporting terrain tiles..."
@@ -22,6 +24,20 @@ echo "Exporting unit sprites..."
 for svg in "$TOOLS_DIR/sprites/units/"*.svg; do
     name=$(basename "$svg" .svg)
     "$INKSCAPE" "$svg" --export-type=png --export-filename="$SPRITE_DIR/Units/$name.png" --export-width=64 --export-height=64 2>/dev/null
+    echo "  $name"
+done
+
+echo "Exporting building sprites..."
+for svg in "$TOOLS_DIR/sprites/buildings/"*.svg; do
+    name=$(basename "$svg" .svg)
+    "$INKSCAPE" "$svg" --export-type=png --export-filename="$SPRITE_DIR/Buildings/$name.png" --export-width=64 --export-height=64 2>/dev/null
+    echo "  $name"
+done
+
+echo "Exporting overlay sprites..."
+for svg in "$TOOLS_DIR/sprites/overlays/"*.svg; do
+    name=$(basename "$svg" .svg)
+    "$INKSCAPE" "$svg" --export-type=png --export-filename="$SPRITE_DIR/Overlays/$name.png" --export-width=64 --export-height=64 2>/dev/null
     echo "  $name"
 done
 

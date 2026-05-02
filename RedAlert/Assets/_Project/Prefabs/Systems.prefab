@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3913977187246934452}
   - component: {fileID: 8464276111644442456}
   - component: {fileID: 6207377703956905497}
+  - component: {fileID: 199132944838731778}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -68,10 +69,14 @@ MonoBehaviour:
     Faction: 0
     Color: {r: 0.2, g: 0.6, b: 1, a: 1}
     OwnedEntities: []
+    Credits: 0
+    StorageCapacity: 0
   - PlayerIndex: 1
     Faction: 1
     Color: {r: 1, g: 0.3, b: 0.3, a: 1}
     OwnedEntities: []
+    Credits: 0
+    StorageCapacity: 0
   _localPlayerIndex: 0
 --- !u!114 &5022583159828480484
 MonoBehaviour:
@@ -93,6 +98,18 @@ MonoBehaviour:
   _waterTile: {fileID: 11400000, guid: 0b812710aafdfa94b961d2df4fd64b59, type: 2}
   _oreTile: {fileID: 11400000, guid: 817a6cf5e81648f4fabcf578b6b9de0b, type: 2}
   _gemsTile: {fileID: 11400000, guid: f8b4090446d8270488740341f264cab2, type: 2}
+  _tilemap: {fileID: 0}
+  _oreOverlayTilemap: {fileID: 0}
+  _oreDensityTiles:
+  - {fileID: 11400000, guid: d2d5d43a75c0d8a47b565a993fe0296a, type: 2}
+  - {fileID: 11400000, guid: 9bf2251932b8f4a45a4be6f05640f6e8, type: 2}
+  - {fileID: 11400000, guid: 2b8c89030e3feee45ad94631ce511796, type: 2}
+  - {fileID: 11400000, guid: 80438176023670243bc5e77ed90e2909, type: 2}
+  _gemDensityTiles:
+  - {fileID: 11400000, guid: 18168ce7f8352604293139d810909716, type: 2}
+  - {fileID: 11400000, guid: a056be749107f9748bd44c49504f7574, type: 2}
+  - {fileID: 11400000, guid: 060b03d01c1ef694c9f1a300e689c1df, type: 2}
+  - {fileID: 11400000, guid: 35c406a96b054c54ca69f1146ffe9d83, type: 2}
 --- !u!114 &1066326887532956304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,3 +243,16 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &199132944838731778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa4ecd0b93ce2a47a28a03a26a258a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EconomyManager
+  _startingCredits: 10000

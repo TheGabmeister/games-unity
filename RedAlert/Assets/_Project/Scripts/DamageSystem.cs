@@ -8,7 +8,7 @@ public static class DamageSystem
     {
         if (target == null || target.IsDead) return;
 
-        float modifier = warhead.GetModifier(target.UnitData.Armor);
+        float modifier = warhead.GetModifier(target.Armor);
         int effective = Mathf.RoundToInt(baseDamage * modifier);
         if (effective < 1) effective = 1;
 
@@ -40,7 +40,7 @@ public static class DamageSystem
                 if (dist > SplashRadius) continue;
 
                 float falloff = Mathf.Max(0f, 1f - dist / (warhead.SpreadFactor * 0.5f));
-                float modifier = warhead.GetModifier(entity.UnitData.Armor);
+                float modifier = warhead.GetModifier(entity.Armor);
                 int effective = Mathf.RoundToInt(baseDamage * modifier * falloff);
                 if (effective < 1) continue;
 

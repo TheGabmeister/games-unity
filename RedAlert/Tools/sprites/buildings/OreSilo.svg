@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Silo base -->
+  <rect x="8" y="32" width="48" height="28" rx="3" fill="#b0b0b0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Silo dome -->
+  <ellipse cx="32" cy="32" rx="24" ry="14" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Top cap -->
+  <ellipse cx="32" cy="22" rx="16" ry="6" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Hatch -->
+  <rect x="28" y="18" width="8" height="6" rx="1" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Vertical ribs -->
+  <g stroke="#808080" stroke-width="0.8" opacity="0.5">
+    <line x1="20" y1="28" x2="20" y2="58"/>
+    <line x1="32" y1="24" x2="32" y2="58"/>
+    <line x1="44" y1="28" x2="44" y2="58"/>
+  </g>
+  <!-- Fill level indicator -->
+  <rect x="12" y="42" width="40" height="16" rx="2" fill="#c89020" opacity="0.5"/>
+  <!-- Base detail -->
+  <rect x="6" y="56" width="52" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+</svg>

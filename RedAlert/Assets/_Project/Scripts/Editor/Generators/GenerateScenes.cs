@@ -33,9 +33,29 @@ public static class GenerateScenes
         var renderer = tilemapGO.AddComponent<TilemapRenderer>();
         renderer.sortingOrder = 0;
 
+        var overlayGO = new GameObject("OreOverlay");
+        overlayGO.transform.SetParent(gridGO.transform, false);
+        var overlayTilemap = overlayGO.AddComponent<Tilemap>();
+        var overlayRenderer = overlayGO.AddComponent<TilemapRenderer>();
+        overlayRenderer.sortingOrder = 1;
+
         var systemsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Systems.prefab");
+        GameObject systemsInstance = null;
         if (systemsPrefab != null)
-            PrefabUtility.InstantiatePrefab(systemsPrefab);
+            systemsInstance = (GameObject)PrefabUtility.InstantiatePrefab(systemsPrefab);
+
+        if (systemsInstance != null)
+        {
+            var mapManager = systemsInstance.GetComponent<MapManager>();
+            if (mapManager != null)
+            {
+                var terrainTM = tilemapGO.GetComponent<Tilemap>();
+                var mmSO = new SerializedObject(mapManager);
+                mmSO.FindProperty("_tilemap").objectReferenceValue = terrainTM;
+                mmSO.FindProperty("_oreOverlayTilemap").objectReferenceValue = overlayTilemap;
+                mmSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
 
         string prefabDir = "Assets/_Project/Prefabs/Units";
         var riflePrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/RifleInfantry.prefab");
@@ -60,6 +80,17 @@ public static class GenerateScenes
         if (htankPrefab != null) SpawnUnit(htankPrefab, new Vector3(28.5f, 19.5f, 0f), 1);
         if (htankPrefab != null) SpawnUnit(htankPrefab, new Vector3(28.5f, 21.5f, 0f), 1);
         if (artyPrefab != null) SpawnUnit(artyPrefab, new Vector3(32.5f, 20.5f, 0f), 1);
+
+        // Economy — Allied (player 0)
+        string buildingDir = "Assets/_Project/Prefabs/Buildings";
+        var refineryPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{buildingDir}/OreRefinery.prefab");
+        var siloPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{buildingDir}/OreSilo.prefab");
+        var oreTruckPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/OreTruck.prefab");
+
+        // Refinery near the ore field (ore is at x:15-21, y:28-34)
+        if (refineryPrefab != null) SpawnUnit(refineryPrefab, new Vector3(13.5f, 28.5f, 0f), 0);
+        if (siloPrefab != null) SpawnUnit(siloPrefab, new Vector3(13.5f, 26.5f, 0f), 0);
+        if (oreTruckPrefab != null) SpawnUnit(oreTruckPrefab, new Vector3(14.5f, 27.5f, 0f), 0);
 
         EditorSceneManager.SaveScene(scene, path);
         Debug.Log($"Gameplay scene created at {path}");

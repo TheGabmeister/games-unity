@@ -27,6 +27,7 @@ public static class GenerateSystemsPrefab
             AddIfMissing<InputManager>(instance);
             AddIfMissing<PlayerManager>(instance);
             AddIfMissing<MapManager>(instance);
+            AddIfMissing<EconomyManager>(instance);
             AddIfMissing<SelectionManager>(instance);
             AddIfMissing<CommandManager>(instance);
             AddIfMissing<SfxManager>(instance);
@@ -81,6 +82,22 @@ public static class GenerateSystemsPrefab
         SetTile(so, "_waterTile", $"{tileDir}/Water.asset");
         SetTile(so, "_oreTile", $"{tileDir}/Ore.asset");
         SetTile(so, "_gemsTile", $"{tileDir}/Gems.asset");
+
+        var oreDensityProp = so.FindProperty("_oreDensityTiles");
+        oreDensityProp.arraySize = 4;
+        for (int i = 0; i < 4; i++)
+        {
+            var tile = AssetDatabase.LoadAssetAtPath<TileBase>($"{tileDir}/OreDensity{i + 1}.asset");
+            oreDensityProp.GetArrayElementAtIndex(i).objectReferenceValue = tile;
+        }
+
+        var gemDensityProp = so.FindProperty("_gemDensityTiles");
+        gemDensityProp.arraySize = 4;
+        for (int i = 0; i < 4; i++)
+        {
+            var tile = AssetDatabase.LoadAssetAtPath<TileBase>($"{tileDir}/GemDensity{i + 1}.asset");
+            gemDensityProp.GetArrayElementAtIndex(i).objectReferenceValue = tile;
+        }
 
         so.ApplyModifiedPropertiesWithoutUndo();
     }

@@ -16,6 +16,7 @@ MonoBehaviour:
   Sprite: {fileID: -4047491817323079948, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
   Category: 1
   Faction: 1
+  Cost: 0
   Locomotion: 1
   BaseSpeed: 3.5
   MaxHP: 75
@@ -29,4 +30,9 @@ MonoBehaviour:
   DeathWarhead: {fileID: 0}
   DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
   BailOutUnit: {fileID: 0}
+  FootprintX: 1
+  FootprintY: 1
+  StorageCapacity: 0
+  RequiresPower: 0
+  FreeUnit: {fileID: 0}
   Prefab: {fileID: 4850823203602214659, guid: de43d13ac8b5dfb4e8fc7320b493c037, type: 3}

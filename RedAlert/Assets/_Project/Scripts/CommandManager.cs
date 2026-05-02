@@ -55,6 +55,7 @@ public class CommandManager : MonoBehaviour
         if (targetEntity != null && !targetEntity.IsDead)
         {
             int localPlayer = PlayerManager.Instance.LocalPlayer.PlayerIndex;
+
             if (PlayerManager.Instance.AreEnemies(localPlayer, targetEntity.OwnerPlayerIndex))
             {
                 foreach (var selectable in selected)
@@ -71,10 +72,31 @@ public class CommandManager : MonoBehaviour
                 }
                 return;
             }
+
+            var refinery = targetEntity.GetComponent<Refinery>();
+            if (refinery != null)
+            {
+                foreach (var selectable in selected)
+                {
+                    var harvester = selectable.GetComponent<Harvester>();
+                    if (harvester != null)
+                        harvester.SendToRefinery(refinery);
+                }
+                return;
+            }
         }
+
+        bool hasOre = MapManager.Instance.HasOre(targetCell);
 
         foreach (var selectable in selected)
         {
+            var harvester = selectable.GetComponent<Harvester>();
+            if (harvester != null && hasOre)
+            {
+                harvester.SendToOre(targetCell);
+                continue;
+            }
+
             var attacker = selectable.GetComponent<Attacker>();
             if (attacker != null)
                 attacker.ClearOrders();
@@ -154,6 +176,10 @@ public class CommandManager : MonoBehaviour
             var attacker = selectable.GetComponent<Attacker>();
             if (attacker != null)
                 attacker.ClearOrders();
+
+            var harvester = selectable.GetComponent<Harvester>();
+            if (harvester != null)
+                harvester.Stop();
         }
     }
 

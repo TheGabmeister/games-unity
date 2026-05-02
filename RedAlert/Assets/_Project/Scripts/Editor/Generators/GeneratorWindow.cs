@@ -36,6 +36,17 @@ public class GeneratorWindow : EditorWindow
             Button("All Combat Data", GenerateCombatData.GenerateAll);
         });
 
+        Section("Economy", () =>
+        {
+            Button("Overlay Tiles (ore/gem density)", GenerateEconomyData.GenerateOverlayTiles);
+            Button("Building Sprites", GenerateEconomyData.GenerateBuildingSprites);
+            Button("Ore Truck Unit", GenerateEconomyData.GenerateOreUnit);
+            Button("Building Data (Refinery, Silo)", GenerateEconomyData.GenerateBuildingData);
+            Button("Ore Truck Prefab", GenerateEconomyData.GenerateOreTruckPrefab);
+            Button("Building Prefabs", GenerateEconomyData.GenerateBuildingPrefabs);
+            Button("All Economy", GenerateEconomyData.GenerateAll);
+        });
+
         Section("Prefabs", () =>
         {
             Button("Placeholder Unit Prefab", GenerateUnitPrefab.GeneratePrefab);
@@ -82,6 +93,7 @@ public class GeneratorWindow : EditorWindow
         GenerateTestMap.Generate();
         GenerateUnitPrefab.GenerateSprites();
         GenerateCombatData.GenerateAll();
+        GenerateEconomyData.GenerateAll();
         GenerateUnitPrefab.GeneratePrefab();
         GenerateUnitPrefabs.Generate();
         GenerateSystemsPrefab.Generate();

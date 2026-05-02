@@ -14,6 +14,8 @@ public class Entity : MonoBehaviour
     public Vector2Int Cell { get; private set; }
     public Health Health => _health;
     public bool IsDead { get; private set; }
+    public bool IsBuilding => _unitData != null && _unitData.Category == UnitCategory.Building;
+    public ArmorType Armor => _unitData != null ? _unitData.Armor : ArmorType.None;
 
     void Awake()
     {

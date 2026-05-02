@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: OreTruck
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Ore Truck
+  Sprite: {fileID: 2175045147716456000, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  Category: 1
+  Faction: 0
+  Cost: 1400
+  Locomotion: 2
+  BaseSpeed: 4
+  MaxHP: 600
+  Armor: 3
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 4
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 1
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 11400000, guid: 4a67bfa78c8a15f48a9ddaa55dc5b38a, type: 2}
+  FootprintX: 1
+  FootprintY: 1
+  StorageCapacity: 0
+  RequiresPower: 0
+  FreeUnit: {fileID: 0}
+  Prefab: {fileID: 6576076437252222818, guid: 9a601fe2715cf8044803a009afd14ef9, type: 3}
