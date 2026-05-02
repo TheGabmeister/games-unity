@@ -36,6 +36,21 @@ All game content goes under `Assets/_Project/`. Editor-only scripts are in `Asse
 - **DRY** — remove real duplication, not shape-similar code
 - **Locality of change** — adding a new entity or feature should touch as few files as possible
 
+## Reference Source Code
+
+The original C&C: Red Alert source code (EA GPL release) is at `D:\CnC_Red_Alert\CODE\`. Key files for gameplay data:
+- `BDATA.CPP` — building definitions, footprint sizes, occupy/overlap lists
+- `UDATA.CPP` — vehicle unit definitions, locomotion types
+- `IDATA.CPP` — infantry unit definitions
+- `VDATA.CPP` — naval vessel definitions
+- `AADATA.CPP` — aircraft definitions
+- `BULLET.CPP` — projectile behavior, homing, scatter, arcs
+- `COMBAT.CPP` — splash damage, damage calculation, friendly fire
+- `TECHNO.CPP` — targeting, Can_Fire logic, turret rotation
+- `UNIT.CPP` — fire-while-moving, harvester AI, unit state machine
+- `RULES.H` / `RULES.CPP` — all configurable game rules (ore values, growth rates, build speed, etc.)
+- `DEFINES.H` — enums: BSizeType, SpeedType, ArmorType, WarheadType
+
 ## Asset Pipeline
 
 - **Sprites**: SVG source files exported to PNG via Inkscape. Sprite size is 64×64 px. Sprite sheets are horizontal strips (e.g., 512×64 for 8 frames).
