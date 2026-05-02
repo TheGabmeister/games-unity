@@ -29,3 +29,4 @@ MonoBehaviour:
   DeathWarhead: {fileID: 0}
   DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
   BailOutUnit: {fileID: 0}
+  Prefab: {fileID: 1057406363282900693, guid: 20dc2679c77d2c24581d171cd14f1802, type: 3}

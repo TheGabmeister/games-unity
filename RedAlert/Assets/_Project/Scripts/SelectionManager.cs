@@ -10,6 +10,7 @@ public class SelectionManager : MonoBehaviour
     private bool _isDragging;
     private Vector2 _dragStart;
     private float _lastClickTime;
+    private Selectable _inspectedEnemy;
     private const float DoubleClickTime = 0.3f;
     private const float DragThreshold = 5f;
 
@@ -79,13 +80,19 @@ public class SelectionManager : MonoBehaviour
         Entity entity = MapManager.Instance.GetEntityAt(cell);
 
         if (entity == null) return;
-        if (entity.OwnerPlayerIndex != PlayerManager.Instance.LocalPlayer.PlayerIndex) return;
 
         var selectable = entity.GetComponent<Selectable>();
-        if (selectable != null)
+        if (selectable == null) return;
+
+        if (entity.OwnerPlayerIndex == PlayerManager.Instance.LocalPlayer.PlayerIndex)
         {
             selectable.Select();
             _selected.Add(selectable);
+        }
+        else
+        {
+            selectable.Select();
+            _inspectedEnemy = selectable;
         }
     }
 
@@ -210,6 +217,12 @@ public class SelectionManager : MonoBehaviour
         foreach (var s in _selected)
             if (s != null) s.Deselect();
         _selected.Clear();
+
+        if (_inspectedEnemy != null)
+        {
+            _inspectedEnemy.Deselect();
+            _inspectedEnemy = null;
+        }
     }
 
     void OnGUI()

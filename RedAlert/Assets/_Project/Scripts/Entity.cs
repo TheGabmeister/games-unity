@@ -85,6 +85,8 @@ public class Entity : MonoBehaviour
 
     void SpawnBailOut()
     {
+        if (_unitData.BailOutUnit.Prefab == null) return;
+
         Vector2Int spawnCell = Cell;
         bool found = false;
 
@@ -105,17 +107,14 @@ public class Entity : MonoBehaviour
         }
 
         Vector3 pos = MapManager.Instance.CellToWorld(spawnCell);
-        var go = new GameObject(_unitData.BailOutUnit.DisplayName);
-        go.transform.position = pos;
+        var go = Instantiate(_unitData.BailOutUnit.Prefab, pos, Quaternion.identity);
+        go.name = _unitData.BailOutUnit.DisplayName;
 
-        var sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = _unitData.BailOutUnit.Sprite;
-
-        var entity = go.AddComponent<Entity>();
+        var entity = go.GetComponent<Entity>();
         entity.InitRuntime(_ownerPlayerIndex, _unitData.BailOutUnit);
 
-        go.AddComponent<Mover>();
-        go.AddComponent<Attacker>();
+        if (go.TryGetComponent<SpriteRenderer>(out var sr))
+            sr.color = PlayerManager.Instance.GetPlayer(_ownerPlayerIndex).Color;
     }
 
     public void InitRuntime(int ownerIndex, UnitData data)

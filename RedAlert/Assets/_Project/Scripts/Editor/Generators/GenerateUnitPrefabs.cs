@@ -24,10 +24,16 @@ public static class GenerateUnitPrefabs
                 continue;
             }
 
-            CreateUnitPrefab(unitName, $"{dir}/{unitName}.prefab", unitData,
+            string prefabPath = $"{dir}/{unitName}.prefab";
+            CreateUnitPrefab(unitName, prefabPath, unitData,
                 circleSprite, barBGSprite, barFillSprite);
+
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            unitData.Prefab = prefab;
+            EditorUtility.SetDirty(unitData);
         }
 
+        AssetDatabase.SaveAssets();
         Debug.Log($"Generated {unitNames.Length} unit prefabs");
     }
 

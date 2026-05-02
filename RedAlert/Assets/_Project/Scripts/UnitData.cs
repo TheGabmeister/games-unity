@@ -28,4 +28,7 @@ public class UnitData : ScriptableObject
     [Header("Death")]
     public AudioClip DeathSound;
     public UnitData BailOutUnit;
+
+    [Header("Prefab")]
+    public GameObject Prefab;
 }
