@@ -242,7 +242,7 @@ public static class GenerateSidebarPrefab
         viewportRT.offsetMin = Vector2.zero;
         viewportRT.offsetMax = Vector2.zero;
         viewportRT.gameObject.AddComponent<Image>().color = Color.clear;
-        viewportRT.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+        viewportRT.gameObject.AddComponent<RectMask2D>();
 
         // Content with vertical layout
         var contentRT = CreateRect("Content", viewportRT);
