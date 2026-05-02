@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4115141950772343733}
   - component: {fileID: 5022583159828480484}
   - component: {fileID: 1066326887532956304}
+  - component: {fileID: 3913977187246934452}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -102,3 +103,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a840f5a7561463439ae96c65708b3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelectionManager
+--- !u!114 &3913977187246934452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29d91f5d193d2be47b2210a79de083de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CommandManager

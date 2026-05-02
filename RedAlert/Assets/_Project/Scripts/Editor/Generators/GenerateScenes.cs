@@ -37,29 +37,36 @@ public static class GenerateScenes
             PrefabUtility.InstantiatePrefab(systemsPrefab);
 
         var unitPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Units/PlaceholderUnit.prefab");
+        var rifleData = AssetDatabase.LoadAssetAtPath<UnitData>("Assets/_Project/Data/Units/RifleInfantry.asset");
+        var tankData = AssetDatabase.LoadAssetAtPath<UnitData>("Assets/_Project/Data/Units/LightTank.asset");
+        var rangerData = AssetDatabase.LoadAssetAtPath<UnitData>("Assets/_Project/Data/Units/Ranger.asset");
+
         if (unitPrefab != null)
         {
-            SpawnUnit(unitPrefab, new Vector3(5.5f, 5.5f, 0f), 0);
-            SpawnUnit(unitPrefab, new Vector3(7.5f, 5.5f, 0f), 0);
-            SpawnUnit(unitPrefab, new Vector3(6.5f, 7.5f, 0f), 0);
+            SpawnUnit(unitPrefab, new Vector3(5.5f, 5.5f, 0f), 0, rifleData);
+            SpawnUnit(unitPrefab, new Vector3(7.5f, 5.5f, 0f), 0, tankData);
+            SpawnUnit(unitPrefab, new Vector3(6.5f, 7.5f, 0f), 0, rangerData);
 
-            SpawnUnit(unitPrefab, new Vector3(33.5f, 33.5f, 0f), 1);
-            SpawnUnit(unitPrefab, new Vector3(35.5f, 33.5f, 0f), 1);
-            SpawnUnit(unitPrefab, new Vector3(34.5f, 35.5f, 0f), 1);
+            SpawnUnit(unitPrefab, new Vector3(33.5f, 33.5f, 0f), 1, rifleData);
+            SpawnUnit(unitPrefab, new Vector3(35.5f, 33.5f, 0f), 1, tankData);
+            SpawnUnit(unitPrefab, new Vector3(34.5f, 35.5f, 0f), 1, rangerData);
         }
 
         EditorSceneManager.SaveScene(scene, path);
         Debug.Log($"Gameplay scene created at {path}");
     }
 
-    static void SpawnUnit(GameObject prefab, Vector3 position, int playerIndex)
+    static void SpawnUnit(GameObject prefab, Vector3 position, int playerIndex, UnitData unitData)
     {
         var unit = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         unit.transform.position = position;
 
+        if (unitData != null)
+            unit.name = $"{unitData.DisplayName} (P{playerIndex})";
+
         var so = new SerializedObject(unit.GetComponent<Entity>());
         so.FindProperty("_ownerPlayerIndex").intValue = playerIndex;
-        so.FindProperty("_entityName").stringValue = "Placeholder";
+        so.FindProperty("_unitData").objectReferenceValue = unitData;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         var sr = unit.GetComponent<SpriteRenderer>();

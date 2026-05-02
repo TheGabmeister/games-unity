@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8153016878755432631}
   - component: {fileID: 9107107135496655790}
   - component: {fileID: 8459998371784602457}
+  - component: {fileID: 5815271913099132110}
   - component: {fileID: 6889429132455410293}
   m_Layer: 0
   m_Name: PlaceholderUnit
@@ -108,7 +109,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Entity
   _ownerPlayerIndex: 0
-  _entityName: 
+  _unitData: {fileID: 0}
+--- !u!114 &5815271913099132110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035041128591635241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b73bb722aef3c244fbe06407d9c88795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mover
 --- !u!114 &6889429132455410293
 MonoBehaviour:
   m_ObjectHideFlags: 0

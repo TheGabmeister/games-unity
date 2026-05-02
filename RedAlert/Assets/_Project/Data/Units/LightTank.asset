@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: LightTank
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Light Tank
+  Sprite: {fileID: -8506272095534995724, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  Locomotion: 1
+  BaseSpeed: 5

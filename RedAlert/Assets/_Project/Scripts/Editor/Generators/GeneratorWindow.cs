@@ -25,14 +25,20 @@ public class GeneratorWindow : EditorWindow
             Button("Gameplay Scene", GenerateScenes.GenerateAll);
         });
 
-        Section("Generate All (Phase 1)", () =>
+        Section("Phase 2 — Movement", () =>
+        {
+            Button("Unit Data (Rifle, Tank, Ranger)", GenerateUnitData.Generate);
+        });
+
+        Section("Generate All", () =>
         {
             EditorGUILayout.HelpBox(
-                "Runs all Phase 1 generators in order:\n" +
-                "Terrain tiles → Test map → Unit sprites → Unit prefab → Systems prefab → Scenes",
+                "Runs all generators in order:\n" +
+                "Terrain tiles → Test map → Unit sprites → Unit data →\n" +
+                "Unit prefab → Systems prefab → Gameplay scene",
                 MessageType.Info);
             if (GUILayout.Button("Generate All", GUILayout.Height(30)))
-                GenerateAllPhase1();
+                GenerateAll();
         });
 
         EditorGUILayout.EndScrollView();
@@ -53,11 +59,12 @@ public class GeneratorWindow : EditorWindow
             action();
     }
 
-    private static void GenerateAllPhase1()
+    private static void GenerateAll()
     {
         GenerateTerrainTiles.Generate();
         GenerateTestMap.Generate();
         GenerateUnitPrefab.GenerateSprites();
+        GenerateUnitData.Generate();
         GenerateUnitPrefab.GeneratePrefab();
         GenerateSystemsPrefab.Generate();
         GenerateScenes.GenerateAll();

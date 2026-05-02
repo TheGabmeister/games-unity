@@ -43,6 +43,7 @@ public static class GenerateUnitPrefab
             sr.sortingOrder = 10;
 
             root.AddComponent<Entity>();
+            root.AddComponent<Mover>();
             var selectable = root.AddComponent<Selectable>();
 
             var circleGO = new GameObject("SelectionCircle");

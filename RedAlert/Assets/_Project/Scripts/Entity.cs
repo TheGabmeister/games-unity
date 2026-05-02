@@ -3,14 +3,21 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     [SerializeField] private int _ownerPlayerIndex;
-    [SerializeField] private string _entityName;
+    [SerializeField] private UnitData _unitData;
 
     public int OwnerPlayerIndex => _ownerPlayerIndex;
-    public string EntityName => _entityName;
+    public UnitData UnitData => _unitData;
+    public string EntityName => _unitData != null ? _unitData.DisplayName : "";
     public Vector2Int Cell { get; private set; }
 
     void Start()
     {
+        if (_unitData != null && _unitData.Sprite != null
+            && TryGetComponent<SpriteRenderer>(out var sr))
+        {
+            sr.sprite = _unitData.Sprite;
+        }
+
         Cell = MapManager.Instance.WorldToCell(transform.position);
         MapManager.Instance.RegisterEntity(Cell, this);
 
