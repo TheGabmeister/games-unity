@@ -132,6 +132,7 @@ public class SidebarUI : MonoBehaviour
 
         foreach (var item in items)
         {
+            if (item == null) continue;
             if (!ConstructionManager.Instance.CanBuild(item, playerIndex)) continue;
 
             var go = Instantiate(_buildSlotPrefab, parent);
@@ -143,10 +144,20 @@ public class SidebarUI : MonoBehaviour
             };
 
             var icon = go.transform.Find("Icon")?.GetComponent<Image>();
-            if (icon != null && item.Icon != null)
-                icon.sprite = item.Icon;
-            else if (icon != null && item.Sprite != null)
-                icon.sprite = item.Sprite;
+            if (icon != null)
+            {
+                var sprite = item.Icon != null ? item.Icon : item.Sprite;
+                if (sprite != null)
+                {
+                    icon.sprite = sprite;
+                    icon.preserveAspect = true;
+                }
+                else
+                {
+                    icon.color = new Color(0.4f, 0.4f, 0.4f);
+                    Debug.LogWarning($"No sprite for build slot: {item.DisplayName}");
+                }
+            }
 
             var nameText = go.transform.Find("Name")?.GetComponent<TMP_Text>();
             if (nameText != null)

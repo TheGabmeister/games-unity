@@ -10,6 +10,8 @@ public static class GenerateSidebarPrefab
         string path = "Assets/_Project/Prefabs/SidebarCanvas.prefab";
         PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Prefabs");
 
+        GenerateBuildSlotPrefab();
+
         GameObject root = new GameObject("SidebarCanvas");
         try
         {
@@ -22,112 +24,102 @@ public static class GenerateSidebarPrefab
             scaler.referenceResolution = new Vector2(1920, 1080);
             root.AddComponent<GraphicRaycaster>();
 
-            // Sidebar panel (right side)
-            var sidebarPanel = CreatePanel("SidebarPanel", root.transform,
-                new Vector2(1, 0), new Vector2(1, 1),
-                new Vector2(-288, 0), Vector2.zero);
-            var sidebarBG = sidebarPanel.AddComponent<Image>();
-            sidebarBG.color = new Color(0.15f, 0.15f, 0.15f, 1f);
+            // Sidebar panel — anchored to right edge, 288px wide, full height
+            var sidebar = CreateRect("SidebarPanel", root.transform);
+            sidebar.anchorMin = new Vector2(1, 0);
+            sidebar.anchorMax = new Vector2(1, 1);
+            sidebar.pivot = new Vector2(1, 1);
+            sidebar.offsetMin = new Vector2(-288, 0);
+            sidebar.offsetMax = Vector2.zero;
+            var sidebarBG = sidebar.gameObject.AddComponent<Image>();
+            sidebarBG.color = new Color(0.12f, 0.12f, 0.12f, 1f);
 
-            // ---- Credits Display ----
-            var creditsPanel = CreatePanel("CreditsPanel", sidebarPanel.transform,
-                new Vector2(0, 1), new Vector2(1, 1),
-                new Vector2(0, -40), new Vector2(0, 0));
-            var creditsRT = creditsPanel.GetComponent<RectTransform>();
-            creditsRT.sizeDelta = new Vector2(0, 40);
-            creditsRT.anchoredPosition = new Vector2(0, -20);
+            // Credits — top strip
+            var credits = CreateRect("CreditsPanel", sidebar);
+            credits.anchorMin = new Vector2(0, 1);
+            credits.anchorMax = new Vector2(1, 1);
+            credits.pivot = new Vector2(0.5f, 1);
+            credits.sizeDelta = new Vector2(0, 36);
+            credits.anchoredPosition = Vector2.zero;
+            credits.gameObject.AddComponent<Image>().color = new Color(0.08f, 0.08f, 0.08f);
 
-            var creditsBG = creditsPanel.AddComponent<Image>();
-            creditsBG.color = new Color(0.1f, 0.1f, 0.1f, 1f);
-
-            var creditsText = CreateTMP("CreditsText", creditsPanel.transform, "$10,000", 20,
+            var creditsText = CreateTMP("CreditsText", credits, "$10,000", 22,
                 TextAlignmentOptions.Center, Color.green);
-            var creditsTextRT = creditsText.GetComponent<RectTransform>();
-            creditsTextRT.anchorMin = Vector2.zero;
-            creditsTextRT.anchorMax = Vector2.one;
-            creditsTextRT.offsetMin = Vector2.zero;
-            creditsTextRT.offsetMax = Vector2.zero;
 
-            // ---- Power Bar ----
-            var powerPanel = CreatePanel("PowerPanel", sidebarPanel.transform,
-                new Vector2(0, 1), new Vector2(0, 1),
-                Vector2.zero, Vector2.zero);
-            var powerRT = powerPanel.GetComponent<RectTransform>();
-            powerRT.anchoredPosition = new Vector2(15, -250);
-            powerRT.sizeDelta = new Vector2(20, 400);
+            // Power bar — left edge vertical strip
+            var powerBG = CreateRect("PowerBar", sidebar);
+            powerBG.anchorMin = new Vector2(0, 0);
+            powerBG.anchorMax = new Vector2(0, 1);
+            powerBG.pivot = new Vector2(0, 0.5f);
+            powerBG.anchoredPosition = new Vector2(4, 0);
+            powerBG.sizeDelta = new Vector2(16, -80);
+            powerBG.gameObject.AddComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f);
 
-            var powerBG = powerPanel.AddComponent<Image>();
-            powerBG.color = new Color(0.2f, 0.2f, 0.2f, 1f);
+            var powerFill = CreateRect("PowerFill", powerBG);
+            powerFill.anchorMin = Vector2.zero;
+            powerFill.anchorMax = Vector2.one;
+            powerFill.offsetMin = new Vector2(2, 2);
+            powerFill.offsetMax = new Vector2(-2, -2);
+            var fillImg = powerFill.gameObject.AddComponent<Image>();
+            fillImg.color = Color.green;
+            fillImg.type = Image.Type.Filled;
+            fillImg.fillMethod = Image.FillMethod.Vertical;
+            fillImg.fillOrigin = 0;
+            fillImg.fillAmount = 0.5f;
 
-            var powerFill = new GameObject("PowerFill", typeof(RectTransform));
-            powerFill.transform.SetParent(powerPanel.transform, false);
-            var fillImage = powerFill.AddComponent<Image>();
-            fillImage.color = Color.green;
-            fillImage.type = Image.Type.Filled;
-            fillImage.fillMethod = Image.FillMethod.Vertical;
-            fillImage.fillOrigin = 0;
-            fillImage.fillAmount = 0.5f;
-            var fillRT = powerFill.GetComponent<RectTransform>();
-            fillRT.anchorMin = Vector2.zero;
-            fillRT.anchorMax = Vector2.one;
-            fillRT.offsetMin = new Vector2(2, 2);
-            fillRT.offsetMax = new Vector2(-2, -2);
+            // Sell + Repair buttons — below credits
+            var btnRow = CreateRect("ButtonsPanel", sidebar);
+            btnRow.anchorMin = new Vector2(0, 1);
+            btnRow.anchorMax = new Vector2(1, 1);
+            btnRow.pivot = new Vector2(0.5f, 1);
+            btnRow.anchoredPosition = new Vector2(0, -38);
+            btnRow.sizeDelta = new Vector2(-28, 28);
+            var hlg = btnRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            hlg.spacing = 4;
+            hlg.padding = new RectOffset(24, 0, 0, 0);
+            hlg.childForceExpandWidth = true;
+            hlg.childForceExpandHeight = true;
 
-            // ---- Sell / Repair Buttons ----
-            var buttonsPanel = CreatePanel("ButtonsPanel", sidebarPanel.transform,
-                new Vector2(0, 1), new Vector2(1, 1),
-                Vector2.zero, Vector2.zero);
-            var buttonsRT = buttonsPanel.GetComponent<RectTransform>();
-            buttonsRT.anchoredPosition = new Vector2(0, -60);
-            buttonsRT.sizeDelta = new Vector2(0, 30);
-            var buttonsLayout = buttonsPanel.AddComponent<HorizontalLayoutGroup>();
-            buttonsLayout.spacing = 4;
-            buttonsLayout.padding = new RectOffset(40, 4, 2, 2);
+            var sellBtn = CreateUIButton("SellButton", btnRow, "SELL", new Color(0.6f, 0.15f, 0.15f));
+            var repairBtn = CreateUIButton("RepairButton", btnRow, "REPAIR", new Color(0.15f, 0.4f, 0.6f));
 
-            var sellBtn = CreateButton("SellButton", buttonsPanel.transform, "SELL",
-                new Color(0.7f, 0.2f, 0.2f), 14);
-            var repairBtn = CreateButton("RepairButton", buttonsPanel.transform, "REPAIR",
-                new Color(0.2f, 0.5f, 0.7f), 14);
+            // Build area — two columns below buttons, fills remaining space
+            var buildArea = CreateRect("BuildArea", sidebar);
+            buildArea.anchorMin = Vector2.zero;
+            buildArea.anchorMax = Vector2.one;
+            buildArea.offsetMin = new Vector2(24, 4);
+            buildArea.offsetMax = new Vector2(-4, -70);
 
-            // ---- Build Grid Area ----
-            var buildArea = CreatePanel("BuildArea", sidebarPanel.transform,
-                new Vector2(0, 0), new Vector2(1, 1),
-                Vector2.zero, Vector2.zero);
-            var buildAreaRT = buildArea.GetComponent<RectTransform>();
-            buildAreaRT.offsetMin = new Vector2(36, 4);
-            buildAreaRT.offsetMax = new Vector2(-4, -96);
+            var buildHLG = buildArea.gameObject.AddComponent<HorizontalLayoutGroup>();
+            buildHLG.spacing = 4;
+            buildHLG.childForceExpandWidth = true;
+            buildHLG.childForceExpandHeight = true;
+            buildHLG.childControlWidth = true;
+            buildHLG.childControlHeight = true;
 
-            var buildLayout = buildArea.AddComponent<HorizontalLayoutGroup>();
-            buildLayout.spacing = 4;
-            buildLayout.childForceExpandWidth = true;
-            buildLayout.childForceExpandHeight = true;
+            // Structure column (left)
+            var structScroll = CreateScrollColumn("StructureGrid", buildArea);
+            // Unit column (right)
+            var unitScroll = CreateScrollColumn("UnitGrid", buildArea);
 
-            // Structure column
-            var structCol = CreateScrollColumn("StructureGrid", buildArea.transform);
-            // Unit column
-            var unitCol = CreateScrollColumn("UnitGrid", buildArea.transform);
-
-            // ---- Build Slot Prefab ----
-            var buildSlot = CreateBuildSlotPrefab();
-
-            // ---- Sidebar UI Component ----
+            // Wire SidebarUI
             var sidebarUI = root.AddComponent<SidebarUI>();
-            var uiSO = new SerializedObject(sidebarUI);
-            uiSO.FindProperty("_creditsText").objectReferenceValue = creditsText;
-            uiSO.FindProperty("_powerBarFill").objectReferenceValue = fillImage;
-            uiSO.FindProperty("_powerBarBG").objectReferenceValue = powerBG;
-            uiSO.FindProperty("_sellButton").objectReferenceValue = sellBtn.GetComponent<Button>();
-            uiSO.FindProperty("_repairButton").objectReferenceValue = repairBtn.GetComponent<Button>();
-            uiSO.FindProperty("_sellButtonImage").objectReferenceValue = sellBtn.GetComponent<Image>();
-            uiSO.FindProperty("_repairButtonImage").objectReferenceValue = repairBtn.GetComponent<Image>();
-            uiSO.FindProperty("_structureGrid").objectReferenceValue = structCol.transform;
-            uiSO.FindProperty("_unitGrid").objectReferenceValue = unitCol.transform;
+            var so = new SerializedObject(sidebarUI);
+            so.FindProperty("_creditsText").objectReferenceValue = creditsText.GetComponent<TMP_Text>();
+            so.FindProperty("_powerBarFill").objectReferenceValue = fillImg;
+            so.FindProperty("_powerBarBG").objectReferenceValue = powerBG.gameObject.GetComponent<Image>();
+            so.FindProperty("_sellButton").objectReferenceValue = sellBtn.GetComponent<Button>();
+            so.FindProperty("_repairButton").objectReferenceValue = repairBtn.GetComponent<Button>();
+            so.FindProperty("_sellButtonImage").objectReferenceValue = sellBtn.GetComponent<Image>();
+            so.FindProperty("_repairButtonImage").objectReferenceValue = repairBtn.GetComponent<Image>();
+            so.FindProperty("_structureGrid").objectReferenceValue = structScroll.transform;
+            so.FindProperty("_unitGrid").objectReferenceValue = unitScroll.transform;
 
             var slotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/UI/BuildSlot.prefab");
             if (slotPrefab != null)
-                uiSO.FindProperty("_buildSlotPrefab").objectReferenceValue = slotPrefab;
+                so.FindProperty("_buildSlotPrefab").objectReferenceValue = slotPrefab;
 
-            uiSO.ApplyModifiedPropertiesWithoutUndo();
+            so.ApplyModifiedPropertiesWithoutUndo();
 
             PrefabUtility.SaveAsPrefabAsset(root, path);
         }
@@ -143,11 +135,6 @@ public static class GenerateSidebarPrefab
 
     public static void GenerateBuildSlotPrefab()
     {
-        CreateBuildSlotPrefab();
-    }
-
-    static GameObject CreateBuildSlotPrefab()
-    {
         string path = "Assets/_Project/Prefabs/UI/BuildSlot.prefab";
         PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Prefabs/UI");
 
@@ -155,69 +142,66 @@ public static class GenerateSidebarPrefab
         try
         {
             var slotRT = slot.GetComponent<RectTransform>();
-            slotRT.sizeDelta = new Vector2(120, 48);
+            slotRT.sizeDelta = new Vector2(120, 52);
 
             var bg = slot.AddComponent<Image>();
-            bg.color = new Color(0.25f, 0.25f, 0.25f, 1f);
+            bg.color = new Color(0.22f, 0.22f, 0.22f, 1f);
             slot.AddComponent<Button>();
 
             var layout = slot.AddComponent<LayoutElement>();
-            layout.preferredHeight = 48;
-            layout.minHeight = 48;
+            layout.preferredHeight = 52;
+            layout.minHeight = 52;
+            layout.flexibleWidth = 1;
 
-            // Icon
-            var iconGO = new GameObject("Icon", typeof(RectTransform));
-            iconGO.transform.SetParent(slot.transform, false);
-            var iconImage = iconGO.AddComponent<Image>();
-            iconImage.preserveAspect = true;
-            var iconRT = iconGO.GetComponent<RectTransform>();
+            // Icon — left side, square
+            var iconRT = CreateRect("Icon", slotRT);
             iconRT.anchorMin = new Vector2(0, 0);
             iconRT.anchorMax = new Vector2(0, 1);
+            iconRT.pivot = new Vector2(0, 0.5f);
             iconRT.offsetMin = new Vector2(2, 2);
-            iconRT.offsetMax = new Vector2(46, -2);
+            iconRT.offsetMax = new Vector2(50, -2);
+            var iconImg = iconRT.gameObject.AddComponent<Image>();
+            iconImg.preserveAspect = true;
+            iconImg.color = Color.white;
 
-            // Name/Cost text
-            var nameGO = new GameObject("Name", typeof(RectTransform));
-            nameGO.transform.SetParent(slot.transform, false);
-            var nameText = nameGO.AddComponent<TextMeshProUGUI>();
-            nameText.fontSize = 11;
-            nameText.alignment = TextAlignmentOptions.Left;
-            nameText.color = Color.white;
-            var nameRT = nameGO.GetComponent<RectTransform>();
+            // Cost label — right side
+            var nameRT = CreateRect("Name", slotRT);
             nameRT.anchorMin = new Vector2(0, 0);
             nameRT.anchorMax = new Vector2(1, 1);
-            nameRT.offsetMin = new Vector2(48, 2);
-            nameRT.offsetMax = new Vector2(-4, -2);
+            nameRT.offsetMin = new Vector2(52, 2);
+            nameRT.offsetMax = new Vector2(-2, -2);
+            var nameTMP = nameRT.gameObject.AddComponent<TextMeshProUGUI>();
+            nameTMP.fontSize = 12;
+            nameTMP.alignment = TextAlignmentOptions.MidlineLeft;
+            nameTMP.color = Color.white;
 
-            // Progress bar
-            var progressGO = new GameObject("Progress", typeof(RectTransform));
-            progressGO.transform.SetParent(slot.transform, false);
-            var progressImage = progressGO.AddComponent<Image>();
-            progressImage.color = new Color(0.2f, 0.8f, 0.2f, 0.4f);
-            progressImage.type = Image.Type.Filled;
-            progressImage.fillMethod = Image.FillMethod.Horizontal;
-            progressImage.fillAmount = 0f;
-            var progressRT = progressGO.GetComponent<RectTransform>();
+            // Progress overlay
+            var progressRT = CreateRect("Progress", slotRT);
             progressRT.anchorMin = Vector2.zero;
             progressRT.anchorMax = Vector2.one;
             progressRT.offsetMin = Vector2.zero;
             progressRT.offsetMax = Vector2.zero;
+            var progressImg = progressRT.gameObject.AddComponent<Image>();
+            progressImg.color = new Color(0.2f, 0.8f, 0.2f, 0.35f);
+            progressImg.type = Image.Type.Filled;
+            progressImg.fillMethod = Image.FillMethod.Horizontal;
+            progressImg.fillAmount = 0f;
+            progressImg.raycastTarget = false;
 
             // Ready label
-            var readyGO = new GameObject("ReadyLabel", typeof(RectTransform));
-            readyGO.transform.SetParent(slot.transform, false);
-            var readyText = readyGO.AddComponent<TextMeshProUGUI>();
-            readyText.text = "READY";
-            readyText.fontSize = 14;
-            readyText.fontStyle = FontStyles.Bold;
-            readyText.alignment = TextAlignmentOptions.Center;
-            readyText.color = Color.yellow;
-            var readyRT = readyGO.GetComponent<RectTransform>();
+            var readyRT = CreateRect("ReadyLabel", slotRT);
             readyRT.anchorMin = Vector2.zero;
             readyRT.anchorMax = Vector2.one;
             readyRT.offsetMin = Vector2.zero;
             readyRT.offsetMax = Vector2.zero;
-            readyGO.SetActive(false);
+            var readyTMP = readyRT.gameObject.AddComponent<TextMeshProUGUI>();
+            readyTMP.text = "READY";
+            readyTMP.fontSize = 16;
+            readyTMP.fontStyle = FontStyles.Bold;
+            readyTMP.alignment = TextAlignmentOptions.Center;
+            readyTMP.color = Color.yellow;
+            readyTMP.raycastTarget = false;
+            readyRT.gameObject.SetActive(false);
 
             PrefabUtility.SaveAsPrefabAsset(slot, path);
         }
@@ -227,28 +211,86 @@ public static class GenerateSidebarPrefab
         }
 
         AssetDatabase.SaveAssets();
-        return AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        AssetDatabase.Refresh();
+        Debug.Log("Generated BuildSlot prefab");
     }
 
-    static GameObject CreatePanel(string name, Transform parent,
-        Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+    static GameObject CreateScrollColumn(string name, RectTransform parent)
+    {
+        // ScrollRect container
+        var scrollGO = new GameObject(name, typeof(RectTransform));
+        scrollGO.transform.SetParent(parent, false);
+        var scrollRT = scrollGO.GetComponent<RectTransform>();
+        scrollRT.anchorMin = Vector2.zero;
+        scrollRT.anchorMax = Vector2.one;
+        scrollRT.offsetMin = Vector2.zero;
+        scrollRT.offsetMax = Vector2.zero;
+
+        var scrollLE = scrollGO.AddComponent<LayoutElement>();
+        scrollLE.flexibleWidth = 1;
+        scrollLE.flexibleHeight = 1;
+
+        var scrollRect = scrollGO.AddComponent<ScrollRect>();
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        scrollRect.movementType = ScrollRect.MovementType.Clamped;
+
+        // Viewport with mask
+        var viewportRT = CreateRect("Viewport", scrollRT);
+        viewportRT.anchorMin = Vector2.zero;
+        viewportRT.anchorMax = Vector2.one;
+        viewportRT.offsetMin = Vector2.zero;
+        viewportRT.offsetMax = Vector2.zero;
+        viewportRT.gameObject.AddComponent<Image>().color = Color.clear;
+        viewportRT.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+
+        // Content with vertical layout
+        var contentRT = CreateRect("Content", viewportRT);
+        contentRT.anchorMin = new Vector2(0, 1);
+        contentRT.anchorMax = new Vector2(1, 1);
+        contentRT.pivot = new Vector2(0.5f, 1);
+        contentRT.sizeDelta = new Vector2(0, 0);
+
+        var vlg = contentRT.gameObject.AddComponent<VerticalLayoutGroup>();
+        vlg.spacing = 3;
+        vlg.padding = new RectOffset(2, 2, 2, 2);
+        vlg.childForceExpandWidth = true;
+        vlg.childForceExpandHeight = false;
+        vlg.childControlWidth = true;
+        vlg.childControlHeight = false;
+
+        var csf = contentRT.gameObject.AddComponent<ContentSizeFitter>();
+        csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        scrollRect.viewport = viewportRT;
+        scrollRect.content = contentRT;
+
+        return contentRT.gameObject;
+    }
+
+    static RectTransform CreateRect(string name, RectTransform parent)
     {
         var go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
-        var rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = anchorMin;
-        rt.anchorMax = anchorMax;
-        rt.offsetMin = offsetMin;
-        rt.offsetMax = offsetMax;
-        return go;
+        return go.GetComponent<RectTransform>();
     }
 
-    static TextMeshProUGUI CreateTMP(string name, Transform parent, string text,
+    static RectTransform CreateRect(string name, Transform parent)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        return go.GetComponent<RectTransform>();
+    }
+
+    static TextMeshProUGUI CreateTMP(string name, RectTransform parent, string text,
         int fontSize, TextAlignmentOptions alignment, Color color)
     {
-        var go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        var tmp = go.AddComponent<TextMeshProUGUI>();
+        var rt = CreateRect(name, parent);
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+        var tmp = rt.gameObject.AddComponent<TextMeshProUGUI>();
         tmp.text = text;
         tmp.fontSize = fontSize;
         tmp.alignment = alignment;
@@ -256,77 +298,25 @@ public static class GenerateSidebarPrefab
         return tmp;
     }
 
-    static GameObject CreateButton(string name, Transform parent, string label,
-        Color bgColor, int fontSize)
+    static GameObject CreateUIButton(string name, RectTransform parent, string label, Color bgColor)
     {
         var go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
-
-        var image = go.AddComponent<Image>();
-        image.color = bgColor;
+        go.AddComponent<Image>().color = bgColor;
         go.AddComponent<Button>();
+        go.AddComponent<LayoutElement>().flexibleWidth = 1;
 
-        var layout = go.AddComponent<LayoutElement>();
-        layout.flexibleWidth = 1;
-
-        var textGO = new GameObject("Text", typeof(RectTransform));
-        textGO.transform.SetParent(go.transform, false);
-        var tmp = textGO.AddComponent<TextMeshProUGUI>();
-        tmp.text = label;
-        tmp.fontSize = fontSize;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
-        var textRT = textGO.GetComponent<RectTransform>();
+        var textRT = CreateRect("Text", go.GetComponent<RectTransform>());
         textRT.anchorMin = Vector2.zero;
         textRT.anchorMax = Vector2.one;
         textRT.offsetMin = Vector2.zero;
         textRT.offsetMax = Vector2.zero;
+        var tmp = textRT.gameObject.AddComponent<TextMeshProUGUI>();
+        tmp.text = label;
+        tmp.fontSize = 13;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.white;
 
         return go;
-    }
-
-    static GameObject CreateScrollColumn(string name, Transform parent)
-    {
-        var go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-
-        var scrollRect = go.AddComponent<ScrollRect>();
-        scrollRect.horizontal = false;
-        scrollRect.vertical = true;
-        scrollRect.movementType = ScrollRect.MovementType.Clamped;
-
-        var viewport = new GameObject("Viewport", typeof(RectTransform));
-        viewport.transform.SetParent(go.transform, false);
-        viewport.AddComponent<Image>().color = Color.clear;
-        viewport.AddComponent<Mask>().showMaskGraphic = false;
-        var vpRT = viewport.GetComponent<RectTransform>();
-        vpRT.anchorMin = Vector2.zero;
-        vpRT.anchorMax = Vector2.one;
-        vpRT.offsetMin = Vector2.zero;
-        vpRT.offsetMax = Vector2.zero;
-
-        var content = new GameObject("Content", typeof(RectTransform));
-        content.transform.SetParent(viewport.transform, false);
-        var contentRT = content.GetComponent<RectTransform>();
-        contentRT.anchorMin = new Vector2(0, 1);
-        contentRT.anchorMax = new Vector2(1, 1);
-        contentRT.pivot = new Vector2(0.5f, 1);
-        contentRT.sizeDelta = new Vector2(0, 0);
-
-        var vlg = content.AddComponent<VerticalLayoutGroup>();
-        vlg.spacing = 2;
-        vlg.padding = new RectOffset(2, 2, 2, 2);
-        vlg.childForceExpandWidth = true;
-        vlg.childForceExpandHeight = false;
-        vlg.childControlWidth = true;
-        vlg.childControlHeight = false;
-
-        var csf = content.AddComponent<ContentSizeFitter>();
-        csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-        scrollRect.viewport = vpRT;
-        scrollRect.content = contentRT;
-
-        return content;
     }
 }

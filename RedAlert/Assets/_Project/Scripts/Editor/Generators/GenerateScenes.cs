@@ -1,6 +1,8 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
@@ -101,6 +103,11 @@ public static class GenerateScenes
         if (refineryPrefab != null) SpawnUnit(refineryPrefab, new Vector3(13.5f, 28.5f, 0f), 0);
         if (siloPrefab != null) SpawnUnit(siloPrefab, new Vector3(13.5f, 26.5f, 0f), 0);
         if (oreTruckPrefab != null) SpawnUnit(oreTruckPrefab, new Vector3(14.5f, 27.5f, 0f), 0);
+
+        // EventSystem (required for uGUI clicks)
+        var eventSystemGO = new GameObject("EventSystem");
+        eventSystemGO.AddComponent<EventSystem>();
+        eventSystemGO.AddComponent<InputSystemUIInputModule>();
 
         // Sidebar canvas
         var sidebarPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/SidebarCanvas.prefab");
