@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class CommandManager : MonoBehaviour
 {
+    private Camera _cam;
+
     public static CommandManager Instance { get; private set; }
 
     void Awake()
     {
         Instance = this;
+        _cam = Camera.main;
     }
 
     void Update()
@@ -25,7 +28,7 @@ public class CommandManager : MonoBehaviour
         var selected = SelectionManager.Instance.Selected;
         if (selected.Count == 0) return;
 
-        Vector3 world = Camera.main.ScreenToWorldPoint(InputManager.Instance.MousePosition);
+        Vector3 world = _cam.ScreenToWorldPoint(InputManager.Instance.MousePosition);
         Vector2Int targetCell = MapManager.Instance.WorldToCell(world);
 
         Debug.Log($"Move command: {selected.Count} unit(s) to {targetCell}");

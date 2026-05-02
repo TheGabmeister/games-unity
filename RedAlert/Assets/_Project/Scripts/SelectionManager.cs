@@ -6,6 +6,7 @@ public class SelectionManager : MonoBehaviour
     private readonly List<Selectable> _selected = new();
     private readonly List<Selectable>[] _controlGroups = new List<Selectable>[9];
 
+    private Camera _cam;
     private bool _isDragging;
     private Vector2 _dragStart;
     private float _lastClickTime;
@@ -20,6 +21,7 @@ public class SelectionManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        _cam = Camera.main;
         for (int i = 0; i < 9; i++)
             _controlGroups[i] = new List<Selectable>();
     }
@@ -72,7 +74,7 @@ public class SelectionManager : MonoBehaviour
     {
         ClearSelection();
 
-        Vector3 world = Camera.main.ScreenToWorldPoint(screenPos);
+        Vector3 world = _cam.ScreenToWorldPoint(screenPos);
         Vector2Int cell = MapManager.Instance.WorldToCell(world);
         Entity entity = MapManager.Instance.GetEntityAt(cell);
 
@@ -89,7 +91,7 @@ public class SelectionManager : MonoBehaviour
 
     void DoubleClickSelect(Vector2 screenPos)
     {
-        Vector3 world = Camera.main.ScreenToWorldPoint(screenPos);
+        Vector3 world = _cam.ScreenToWorldPoint(screenPos);
         Vector2Int cell = MapManager.Instance.WorldToCell(world);
         Entity clicked = MapManager.Instance.GetEntityAt(cell);
         if (clicked == null) return;
@@ -103,7 +105,7 @@ public class SelectionManager : MonoBehaviour
             if (entity.EntityName != targetName) continue;
             if (entity.OwnerPlayerIndex != localPlayer) continue;
 
-            Vector3 vp = Camera.main.WorldToViewportPoint(entity.transform.position);
+            Vector3 vp = _cam.WorldToViewportPoint(entity.transform.position);
             if (vp.x < 0 || vp.x > 1 || vp.y < 0 || vp.y > 1) continue;
 
             var selectable = entity.GetComponent<Selectable>();
@@ -131,7 +133,7 @@ public class SelectionManager : MonoBehaviour
         {
             if (entity.OwnerPlayerIndex != localPlayer) continue;
 
-            Vector3 screen = Camera.main.WorldToScreenPoint(entity.transform.position);
+            Vector3 screen = _cam.WorldToScreenPoint(entity.transform.position);
             if (!rect.Contains(new Vector2(screen.x, screen.y))) continue;
 
             var selectable = entity.GetComponent<Selectable>();
@@ -152,7 +154,7 @@ public class SelectionManager : MonoBehaviour
         {
             if (entity.OwnerPlayerIndex != localPlayer) continue;
 
-            Vector3 vp = Camera.main.WorldToViewportPoint(entity.transform.position);
+            Vector3 vp = _cam.WorldToViewportPoint(entity.transform.position);
             if (vp.x < 0 || vp.x > 1 || vp.y < 0 || vp.y > 1) continue;
 
             var selectable = entity.GetComponent<Selectable>();
@@ -212,7 +214,7 @@ public class SelectionManager : MonoBehaviour
 
     void OnGUI()
     {
-        if (!_isDragging) return;
+        if (!_isDragging || InputManager.Instance == null) return;
 
         Vector2 mouse = InputManager.Instance.MousePosition;
         float startY = Screen.height - _dragStart.y;

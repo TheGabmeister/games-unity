@@ -50,7 +50,8 @@ public class Mover : MonoBehaviour
             if (_waitTimer >= WaitBeforeRepath)
             {
                 _waitTimer = 0f;
-                Vector2Int goal = _path[_path.Count - 1];
+                var goal = _path[^1];
+                _path = null;
                 MoveTo(goal);
             }
             return;
