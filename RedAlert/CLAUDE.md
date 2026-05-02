@@ -23,27 +23,42 @@ One scene in build settings:
 Managers use a static `Instance` property set in `Awake`. All `Awake` calls run before any `Start`, so singletons are safe to access from `Start` onward. `Update`/`LateUpdate` methods guard with `if (SomeManager.Instance == null) return;`. Camera.main is cached in `Awake` (not called per-frame) by SelectionManager and CommandManager.
 
 ### Initialization Order
-1. **Awake** — all managers set `Instance`, MapManager builds the grid and renders both terrain and ore overlay tilemaps. Entity finds Health (RequireComponent) and HealthBar (child GO, includeInactive).
-2. **Start** — Entity registers itself with MapManager and PlayerManager, initializes Health with MaxHP from UnitData, applies sprite. Refinery/Silo call `EconomyManager.RecalculateStorage`. Harvester begins SeekOre.
-3. **First LateUpdate** — EconomyManager initializes starting credits (after all Start calls have run). PowerManager.Start recalculates all players.
-4. **Update** — SelectionManager polls input for selection, CommandManager polls for orders, Mover follows paths, Attacker scans for targets, Harvester runs state machine, MapManager ticks ore regrowth (2 min interval). ConstructionManager/ProductionManager tick build progress and drain credits incrementally. PlacementManager shows ghost and handles placement clicks. SellRepairManager handles sell clicks and repair ticks.
-5. **LateUpdate** — RTSCamera reads input for panning and clamps to map bounds (viewport shrunk for sidebar). SelectionManager prunes destroyed units from selection. ProductionManager retries spawning READY units if exit was blocked.
+1. **Awake** — all managers set `Instance`, MapManager builds the grid and renders both terrain and ore overlay tilemaps. Entity finds Health (RequireComponent).
+2. **Start** — Entity registers itself with MapManager (including multi-cell footprints for buildings) and PlayerManager, initializes Health with MaxHP from UnitData, applies sprite, repositions multi-cell buildings to center over footprint. Harvester begins SeekOre. PowerManager.Start recalculates all players.
+3. **First Update** — SidebarUI defers its initial RefreshBuildGrid to the first Update frame (not Start) because Entity.Start hasn't populated OwnedEntities yet when SidebarUI.Start runs.
+4. **First LateUpdate** — EconomyManager initializes starting credits (after all Start calls have run).
+5. **Update** — SelectionManager polls input for selection, CommandManager polls for orders, Mover follows paths, Attacker scans for targets, Harvester runs state machine, MapManager ticks ore regrowth (2 min interval). ConstructionManager/ProductionManager tick build progress and drain credits incrementally. PlacementManager shows ghost and handles placement clicks. SellRepairManager handles sell clicks and repair ticks.
+6. **LateUpdate** — RTSCamera reads input for panning and clamps to map bounds (viewport shrunk for sidebar). SelectionManager prunes destroyed units from selection. ProductionManager retries spawning READY units if exit was blocked.
 
 ### Key Design Decisions
 - **Grid is king.** All gameplay (pathfinding, fog of war, building placement, targeting, selection) operates on a cell grid via MapManager. No Unity Physics2D — no Rigidbody2D, no Collider2D, no collision layers.
 - **Composition over inheritance.** Units are GameObjects with mix-and-match components (Entity, Health, Mover, Attacker, Harvester, etc.), not a class hierarchy. Entity has `[RequireComponent(typeof(Health))]`. Health owns HP state and fires events; HealthBar is a purely visual subscriber on an inactive child GO.
-- **ScriptableObjects for data.** All unit/building/weapon stats live in SOs (UnitData, MapData). UnitData covers both units and buildings — buildings use `Category = Building` and building-specific fields (FootprintX/Y, StorageCapacity, RequiresPower, FreeUnit). Runtime mutable state lives on MonoBehaviour components.
-- **Editor generators** in `Assets/_Project/Scripts/Editor/Generators/` follow a pattern: GeneratorWindow (Tools > RedAlert > Generator Window) with categorized buttons (Terrain, Sprites, Data, Prefabs, Scenes) → static `Generate()` methods → temp GO → configure → SerializedObject wiring → SaveAsPrefabAsset → DestroyImmediate in finally block. "Generate All" runs everything in dependency order. This is the primary way to set up or rebuild the project.
-- **SVG → PNG pipeline.** SVG source files live in `Tools/sprites/`. Inkscape exports to PNG in `Assets/_Project/Sprites/`. Unity only sees PNGs. Run `bash Tools/export_sprites.sh` to re-export all.
+- **ScriptableObjects for data.** All unit/building/weapon stats live in SOs (UnitData, FactionData, MapData). UnitData covers both units and buildings — buildings use `Category = Building` and building-specific fields. Runtime mutable state lives on MonoBehaviour components.
+- **Editor generators** in `Assets/_Project/Scripts/Editor/Generators/` follow a pattern: GeneratorWindow (Tools > RedAlert > Generator Window) with categorized buttons (Terrain, Sprites, Data, Economy, Buildings, UI, Prefabs, Scenes) → static `Generate()` methods → temp GO → configure → SerializedObject wiring → SaveAsPrefabAsset → DestroyImmediate in finally block. "Generate All" runs everything in dependency order. This is the primary way to set up or rebuild the project.
+- **SVG → PNG pipeline.** SVG source files live in `Tools/sprites/`. Inkscape exports to PNG in `Assets/_Project/Sprites/`. Unity only sees PNGs. Run `bash Tools/export_sprites.sh` to re-export all. Building sprites export at footprint-scaled sizes (e.g., 3×3 = 192×192 px).
 - **No camera zoom.** Fixed orthographic size, matching the original game.
+- **Sidebar shrinks viewport.** RTSCamera sets `Camera.rect` to `(0, 0, 0.85, 1)`, leaving the right 15% for the sidebar (ScreenSpaceOverlay canvas). Edge scroll ignores mouse positions past the viewport boundary.
 
 ### Project Layout
 All game content goes under `Assets/_Project/`. Editor-only scripts are in `Assets/_Project/Scripts/Editor/`. URP and rendering settings are in `Assets/_Project/Settings/`.
 
+### UnitData: Units and Buildings
+UnitData SO is used for both units and buildings. Key field groups:
+- **Shared**: DisplayName, Sprite, Icon, Category, Faction, Cost, MaxHP, Armor, SightRange, Prefab
+- **Unit-specific**: Locomotion, BaseSpeed, PrimaryWeapon, IsCrusher, NoMovingFire, IsCrewedVehicle, ExplodesOnDeath, DeathWarhead, DeathSound, BailOutUnit
+- **Building-specific**: FootprintX/Y, StorageCapacity, PowerProduced, PowerConsumed, RequiresPower, IsWall, FreeUnit, ProducesCategory, ExitCellOffset, Prerequisites
+
+Buildings are identified by `Category == UnitCategory.Building`. Entity.IsBuilding checks this.
+
+### Multi-Cell Buildings
+Buildings with `FootprintX > 1` or `FootprintY > 1` register all cells in `Entity.RegisterCells()`. The entity grid maps each occupied cell back to the same Entity. Entity.Start repositions the transform to center the sprite over the full footprint: `(Cell.x + FootprintX * 0.5, Cell.y + FootprintY * 0.5)`. Scene generators and PlacementManager must do the same offset when placing buildings.
+
+Building sprites are exported at `FootprintX × 64` by `FootprintY × 64` pixels. The texture importer must use `SpriteMeshType.FullRect` and `SpriteImportMode.Single` to avoid Unity auto-trimming transparent pixels.
+
 ### Data Flow: Selection → Command → Movement/Combat
 1. SelectionManager tracks selected units (click, box drag, double-click, E, control groups). Click enemy = inspect health only (not added to selection).
 2. CommandManager listens for right-click → converts screen position to cell via MapManager.WorldToCell
-3. Context-sensitive: right-click enemy → Attacker.AttackTarget; right-click ground → Mover.MoveTo + Attacker.ClearOrders. Modifiers: Ctrl = force fire, Alt = force move, Q = attack-move.
+3. Context-sensitive: right-click enemy → Attacker.AttackTarget; right-click ore → Harvester.SendToOre; right-click friendly Refinery → Harvester.SendToRefinery; right-click ground → Mover.MoveTo + Attacker.ClearOrders. Modifiers: Ctrl = force fire, Alt = force move, Q = attack-move.
 4. Mover calls Pathfinder.FindPath (static A*, 8-directional, octile heuristic) → walks path cell-by-cell. IsCrusher vehicles kill enemy infantry on cell enter.
 5. Attacker auto-targets nearest enemy in weapon range. Fires hitscan (instant) or spawns Projectile GO. DamageSystem applies damage × warhead modifier, splash with falloff.
 6. Health.TakeDamage → fires OnHealthChanged (HealthBar subscribes for visual). On death → Entity.Die handles bail-out, explode-on-death, destroy.
@@ -53,12 +68,11 @@ All game content goes under `Assets/_Project/`. Editor-only scripts are in `Asse
 1. Harvester auto-seeks nearest ore cell (6-cell radius, then 48-cell far-scan) via `MapManager.FindNearestOre`.
 2. On arrival, enters Harvesting state — calls `MapManager.HarvestBail` per tick, collecting up to 28 bails. Ore = $25/bail, gems = $50/bail.
 3. When full (or ore depleted), finds nearest friendly Refinery via `FindNearestRefinery` (prefers unoccupied). Paths to adjacent cell, docks when within 1.5 cells.
-4. Depositing state — converts bails to credits via `EconomyManager.AddCredits`, capped by storage capacity. One bail per tick.
+4. Depositing state — converts bails to credits via `EconomyManager.AddCredits`, capped by storage capacity. One bail per tick. Last bail gets the cargo remainder (avoids integer division rounding loss).
 5. When empty, undocks and returns to step 1.
-6. Right-click ore cell with harvester selected = `SendToOre`. Right-click friendly Refinery = `SendToRefinery`.
-7. MapManager tracks per-cell ore density (0–4) and type (Ore/Gems). Ore regrows every 2 min (density++, spreads to adjacent cells at max density). Gems never regrow.
-8. Ore overlay rendered on a second tilemap layer (4 density sprites per resource type).
-9. Storage = sum of Refinery (2,000) + Silo (1,500) capacities. Destroying a storage building clamps credits to new capacity.
+6. MapManager tracks per-cell ore density (0–4) and type (Ore/Gems). Ore regrows every 2 min (density++, spreads to adjacent cells at max density). Gems never regrow.
+7. Ore overlay rendered on a second tilemap layer (4 density sprites per resource type).
+8. Storage = sum of all entities' `UnitData.StorageCapacity`. Entity.OnDestroy triggers `EconomyManager.RecalculateStorage` if the entity had storage, clamping credits to new capacity.
 
 ### Data Flow: Construction & Production
 1. SidebarUI shows buildable items filtered by FactionData + prerequisites. Structures on left column, units on right.
@@ -72,10 +86,9 @@ All game content goes under `Assets/_Project/`. Editor-only scripts are in `Asse
 9. Sell mode: click building → refund 50% × (HP ratio) × Cost, spawn infantry if crewed.
 10. Repair: click building → 7 HP per tick, drains credits at rate proportional to 20% of Cost.
 11. Building damage: ≤50% HP shows fire overlay. ≤25% HP = critical (Engineer-capturable in Phase 7).
-12. Multi-cell buildings: Entity.RegisterCells occupies FootprintX × FootprintY cells in the entity grid.
 
 ### Grid Coordinate System
-- 1 cell = 1 Unity unit. Sprites are 64×64 px at 64 PPU.
+- 1 cell = 1 Unity unit. Sprites are 64×64 px at 64 PPU (buildings scale to footprint × 64).
 - `MapManager.CellToWorld(cell)` returns cell center at `(cell.x + 0.5, cell.y + 0.5)`.
 - `MapManager.WorldToCell(world)` floors to int.
 - Terrain speed lookup: `TerrainMovement.GetSpeedMultiplier(LocomotionType, TerrainType)` — static table, 0 = impassable.
@@ -111,9 +124,10 @@ The original C&C: Red Alert source code (EA GPL release) is at `D:\CnC_Red_Alert
 
 ## Asset Pipeline
 
-- **Sprites**: SVG source files in `Tools/sprites/` exported to PNG via Inkscape. Sprite size is 64×64 px at 64 PPU. Sprite sheets are horizontal strips (e.g., 512×64 for 8 frames).
+- **Sprites**: SVG source files in `Tools/sprites/` (subdirs: terrain, units, buildings, overlays, ui) exported to PNG via Inkscape. Unit sprites are 64×64 px. Building sprites are `FootprintX × 64` by `FootprintY × 64` px (e.g., 3×3 CY = 192×192). The export script `Tools/export_sprites.sh` has a `get_building_size` function mapping building names to pixel dimensions.
   - Inkscape path: `"/c/Program Files/Inkscape/bin/inkscape.exe"`
   - Batch export: `bash Tools/export_sprites.sh` (re-exports all SVGs from `Tools/sprites/` to `Assets/_Project/Sprites/`)
+  - Building sprite import: must use `SpriteImportMode.Single`, `SpriteMeshType.FullRect`, `spritePixelsPerUnit = 64` to avoid auto-trimming.
   - Python: C:/Users/Admin/AppData/Local/Python/pythoncore-3.14-64/python.exe
 - **Sounds**: `python Tools/generate_combat_sounds.py` generates combat .wav files to `Assets/_Project/Sounds/Combat/`. Uses synthesized waveforms (noise bursts, frequency sweeps, envelopes).
 - **Music**: Python scripts in `Tools/music/` use `midiutil` to generate MIDI → FluidSynth renders with a soundfont to WAV → ffmpeg converts to OGG. Tool paths: `D:/fluidsynth-v2.5.4-win10-x64-cpp11/bin/fluidsynth.exe`, `D:/ffmpeg-8.1-essentials_build/bin/ffmpeg.exe`, soundfont `D:/GeneralUser-GS/GeneralUser-GS.sf2`
