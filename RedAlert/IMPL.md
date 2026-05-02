@@ -229,6 +229,15 @@ public class BuildingData : ScriptableObject
 
 The map is a 2D cell grid backed by Unity's **Tilemap**. One cell = one game tile (24×24 px at original scale; we'll use 64×64 px sprite cells to match our sprite pipeline).
 
+### Map Authoring
+
+Maps are **hand-painted** in Unity's Tile Palette editor. An editor window (`Tools/RedAlert/Generator Window`) provides buttons for generating prefabs, SOs, and scene scaffolding — following the same pattern as `Assets/_Project/Scripts/Editor/Generators/` from previous projects:
+
+- `PrefabGeneratorUtils.cs` — shared helpers: `SavePrefab()`, `EnsureFolder()`, `CreateCanvasRoot()`, `CreatePanel()`.
+- `GeneratorWindow.cs` — single `EditorWindow` with categorized buttons (Data, Prefabs, Scenes). Each button calls a static `Generate()` method. Has a "Generate All" that runs them in dependency order.
+- Generator classes (e.g., `GenerateUnitPrefab.cs`) — each follows the pattern: create temp GO → configure components → wire references via `SerializedObject` → `PrefabUtility.SaveAsPrefabAsset()` → `DestroyImmediate()` in `finally` block.
+- Scene generators use `EditorSceneManager.NewScene()` → instantiate prefabs → wire cross-references → save.
+
 ### Layers
 
 Multiple Tilemaps stacked on one Grid:
@@ -286,7 +295,7 @@ Camera rig (empty GO)
 
 ## Input
 
-Replace the default InputSystem_Actions with an **RTS-specific Input Action Asset**:
+Replace the default InputSystem_Actions with an **RTS-specific Input Action Asset**. Keyboard + mouse only, no gamepad:
 
 | Action | Binding | Notes |
 |--------|---------|-------|
@@ -371,7 +380,7 @@ A `SelectionManager` on the Systems prefab:
 
 ## Pathfinding
 
-**A\* on the cell grid.** No NavMesh — the grid is the authority.
+**A\* on the cell grid.** No NavMesh — the grid is the authority. Single-threaded, simple implementation. Profile and optimize (Job System / Burst) only if it becomes a bottleneck.
 
 ### Implementation
 
@@ -389,6 +398,18 @@ The `Mover` component follows the path cell-by-cell, interpolating position smoo
 ### Unit Avoidance
 
 Simple: units occupy cells. A cell can hold one vehicle or a small group of infantry (original RA1 lets multiple infantry share a cell). Vehicles that bump into each other repath around.
+
+---
+
+## No Physics / No Collision Layers
+
+This project does **not** use Unity's Physics2D system. No Rigidbody2D, no Collider2D, no collision layers, no physics matrix. Everything is grid-based:
+
+- **Mouse picking**: Convert screen position to cell coordinate via `Camera.ScreenToWorldPoint` → `Tilemap.WorldToCell`. Ask `MapManager` who occupies that cell.
+- **Box selection**: Convert drag rect corners to cell coordinates, iterate entities and check if their cell falls inside.
+- **Range checks**: Cell distance between attacker and target.
+- **Passability**: `MapManager.IsPassable(cell, loco)`.
+- **Crushing**: Check cell occupant type on cell enter.
 
 ---
 
@@ -589,12 +610,10 @@ Each frame (or every few frames for performance):
 
 ### Rendering
 
-A dedicated Tilemap layer on top of everything. Three tile types:
+A dedicated Tilemap layer on top of everything. Cell-snapped tiles:
 - **Shroud tile** — fully black, opaque.
 - **Fog tile** — semi-transparent dark overlay.
 - **Visible** — no tile (transparent).
-
-For smoother visuals, use a RenderTexture approach: a camera renders unit sight as white circles onto a low-res texture, which is then used to mask the fog overlay. This gives soft edges instead of cell-snapped hard edges.
 
 ### Entity Visibility
 
@@ -801,7 +820,9 @@ Generated via the MIDI → FluidSynth → OGG pipeline in `Tools/music/`. Milita
 
 ### Sprite Pipeline
 
-All art is SVG → PNG via Inkscape (see CLAUDE.md). Each unit and building needs:
+SVG source files live in `Tools/` (not imported by Unity). Inkscape exports them to PNG, which goes into `Assets/_Project/Sprites/`. The `bash Tools/export_sprites.sh` script re-exports all SVGs in batch. Unity only sees the PNGs.
+
+Each unit and building needs:
 
 | Asset | Size | Notes |
 |---|---|---|
@@ -823,123 +844,203 @@ RTS units face 8 directions. Rather than 8 separate hand-drawn sprites, generate
 
 Buildings have two visual states: **intact** and **damaged** (below 50% HP, show fire/damage overlay sprite on top).
 
+### Creation Schedule
+
+Sprites are created **incrementally** as each phase needs them, not all at once:
+
+| Phase | Sprites Needed |
+|-------|---------------|
+| 1 — Foundation | Terrain tiles (placeholder colors OK), generic unit placeholder square |
+| 3 — Combat | A few distinct units (e.g., Rifle Infantry, Light Tank, Heavy Tank) + projectiles |
+| 4 — Economy | Ore Truck, Ore Refinery, Ore Silo, ore/gem density overlays |
+| 5 — Buildings | All buildings (intact + damaged overlay) + sidebar icons (48×48) |
+| 7 — Unit Roster | All remaining units (every infantry, vehicle, naval, aircraft — full 8 rotations + animations) |
+
 ---
 
 ## Implementation Phases
 
-### Phase 1 — Grid, Camera, Selection
+### Phase 1 — Foundation
 
+Editor tooling, core infrastructure, and a playable test map.
+
+- GeneratorWindow + PrefabGeneratorUtils (editor tooling framework).
+- RTS Input Action Asset (keyboard + mouse only): Select, Command, DragSelect, ForceAttack, ForceMove, Stop, Guard, Scatter, control groups, camera pan/zoom.
+- PlayerState + PlayerManager (player index, faction, owned entities).
 - MapManager with cell grid, terrain data, tilemap rendering.
-- RTS camera (pan, zoom, clamp).
-- Input actions for selection.
+- **Sprites**: terrain tiles (grass, road, rough, sand, water, ore, gems) — placeholder colors are fine.
+- Hand-paint a small test map (~40×40) with mixed terrain.
+- RTS camera (pan, zoom, edge scroll, clamp to map).
 - Entity + Selectable components.
-- SelectionManager (click, box, double-click, control groups).
-- Placeholder unit prefab (colored square) that can be selected and displays a health bar.
+- SelectionManager (click, box select, double-click same-type, E for all, control groups).
+- **Sprites**: placeholder unit (colored square per faction) that can be selected and shows a health bar.
+
+**Testable**: Place units on the test map, select them, move camera around.
 
 ### Phase 2 — Movement & Pathfinding
 
-- A* pathfinder on the cell grid.
-- Mover component: follow path, terrain speed modifiers.
+- A* pathfinder on the cell grid (single-threaded).
+- Mover component: follow path cell-by-cell with smooth interpolation.
+- Terrain speed modifiers applied per locomotion type (Foot/Tracked/Wheeled).
 - Right-click to move.
-- Basic unit avoidance (occupied cells block, repath).
-- Force move (Alt+click).
+- Basic unit avoidance (occupied cells block, wait then repath).
+- Force move (Alt+click — move without engaging).
+
+**Testable**: Place different unit types, right-click to move them across varied terrain, watch them prefer roads.
 
 ### Phase 3 — Combat
 
-- WeaponData, WarheadData SOs.
-- Attacker component: auto-target, ROF cooldown, range check.
-- Damage calculation with warhead modifiers.
-- Projectile spawning for non-hitscan weapons.
-- Unit death (crewed bail-out, explodes-on-death).
-- Force fire (Ctrl+click).
-- Guard, Stop, Scatter commands.
+- **Sprites**: a few distinct unit SVGs (e.g., Rifle Infantry, Light Tank, Heavy Tank) so combat is visually readable. 8 rotations each.
+- **Sprites**: projectiles (bullet, shell, rocket, fireball) — simple shapes.
+- WeaponData, ProjectileData, WarheadData SOs.
+- Attacker component: auto-target nearest enemy in range, ROF cooldown, burst fire.
+- Turret rotation (ROT speed) — wait for facing before firing non-homing projectiles.
+- NoMovingFire — V2/Artillery stop before shooting.
+- Damage calculation: `damage × warhead modifier[armor type]`.
+- Hitscan weapons (instant damage) vs projectile weapons (spawn GO, travel, impact).
+- Splash damage hitting everything in 1.5-cell radius including friendlies. Falloff by Spread value.
+- Crushing: `CanCrush` vehicles kill infantry on cell enter.
+- Unit death: crewed bail-out (spawn Rifle Infantry), explodes-on-death (Grenadier/Flamethrower AoE).
+- Force fire (Ctrl+click — target ground/friendlies/trees).
+- Stop (S), Guard (G), Scatter (X) commands.
+
+**Testable**: Place Allied and Soviet units, watch them auto-engage. Test splash friendly fire, crushing, force fire on ground.
 
 ### Phase 4 — Economy & Harvesting
 
-- EconomyManager (credits, storage).
-- Ore/gem cells on the map with density values.
-- Harvester component (seek → harvest → return → deposit loop).
-- Ore Refinery docking behavior.
-- Ore regrowth timer.
-- Credits display in UI.
+- **Sprites**: Ore Truck, Ore Refinery, Ore Silo. Ore/gem tile overlays (4 density levels each).
+- EconomyManager (per-player credits, storage capacity).
+- Ore/gem cells with 4 density levels. Ore regrowth timer (2 min).
+- Ore Refinery building (docking point, storage, free Ore Truck).
+- Ore Silo building (additional storage).
+- Harvester component: SeekOre → Harvesting → ReturnToRefinery → Depositing → repeat.
+- Single harvester docking per refinery, others queue.
+- Storage overflow: excess credits lost.
+- Edge cases: refinery destroyed while returning (find another or idle), all ore depleted (far-scan 48 cells).
 
-### Phase 5 — Buildings & Construction
+**Testable**: Place a refinery + ore field, watch harvester loop. Destroy the refinery, verify retargeting. Fill storage, verify overflow.
 
-- BuildingData SOs for all buildings.
-- Building placement system (ghost, validity checks, grid snapping).
-- ConstructionManager (sidebar build queue, progress, placement mode).
-- Selling and repairing.
-- PowerManager (power produced vs consumed, brownout effects).
-- Populate all building stats from source code (`D:\CnC_Red_Alert\CODE\BDATA.CPP`).
+### Phase 5 — Buildings, Construction & Sidebar
 
-### Phase 6 — Production & Tech Tree
+Buildings, construction, production, and the sidebar are tightly coupled — build them together.
 
-- ProductionQueue component on Barracks, War Factory, etc.
-- FactionData SOs with tech tree references.
-- Sidebar UI: two-column build grid (structures left, units right) filtered by prerequisites.
-- Unit spawning at primary building exit cell.
-- Multiple same-type buildings speed up production.
+- **Sprites**: all buildings (Construction Yard, Power Plant, Barracks, War Factory, Radar Dome, Tech Center, defenses, walls, superweapon buildings, etc.). Each needs intact sprite + damaged overlay. Sidebar icons (48×48) for every buildable item.
+- BuildingData SOs for core buildings (populate stats from source code).
+- Top bar: Options button + credits display (ticking counter).
+- Sidebar layout (uGUI Canvas):
+  - Minimap placeholder (top).
+  - Power bar (vertical strip).
+  - Sell / Repair buttons.
+  - Two-column build grid: structures (left), units (right). Filtered by prerequisites.
+  - Build progress bar on icons. "READY" label on finished structures.
+- ConstructionManager: one structure queue per Construction Yard. Build time formula. Placement mode (ghost, green/red validity, grid snap). Cancel returns to READY.
+- Building placement rules: 16-cell CY radius, 2-cell adjacency, footprint checks.
+- Selling: 50% × (currentHP / maxHP) refund. Crewed buildings spawn infantry.
+- Repairing: 20% of cost to fully repair. Drains credits. 7 HP per tick.
+- Building damage states: intact (>50%), damaged (≤50% — fire overlay), critical (≤25% — Engineer capturable).
+- PowerManager: produced vs consumed, brownout disables RequiresPower buildings. Power bar colors (green/yellow/red).
+- ProductionQueue: one queue per category (Infantry, Vehicles, Naval, Aircraft). Multiple same-type buildings = speed multiplier. Unit spawns at primary building exit cell. Blocked exit = wait.
+- FactionData SOs: Allied + Soviet tech trees, prerequisite filtering.
+- Primary building selection (click to set which factory is the exit point).
 
-### Phase 7 — Fog of War
+**Testable**: Full build loop — construct buildings from sidebar, place them, build units, sell/repair. Power brownout from losing a power plant. Tech tree filtering.
 
-- FogState grid (per player).
-- Sight range update loop.
-- Fog tilemap rendering (shroud, fog, visible).
-- Entity visibility toggling for enemies.
-- Gap Generator effect.
-- GPS Satellite (reveal all).
+### Phase 6 — Fog of War
 
-### Phase 8 — Full Unit & Building Roster
+- FogState grid: per-player, per-cell (Shroud/Fog/Visible).
+- Sight range update loop (every few frames for performance).
+- Fog tilemap rendering: shroud (black), fog (semi-transparent), visible (no tile).
+- Entity visibility: enemies hidden in shroud/fog. Buildings in fog shown as "last seen" ghost.
+- Gap Generator: re-shrouds 10-cell radius, 6-second refresh.
 
-- Create all UnitData and BuildingData SOs from source code values.
-- SVG sprites for every unit and building.
-- Unique behaviors: Spy (disguise, infiltrate), Tanya (C4), Engineer (capture), Attack Dog (instant kill, detect spies), Submarine (cloak), Aircraft (ammo, rearm at pad).
-- Transports (APC, Chinook, naval Transport).
-- Naval movement on water cells.
+**Testable**: Move units around, watch shroud reveal. Walk away, see fog. Place a Gap Generator, verify re-shrouding.
 
-### Phase 9 — Sidebar & UI Polish
+### Phase 7 — Unit Roster & Special Behaviors
 
-- Full sidebar layout (power bar, credits, build grid, sell/repair buttons).
-- Minimap with secondary camera.
-- Selected unit info panel (portrait, HP, weapon stats).
-- Cursor changes (move, attack, harvest, enter, no-go).
-- Radar Dome requirement for minimap.
+Create all remaining UnitData SOs from source code. **Sprites**: all remaining units not yet created (every infantry type, all vehicles, naval units, aircraft — 8 rotations, move/attack/death animations). Implement unique behaviors:
 
-### Phase 10 — AI Opponent
+**Infantry specials:**
+- Engineer: capture enemy buildings (≤25% HP required, ~1/3 HP damage per engineer), repair friendly buildings (instant full heal).
+- Spy: disguise as enemy infantry, infiltration effects per building type.
+- Tanya: dual pistols (HollowPoint), C4 on buildings/bridges/ships (1.8s delay, instant kill).
+- Attack Dog: instant-kill infantry (Organic warhead), auto-detect spies (7-cell guard range).
+- Field Medic: auto-heal nearby friendly infantry (~1.83 cells), cannot self-heal.
 
-- AIController with hardcoded build order.
-- Team assembly and waypoint-following attack waves.
-- Difficulty multipliers (Easy/Medium/Hard).
-- AI ore harvesting.
-- Basic AI defense (build turrets/coils near base).
-- Skirmish setup screen (pick faction, map, AI count/difficulty, starting credits).
+**Vehicle specials:**
+- MCV: deploy into Construction Yard / re-pack.
+- Mammoth Tank + Ore Truck: SelfHeal to 50% HP.
+- Mine Layer: deploy mines.
 
-### Phase 11 — Superweapons & Support Powers
+**Naval:**
+- Float locomotion on water cells.
+- Submarine: cloaked when submerged, surface to fire, detected by Sensors units.
+- Naval Transport: carry infantry + vehicles, shoreline unloading.
 
-- Chronosphere (teleport vehicle, auto-return timer).
-- Iron Curtain (temporary invulnerability).
-- Nuclear Missile (big AoE + radiation zone).
-- GPS Satellite (reveal map).
-- Spy Plane (reveal area).
-- Paratroopers (air drop infantry).
-- Parabombs (air bombing run).
-- Cooldown timers and sidebar activation buttons.
+**Aircraft:**
+- Fly locomotion (ignore terrain). Ammo tracking.
+- Helicopters hover at target, return to Helipad to rearm.
+- Fixed-wing (MiG, Yak) do strafing runs, return to Airfield.
+- Rearming: 2.4 sec per ammo point.
 
-### Phase 12 — Campaign
+**Transports (APC, Chinook, Naval Transport):**
+- Boarding/unloading one at a time.
+- Passenger fate on destruction (APC: eject, Chinook: die, Naval at sea: vehicles die / infantry may survive).
 
-- Campaign selection screen (map of Europe with mission markers).
-- MissionData SOs for all 28 missions.
+**Testable**: Each special unit behavior works in isolation on the test map.
+
+### Phase 8 — Minimap & UI Polish
+
+- Minimap: secondary orthographic camera → RenderTexture in sidebar. Terrain colors, unit dots (green/red), fog overlay. Click to jump, drag to pan. Requires Radar Dome + power.
+- Selected unit info panel (portrait, HP bar, weapon stats).
+- Cursor changes: move, attack, harvest, enter building, no-go, sell, repair.
+
+**Testable**: Minimap reflects game state. Click minimap to jump camera. Radar Dome destroyed = minimap offline.
+
+### Phase 9 — AI Opponent
+
+- AIController component per AI player.
+- Hardcoded build order: Power → Power → Refinery → Barracks → War Factory → Radar → ...
+- Priority evaluation after opener: power deficit → power plants, low cash → refineries, need army → production.
+- AI harvesting: assigns ore trucks, builds additional refineries.
+- Team assembly: ~6 predefined attack templates. Queue units, wait until team is full, send along waypoints.
+- Attack timing: first wave ~3 minutes, subsequent at intervals. Retaliates sooner if attacked.
+- AI limitations (matching original): no navy, no dogs, no Service Depots, no Missile Silos. Air only if attacked by air.
+- Difficulty: Easy/Medium/Hard stat multipliers (HP, damage) only — no behavior change.
+- AI sells buildings when nearly dead and out of money.
+- Skirmish setup screen (Init scene): pick faction/country, map, AI count, difficulty, starting credits.
+
+**Testable**: Start a skirmish match, AI builds a base, harvests, and attacks at ~3 minutes.
+
+### Phase 10 — Superweapons & Support Powers
+
+- Chronosphere: teleport one vehicle, auto-return after ~3 minutes. Cannot teleport infantry.
+- Iron Curtain: temporary invulnerability (~45 sec). Kills infantry inside transports.
+- Nuclear Missile: 1000 damage AoE, Nuke warhead, destroys ore, radiation zone. 13-min recharge.
+- GPS Satellite: permanently reveal entire map (one-time, Allied Tech Center).
+- Spy Plane: reveal target area temporarily (Soviet Airfield).
+- Paratroopers: drop 5 Rifle Infantry anywhere (Soviet Airfield).
+- Parabombs: bombing run on target area (Soviet Airfield + Tech Center).
+- Cooldown timers in sidebar. Click to activate → click map to target.
+
+**Testable**: Build superweapon buildings, wait for charge, use each one. Verify effects and cooldowns.
+
+### Phase 11 — Campaign
+
+- Campaign selection screen (map of Europe with mission markers, map-variant branching).
+- MissionData SOs for all 28 missions (14 Allied + 14 Soviet).
 - Briefing screen (text + audio).
-- Scripted triggers for each mission (reinforcements, objectives, events).
-- Victory/defeat conditions and screen.
-- Map-variant branching.
+- MissionTrigger component: conditions (timer, unit enters zone, building captured) → actions (spawn units, show dialogue, mark objective complete).
+- Victory/defeat detection and result screen.
+- Mission unlock progression.
 
-### Phase 13 — Crates & Polish
+**Testable**: Play through at least the first 2-3 missions of each campaign end-to-end.
 
-- Random crate spawning in skirmish.
-- Crate pickup effects (money, heal, unit, map reveal, buff, explosion).
-- Sound effects for all actions.
-- Music tracks (menu, Allied, Soviet, combat).
-- Building damage visuals (fire overlays at <50% HP).
-- Screen shake on explosions.
+### Phase 12 — Crates, Audio & Polish
+
+- Random crate spawning in skirmish. 11 crate types (money, heal, unit, map reveal, buffs, explosion).
+- Sound effects: unit select/move/attack acknowledgements, weapon fire, explosions, building placement/sell, UI clicks.
+- Music: MIDI → FluidSynth → OGG pipeline. Tracks for menu, Allied gameplay, Soviet gameplay.
+- Building damage visuals: fire/smoke overlay at ≤50% HP.
+- Screen shake on large explosions.
 - Victory/defeat fanfare.
+- Country bonuses for skirmish (damage, armor, speed, cost, ROF multipliers).

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-RedAlert is a Unity 6 (6000.3.12f1) 2D game project using Universal Render Pipeline with the 2D Renderer. It uses the new Input System and PrimeTween for animation. The project is in early stage — infrastructure is in place but no gameplay systems exist yet.
+Singleplayer recreation of C&C: Red Alert (1996) in Unity 6 (6000.3.12f1). 2D top-down RTS using Universal Render Pipeline with the 2D Renderer, New Input System (keyboard + mouse only, no gamepad), PrimeTween, and uGUI. See `SPEC.md` for gameplay design and `IMPL.md` for implementation plan.
 
 ## Build & Run
 
@@ -20,8 +20,12 @@ Two scenes are configured in build settings:
 - **Init** (index 0) — `Assets/_Project/Scenes/Init.unity`
 - **Gameplay** (index 1) — `Assets/_Project/Scenes/Gameplay.unity`
 
-### Input
-`Assets/_Project/Input/InputSystem_Actions.inputactions` defines a Player action map with: Move, Look, Attack, Interact (hold), Crouch, Jump, Previous, Next, Sprint. Bindings exist for keyboard+mouse, gamepad, touch, and XR.
+### Key Design Decisions
+- **Grid is king.** All gameplay (pathfinding, fog of war, building placement, targeting, selection) operates on a cell grid via MapManager. No Unity Physics2D — no Rigidbody2D, no Collider2D, no collision layers.
+- **Composition over inheritance.** Units are GameObjects with mix-and-match components (Entity, Mover, Attacker, Harvester, etc.), not a class hierarchy.
+- **ScriptableObjects for data.** All unit/building/weapon stats live in SOs. Runtime mutable state lives on MonoBehaviour components.
+- **Editor generators** in `Assets/_Project/Scripts/Editor/Generators/` follow a pattern: GeneratorWindow with categorized buttons → static `Generate()` methods → temp GO → configure → SerializedObject wiring → SaveAsPrefabAsset → DestroyImmediate in finally block.
+- SVG source files live in `Tools/`. Inkscape exports to PNG in `Assets/_Project/Sprites/`. Unity only sees PNGs.
 
 ### Project Layout
 All game content goes under `Assets/_Project/`. Editor-only scripts are in `Assets/_Project/Scripts/Editor/`. URP and rendering settings are in `Assets/_Project/Settings/`.

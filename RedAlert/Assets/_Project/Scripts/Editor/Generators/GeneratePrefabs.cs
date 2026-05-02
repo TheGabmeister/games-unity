@@ -1,0 +1,989 @@
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UI;
+using UnityEngine.Video;
+
+public static class GeneratePrefabs
+{
+    private const string BootstrapperPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/Bootstrapper.prefab";
+    private const string AudioSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/AudioSystem.prefab";
+    private const string AudioMixerPath = "Assets/_Project/Audio/MainMixer.mixer";
+    private const string GameplayManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameplayManager.prefab";
+    private const string BattleSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/BattleSystem.prefab";
+    private const string WildDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/WildDigimon.prefab";
+    private const string EvolutionDataDir = "Assets/_Project/Data/Evolution";
+    private const string EncounterDataDir = "Assets/_Project/Data/Encounters";
+    private const string GameManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/GameManager.prefab";
+    private const string ScreenFaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/ScreenFader.prefab";
+    private const string SplashscreenControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/SplashscreenController.prefab";
+    private const string IntroControllerPrefabPath = PrefabGeneratorUtils.ControllersPrefabDir + "/IntroController.prefab";
+    private const string PlayerPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/Player.prefab";
+    private const string PartnerDigimonPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/PartnerDigimon.prefab";
+    private const string NPCPrefabPath = PrefabGeneratorUtils.CharactersPrefabDir + "/NPC.prefab";
+    private const string InputManagerPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/InputManager.prefab";
+    private const string SceneLoaderPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/SceneLoader.prefab";
+    private const string TimeSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/TimeSystem.prefab";
+    private const string CareSystemPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/CareSystem.prefab";
+    private const string InventoryPrefabPath = PrefabGeneratorUtils.ServicesPrefabDir + "/Inventory.prefab";
+    private const string TrainingFacilityPrefabPath = PrefabGeneratorUtils.InteractablesPrefabDir + "/TrainingFacility.prefab";
+    private const string TestDialoguePath = "Assets/_Project/Data/TestDialogue.asset";
+    private const string DigimonDataDir = "Assets/_Project/Data/Digimons";
+    private const string TrainingDataDir = "Assets/_Project/Data/Training";
+    private const string TechniqueDataDir = "Assets/_Project/Data/Techniques";
+    private const string ItemDataDir = "Assets/_Project/Data/Items";
+    private const string BootstrapConfigPath = "Assets/_Project/Resources/BootstrapConfig.asset";
+    private const string Zone1DataPath = "Assets/_Project/Data/Zones/Zone1.asset";
+    private const string Zone2DataPath = "Assets/_Project/Data/Zones/Zone2.asset";
+    private const string Zone1ScenePath = "Assets/_Project/Scenes/Zones/Zone1.unity";
+    private const string Zone2ScenePath = "Assets/_Project/Scenes/Zones/Zone2.unity";
+
+    private const string BootstrapScenePath = "Assets/_Project/Scenes/_Bootstrap.unity";
+    private const string SplashscreenScenePath = "Assets/_Project/Scenes/_Splashscreen.unity";
+    private const string IntroScenePath = "Assets/_Project/Scenes/_Intro.unity";
+    private const string MainMenuScenePath = "Assets/_Project/Scenes/_MainMenu.unity";
+    private const string NameScenePath = "Assets/_Project/Scenes/_Name.unity";
+    private const string GameplayScenePath = "Assets/_Project/Scenes/_Gameplay.unity";
+    private const string IntroVideoPath = "Assets/_Project/Videos/IntroVideo.mp4";
+    private const string PlayerModelPath = "Assets/_Project/Player/Player.fbx";
+    private const string AgumonModelPath = "Assets/_Project/Digimons/Agumon/Agumon.fbx";
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Bootstrapper")]
+    public static void GenerateBootstrapper()
+    {
+        PrefabGeneratorUtils.SavePrefab("Bootstrapper", BootstrapperPrefabPath, go =>
+        {
+            //go.AddComponent<Bootstrapper>();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate BootstrapConfig")]
+    public static void GenerateBootstrapConfig()
+    {
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Resources");
+
+        BootstrapConfig config = ScriptableObject.CreateInstance<BootstrapConfig>();
+
+        SerializedObject so = new SerializedObject(config);
+        PrefabGeneratorUtils.SetSceneReference(so, "_bootstrapScene", BootstrapScenePath);
+        PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(config, BootstrapConfigPath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"BootstrapConfig asset generated at {BootstrapConfigPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate AudioSystem")]
+    public static void GenerateAudioSystem()
+    {
+        PrefabGeneratorUtils.SavePrefab("AudioSystem", AudioSystemPrefabPath, go =>
+        {
+            AudioSystem audio = go.AddComponent<AudioSystem>();
+            AudioMixer mixer = AssetDatabase.LoadAssetAtPath<AudioMixer>(AudioMixerPath);
+            if (mixer != null)
+            {
+                SerializedObject so = new SerializedObject(audio);
+                so.FindProperty("_mixer").objectReferenceValue = mixer;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                Debug.LogWarning($"AudioMixer not found at {AudioMixerPath}. Create it manually: Master group with Music/SFX/UI children, expose volume parameters.");
+            }
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate GameplayManager")]
+    public static void GenerateGameplayManager()
+    {
+        PrefabGeneratorUtils.SavePrefab("GameplayManager", GameplayManagerPrefabPath, go => go.AddComponent<GameplayManager>());
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameplayManagerPrefabPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"GameplayManager prefab not found at {GameplayManagerPrefabPath} after save.");
+            return;
+        }
+        GameplayManager gpm = prefab.GetComponent<GameplayManager>();
+        SerializedObject so = new SerializedObject(gpm);
+
+        ZoneData zone1 = AssetDatabase.LoadAssetAtPath<ZoneData>(Zone1DataPath);
+        ZoneData zone2 = AssetDatabase.LoadAssetAtPath<ZoneData>(Zone2DataPath);
+
+        if (zone1 != null)
+            so.FindProperty("_startingZone").objectReferenceValue = zone1;
+        else
+            Debug.LogWarning($"Zone1 data not found at {Zone1DataPath}. Run 'Tools/DigimonWorld/Data/Generate ZoneData Assets' first.");
+
+        DigimonSpeciesData botamon = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/Botamon.asset");
+        if (botamon != null)
+            so.FindProperty("_reincarnationSpecies").objectReferenceValue = botamon;
+        else
+            Debug.LogWarning("Botamon species not found for reincarnation. Run 'Generate Sample Species' first.");
+
+        SerializedProperty allZones = so.FindProperty("_allZones");
+        int zoneCount = 0;
+        if (zone1 != null) zoneCount++;
+        if (zone2 != null) zoneCount++;
+        allZones.arraySize = zoneCount;
+        int idx = 0;
+        if (zone1 != null) allZones.GetArrayElementAtIndex(idx++).objectReferenceValue = zone1;
+        if (zone2 != null) allZones.GetArrayElementAtIndex(idx++).objectReferenceValue = zone2;
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+        AssetDatabase.SaveAssets();
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate BattleSystem")]
+    public static void GenerateBattleSystem()
+    {
+        PrefabGeneratorUtils.SavePrefab("BattleSystem", BattleSystemPrefabPath, go => go.AddComponent<BattleSystem>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate InputManager")]
+    public static void GenerateInputManager()
+    {
+        PrefabGeneratorUtils.SavePrefab("InputManager", InputManagerPrefabPath, go => go.AddComponent<InputManager>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate SceneLoader")]
+    public static void GenerateSceneLoader()
+    {
+        PrefabGeneratorUtils.SavePrefab("SceneLoader", SceneLoaderPrefabPath, go => go.AddComponent<SceneLoader>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate TimeSystem")]
+    public static void GenerateTimeSystem()
+    {
+        PrefabGeneratorUtils.SavePrefab("TimeSystem", TimeSystemPrefabPath, go => go.AddComponent<TimeSystem>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate CareSystem")]
+    public static void GenerateCareSystem()
+    {
+        PrefabGeneratorUtils.SavePrefab("CareSystem", CareSystemPrefabPath, go => go.AddComponent<CareSystem>());
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Inventory")]
+    public static void GenerateInventory()
+    {
+        PrefabGeneratorUtils.SavePrefab("Inventory", InventoryPrefabPath, go =>
+        {
+            Inventory inv = go.AddComponent<Inventory>();
+
+            string[] itemNames = { "Meat", "GiantMeat", "Medicine", "HappyMushroom" };
+            int[] itemCounts = { 5, 2, 3, 2 };
+
+            SerializedObject so = new SerializedObject(inv);
+            so.FindProperty("_startingBits").intValue = 500;
+
+            SerializedProperty startingItems = so.FindProperty("_startingItems");
+            startingItems.arraySize = itemNames.Length;
+            for (int i = 0; i < itemNames.Length; i++)
+            {
+                string path = $"{ItemDataDir}/{itemNames[i]}.asset";
+                ItemData item = AssetDatabase.LoadAssetAtPath<ItemData>(path);
+                if (item != null)
+                {
+                    SerializedProperty element = startingItems.GetArrayElementAtIndex(i);
+                    element.FindPropertyRelative("Item").objectReferenceValue = item;
+                    element.FindPropertyRelative("Count").intValue = itemCounts[i];
+                }
+                else
+                {
+                    Debug.LogWarning($"Item not found at {path}. Run 'Generate Sample Items' first.");
+                }
+            }
+            so.ApplyModifiedPropertiesWithoutUndo();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate ScreenFader")]
+    public static void GenerateScreenFader()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.ServicesPrefabDir);
+
+        GameObject root = new GameObject("ScreenFader");
+        try
+        {
+            Canvas canvas = root.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 999;
+            CanvasScaler scaler = root.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+
+            GameObject imageGo = new GameObject("FadeImage", typeof(RectTransform));
+            imageGo.transform.SetParent(root.transform, false);
+            Image fadeImage = imageGo.AddComponent<Image>();
+            fadeImage.color = new Color(0f, 0f, 0f, 0f);
+            fadeImage.raycastTarget = false;
+            RectTransform rt = imageGo.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            ScreenFader fader = root.AddComponent<ScreenFader>();
+
+            SerializedObject so = new SerializedObject(fader);
+            so.FindProperty("_fadeImage").objectReferenceValue = fadeImage;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, ScreenFaderPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {ScreenFaderPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {ScreenFaderPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate GameManager")]
+    public static void GenerateGameManager()
+    {
+        PrefabGeneratorUtils.SavePrefab("GameManager", GameManagerPrefabPath, go => go.AddComponent<GameManager>());
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GameManagerPrefabPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"GameManager prefab not found at {GameManagerPrefabPath} after save. Check folder structure.");
+            return;
+        }
+        GameManager gm = prefab.GetComponent<GameManager>();
+        SerializedObject so = new SerializedObject(gm);
+
+        PrefabGeneratorUtils.SetSceneReference(so, "_splashscreenScene", SplashscreenScenePath);
+        PrefabGeneratorUtils.SetSceneReference(so, "_introScene", IntroScenePath);
+        PrefabGeneratorUtils.SetSceneReference(so, "_mainMenuScene", MainMenuScenePath);
+        PrefabGeneratorUtils.SetSceneReference(so, "_nameScene", NameScenePath);
+        PrefabGeneratorUtils.SetSceneReference(so, "_gameplayScene", GameplayScenePath);
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+        AssetDatabase.SaveAssets();
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate SplashscreenController")]
+    public static void GenerateSplashscreenController()
+    {
+        PrefabGeneratorUtils.SavePrefab("SplashscreenController", SplashscreenControllerPrefabPath, go =>
+        {
+            go.AddComponent<SplashscreenController>();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate IntroController")]
+    public static void GenerateIntroController()
+    {
+        PrefabGeneratorUtils.SavePrefab("IntroController", IntroControllerPrefabPath, go =>
+        {
+            VideoPlayer vp = go.AddComponent<VideoPlayer>();
+            vp.playOnAwake = true;
+            vp.renderMode = VideoRenderMode.CameraNearPlane;
+
+            VideoClip clip = AssetDatabase.LoadAssetAtPath<VideoClip>(IntroVideoPath);
+            if (clip != null)
+                vp.clip = clip;
+            else
+                Debug.LogWarning($"Intro video not found at {IntroVideoPath} — VideoPlayer clip will be empty.");
+
+            IntroController controller = go.AddComponent<IntroController>();
+
+            SerializedObject so = new SerializedObject(controller);
+            so.FindProperty("_videoPlayer").objectReferenceValue = vp;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        });
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate Player")]
+    public static void GeneratePlayer()
+    {
+        GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerModelPath);
+        if (modelAsset == null)
+        {
+            Debug.LogError($"Player model not found at {PlayerModelPath}.");
+            return;
+        }
+
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
+
+        GameObject root = new GameObject("Player");
+        try
+        {
+            CharacterController cc = root.AddComponent<CharacterController>();
+            cc.center = new Vector3(0f, 1f, 0f);
+            cc.height = 2f;
+            cc.radius = 0.5f;
+
+            root.AddComponent<PlayerController>();
+
+            GameObject model = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
+            model.name = "PlayerModel";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+
+            PrefabUtility.SaveAsPrefabAsset(root, PlayerPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {PlayerPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {PlayerPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate PartnerDigimon")]
+    public static void GeneratePartnerDigimon()
+    {
+        GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(AgumonModelPath);
+        if (modelAsset == null)
+        {
+            Debug.LogError($"Agumon model not found at {AgumonModelPath}. Using this as default partner model.");
+            return;
+        }
+
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
+
+        GameObject root = new GameObject("PartnerDigimon");
+        try
+        {
+            CharacterController cc = root.AddComponent<CharacterController>();
+            cc.center = new Vector3(0f, 0.5f, 0f);
+            cc.height = 1f;
+            cc.radius = 0.3f;
+
+            root.AddComponent<DigimonFollow>();
+            DigimonInstance instance = root.AddComponent<DigimonInstance>();
+
+            DigimonSpeciesData agumonSpecies = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>(DigimonDataDir + "/Agumon.asset");
+            if (agumonSpecies != null)
+            {
+                SerializedObject instanceSo = new SerializedObject(instance);
+                instanceSo.FindProperty("_species").objectReferenceValue = agumonSpecies;
+                instanceSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+            else
+            {
+                Debug.LogWarning("Agumon species data not found. Run 'Generate Sample Species' first. _species will be empty.");
+            }
+
+            GameObject model = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+
+            Material agumonMat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Digimons/Agumon/Agumon.mat", new Color(1f, 0.8f, 0.2f));
+            PrefabGeneratorUtils.ApplyMaterialToRenderers(model, agumonMat);
+
+            PrefabUtility.SaveAsPrefabAsset(root, PartnerDigimonPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {PartnerDigimonPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {PartnerDigimonPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate TestDialogue")]
+    public static void GenerateTestDialogue()
+    {
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Data");
+
+        DialogueData dialogue = ScriptableObject.CreateInstance<DialogueData>();
+
+        SerializedObject so = new SerializedObject(dialogue);
+        SerializedProperty lines = so.FindProperty("_lines");
+        lines.arraySize = 3;
+
+        lines.GetArrayElementAtIndex(0).FindPropertyRelative("Speaker").stringValue = "Jijimon";
+        lines.GetArrayElementAtIndex(0).FindPropertyRelative("Text").stringValue = "Ah, you must be the new Tamer! Welcome to File City.";
+
+        lines.GetArrayElementAtIndex(1).FindPropertyRelative("Speaker").stringValue = "Jijimon";
+        lines.GetArrayElementAtIndex(1).FindPropertyRelative("Text").stringValue = "Things have been rough since the Digimon started losing their memories...";
+
+        lines.GetArrayElementAtIndex(2).FindPropertyRelative("Speaker").stringValue = "Jijimon";
+        lines.GetArrayElementAtIndex(2).FindPropertyRelative("Text").stringValue = "Please, help us rebuild this city. Talk to the Digimon and bring them back!";
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(dialogue, TestDialoguePath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"TestDialogue asset generated at {TestDialoguePath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate ZoneData Assets")]
+    public static void GenerateZoneData()
+    {
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Data/Zones");
+
+        CreateZoneData(Zone1DataPath, Zone1ScenePath, new Vector3(0f, 10f, -10f));
+        CreateZoneData(Zone2DataPath, Zone2ScenePath, new Vector3(0f, 12f, -15f));
+    }
+
+    private static void CreateZoneData(string assetPath, string scenePath, Vector3 cameraPosition)
+    {
+        ZoneData zone = ScriptableObject.CreateInstance<ZoneData>();
+
+        SerializedObject so = new SerializedObject(zone);
+        PrefabGeneratorUtils.SetSceneReference(so, "_scene", scenePath);
+        so.FindProperty("_cameraPosition").vector3Value = cameraPosition;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(zone, assetPath);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"ZoneData asset generated at {assetPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Techniques")]
+    public static void GenerateSampleTechniques()
+    {
+        PrefabGeneratorUtils.EnsureFolder(TechniqueDataDir);
+
+        CreateTechnique("PepperBreath", TechniqueCategory.Fire, 12, 110, 3f);
+        CreateTechnique("DynamiteCick", TechniqueCategory.Battle, 8, 90, 1.5f);
+        CreateTechnique("SonicJab", TechniqueCategory.Battle, 5, 60, 1f);
+        CreateTechnique("NovaBlast", TechniqueCategory.Fire, 28, 260, 5f);
+        CreateTechnique("MetalClaw", TechniqueCategory.Battle, 15, 150, 1.5f);
+        CreateTechnique("IceStatue", TechniqueCategory.Water, 18, 170, 4f);
+        CreateTechnique("ElectroShocker", TechniqueCategory.Air, 22, 200, 4f);
+        CreateTechnique("PoisonIvy", TechniqueCategory.Earth, 10, 80, 3f, 100, StatusEffectType.Poison, 30);
+        CreateTechnique("MegaFlame", TechniqueCategory.Fire, 20, 190, 4.5f);
+        CreateTechnique("SpinningNeedle", TechniqueCategory.Machine, 14, 130, 3f, 100, StatusEffectType.Confusion, 20);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample technique assets generated.");
+    }
+
+    private static void CreateTechnique(string techniqueName, TechniqueCategory category,
+        int mpCost, int power, float range,
+        int accuracy = 100, StatusEffectType statusEffect = StatusEffectType.None, int statusChance = 0)
+    {
+        string path = $"{TechniqueDataDir}/{techniqueName}.asset";
+
+        TechniqueData technique = ScriptableObject.CreateInstance<TechniqueData>();
+
+        SerializedObject so = new SerializedObject(technique);
+        so.FindProperty("_techniqueName").stringValue = techniqueName;
+        so.FindProperty("_category").enumValueIndex = (int)category;
+        so.FindProperty("_mpCost").intValue = mpCost;
+        so.FindProperty("_power").intValue = power;
+        so.FindProperty("_range").floatValue = range;
+        so.FindProperty("_accuracy").intValue = accuracy;
+        so.FindProperty("_statusEffect").enumValueIndex = (int)statusEffect;
+        so.FindProperty("_statusChance").intValue = statusChance;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(technique, path);
+        Debug.Log($"Technique asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Species")]
+    public static void GenerateSampleSpecies()
+    {
+        PrefabGeneratorUtils.EnsureFolder(DigimonDataDir);
+
+        CreateSpecies("Botamon", DigimonStage.Fresh, DigimonAttribute.Data,
+            300, 100, 10, 10, 10, 10, 48, new string[0]);
+
+        CreateSpecies("Koromon", DigimonStage.InTraining, DigimonAttribute.Data,
+            500, 200, 30, 25, 25, 20, 72, new string[0]);
+
+        CreateSpecies("Agumon", DigimonStage.Rookie, DigimonAttribute.Vaccine,
+            1000, 500, 80, 60, 70, 50, 384,
+            new[] { "PepperBreath", "DynamiteCick", "SonicJab" });
+
+        CreateSpecies("Greymon", DigimonStage.Champion, DigimonAttribute.Vaccine,
+            2500, 1200, 200, 150, 130, 120, 384,
+            new[] { "PepperBreath", "NovaBlast", "MegaFlame", "MetalClaw" });
+
+        CreateSpecies("MetalGreymon", DigimonStage.Ultimate, DigimonAttribute.Vaccine,
+            4500, 2500, 400, 350, 280, 300, 480,
+            new[] { "NovaBlast", "MegaFlame", "MetalClaw", "ElectroShocker" });
+
+        CreateSpecies("Gabumon", DigimonStage.Rookie, DigimonAttribute.Data,
+            900, 600, 70, 70, 60, 60, 384,
+            new[] { "IceStatue", "SonicJab", "DynamiteCick" });
+
+        CreateSpecies("Palmon", DigimonStage.Rookie, DigimonAttribute.Data,
+            800, 700, 60, 50, 50, 80, 384,
+            new[] { "PoisonIvy", "SpinningNeedle" });
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample species assets generated.");
+    }
+
+    private static void CreateSpecies(string speciesName, DigimonStage stage,
+        DigimonAttribute attribute, int hp, int mp, int offense, int defense,
+        int speed, int brains, int lifespanHours, string[] techniqueNames)
+    {
+        string path = $"{DigimonDataDir}/{speciesName}.asset";
+
+        DigimonSpeciesData species = ScriptableObject.CreateInstance<DigimonSpeciesData>();
+
+        SerializedObject so = new SerializedObject(species);
+        so.FindProperty("_speciesName").stringValue = speciesName;
+        so.FindProperty("_stage").enumValueIndex = (int)stage;
+        so.FindProperty("_attribute").enumValueIndex = (int)attribute;
+        so.FindProperty("_baseHP").intValue = hp;
+        so.FindProperty("_baseMP").intValue = mp;
+        so.FindProperty("_baseOffense").intValue = offense;
+        so.FindProperty("_baseDefense").intValue = defense;
+        so.FindProperty("_baseSpeed").intValue = speed;
+        so.FindProperty("_baseBrains").intValue = brains;
+        so.FindProperty("_lifespanHours").intValue = lifespanHours;
+
+        SerializedProperty techniques = so.FindProperty("_learnableTechniques");
+        techniques.arraySize = techniqueNames.Length;
+        for (int i = 0; i < techniqueNames.Length; i++)
+        {
+            string techPath = $"{TechniqueDataDir}/{techniqueNames[i]}.asset";
+            TechniqueData techAsset = AssetDatabase.LoadAssetAtPath<TechniqueData>(techPath);
+            if (techAsset != null)
+                techniques.GetArrayElementAtIndex(i).objectReferenceValue = techAsset;
+            else
+                Debug.LogWarning($"Technique not found at {techPath}. Run 'Generate Sample Techniques' first.");
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(species, path);
+        Debug.Log($"Species asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Evolution Tables")]
+    public static void GenerateEvolutionTables()
+    {
+        PrefabGeneratorUtils.EnsureFolder(EvolutionDataDir);
+
+        CreateEvolutionTable("Botamon", new EvolutionEntry("Koromon", minAge: 6));
+        CreateEvolutionTable("Koromon", new EvolutionEntry("Agumon", minAge: 12, minOffense: 20));
+        CreateEvolutionTable("Agumon", new EvolutionEntry("Greymon", minAge: 72, minHP: 1500, minOffense: 100, maxCareMistakes: 5, minHappiness: 50));
+        CreateEvolutionTable("Greymon", new EvolutionEntry("MetalGreymon", minAge: 192, minHP: 3000, minOffense: 250, minSpeed: 200, maxCareMistakes: 3, minDiscipline: 60));
+
+        WireEvolutionTablesToSpecies();
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Evolution table assets generated and wired to species.");
+    }
+
+    private struct EvolutionEntry
+    {
+        public string TargetSpecies;
+        public int MinAge;
+        public int MinHP, MinMP, MinOffense, MinDefense, MinSpeed, MinBrains;
+        public int MaxCareMistakes;
+        public int MinWeight, MaxWeight;
+        public int MinHappiness, MinDiscipline;
+
+        public EvolutionEntry(string target, int minAge = 0, int minHP = 0, int minMP = 0,
+            int minOffense = 0, int minDefense = 0, int minSpeed = 0, int minBrains = 0,
+            int maxCareMistakes = -1, int minWeight = 0, int maxWeight = 0,
+            int minHappiness = 0, int minDiscipline = 0)
+        {
+            TargetSpecies = target;
+            MinAge = minAge;
+            MinHP = minHP;
+            MinMP = minMP;
+            MinOffense = minOffense;
+            MinDefense = minDefense;
+            MinSpeed = minSpeed;
+            MinBrains = minBrains;
+            MaxCareMistakes = maxCareMistakes;
+            MinWeight = minWeight;
+            MaxWeight = maxWeight;
+            MinHappiness = minHappiness;
+            MinDiscipline = minDiscipline;
+        }
+    }
+
+    private static void CreateEvolutionTable(string fromSpeciesName, params EvolutionEntry[] entries)
+    {
+        string path = $"{EvolutionDataDir}/{fromSpeciesName}Evolution.asset";
+
+        EvolutionTable table = ScriptableObject.CreateInstance<EvolutionTable>();
+
+        SerializedObject so = new SerializedObject(table);
+
+        DigimonSpeciesData fromSpecies = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/{fromSpeciesName}.asset");
+        if (fromSpecies != null)
+            so.FindProperty("_fromSpecies").objectReferenceValue = fromSpecies;
+        else
+            Debug.LogWarning($"Species {fromSpeciesName} not found. Run 'Generate Sample Species' first.");
+
+        SerializedProperty requirements = so.FindProperty("_requirements");
+        requirements.arraySize = entries.Length;
+
+        for (int i = 0; i < entries.Length; i++)
+        {
+            SerializedProperty req = requirements.GetArrayElementAtIndex(i);
+            EvolutionEntry entry = entries[i];
+
+            DigimonSpeciesData targetSpecies = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/{entry.TargetSpecies}.asset");
+            if (targetSpecies != null)
+                req.FindPropertyRelative("_targetSpecies").objectReferenceValue = targetSpecies;
+            else
+                Debug.LogWarning($"Target species {entry.TargetSpecies} not found.");
+
+            req.FindPropertyRelative("_minAge").intValue = entry.MinAge;
+            req.FindPropertyRelative("_minHP").intValue = entry.MinHP;
+            req.FindPropertyRelative("_minMP").intValue = entry.MinMP;
+            req.FindPropertyRelative("_minOffense").intValue = entry.MinOffense;
+            req.FindPropertyRelative("_minDefense").intValue = entry.MinDefense;
+            req.FindPropertyRelative("_minSpeed").intValue = entry.MinSpeed;
+            req.FindPropertyRelative("_minBrains").intValue = entry.MinBrains;
+            req.FindPropertyRelative("_maxCareMistakes").intValue = entry.MaxCareMistakes;
+            req.FindPropertyRelative("_minWeight").intValue = entry.MinWeight;
+            req.FindPropertyRelative("_maxWeight").intValue = entry.MaxWeight;
+            req.FindPropertyRelative("_minHappiness").intValue = entry.MinHappiness;
+            req.FindPropertyRelative("_minDiscipline").intValue = entry.MinDiscipline;
+        }
+
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(table, path);
+        Debug.Log($"Evolution table generated at {path}");
+    }
+
+    private static void WireEvolutionTablesToSpecies()
+    {
+        string[] speciesNames = { "Botamon", "Koromon", "Agumon", "Greymon" };
+        foreach (string name in speciesNames)
+        {
+            string speciesPath = $"{DigimonDataDir}/{name}.asset";
+            string tablePath = $"{EvolutionDataDir}/{name}Evolution.asset";
+
+            DigimonSpeciesData species = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>(speciesPath);
+            EvolutionTable table = AssetDatabase.LoadAssetAtPath<EvolutionTable>(tablePath);
+
+            if (species != null && table != null)
+            {
+                SerializedObject so = new SerializedObject(species);
+                so.FindProperty("_evolutionTable").objectReferenceValue = table;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(species);
+            }
+        }
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Items")]
+    public static void GenerateSampleItems()
+    {
+        PrefabGeneratorUtils.EnsureFolder(ItemDataDir);
+
+        CreateItem("Meat", ItemCategory.Food, 100, 50, 10, "Basic food. Reduces hunger.",
+            hungerReduction: 15, weightGain: 3);
+        CreateItem("GiantMeat", ItemCategory.Food, 500, 250, 10, "Large food. Greatly reduces hunger.",
+            hungerReduction: 30, weightGain: 5);
+        CreateItem("Sirloin", ItemCategory.Food, 1000, 500, 10, "Premium food. Best hunger reduction.",
+            hungerReduction: 50, weightGain: 8);
+        CreateItem("DigiMushroom", ItemCategory.Food, 200, 100, 10, "A mushroom that slightly reduces tiredness.",
+            hungerReduction: 10, weightGain: 1, tirednessReduction: 10);
+        CreateItem("Medicine", ItemCategory.Recovery, 500, 250, 10, "Restores a moderate amount of HP.",
+            hpRestore: 500);
+        CreateItem("SuperRecovery", ItemCategory.Recovery, 1500, 750, 10, "Fully restores HP and MP.",
+            hpRestore: 9999, mpRestore: 9999);
+        CreateItem("MPFloppy", ItemCategory.Recovery, 300, 150, 10, "Restores MP.",
+            mpRestore: 500);
+        CreateItem("HappyMushroom", ItemCategory.Status, 300, 150, 10, "Increases happiness.",
+            happinessChange: 10);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample item assets generated.");
+    }
+
+    private static void CreateItem(string itemName, ItemCategory category, int buyPrice,
+        int sellPrice, int maxStack, string description,
+        int hungerReduction = 0, int weightGain = 0, int hpRestore = 0,
+        int mpRestore = 0, int happinessChange = 0, int disciplineChange = 0,
+        int tirednessReduction = 0)
+    {
+        string path = $"{ItemDataDir}/{itemName}.asset";
+
+        ItemData item = ScriptableObject.CreateInstance<ItemData>();
+
+        SerializedObject so = new SerializedObject(item);
+        so.FindProperty("_itemName").stringValue = itemName;
+        so.FindProperty("_category").enumValueIndex = (int)category;
+        so.FindProperty("_description").stringValue = description;
+        so.FindProperty("_buyPrice").intValue = buyPrice;
+        so.FindProperty("_sellPrice").intValue = sellPrice;
+        so.FindProperty("_maxStack").intValue = maxStack;
+        so.FindProperty("_hungerReduction").intValue = hungerReduction;
+        so.FindProperty("_weightGain").intValue = weightGain;
+        so.FindProperty("_hpRestore").intValue = hpRestore;
+        so.FindProperty("_mpRestore").intValue = mpRestore;
+        so.FindProperty("_happinessChange").intValue = happinessChange;
+        so.FindProperty("_disciplineChange").intValue = disciplineChange;
+        so.FindProperty("_tirednessReduction").intValue = tirednessReduction;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(item, path);
+        Debug.Log($"Item asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Training")]
+    public static void GenerateSampleTraining()
+    {
+        PrefabGeneratorUtils.EnsureFolder(TrainingDataDir);
+
+        CreateTraining("HPTraining", TrainableStat.HP, 10, 30, 12, 2);
+        CreateTraining("MPTraining", TrainableStat.MP, 8, 25, 12, 2);
+        CreateTraining("OffenseTraining", TrainableStat.Offense, 3, 8, 15, 3);
+        CreateTraining("DefenseTraining", TrainableStat.Defense, 3, 8, 15, 3);
+        CreateTraining("SpeedTraining", TrainableStat.Speed, 3, 8, 15, 3);
+        CreateTraining("BrainsTraining", TrainableStat.Brains, 3, 8, 10, 1);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample training assets generated.");
+    }
+
+    private static void CreateTraining(string facilityName, TrainableStat stat,
+        int gainMin, int gainMax, int tirednessCost, int happinessCost)
+    {
+        string path = $"{TrainingDataDir}/{facilityName}.asset";
+
+        TrainingData training = ScriptableObject.CreateInstance<TrainingData>();
+
+        SerializedObject so = new SerializedObject(training);
+        so.FindProperty("_facilityName").stringValue = facilityName;
+        so.FindProperty("_stat").enumValueIndex = (int)stat;
+        so.FindProperty("_statGainMin").intValue = gainMin;
+        so.FindProperty("_statGainMax").intValue = gainMax;
+        so.FindProperty("_tirednessCost").intValue = tirednessCost;
+        so.FindProperty("_happinessCost").intValue = happinessCost;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(training, path);
+        Debug.Log($"Training asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate TrainingFacility")]
+    public static void GenerateTrainingFacility()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.InteractablesPrefabDir);
+
+        GameObject root = new GameObject("TrainingFacility");
+        try
+        {
+            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localScale = new Vector3(0.8f, 0.5f, 0.8f);
+
+            Object.DestroyImmediate(model.GetComponent<CapsuleCollider>());
+            CapsuleCollider col = root.AddComponent<CapsuleCollider>();
+            col.center = new Vector3(0f, 0.5f, 0f);
+            col.height = 1f;
+            col.radius = 0.5f;
+
+            Material mat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/TrainingFacility.mat", new Color(0.6f, 0.9f, 0.3f));
+            model.GetComponent<Renderer>().sharedMaterial = mat;
+
+            TrainingFacility facility = root.AddComponent<TrainingFacility>();
+
+            GameObject promptGo = new GameObject("PromptText");
+            promptGo.transform.SetParent(root.transform, false);
+            promptGo.transform.localPosition = new Vector3(0f, 1.5f, 0f);
+
+            TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+            tmp.text = "Train";
+            tmp.fontSize = 4;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = Color.white;
+            tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
+
+            SerializedObject so = new SerializedObject(facility);
+            so.FindProperty("_promptText").objectReferenceValue = tmp;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, TrainingFacilityPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {TrainingFacilityPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {TrainingFacilityPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate NPC")]
+    public static void GenerateNPC()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
+
+        GameObject root = new GameObject("NPC");
+        try
+        {
+            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+
+            Object.DestroyImmediate(model.GetComponent<CapsuleCollider>());
+            CapsuleCollider col = root.AddComponent<CapsuleCollider>();
+            col.center = new Vector3(0f, 1f, 0f);
+            col.height = 2f;
+            col.radius = 0.5f;
+
+            Material npcMat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/NPC.mat", new Color(0.2f, 0.4f, 0.9f));
+            model.GetComponent<Renderer>().sharedMaterial = npcMat;
+
+            NPCInteractable npc = root.AddComponent<NPCInteractable>();
+
+            GameObject promptGo = new GameObject("PromptText");
+            promptGo.transform.SetParent(root.transform, false);
+            promptGo.transform.localPosition = new Vector3(0f, 2.2f, 0f);
+
+            TextMeshPro tmp = promptGo.AddComponent<TextMeshPro>();
+            tmp.text = "Talk";
+            tmp.fontSize = 4;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = Color.white;
+            tmp.GetComponent<RectTransform>().sizeDelta = new Vector2(3f, 1f);
+
+            SerializedObject so = new SerializedObject(npc);
+            so.FindProperty("_promptText").objectReferenceValue = tmp;
+
+            DialogueData testDialogue = AssetDatabase.LoadAssetAtPath<DialogueData>(TestDialoguePath);
+            if (testDialogue != null)
+                so.FindProperty("_dialogue").objectReferenceValue = testDialogue;
+            else
+                Debug.LogWarning($"TestDialogue not found at {TestDialoguePath}. Run 'Tools/DigimonWorld/Data/Generate TestDialogue' first.");
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, NPCPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {NPCPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {NPCPrefabPath}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Data/Generate Sample Encounters")]
+    public static void GenerateSampleEncounters()
+    {
+        PrefabGeneratorUtils.EnsureFolder(EncounterDataDir);
+
+        CreateEncounter("WildAgumon", "Agumon", 0.8f, 50);
+        CreateEncounter("WildGabumon", "Gabumon", 0.9f, 60);
+        CreateEncounter("WildPalmon", "Palmon", 0.7f, 40);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Sample encounter assets generated.");
+    }
+
+    private static void CreateEncounter(string encounterName, string speciesName, float statScale, int bitReward)
+    {
+        string path = $"{EncounterDataDir}/{encounterName}.asset";
+
+        EncounterData encounter = ScriptableObject.CreateInstance<EncounterData>();
+
+        SerializedObject so = new SerializedObject(encounter);
+        DigimonSpeciesData species = AssetDatabase.LoadAssetAtPath<DigimonSpeciesData>($"{DigimonDataDir}/{speciesName}.asset");
+        if (species != null)
+            so.FindProperty("_species").objectReferenceValue = species;
+        else
+            Debug.LogWarning($"Species {speciesName} not found. Run 'Generate Sample Species' first.");
+
+        so.FindProperty("_statScale").floatValue = statScale;
+        so.FindProperty("_bitReward").intValue = bitReward;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        AssetDatabase.CreateAsset(encounter, path);
+        Debug.Log($"Encounter asset generated at {path}");
+    }
+
+    [MenuItem("Tools/DigimonWorld/Prefabs/Generate WildDigimon")]
+    public static void GenerateWildDigimon()
+    {
+        PrefabGeneratorUtils.EnsureFolder(PrefabGeneratorUtils.CharactersPrefabDir);
+
+        GameObject root = new GameObject("WildDigimon");
+        try
+        {
+            CharacterController cc = root.AddComponent<CharacterController>();
+            cc.center = new Vector3(0f, 0.75f, 0f);
+            cc.height = 1.5f;
+            cc.radius = 0.4f;
+
+            GameObject model = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localScale = new Vector3(0.6f, 0.75f, 0.6f);
+
+            Object.DestroyImmediate(model.GetComponent<CapsuleCollider>());
+
+            Material mat = PrefabGeneratorUtils.CreateOrLoadMaterial("Assets/_Project/Props/WildDigimon.mat", new Color(0.9f, 0.2f, 0.2f));
+            model.GetComponent<Renderer>().sharedMaterial = mat;
+
+            root.AddComponent<WildDigimon>();
+
+            PrefabUtility.SaveAsPrefabAsset(root, WildDigimonPrefabPath, out bool success);
+            if (!success)
+            {
+                Debug.LogError($"Failed to save prefab at {WildDigimonPrefabPath}");
+                return;
+            }
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"Prefab generated at {WildDigimonPrefabPath}");
+    }
+}
