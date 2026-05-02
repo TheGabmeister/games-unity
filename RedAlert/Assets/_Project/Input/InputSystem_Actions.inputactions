@@ -42,15 +42,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "CameraZoom",
-                    "type": "Value",
-                    "id": "a1b2c3d4-0001-4000-8000-000000000014",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "ModifierCtrl",
                     "type": "Button",
                     "id": "a1b2c3d4-0001-4000-8000-000000000015",
@@ -329,17 +320,6 @@
                     "action": "CameraPan",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "b0000006-0001-4000-8000-000000000001",
-                    "path": "<Mouse>/scroll/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "CameraZoom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 },
                 {
                     "name": "",

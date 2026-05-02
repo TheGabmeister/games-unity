@@ -11,7 +11,6 @@ public class InputManager : MonoBehaviour
     public InputAction Select { get; private set; }
     public InputAction Command { get; private set; }
     public InputAction CameraPan { get; private set; }
-    public InputAction CameraZoom { get; private set; }
     public InputAction ModifierCtrl { get; private set; }
     public InputAction ModifierAlt { get; private set; }
     public InputAction Stop { get; private set; }
@@ -35,7 +34,6 @@ public class InputManager : MonoBehaviour
         Select = _playerMap.FindAction("Select");
         Command = _playerMap.FindAction("Command");
         CameraPan = _playerMap.FindAction("CameraPan");
-        CameraZoom = _playerMap.FindAction("CameraZoom");
         ModifierCtrl = _playerMap.FindAction("ModifierCtrl");
         ModifierAlt = _playerMap.FindAction("ModifierAlt");
         Stop = _playerMap.FindAction("Stop");

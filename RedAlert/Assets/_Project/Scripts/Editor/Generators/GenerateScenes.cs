@@ -52,6 +52,10 @@ public static class GenerateScenes
         var renderer = tilemapGO.AddComponent<TilemapRenderer>();
         renderer.sortingOrder = 0;
 
+        var systemsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Systems.prefab");
+        if (systemsPrefab != null)
+            PrefabUtility.InstantiatePrefab(systemsPrefab);
+
         var unitPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/Units/PlaceholderUnit.prefab");
         if (unitPrefab != null)
         {

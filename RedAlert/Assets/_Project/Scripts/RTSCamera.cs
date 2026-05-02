@@ -5,9 +5,6 @@ public class RTSCamera : MonoBehaviour
     [SerializeField] private float _panSpeed = 10f;
     [SerializeField] private float _edgeScrollSpeed = 10f;
     [SerializeField] private float _edgeScrollThreshold = 10f;
-    [SerializeField] private float _zoomStep = 1f;
-    [SerializeField] private float _minZoom = 3f;
-    [SerializeField] private float _maxZoom = 15f;
 
     private Camera _camera;
 
@@ -24,7 +21,6 @@ public class RTSCamera : MonoBehaviour
         if (InputManager.Instance == null) return;
         HandlePan();
         HandleEdgeScroll();
-        HandleZoom();
         ClampToMap();
     }
 
@@ -51,16 +47,6 @@ public class RTSCamera : MonoBehaviour
 
         if (move.sqrMagnitude > 0f)
             transform.position += move.normalized * (_edgeScrollSpeed * Time.unscaledDeltaTime);
-    }
-
-    void HandleZoom()
-    {
-        float scroll = InputManager.Instance.CameraZoom.ReadValue<float>();
-        if (Mathf.Abs(scroll) > 0.01f)
-        {
-            float delta = Mathf.Sign(scroll) * _zoomStep;
-            _camera.orthographicSize = Mathf.Clamp(_camera.orthographicSize - delta, _minZoom, _maxZoom);
-        }
     }
 
     void ClampToMap()

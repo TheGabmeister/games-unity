@@ -12,8 +12,8 @@ This is a Unity project — there is no CLI build. Open in Unity 6 (6000.3.12f1+
 
 ## Architecture
 
-### Bootstrapper Pattern
-`Assets/_Project/Scripts/Editor/Bootstrapper.cs` uses `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to instantiate a `Resources/Systems` prefab before any scene loads. All global managers/systems should live as components on this prefab rather than as scene-dependent singletons.
+### Systems Prefab
+`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, SelectionManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder.
 
 ### Scene Structure
 Two scenes are configured in build settings:

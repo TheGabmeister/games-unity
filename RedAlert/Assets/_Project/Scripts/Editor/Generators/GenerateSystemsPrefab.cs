@@ -7,8 +7,8 @@ public static class GenerateSystemsPrefab
 {
     public static void Generate()
     {
-        string path = "Assets/Resources/Systems.prefab";
-        PrefabGeneratorUtils.EnsureFolder("Assets/Resources");
+        string path = "Assets/_Project/Prefabs/Systems.prefab";
+        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Prefabs");
 
         var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
         GameObject instance;
