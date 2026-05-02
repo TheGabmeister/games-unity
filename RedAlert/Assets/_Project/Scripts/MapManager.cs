@@ -25,10 +25,6 @@ public class MapManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-    }
-
-    void Start()
-    {
         _tilemap = FindFirstObjectByType<Tilemap>();
         if (_tilemap == null || _mapData == null) return;
         BuildGrid();
