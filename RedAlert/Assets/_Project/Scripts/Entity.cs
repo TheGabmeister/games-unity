@@ -1,22 +1,23 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Health))]
 public class Entity : MonoBehaviour
 {
     [SerializeField] private int _ownerPlayerIndex;
     [SerializeField] private UnitData _unitData;
 
-    private HealthBar _healthBar;
+    private Health _health;
 
     public int OwnerPlayerIndex => _ownerPlayerIndex;
     public UnitData UnitData => _unitData;
     public string EntityName => _unitData != null ? _unitData.DisplayName : "";
     public Vector2Int Cell { get; private set; }
-    public HealthBar HealthBar => _healthBar;
+    public Health Health => _health;
     public bool IsDead { get; private set; }
 
     void Awake()
     {
-        _healthBar = GetComponentInChildren<HealthBar>(true);
+        _health = GetComponent<Health>();
     }
 
     void Start()
@@ -27,10 +28,10 @@ public class Entity : MonoBehaviour
             sr.sprite = _unitData.Sprite;
         }
 
-        if (_healthBar != null && _unitData != null)
+        if (_health != null && _unitData != null)
         {
-            _healthBar.Initialize(_unitData.MaxHP);
-            _healthBar.OnDeath += Die;
+            _health.Initialize(_unitData.MaxHP);
+            _health.OnDeath += Die;
         }
 
         Cell = MapManager.Instance.WorldToCell(transform.position);
@@ -42,8 +43,8 @@ public class Entity : MonoBehaviour
 
     void OnDestroy()
     {
-        if (_healthBar != null)
-            _healthBar.OnDeath -= Die;
+        if (_health != null)
+            _health.OnDeath -= Die;
 
         MapManager.Instance?.UnregisterEntity(Cell);
 
@@ -61,8 +62,8 @@ public class Entity : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (IsDead) return;
-        if (_healthBar != null)
-            _healthBar.TakeDamage(damage);
+        if (_health != null)
+            _health.TakeDamage(damage);
     }
 
     public void Die()

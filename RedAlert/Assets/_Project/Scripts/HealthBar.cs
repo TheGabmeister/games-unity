@@ -5,39 +5,30 @@ public class HealthBar : MonoBehaviour
     [SerializeField] private Transform _barFill;
     [SerializeField] private SpriteRenderer _fillRenderer;
 
-    private float _maxHP = 100f;
-    private float _currentHP = 100f;
+    private Health _health;
+    private float _ratio = 1f;
 
-    public float CurrentHP => _currentHP;
-    public float MaxHP => _maxHP;
-    public bool IsDead => _currentHP <= 0f;
-
-    public System.Action OnDeath;
+    void Awake()
+    {
+        _health = GetComponentInParent<Health>(true);
+    }
 
     void OnEnable()
     {
-        UpdateBar();
+        if (_health != null)
+            _health.OnHealthChanged += UpdateBar;
+        UpdateBar(_ratio);
     }
 
-    public void Initialize(float maxHP)
+    void OnDisable()
     {
-        _maxHP = maxHP;
-        _currentHP = maxHP;
-        UpdateBar();
+        if (_health != null)
+            _health.OnHealthChanged -= UpdateBar;
     }
 
-    public void TakeDamage(float damage)
+    void UpdateBar(float ratio)
     {
-        if (IsDead) return;
-        _currentHP = Mathf.Max(0, _currentHP - damage);
-        UpdateBar();
-        if (_currentHP <= 0f)
-            OnDeath?.Invoke();
-    }
-
-    void UpdateBar()
-    {
-        float ratio = _currentHP / _maxHP;
+        _ratio = ratio;
         if (_barFill != null)
         {
             _barFill.localScale = new Vector3(ratio, 1f, 1f);
