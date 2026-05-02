@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Rifle Infantry
   Sprite: {fileID: -4418884546393760298, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  Icon: {fileID: 0}
   Category: 0
   Faction: 0
   Cost: 0
@@ -33,6 +34,12 @@ MonoBehaviour:
   FootprintX: 1
   FootprintY: 1
   StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
   RequiresPower: 0
+  IsWall: 0
   FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
   Prefab: {fileID: 3724010620712085541, guid: 10a6b103c8efdf24d87b72eaabccd245, type: 3}

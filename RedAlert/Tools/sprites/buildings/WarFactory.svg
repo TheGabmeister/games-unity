@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Main building - wide industrial -->
+  <rect x="2" y="20" width="60" height="40" rx="2" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Sawtooth roof -->
+  <polygon points="2,20 12,10 22,20 32,10 42,20 52,10 62,20" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Large bay doors -->
+  <rect x="6" y="36" width="24" height="24" rx="1" fill="#505050" stroke="#404040" stroke-width="1.5"/>
+  <!-- Bay door segments -->
+  <g stroke="#606060" stroke-width="0.5">
+    <line x1="6" y1="42" x2="30" y2="42"/>
+    <line x1="6" y1="48" x2="30" y2="48"/>
+    <line x1="6" y1="54" x2="30" y2="54"/>
+  </g>
+  <!-- Secondary bay -->
+  <rect x="34" y="40" width="14" height="20" rx="1" fill="#505050" stroke="#404040" stroke-width="1"/>
+  <g stroke="#606060" stroke-width="0.5">
+    <line x1="34" y1="46" x2="48" y2="46"/>
+    <line x1="34" y1="52" x2="48" y2="52"/>
+  </g>
+  <!-- Crane rail -->
+  <rect x="4" y="24" width="56" height="3" rx="0.5" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Office section -->
+  <rect x="50" y="26" width="10" height="14" rx="1" fill="#b0b0b0" stroke="#707070" stroke-width="0.8"/>
+  <rect x="52" y="28" width="3" height="3" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <rect x="52" y="34" width="3" height="3" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <!-- Smoke stack -->
+  <rect x="56" y="6" width="4" height="16" rx="0.5" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Base -->
+  <rect x="2" y="58" width="60" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

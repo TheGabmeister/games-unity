@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Runway/tarmac -->
+  <rect x="2" y="32" width="60" height="28" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+  <!-- Runway centerline -->
+  <g stroke="#c0c040" stroke-width="1" opacity="0.7">
+    <line x1="8" y1="46" x2="14" y2="46"/>
+    <line x1="18" y1="46" x2="24" y2="46"/>
+    <line x1="28" y1="46" x2="34" y2="46"/>
+    <line x1="38" y1="46" x2="44" y2="46"/>
+    <line x1="48" y1="46" x2="54" y2="46"/>
+  </g>
+  <!-- Hangar building -->
+  <rect x="4" y="12" width="36" height="22" rx="2" fill="#b0b0b0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Hangar roof - arched -->
+  <path d="M4,12 Q22,2 40,12" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Hangar door -->
+  <rect x="8" y="18" width="28" height="16" rx="1" fill="#505050" stroke="#404040" stroke-width="1"/>
+  <!-- Door segments -->
+  <g stroke="#606060" stroke-width="0.5">
+    <line x1="8" y1="24" x2="36" y2="24"/>
+    <line x1="8" y1="30" x2="36" y2="30"/>
+  </g>
+  <!-- Control tower -->
+  <rect x="46" y="8" width="12" height="24" rx="1" fill="#a0a0a0" stroke="#707070" stroke-width="1"/>
+  <!-- Tower cab -->
+  <rect x="44" y="4" width="16" height="6" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Tower windows -->
+  <rect x="46" y="5" width="12" height="4" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <!-- Antenna -->
+  <line x1="52" y1="0" x2="52" y2="4" stroke="#606060" stroke-width="1"/>
+  <!-- Runway edge lights -->
+  <g fill="#c0c040" opacity="0.5">
+    <circle cx="4" cy="36" r="1.5"/>
+    <circle cx="4" cy="56" r="1.5"/>
+    <circle cx="60" cy="36" r="1.5"/>
+    <circle cx="60" cy="56" r="1.5"/>
+  </g>
+  <!-- Base -->
+  <rect x="2" y="58" width="60" height="4" rx="1" fill="#707070" stroke="#606060" stroke-width="0.8"/>
+</svg>

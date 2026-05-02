@@ -28,10 +28,21 @@ for svg in "$TOOLS_DIR/sprites/units/"*.svg; do
 done
 
 echo "Exporting building sprites..."
+get_building_size() {
+    case "$1" in
+        ConstructionYard|AdvancedPower|OreRefinery|SovietTech|NavalYard|SubPen) echo "192 192" ;;
+        WarFactory|Airfield|ServiceDepot) echo "192 128" ;;
+        PowerPlant|Barracks|RadarDome|AlliedTech|Helipad|Chronosphere|IronCurtain|OreSilo) echo "128 128" ;;
+        AAGun|TeslaCoil|GapGenerator) echo "64 128" ;;
+        SAMSite|MissileSilo) echo "128 64" ;;
+        *) echo "64 64" ;;
+    esac
+}
 for svg in "$TOOLS_DIR/sprites/buildings/"*.svg; do
     name=$(basename "$svg" .svg)
-    "$INKSCAPE" "$svg" --export-type=png --export-filename="$SPRITE_DIR/Buildings/$name.png" --export-width=64 --export-height=64 2>/dev/null
-    echo "  $name"
+    read -r w h <<< "$(get_building_size "$name")"
+    "$INKSCAPE" "$svg" --export-type=png --export-filename="$SPRITE_DIR/Buildings/$name.png" --export-width=$w --export-height=$h 2>/dev/null
+    echo "  $name (${w}x${h})"
 done
 
 echo "Exporting overlay sprites..."

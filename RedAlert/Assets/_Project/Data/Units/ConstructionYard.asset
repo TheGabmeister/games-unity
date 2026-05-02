@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: ConstructionYard
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Construction Yard
+  Sprite: {fileID: -4273890944221904687, guid: adb395698c89ddf4b8d79f25c05b99d9, type: 3}
+  Icon: {fileID: 0}
+  Category: 2
+  Faction: 0
+  Cost: 0
+  Locomotion: 0
+  BaseSpeed: 5
+  MaxHP: 1500
+  Armor: 4
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 0}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 3
+  FootprintY: 3
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 15
+  RequiresPower: 0
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 2
+  ExitCellOffset: {x: 1, y: -1}
+  Prerequisites: []
+  Prefab: {fileID: 5361833657939403755, guid: b4c79e98eab0e08498977a4781785eaa, type: 3}

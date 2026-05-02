@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Ore Refinery
   Sprite: {fileID: 175639219898678221, guid: b27c1aa6103a76b40b6de7c384a2f21d, type: 3}
+  Icon: {fileID: 0}
   Category: 2
   Faction: 0
   Cost: 2000
@@ -33,6 +34,13 @@ MonoBehaviour:
   FootprintX: 3
   FootprintY: 3
   StorageCapacity: 2000
+  PowerProduced: 0
+  PowerConsumed: 30
   RequiresPower: 1
+  IsWall: 0
   FreeUnit: {fileID: 11400000, guid: 5fe0f61e49886da438e16245f13bfa3b, type: 2}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites:
+  - {fileID: 11400000, guid: f11e0268509f1414f8c0312b59a31972, type: 2}
   Prefab: {fileID: 5058371716643237828, guid: 3e1dd97aadc415c448bcaef505faa617, type: 3}

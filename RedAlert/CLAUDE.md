@@ -13,7 +13,7 @@ This is a Unity project — there is no CLI build. Open in Unity 6 (6000.3.12f1+
 ## Architecture
 
 ### Systems Prefab
-`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, EconomyManager, SelectionManager, CommandManager, SfxManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder.
+`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, EconomyManager, PowerManager, SelectionManager, CommandManager, PlacementManager, SellRepairManager, ConstructionManager, ProductionManager, SfxManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder. `SidebarCanvas.prefab` is a separate uGUI canvas also placed in the scene.
 
 ### Scene Structure
 One scene in build settings:
@@ -25,9 +25,9 @@ Managers use a static `Instance` property set in `Awake`. All `Awake` calls run 
 ### Initialization Order
 1. **Awake** — all managers set `Instance`, MapManager builds the grid and renders both terrain and ore overlay tilemaps. Entity finds Health (RequireComponent) and HealthBar (child GO, includeInactive).
 2. **Start** — Entity registers itself with MapManager and PlayerManager, initializes Health with MaxHP from UnitData, applies sprite. Refinery/Silo call `EconomyManager.RecalculateStorage`. Harvester begins SeekOre.
-3. **First LateUpdate** — EconomyManager initializes starting credits (after all Start calls have run).
-4. **Update** — SelectionManager polls input for selection, CommandManager polls for orders, Mover follows paths, Attacker scans for targets, Harvester runs state machine, MapManager ticks ore regrowth (2 min interval).
-5. **LateUpdate** — RTSCamera reads input for panning and clamps to map bounds. SelectionManager prunes destroyed units from selection.
+3. **First LateUpdate** — EconomyManager initializes starting credits (after all Start calls have run). PowerManager.Start recalculates all players.
+4. **Update** — SelectionManager polls input for selection, CommandManager polls for orders, Mover follows paths, Attacker scans for targets, Harvester runs state machine, MapManager ticks ore regrowth (2 min interval). ConstructionManager/ProductionManager tick build progress and drain credits incrementally. PlacementManager shows ghost and handles placement clicks. SellRepairManager handles sell clicks and repair ticks.
+5. **LateUpdate** — RTSCamera reads input for panning and clamps to map bounds (viewport shrunk for sidebar). SelectionManager prunes destroyed units from selection. ProductionManager retries spawning READY units if exit was blocked.
 
 ### Key Design Decisions
 - **Grid is king.** All gameplay (pathfinding, fog of war, building placement, targeting, selection) operates on a cell grid via MapManager. No Unity Physics2D — no Rigidbody2D, no Collider2D, no collision layers.
@@ -59,6 +59,20 @@ All game content goes under `Assets/_Project/`. Editor-only scripts are in `Asse
 7. MapManager tracks per-cell ore density (0–4) and type (Ore/Gems). Ore regrows every 2 min (density++, spreads to adjacent cells at max density). Gems never regrow.
 8. Ore overlay rendered on a second tilemap layer (4 density sprites per resource type).
 9. Storage = sum of Refinery (2,000) + Silo (1,500) capacities. Destroying a storage building clamps credits to new capacity.
+
+### Data Flow: Construction & Production
+1. SidebarUI shows buildable items filtered by FactionData + prerequisites. Structures on left column, units on right.
+2. Click structure icon → ConstructionManager.StartBuild → credits drain incrementally over build time (`Cost / 1000 × 0.8 min`). Cancel mid-build = lose spent credits.
+3. Build complete → state = READY → PlacementManager.EnterPlacement shows ghost sprite at mouse. Green = valid, red = invalid.
+4. Placement validation: within 16-cell CY radius, within 2-cell adjacency to friendly building, footprint cells clear and passable.
+5. Left-click places building, right-click cancels (refunds full cost since it was READY).
+6. Click unit icon → ProductionManager starts build. Build time / factory count = effective time. Credits drain incrementally.
+7. Unit complete → spawns at primary factory's ExitCellOffset. If exit blocked, retries each LateUpdate.
+8. PowerManager: each building produces/consumes power. `IsLowPower` = consumed > produced. Brownout disables RequiresPower buildings.
+9. Sell mode: click building → refund 50% × (HP ratio) × Cost, spawn infantry if crewed.
+10. Repair: click building → 7 HP per tick, drains credits at rate proportional to 20% of Cost.
+11. Building damage: ≤50% HP shows fire overlay. ≤25% HP = critical (Engineer-capturable in Phase 7).
+12. Multi-cell buildings: Entity.RegisterCells occupies FootprintX × FootprintY cells in the entity grid.
 
 ### Grid Coordinate System
 - 1 cell = 1 Unity unit. Sprites are 64×64 px at 64 PPU.

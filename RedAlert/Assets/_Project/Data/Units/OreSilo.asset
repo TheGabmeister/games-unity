@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Ore Silo
   Sprite: {fileID: -1683131798906928302, guid: 55024c1f9b5553645a3caa44949bf750, type: 3}
+  Icon: {fileID: 0}
   Category: 2
   Faction: 0
   Cost: 150
@@ -33,6 +34,13 @@ MonoBehaviour:
   FootprintX: 2
   FootprintY: 2
   StorageCapacity: 1500
+  PowerProduced: 0
+  PowerConsumed: 0
   RequiresPower: 0
+  IsWall: 0
   FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites:
+  - {fileID: 11400000, guid: 422ff5b0f0a8e7f41989de7db6821053, type: 2}
   Prefab: {fileID: 8619910719342596815, guid: 47b97b02cfc94d0408b9bd8413891e5e, type: 3}

@@ -5,6 +5,7 @@ public class UnitData : ScriptableObject
 {
     public string DisplayName;
     public Sprite Sprite;
+    public Sprite Icon;
     public UnitCategory Category = UnitCategory.Vehicle;
     public Faction Faction = Faction.Allied;
     public int Cost;
@@ -34,8 +35,14 @@ public class UnitData : ScriptableObject
     public int FootprintX = 1;
     public int FootprintY = 1;
     public int StorageCapacity;
+    public int PowerProduced;
+    public int PowerConsumed;
     public bool RequiresPower;
+    public bool IsWall;
     public UnitData FreeUnit;
+    public UnitCategory ProducesCategory;
+    public Vector2Int ExitCellOffset;
+    public UnitData[] Prerequisites;
 
     [Header("Prefab")]
     public GameObject Prefab;

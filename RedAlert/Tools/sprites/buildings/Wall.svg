@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Wall segment - full cell -->
+  <rect x="4" y="12" width="56" height="44" rx="1" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Top surface -->
+  <rect x="4" y="10" width="56" height="6" rx="1" fill="#b0b0b0" stroke="#707070" stroke-width="1"/>
+  <!-- Brick/block pattern -->
+  <g stroke="#808080" stroke-width="0.6" opacity="0.5">
+    <!-- Horizontal mortar lines -->
+    <line x1="4" y1="22" x2="60" y2="22"/>
+    <line x1="4" y1="32" x2="60" y2="32"/>
+    <line x1="4" y1="42" x2="60" y2="42"/>
+    <line x1="4" y1="52" x2="60" y2="52"/>
+    <!-- Vertical mortar lines - staggered -->
+    <line x1="20" y1="12" x2="20" y2="22"/>
+    <line x1="40" y1="12" x2="40" y2="22"/>
+    <line x1="32" y1="22" x2="32" y2="32"/>
+    <line x1="52" y1="22" x2="52" y2="32"/>
+    <line x1="12" y1="22" x2="12" y2="32"/>
+    <line x1="20" y1="32" x2="20" y2="42"/>
+    <line x1="40" y1="32" x2="40" y2="42"/>
+    <line x1="32" y1="42" x2="32" y2="52"/>
+    <line x1="52" y1="42" x2="52" y2="52"/>
+    <line x1="12" y1="42" x2="12" y2="52"/>
+    <line x1="20" y1="52" x2="20" y2="56"/>
+    <line x1="40" y1="52" x2="40" y2="56"/>
+  </g>
+  <!-- Base -->
+  <rect x="4" y="54" width="56" height="6" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+</svg>

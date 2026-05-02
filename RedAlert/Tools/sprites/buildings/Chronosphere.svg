@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Base platform -->
+  <rect x="6" y="38" width="52" height="22" rx="2" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Building base -->
+  <rect x="10" y="30" width="44" height="12" rx="1" fill="#b0b0b0" stroke="#707070" stroke-width="1"/>
+  <!-- Portal ring - outer -->
+  <circle cx="32" cy="24" r="18" fill="none" stroke="#4080c0" stroke-width="2" opacity="0.7"/>
+  <!-- Portal ring - inner -->
+  <circle cx="32" cy="24" r="13" fill="none" stroke="#4080c0" stroke-width="1.5" opacity="0.5"/>
+  <!-- Portal center glow -->
+  <circle cx="32" cy="24" r="10" fill="#4080c0" opacity="0.15"/>
+  <circle cx="32" cy="24" r="6" fill="#80b8d0" opacity="0.2"/>
+  <!-- Ring supports -->
+  <rect x="12" y="22" width="4" height="12" rx="0.5" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <rect x="48" y="22" width="4" height="12" rx="0.5" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Energy conduits -->
+  <line x1="14" y1="24" x2="20" y2="24" stroke="#4080c0" stroke-width="1" opacity="0.6"/>
+  <line x1="44" y1="24" x2="50" y2="24" stroke="#4080c0" stroke-width="1" opacity="0.6"/>
+  <!-- Top emitter -->
+  <line x1="32" y1="6" x2="32" y2="12" stroke="#707070" stroke-width="1.5"/>
+  <circle cx="32" cy="5" r="2.5" fill="#4080c0" opacity="0.6" stroke="#3070b0" stroke-width="0.5"/>
+  <!-- Bottom emitter -->
+  <line x1="32" y1="36" x2="32" y2="42" stroke="#707070" stroke-width="1.5"/>
+  <!-- Control panels -->
+  <rect x="14" y="42" width="10" height="8" rx="0.5" fill="#808080" stroke="#606060" stroke-width="0.5"/>
+  <rect x="40" y="42" width="10" height="8" rx="0.5" fill="#808080" stroke="#606060" stroke-width="0.5"/>
+  <!-- Panel lights -->
+  <g fill="#4080c0" opacity="0.6">
+    <circle cx="17" cy="45" r="1"/>
+    <circle cx="21" cy="45" r="1"/>
+    <circle cx="43" cy="45" r="1"/>
+    <circle cx="47" cy="45" r="1"/>
+  </g>
+  <!-- Base -->
+  <rect x="6" y="58" width="52" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

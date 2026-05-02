@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Light Tank
   Sprite: {fileID: -8506272095534995724, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  Icon: {fileID: 0}
   Category: 1
   Faction: 0
   Cost: 0
@@ -33,6 +34,12 @@ MonoBehaviour:
   FootprintX: 1
   FootprintY: 1
   StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
   RequiresPower: 0
+  IsWall: 0
   FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
   Prefab: {fileID: 8981315783006873038, guid: 536a8ad1a1eddfe409bda5df717a14a5, type: 3}

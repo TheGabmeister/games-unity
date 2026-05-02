@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Heavy Tank
   Sprite: {fileID: 3345776018585520359, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  Icon: {fileID: 0}
   Category: 1
   Faction: 1
   Cost: 0
@@ -33,6 +34,12 @@ MonoBehaviour:
   FootprintX: 1
   FootprintY: 1
   StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
   RequiresPower: 0
+  IsWall: 0
   FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
   Prefab: {fileID: 3533238649276500276, guid: b6f295114a96841428c4880464c38b50, type: 3}

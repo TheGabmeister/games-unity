@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: Kennel
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Kennel
+  Sprite: {fileID: 6873717941669526471, guid: fa03faf5bdab2af4390032c42e8ca72e, type: 3}
+  Icon: {fileID: 0}
+  Category: 2
+  Faction: 1
+  Cost: 200
+  Locomotion: 0
+  BaseSpeed: 5
+  MaxHP: 400
+  Armor: 1
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 4
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 0}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 1
+  FootprintY: 1
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 5
+  RequiresPower: 0
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: -1}
+  Prerequisites:
+  - {fileID: 11400000, guid: c4ac9bf9053ebd64fb37cbce061edad7, type: 2}
+  Prefab: {fileID: 7341230840231076653, guid: c9f5e5b042b37114b8a5023e8c2025ca, type: 3}

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Main building - large -->
+  <rect x="4" y="26" width="56" height="34" rx="2" fill="#b0b0b0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Roof section -->
+  <rect x="2" y="22" width="60" height="6" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Cooling tower 1 -->
+  <path d="M8,22 Q6,12 10,4 L18,4 Q22,12 20,22" fill="#a0a0a0" stroke="#707070" stroke-width="1"/>
+  <ellipse cx="14" cy="4" rx="4" ry="2" fill="#909090" stroke="#606060" stroke-width="0.8"/>
+  <!-- Cooling tower 2 -->
+  <path d="M24,22 Q22,12 26,4 L34,4 Q38,12 36,22" fill="#a0a0a0" stroke="#707070" stroke-width="1"/>
+  <ellipse cx="30" cy="4" rx="4" ry="2" fill="#909090" stroke="#606060" stroke-width="0.8"/>
+  <!-- Smokestack -->
+  <rect x="44" y="8" width="6" height="16" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <rect x="52" y="12" width="6" height="12" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Electrical accents -->
+  <polygon points="18,32 15,38 20,36 17,44 23,36 18,38" fill="#c0c040" opacity="0.7"/>
+  <polygon points="42,32 39,38 44,36 41,44 47,36 42,38" fill="#c0c040" opacity="0.7"/>
+  <!-- Transformer boxes -->
+  <rect x="8" y="42" width="10" height="8" rx="1" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <rect x="46" y="42" width="10" height="8" rx="1" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Door -->
+  <rect x="26" y="44" width="12" height="16" rx="1" fill="#505050" stroke="#404040" stroke-width="1"/>
+  <!-- Power lines -->
+  <g stroke="#c0c040" stroke-width="0.6" opacity="0.6">
+    <line x1="13" y1="42" x2="13" y2="46"/>
+    <line x1="51" y1="42" x2="51" y2="46"/>
+  </g>
+  <!-- Base -->
+  <rect x="2" y="58" width="60" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

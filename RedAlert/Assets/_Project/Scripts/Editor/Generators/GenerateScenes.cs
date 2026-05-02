@@ -87,10 +87,25 @@ public static class GenerateScenes
         var siloPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{buildingDir}/OreSilo.prefab");
         var oreTruckPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabDir}/OreTruck.prefab");
 
+        // Allied base (player 0) — buildings
+        var cyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{buildingDir}/ConstructionYard.prefab");
+        var ppPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{buildingDir}/PowerPlant.prefab");
+        var barracksPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{buildingDir}/Barracks.prefab");
+
+        if (cyPrefab != null) SpawnUnit(cyPrefab, new Vector3(5.5f, 20.5f, 0f), 0);
+        if (ppPrefab != null) SpawnUnit(ppPrefab, new Vector3(5.5f, 17.5f, 0f), 0);
+        if (ppPrefab != null) SpawnUnit(ppPrefab, new Vector3(5.5f, 15.5f, 0f), 0);
+        if (barracksPrefab != null) SpawnUnit(barracksPrefab, new Vector3(3.5f, 20.5f, 0f), 0);
+
         // Refinery near the ore field (ore is at x:15-21, y:28-34)
         if (refineryPrefab != null) SpawnUnit(refineryPrefab, new Vector3(13.5f, 28.5f, 0f), 0);
         if (siloPrefab != null) SpawnUnit(siloPrefab, new Vector3(13.5f, 26.5f, 0f), 0);
         if (oreTruckPrefab != null) SpawnUnit(oreTruckPrefab, new Vector3(14.5f, 27.5f, 0f), 0);
+
+        // Sidebar canvas
+        var sidebarPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/SidebarCanvas.prefab");
+        if (sidebarPrefab != null)
+            PrefabUtility.InstantiatePrefab(sidebarPrefab);
 
         EditorSceneManager.SaveScene(scene, path);
         Debug.Log($"Gameplay scene created at {path}");

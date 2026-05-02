@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Health))]
 public class Entity : MonoBehaviour
@@ -7,6 +8,7 @@ public class Entity : MonoBehaviour
     [SerializeField] private UnitData _unitData;
 
     private Health _health;
+    private List<Vector2Int> _occupiedCells;
 
     public int OwnerPlayerIndex => _ownerPlayerIndex;
     public UnitData UnitData => _unitData;
@@ -16,6 +18,7 @@ public class Entity : MonoBehaviour
     public bool IsDead { get; private set; }
     public bool IsBuilding => _unitData != null && _unitData.Category == UnitCategory.Building;
     public ArmorType Armor => _unitData != null ? _unitData.Armor : ArmorType.None;
+    public IReadOnlyList<Vector2Int> OccupiedCells => _occupiedCells;
 
     void Awake()
     {
@@ -37,10 +40,54 @@ public class Entity : MonoBehaviour
         }
 
         Cell = MapManager.Instance.WorldToCell(transform.position);
-        MapManager.Instance.RegisterEntity(Cell, this);
+        RegisterCells();
+
+        if (IsBuilding && (_unitData.FootprintX > 1 || _unitData.FootprintY > 1))
+        {
+            transform.position = new Vector3(
+                Cell.x + _unitData.FootprintX * 0.5f,
+                Cell.y + _unitData.FootprintY * 0.5f,
+                0f);
+        }
 
         var player = PlayerManager.Instance.GetPlayer(_ownerPlayerIndex);
         player.OwnedEntities.Add(this);
+    }
+
+    void RegisterCells()
+    {
+        _occupiedCells = new List<Vector2Int>();
+
+        if (IsBuilding && (_unitData.FootprintX > 1 || _unitData.FootprintY > 1))
+        {
+            for (int dx = 0; dx < _unitData.FootprintX; dx++)
+            {
+                for (int dy = 0; dy < _unitData.FootprintY; dy++)
+                {
+                    var cell = new Vector2Int(Cell.x + dx, Cell.y + dy);
+                    MapManager.Instance.RegisterEntity(cell, this);
+                    _occupiedCells.Add(cell);
+                }
+            }
+        }
+        else
+        {
+            MapManager.Instance.RegisterEntity(Cell, this);
+            _occupiedCells.Add(Cell);
+        }
+    }
+
+    void UnregisterCells()
+    {
+        if (_occupiedCells != null)
+        {
+            foreach (var cell in _occupiedCells)
+                MapManager.Instance?.UnregisterEntity(cell);
+        }
+        else
+        {
+            MapManager.Instance?.UnregisterEntity(Cell);
+        }
     }
 
     void OnDestroy()
@@ -48,13 +95,16 @@ public class Entity : MonoBehaviour
         if (_health != null)
             _health.OnDeath -= Die;
 
-        MapManager.Instance?.UnregisterEntity(Cell);
+        UnregisterCells();
 
         var player = PlayerManager.Instance?.GetPlayer(_ownerPlayerIndex);
         player?.OwnedEntities.Remove(this);
 
         if (_unitData != null && _unitData.StorageCapacity > 0 && EconomyManager.Instance != null)
             EconomyManager.Instance.RecalculateStorage(_ownerPlayerIndex);
+
+        if (IsBuilding && PowerManager.Instance != null)
+            PowerManager.Instance.Recalculate(_ownerPlayerIndex);
     }
 
     public void SetCell(Vector2Int newCell)
@@ -62,6 +112,8 @@ public class Entity : MonoBehaviour
         MapManager.Instance.UnregisterEntity(Cell);
         Cell = newCell;
         MapManager.Instance.RegisterEntity(Cell, this);
+        if (_occupiedCells != null && _occupiedCells.Count == 1)
+            _occupiedCells[0] = Cell;
     }
 
     public void TakeDamage(int damage)
@@ -92,24 +144,7 @@ public class Entity : MonoBehaviour
     {
         if (_unitData.BailOutUnit.Prefab == null) return;
 
-        Vector2Int spawnCell = Cell;
-        bool found = false;
-
-        for (int dx = -1; dx <= 1 && !found; dx++)
-        {
-            for (int dy = -1; dy <= 1 && !found; dy++)
-            {
-                if (dx == 0 && dy == 0) continue;
-                var candidate = new Vector2Int(Cell.x + dx, Cell.y + dy);
-                if (MapManager.Instance.GetEntityAt(candidate) == null &&
-                    TerrainMovement.GetSpeedMultiplier(LocomotionType.Foot,
-                        MapManager.Instance.GetTerrain(candidate)) > 0f)
-                {
-                    spawnCell = candidate;
-                    found = true;
-                }
-            }
-        }
+        Vector2Int spawnCell = FindAdjacentFreeCell();
 
         Vector3 pos = MapManager.Instance.CellToWorld(spawnCell);
         var go = Instantiate(_unitData.BailOutUnit.Prefab, pos, Quaternion.identity);
@@ -120,6 +155,27 @@ public class Entity : MonoBehaviour
 
         if (go.TryGetComponent<SpriteRenderer>(out var sr))
             sr.color = PlayerManager.Instance.GetPlayer(_ownerPlayerIndex).Color;
+    }
+
+    public Vector2Int FindAdjacentFreeCell()
+    {
+        for (int dx = -1; dx <= _unitData.FootprintX; dx++)
+        {
+            for (int dy = -1; dy <= _unitData.FootprintY; dy++)
+            {
+                if (dx >= 0 && dx < _unitData.FootprintX && dy >= 0 && dy < _unitData.FootprintY)
+                    continue;
+
+                var candidate = new Vector2Int(Cell.x + dx, Cell.y + dy);
+                if (!MapManager.Instance.IsInBounds(candidate)) continue;
+                if (MapManager.Instance.GetEntityAt(candidate) != null) continue;
+                if (TerrainMovement.GetSpeedMultiplier(LocomotionType.Foot,
+                    MapManager.Instance.GetTerrain(candidate)) > 0f)
+                    return candidate;
+            }
+        }
+
+        return Cell;
     }
 
     public void InitRuntime(int ownerIndex, UnitData data)

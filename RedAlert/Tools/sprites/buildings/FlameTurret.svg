@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Concrete base -->
+  <rect x="10" y="36" width="44" height="24" rx="2" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Turret base -->
+  <ellipse cx="32" cy="34" rx="16" ry="6" fill="#808080" stroke="#606060" stroke-width="1"/>
+  <!-- Turret body - darker/red tinted -->
+  <rect x="22" y="22" width="20" height="14" rx="3" fill="#804040" stroke="#603030" stroke-width="1.5"/>
+  <!-- Turret top -->
+  <ellipse cx="32" cy="22" rx="10" ry="4" fill="#905050" stroke="#703030" stroke-width="1"/>
+  <!-- Flame nozzle -->
+  <rect x="29" y="10" width="6" height="14" rx="1" fill="#606060" stroke="#505050" stroke-width="1"/>
+  <!-- Nozzle tip - wider -->
+  <polygon points="27,10 37,10 35,6 29,6" fill="#505050" stroke="#404040" stroke-width="0.8"/>
+  <!-- Fuel tanks -->
+  <rect x="12" y="38" width="6" height="14" rx="2" fill="#804040" stroke="#603030" stroke-width="0.8"/>
+  <rect x="46" y="38" width="6" height="14" rx="2" fill="#804040" stroke="#603030" stroke-width="0.8"/>
+  <!-- Flame accent -->
+  <g opacity="0.6">
+    <ellipse cx="32" cy="4" rx="4" ry="3" fill="#c06020"/>
+    <ellipse cx="32" cy="5" rx="2.5" ry="2" fill="#c08020"/>
+  </g>
+  <!-- Warning stripe -->
+  <rect x="22" y="32" width="20" height="2" fill="#c04040" opacity="0.5"/>
+  <!-- Base -->
+  <rect x="8" y="58" width="48" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

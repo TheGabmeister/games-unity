@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Base building -->
+  <rect x="12" y="36" width="40" height="24" rx="2" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Dome base -->
+  <ellipse cx="32" cy="36" rx="20" ry="6" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Dome -->
+  <ellipse cx="32" cy="28" rx="18" ry="14" fill="#909090" stroke="#707070" stroke-width="1.5"/>
+  <!-- Concentric rings - electronic warfare -->
+  <g fill="none" stroke="#4080c0" stroke-width="0.8" opacity="0.5">
+    <ellipse cx="32" cy="26" rx="14" ry="10"/>
+    <ellipse cx="32" cy="26" rx="10" ry="7"/>
+    <ellipse cx="32" cy="26" rx="6" ry="4"/>
+  </g>
+  <!-- Center emitter -->
+  <circle cx="32" cy="24" r="3" fill="#4080c0" opacity="0.6"/>
+  <circle cx="32" cy="24" r="1.5" fill="#80b8d0"/>
+  <!-- Antenna -->
+  <line x1="32" y1="14" x2="32" y2="6" stroke="#707070" stroke-width="1.5"/>
+  <circle cx="32" cy="5" r="2" fill="#4080c0" opacity="0.6"/>
+  <!-- Side panels -->
+  <rect x="14" y="40" width="8" height="10" rx="0.5" fill="#4080c0" opacity="0.2" stroke="#4080c0" stroke-width="0.5"/>
+  <rect x="42" y="40" width="8" height="10" rx="0.5" fill="#4080c0" opacity="0.2" stroke="#4080c0" stroke-width="0.5"/>
+  <!-- Wave emission lines -->
+  <g stroke="#4080c0" stroke-width="0.6" opacity="0.3">
+    <path d="M6,26 Q4,20 8,16" fill="none"/>
+    <path d="M58,26 Q60,20 56,16" fill="none"/>
+  </g>
+  <!-- Base -->
+  <rect x="10" y="58" width="44" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

@@ -28,9 +28,17 @@ public static class GenerateSystemsPrefab
             AddIfMissing<PlayerManager>(instance);
             AddIfMissing<MapManager>(instance);
             AddIfMissing<EconomyManager>(instance);
+            AddIfMissing<PowerManager>(instance);
             AddIfMissing<SelectionManager>(instance);
             AddIfMissing<CommandManager>(instance);
+            AddIfMissing<PlacementManager>(instance);
+            AddIfMissing<SellRepairManager>(instance);
             AddIfMissing<SfxManager>(instance);
+
+            var constructionMgr = AddIfMissing<ConstructionManager>(instance);
+            WireConstructionManager(constructionMgr);
+
+            AddIfMissing<ProductionManager>(instance);
 
             var sfx = instance.GetComponent<SfxManager>();
             if (sfx.GetComponent<AudioSource>() == null)
@@ -99,6 +107,16 @@ public static class GenerateSystemsPrefab
             gemDensityProp.GetArrayElementAtIndex(i).objectReferenceValue = tile;
         }
 
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static void WireConstructionManager(ConstructionManager mgr)
+    {
+        var so = new SerializedObject(mgr);
+        var allied = AssetDatabase.LoadAssetAtPath<FactionData>("Assets/_Project/Data/AlliedFaction.asset");
+        var soviet = AssetDatabase.LoadAssetAtPath<FactionData>("Assets/_Project/Data/SovietFaction.asset");
+        if (allied != null) so.FindProperty("_alliedFaction").objectReferenceValue = allied;
+        if (soviet != null) so.FindProperty("_sovietFaction").objectReferenceValue = soviet;
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 

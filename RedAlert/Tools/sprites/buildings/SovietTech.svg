@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Main building - heavy brutalist -->
+  <rect x="4" y="22" width="56" height="38" rx="1" fill="#a0a0a0" stroke="#606060" stroke-width="1.5"/>
+  <!-- Heavy flat roof -->
+  <rect x="2" y="18" width="60" height="6" rx="1" fill="#808080" stroke="#606060" stroke-width="1.5"/>
+  <!-- Brutalist upper structure -->
+  <rect x="10" y="10" width="20" height="10" rx="1" fill="#909090" stroke="#606060" stroke-width="1"/>
+  <rect x="34" y="12" width="20" height="8" rx="1" fill="#909090" stroke="#606060" stroke-width="1"/>
+  <!-- Heavy antenna -->
+  <rect x="18" y="2" width="4" height="10" fill="#707070" stroke="#505050" stroke-width="0.8"/>
+  <rect x="14" y="2" width="12" height="3" rx="0.5" fill="#606060" stroke="#505050" stroke-width="0.8"/>
+  <!-- Red accent stripe -->
+  <rect x="4" y="30" width="56" height="3" fill="#c04040" opacity="0.6"/>
+  <!-- Red star accent -->
+  <polygon points="50,6 51.5,10 56,10 52.5,13 54,17 50,14.5 46,17 47.5,13 44,10 48.5,10" fill="#c04040" opacity="0.7"/>
+  <!-- Heavy concrete pillars -->
+  <rect x="6" y="22" width="4" height="38" fill="#909090" stroke="#707070" stroke-width="0.5"/>
+  <rect x="54" y="22" width="4" height="38" fill="#909090" stroke="#707070" stroke-width="0.5"/>
+  <!-- Windows - narrow slits -->
+  <rect x="14" y="36" width="8" height="3" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <rect x="26" y="36" width="8" height="3" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <rect x="38" y="36" width="8" height="3" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <!-- Heavy door -->
+  <rect x="22" y="44" width="16" height="16" rx="1" fill="#505050" stroke="#404040" stroke-width="1.5"/>
+  <!-- Base -->
+  <rect x="2" y="58" width="60" height="4" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+</svg>

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Ore Truck
   Sprite: {fileID: 2175045147716456000, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  Icon: {fileID: 0}
   Category: 1
   Faction: 0
   Cost: 1400
@@ -33,6 +34,12 @@ MonoBehaviour:
   FootprintX: 1
   FootprintY: 1
   StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
   RequiresPower: 0
+  IsWall: 0
   FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
   Prefab: {fileID: 6576076437252222818, guid: 9a601fe2715cf8044803a009afd14ef9, type: 3}

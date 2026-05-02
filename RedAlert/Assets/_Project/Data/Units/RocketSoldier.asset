@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Rocket Soldier
   Sprite: {fileID: -6369336340890218860, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  Icon: {fileID: 0}
   Category: 0
   Faction: 0
   Cost: 0
@@ -33,6 +34,12 @@ MonoBehaviour:
   FootprintX: 1
   FootprintY: 1
   StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
   RequiresPower: 0
+  IsWall: 0
   FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
   Prefab: {fileID: 1057406363282900693, guid: 20dc2679c77d2c24581d171cd14f1802, type: 3}

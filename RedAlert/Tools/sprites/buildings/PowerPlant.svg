@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Main building -->
+  <rect x="6" y="28" width="52" height="32" rx="2" fill="#b0b0b0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Roof -->
+  <rect x="4" y="24" width="56" height="6" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Smokestack 1 -->
+  <rect x="12" y="6" width="8" height="20" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <ellipse cx="16" cy="6" rx="4" ry="2" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Smokestack 2 -->
+  <rect x="26" y="10" width="8" height="16" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <ellipse cx="30" cy="10" rx="4" ry="2" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Cooling tower shape -->
+  <path d="M44,26 Q42,14 46,6 L54,6 Q58,14 56,26" fill="#a0a0a0" stroke="#707070" stroke-width="1"/>
+  <ellipse cx="50" cy="6" rx="4" ry="2" fill="#909090" stroke="#606060" stroke-width="0.8"/>
+  <!-- Electrical symbol - lightning bolt accent -->
+  <polygon points="32,34 28,42 34,40 30,50 38,38 32,40" fill="#c0c040" opacity="0.7"/>
+  <!-- Door -->
+  <rect x="14" y="46" width="10" height="14" rx="1" fill="#505050" stroke="#404040" stroke-width="1"/>
+  <!-- Windows -->
+  <rect x="36" y="34" width="4" height="4" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <rect x="44" y="34" width="4" height="4" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <!-- Base -->
+  <rect x="4" y="58" width="56" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

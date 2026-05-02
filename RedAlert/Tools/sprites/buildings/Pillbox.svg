@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Concrete base -->
+  <rect x="8" y="30" width="48" height="30" rx="2" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Bunker top - angled -->
+  <polygon points="8,30 16,18 48,18 56,30" fill="#909090" stroke="#707070" stroke-width="1.5"/>
+  <!-- Firing slit -->
+  <rect x="20" y="22" width="24" height="4" rx="0.5" fill="#303030" stroke="#404040" stroke-width="1"/>
+  <!-- Inner slit darkness -->
+  <rect x="22" y="23" width="20" height="2" fill="#202020"/>
+  <!-- Reinforcement lines -->
+  <g stroke="#808080" stroke-width="0.6" opacity="0.5">
+    <line x1="10" y1="40" x2="54" y2="40"/>
+    <line x1="10" y1="50" x2="54" y2="50"/>
+  </g>
+  <!-- Sandbag detail -->
+  <g fill="#8a8060" stroke="#706850" stroke-width="0.5" opacity="0.6">
+    <ellipse cx="16" cy="56" rx="6" ry="3"/>
+    <ellipse cx="28" cy="56" rx="6" ry="3"/>
+    <ellipse cx="40" cy="56" rx="6" ry="3"/>
+    <ellipse cx="52" cy="56" rx="6" ry="3"/>
+  </g>
+  <!-- Base -->
+  <rect x="6" y="58" width="52" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

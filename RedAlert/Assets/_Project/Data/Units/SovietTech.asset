@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: SovietTech
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Soviet Tech Center
+  Sprite: {fileID: -3040201324543885039, guid: 5900cea15a7efb547805a7fa75fe88eb, type: 3}
+  Icon: {fileID: 0}
+  Category: 2
+  Faction: 1
+  Cost: 1500
+  Locomotion: 0
+  BaseSpeed: 5
+  MaxHP: 1200
+  Armor: 1
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 0}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 3
+  FootprintY: 3
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 40
+  RequiresPower: 1
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites:
+  - {fileID: 11400000, guid: 0c1c642df09e6c647802a5d02a2b05da, type: 2}
+  Prefab: {fileID: 2439047132742045055, guid: a5290afebc4473343841e6c8650af982, type: 3}

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Concrete base with camo -->
+  <rect x="8" y="30" width="48" height="30" rx="2" fill="#5a7a50" stroke="#4a6a40" stroke-width="1.5"/>
+  <!-- Camo patches -->
+  <g opacity="0.5">
+    <ellipse cx="20" cy="42" rx="8" ry="5" fill="#6a8a58"/>
+    <ellipse cx="44" cy="38" rx="7" ry="6" fill="#4a6838"/>
+    <ellipse cx="32" cy="50" rx="10" ry="4" fill="#3a5830"/>
+  </g>
+  <!-- Bunker top - angled -->
+  <polygon points="8,30 16,18 48,18 56,30" fill="#4a6a40" stroke="#3a5a30" stroke-width="1.5"/>
+  <!-- Camo on top -->
+  <g opacity="0.4">
+    <ellipse cx="28" cy="24" rx="6" ry="3" fill="#5a7a50"/>
+    <ellipse cx="40" cy="22" rx="5" ry="4" fill="#3a5830"/>
+  </g>
+  <!-- Firing slit -->
+  <rect x="20" y="22" width="24" height="4" rx="0.5" fill="#303030" stroke="#404040" stroke-width="1"/>
+  <rect x="22" y="23" width="20" height="2" fill="#202020"/>
+  <!-- Foliage/netting detail -->
+  <g fill="#5a8040" opacity="0.4">
+    <circle cx="12" cy="32" r="3"/>
+    <circle cx="52" cy="32" r="3"/>
+    <circle cx="10" cy="54" r="2.5"/>
+    <circle cx="54" cy="54" r="2.5"/>
+  </g>
+  <!-- Sandbag detail -->
+  <g fill="#6a7a50" stroke="#5a6a40" stroke-width="0.5" opacity="0.6">
+    <ellipse cx="16" cy="56" rx="6" ry="3"/>
+    <ellipse cx="28" cy="56" rx="6" ry="3"/>
+    <ellipse cx="40" cy="56" rx="6" ry="3"/>
+    <ellipse cx="52" cy="56" rx="6" ry="3"/>
+  </g>
+  <!-- Base -->
+  <rect x="6" y="58" width="52" height="4" rx="1" fill="#5a7a50" stroke="#4a6a40" stroke-width="0.8"/>
+</svg>

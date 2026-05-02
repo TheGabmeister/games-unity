@@ -5,15 +5,18 @@ public class RTSCamera : MonoBehaviour
     [SerializeField] private float _panSpeed = 10f;
     [SerializeField] private float _edgeScrollSpeed = 10f;
     [SerializeField] private float _edgeScrollThreshold = 10f;
+    [SerializeField] private float _sidebarWidthFraction = 0.15f;
 
     private Camera _camera;
 
     public static RTSCamera Instance { get; private set; }
+    public float SidebarWidthFraction => _sidebarWidthFraction;
 
     void Awake()
     {
         Instance = this;
         _camera = GetComponent<Camera>();
+        _camera.rect = new Rect(0f, 0f, 1f - _sidebarWidthFraction, 1f);
     }
 
     void LateUpdate()
@@ -38,9 +41,10 @@ public class RTSCamera : MonoBehaviour
     {
         Vector2 mouse = InputManager.Instance.MousePosition;
         Vector3 move = Vector3.zero;
+        float viewportRight = Screen.width * (1f - _sidebarWidthFraction);
 
         if (mouse.x <= _edgeScrollThreshold) move.x -= 1f;
-        else if (mouse.x >= Screen.width - _edgeScrollThreshold) move.x += 1f;
+        else if (mouse.x >= viewportRight - _edgeScrollThreshold) move.x += 1f;
 
         if (mouse.y <= _edgeScrollThreshold) move.y -= 1f;
         else if (mouse.y >= Screen.height - _edgeScrollThreshold) move.y += 1f;

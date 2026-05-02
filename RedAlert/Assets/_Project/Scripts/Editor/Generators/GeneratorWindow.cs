@@ -39,12 +39,25 @@ public class GeneratorWindow : EditorWindow
         Section("Economy", () =>
         {
             Button("Overlay Tiles (ore/gem density)", GenerateEconomyData.GenerateOverlayTiles);
-            Button("Building Sprites", GenerateEconomyData.GenerateBuildingSprites);
+            Button("Economy Sprites", GenerateEconomyData.GenerateBuildingSprites);
             Button("Ore Truck Unit", GenerateEconomyData.GenerateOreUnit);
-            Button("Building Data (Refinery, Silo)", GenerateEconomyData.GenerateBuildingData);
+            Button("Economy Data (Refinery, Silo)", GenerateEconomyData.GenerateBuildingData);
             Button("Ore Truck Prefab", GenerateEconomyData.GenerateOreTruckPrefab);
-            Button("Building Prefabs", GenerateEconomyData.GenerateBuildingPrefabs);
             Button("All Economy", GenerateEconomyData.GenerateAll);
+        });
+
+        Section("Buildings", () =>
+        {
+            Button("Building Sprites (import)", GenerateBuildingData.GenerateSprites);
+            Button("Building Data (all buildings)", GenerateBuildingData.Generate);
+            Button("Faction Data (Allied + Soviet)", GenerateFactionData.Generate);
+            Button("Building Prefabs (all)", GenerateBuildingPrefabs.Generate);
+        });
+
+        Section("UI", () =>
+        {
+            Button("Build Slot Prefab", GenerateSidebarPrefab.GenerateBuildSlotPrefab);
+            Button("Sidebar Canvas Prefab", GenerateSidebarPrefab.Generate);
         });
 
         Section("Prefabs", () =>
@@ -63,7 +76,7 @@ public class GeneratorWindow : EditorWindow
         {
             EditorGUILayout.HelpBox(
                 "Runs all generators in order:\n" +
-                "Terrain → Sprites → Data → Prefabs → Scene",
+                "Terrain → Sprites → Data → Buildings → UI → Prefabs → Scene",
                 MessageType.Info);
             if (GUILayout.Button("Generate All", GUILayout.Height(30)))
                 GenerateAll();
@@ -94,8 +107,14 @@ public class GeneratorWindow : EditorWindow
         GenerateUnitPrefab.GenerateSprites();
         GenerateCombatData.GenerateAll();
         GenerateEconomyData.GenerateAll();
+        GenerateBuildingData.GenerateSprites();
+        GenerateBuildingData.Generate();
+        GenerateFactionData.Generate();
         GenerateUnitPrefab.GeneratePrefab();
         GenerateUnitPrefabs.Generate();
+        GenerateBuildingPrefabs.Generate();
+        GenerateSidebarPrefab.GenerateBuildSlotPrefab();
+        GenerateSidebarPrefab.Generate();
         GenerateSystemsPrefab.Generate();
         GenerateScenes.GenerateAll();
     }

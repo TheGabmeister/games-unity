@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Concrete foundation -->
+  <rect x="2" y="24" width="60" height="38" rx="2" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Floor grid lines -->
+  <g stroke="#909090" stroke-width="0.5" opacity="0.5">
+    <line x1="2" y1="40" x2="62" y2="40"/>
+    <line x1="22" y1="24" x2="22" y2="62"/>
+    <line x1="42" y1="24" x2="42" y2="62"/>
+  </g>
+  <!-- Main structure -->
+  <rect x="6" y="28" width="28" height="24" rx="1" fill="#b0b0b0" stroke="#707070" stroke-width="1"/>
+  <!-- Roof -->
+  <polygon points="6,28 20,18 34,28" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Crane base -->
+  <rect x="44" y="30" width="8" height="32" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+  <!-- Crane arm (horizontal) -->
+  <rect x="28" y="14" width="30" height="4" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  <!-- Crane vertical mast -->
+  <rect x="46" y="14" width="4" height="18" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+  <!-- Crane cable -->
+  <line x1="34" y1="18" x2="34" y2="36" stroke="#505050" stroke-width="0.8"/>
+  <!-- Crane hook -->
+  <path d="M32,36 Q34,40 36,36" stroke="#505050" stroke-width="1" fill="none"/>
+  <!-- Bay door -->
+  <rect x="10" y="40" width="20" height="12" rx="1" fill="#505050" stroke="#404040" stroke-width="1"/>
+  <!-- Door segments -->
+  <g stroke="#606060" stroke-width="0.5">
+    <line x1="10" y1="44" x2="30" y2="44"/>
+    <line x1="10" y1="48" x2="30" y2="48"/>
+  </g>
+  <!-- Windows -->
+  <rect x="12" y="30" width="4" height="4" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <rect x="20" y="30" width="4" height="4" rx="0.5" fill="#80b8d0" stroke="#607890" stroke-width="0.5"/>
+  <!-- Concrete pad markers -->
+  <rect x="4" y="56" width="56" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>

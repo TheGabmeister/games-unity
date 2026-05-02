@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: IronCurtain
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Iron Curtain
+  Sprite: {fileID: -5172854304282783044, guid: 12410bb3fc06a494caa7c4e8a421586c, type: 3}
+  Icon: {fileID: 0}
+  Category: 2
+  Faction: 1
+  Cost: 2800
+  Locomotion: 0
+  BaseSpeed: 5
+  MaxHP: 1000
+  Armor: 4
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 0}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 2
+  FootprintY: 2
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 50
+  RequiresPower: 1
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites:
+  - {fileID: 11400000, guid: 81e3f63bc11aa7b4f83bf6c66d696109, type: 2}
+  Prefab: {fileID: 9070977435475045544, guid: 8eb94da3a5919b94f992dfc313040631, type: 3}

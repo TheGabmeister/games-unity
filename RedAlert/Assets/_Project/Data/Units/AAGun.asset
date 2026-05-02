@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: AAGun
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: AA Gun
+  Sprite: {fileID: 7030965615423450551, guid: 1b0e91d2f8633214abf6795acdc582ec, type: 3}
+  Icon: {fileID: 0}
+  Category: 2
+  Faction: 0
+  Cost: 600
+  Locomotion: 0
+  BaseSpeed: 5
+  MaxHP: 600
+  Armor: 4
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 0}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 1
+  FootprintY: 2
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 25
+  RequiresPower: 1
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites:
+  - {fileID: 11400000, guid: 0c1c642df09e6c647802a5d02a2b05da, type: 2}
+  Prefab: {fileID: 1682257185127508531, guid: 894a3366dc4aae64cac908d1a5d224b8, type: 3}

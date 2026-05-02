@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: NavalYard
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Naval Yard
+  Sprite: {fileID: 4531499309340347445, guid: d60c6de216da31044983ce8ab2385900, type: 3}
+  Icon: {fileID: 0}
+  Category: 2
+  Faction: 0
+  Cost: 650
+  Locomotion: 0
+  BaseSpeed: 5
+  MaxHP: 900
+  Armor: 1
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 0}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 3
+  FootprintY: 3
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 20
+  RequiresPower: 0
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 3
+  ExitCellOffset: {x: 1, y: -1}
+  Prerequisites:
+  - {fileID: 11400000, guid: f11e0268509f1414f8c0312b59a31972, type: 2}
+  Prefab: {fileID: 354316965823056143, guid: 1f9a1218a0b865648b28780516e84f04, type: 3}

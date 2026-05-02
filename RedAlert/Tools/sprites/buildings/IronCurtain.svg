@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Heavy base -->
+  <rect x="6" y="34" width="52" height="26" rx="2" fill="#909090" stroke="#606060" stroke-width="1.5"/>
+  <!-- Main structure - heavy industrial -->
+  <rect x="10" y="18" width="44" height="18" rx="1" fill="#a0a0a0" stroke="#606060" stroke-width="1.5"/>
+  <!-- Heavy top -->
+  <rect x="8" y="14" width="48" height="6" rx="1" fill="#808080" stroke="#606060" stroke-width="1.5"/>
+  <!-- Central device column -->
+  <rect x="26" y="8" width="12" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  <!-- Red energy dome -->
+  <ellipse cx="32" cy="10" rx="8" ry="6" fill="#c04040" opacity="0.3"/>
+  <ellipse cx="32" cy="10" rx="5" ry="4" fill="#c04040" opacity="0.3"/>
+  <!-- Red accent elements -->
+  <circle cx="32" cy="10" r="3" fill="#c04040" opacity="0.5"/>
+  <circle cx="32" cy="10" r="1.5" fill="#e06060"/>
+  <!-- Red stripe -->
+  <rect x="10" y="26" width="44" height="3" fill="#c04040" opacity="0.5"/>
+  <!-- Heavy pillars -->
+  <rect x="10" y="18" width="6" height="42" fill="#909090" stroke="#707070" stroke-width="0.5"/>
+  <rect x="48" y="18" width="6" height="42" fill="#909090" stroke="#707070" stroke-width="0.5"/>
+  <!-- Control panel -->
+  <rect x="20" y="40" width="24" height="10" rx="1" fill="#606060" stroke="#505050" stroke-width="0.8"/>
+  <!-- Panel details -->
+  <g fill="#c04040" opacity="0.5">
+    <circle cx="26" cy="44" r="1.5"/>
+    <circle cx="32" cy="44" r="1.5"/>
+    <circle cx="38" cy="44" r="1.5"/>
+  </g>
+  <!-- Bolts -->
+  <g fill="#606060">
+    <circle cx="12" cy="22" r="1.5"/>
+    <circle cx="52" cy="22" r="1.5"/>
+    <circle cx="12" cy="50" r="1.5"/>
+    <circle cx="52" cy="50" r="1.5"/>
+  </g>
+  <!-- Base -->
+  <rect x="6" y="58" width="52" height="4" rx="1" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+</svg>

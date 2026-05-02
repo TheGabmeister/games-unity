@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Concrete base -->
+  <rect x="12" y="44" width="40" height="16" rx="2" fill="#a0a0a0" stroke="#707070" stroke-width="1.5"/>
+  <!-- Base platform -->
+  <rect x="8" y="40" width="48" height="6" rx="1" fill="#909090" stroke="#707070" stroke-width="1"/>
+  <!-- Main tower/coil structure -->
+  <rect x="26" y="12" width="12" height="30" rx="1" fill="#808080" stroke="#606060" stroke-width="1.5"/>
+  <!-- Coil rings -->
+  <g stroke="#6060a0" stroke-width="1.5" fill="none" opacity="0.7">
+    <ellipse cx="32" cy="18" rx="10" ry="3"/>
+    <ellipse cx="32" cy="26" rx="8" ry="2.5"/>
+    <ellipse cx="32" cy="34" rx="6" ry="2"/>
+  </g>
+  <!-- Top sphere -->
+  <circle cx="32" cy="10" r="6" fill="#707090" stroke="#5050a0" stroke-width="1.5"/>
+  <!-- Electrical arcs -->
+  <g stroke="#6080d0" stroke-width="1" opacity="0.7">
+    <polyline points="26,8 20,4 16,6" fill="none"/>
+    <polyline points="38,8 44,4 48,6" fill="none"/>
+    <polyline points="28,12 22,14 18,12" fill="none"/>
+    <polyline points="36,12 42,14 46,12" fill="none"/>
+  </g>
+  <!-- Electrical glow accents -->
+  <g fill="#6080d0" opacity="0.4">
+    <circle cx="32" cy="10" r="8"/>
+  </g>
+  <!-- Support struts -->
+  <line x1="22" y1="40" x2="28" y2="30" stroke="#707070" stroke-width="1"/>
+  <line x1="42" y1="40" x2="36" y2="30" stroke="#707070" stroke-width="1"/>
+  <!-- Transformer box -->
+  <rect x="14" y="46" width="8" height="8" rx="1" fill="#808080" stroke="#606060" stroke-width="0.5"/>
+  <rect x="42" y="46" width="8" height="8" rx="1" fill="#808080" stroke="#606060" stroke-width="0.5"/>
+  <!-- Base -->
+  <rect x="8" y="58" width="48" height="4" rx="1" fill="#909090" stroke="#707070" stroke-width="0.8"/>
+</svg>
