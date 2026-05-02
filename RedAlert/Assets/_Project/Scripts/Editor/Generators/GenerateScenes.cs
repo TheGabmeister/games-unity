@@ -6,26 +6,6 @@ using System.Collections.Generic;
 
 public static class GenerateScenes
 {
-    public static void GenerateInit()
-    {
-        string path = "Assets/_Project/Scenes/Init.unity";
-        PrefabGeneratorUtils.EnsureFolder("Assets/_Project/Scenes");
-
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-
-        var camGO = new GameObject("Camera");
-        var cam = camGO.AddComponent<Camera>();
-        cam.orthographic = true;
-        cam.orthographicSize = 5;
-        cam.backgroundColor = Color.black;
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        camGO.transform.position = new Vector3(0, 0, -10);
-        camGO.tag = "MainCamera";
-
-        EditorSceneManager.SaveScene(scene, path);
-        Debug.Log($"Init scene created at {path}");
-    }
-
     public static void GenerateGameplay()
     {
         string path = "Assets/_Project/Scenes/Gameplay.unity";
@@ -96,16 +76,14 @@ public static class GenerateScenes
     {
         var scenes = new List<EditorBuildSettingsScene>
         {
-            new("Assets/_Project/Scenes/Init.unity", true),
             new("Assets/_Project/Scenes/Gameplay.unity", true)
         };
         EditorBuildSettings.scenes = scenes.ToArray();
-        Debug.Log("Build settings updated: Init (0), Gameplay (1)");
+        Debug.Log("Build settings updated: Gameplay (0)");
     }
 
     public static void GenerateAll()
     {
-        GenerateInit();
         GenerateGameplay();
         UpdateBuildSettings();
     }

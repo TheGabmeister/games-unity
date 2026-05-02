@@ -22,7 +22,7 @@ public class GeneratorWindow : EditorWindow
             Button("Unit Sprites", GenerateUnitPrefab.GenerateSprites);
             Button("Unit Prefab", GenerateUnitPrefab.GeneratePrefab);
             Button("Systems Prefab", GenerateSystemsPrefab.Generate);
-            Button("Scenes (Init + Gameplay)", GenerateScenes.GenerateAll);
+            Button("Gameplay Scene", GenerateScenes.GenerateAll);
         });
 
         Section("Generate All (Phase 1)", () =>

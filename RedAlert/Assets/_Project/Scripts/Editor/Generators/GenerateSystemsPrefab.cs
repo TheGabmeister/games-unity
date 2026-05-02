@@ -28,7 +28,6 @@ public static class GenerateSystemsPrefab
             AddIfMissing<PlayerManager>(instance);
             AddIfMissing<MapManager>(instance);
             AddIfMissing<SelectionManager>(instance);
-            AddIfMissing<SceneLoader>(instance);
 
             var inputAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(
                 "Assets/_Project/Input/InputSystem_Actions.inputactions");

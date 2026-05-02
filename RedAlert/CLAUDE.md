@@ -16,9 +16,8 @@ This is a Unity project — there is no CLI build. Open in Unity 6 (6000.3.12f1+
 `Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, SelectionManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder.
 
 ### Scene Structure
-Two scenes are configured in build settings:
-- **Init** (index 0) — `Assets/_Project/Scenes/Init.unity`
-- **Gameplay** (index 1) — `Assets/_Project/Scenes/Gameplay.unity`
+One scene in build settings:
+- **Gameplay** (index 0) — `Assets/_Project/Scenes/Gameplay.unity`
 
 ### Key Design Decisions
 - **Grid is king.** All gameplay (pathfinding, fog of war, building placement, targeting, selection) operates on a cell grid via MapManager. No Unity Physics2D — no Rigidbody2D, no Collider2D, no collision layers.
