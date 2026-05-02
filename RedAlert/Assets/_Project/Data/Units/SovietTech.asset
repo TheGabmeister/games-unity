@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SovietTech
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Soviet Tech Center
-  Sprite: {fileID: -3040201324543885039, guid: 5900cea15a7efb547805a7fa75fe88eb, type: 3}
+  Sprite: {fileID: 21300000, guid: 5900cea15a7efb547805a7fa75fe88eb, type: 3}
   Icon: {fileID: 0}
   Category: 2
   Faction: 1

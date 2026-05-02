@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AlliedTech
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Allied Tech Center
-  Sprite: {fileID: -1602406098170767821, guid: 2fb0bdd9a6a545d4a93756da89bf6838, type: 3}
+  Sprite: {fileID: 21300000, guid: 2fb0bdd9a6a545d4a93756da89bf6838, type: 3}
   Icon: {fileID: 0}
   Category: 2
   Faction: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ServiceDepot
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Service Depot
-  Sprite: {fileID: -1177932927050912792, guid: 7026b45a47d7d10478b2fcc0650a5c0a, type: 3}
+  Sprite: {fileID: 21300000, guid: 7026b45a47d7d10478b2fcc0650a5c0a, type: 3}
   Icon: {fileID: 0}
   Category: 2
   Faction: 0

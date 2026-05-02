@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TeslaCoil
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Tesla Coil
-  Sprite: {fileID: 547881618460704273, guid: a93a7c9f51ae75141947f18e29889f34, type: 3}
+  Sprite: {fileID: 21300000, guid: a93a7c9f51ae75141947f18e29889f34, type: 3}
   Icon: {fileID: 0}
   Category: 2
   Faction: 1

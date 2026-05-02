@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Kennel
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Kennel
-  Sprite: {fileID: 6873717941669526471, guid: fa03faf5bdab2af4390032c42e8ca72e, type: 3}
+  Sprite: {fileID: 21300000, guid: fa03faf5bdab2af4390032c42e8ca72e, type: 3}
   Icon: {fileID: 0}
   Category: 2
   Faction: 1

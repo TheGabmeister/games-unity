@@ -114,10 +114,24 @@ public static class GenerateScenes
     static void SpawnUnit(GameObject prefab, Vector3 position, int playerIndex)
     {
         var unit = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-        unit.transform.position = position;
 
         var entity = unit.GetComponent<Entity>();
         var unitData = entity != null ? new SerializedObject(entity).FindProperty("_unitData").objectReferenceValue as UnitData : null;
+
+        if (unitData != null && unitData.Category == UnitCategory.Building
+            && (unitData.FootprintX > 1 || unitData.FootprintY > 1))
+        {
+            Vector2Int cell = new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
+            unit.transform.position = new Vector3(
+                cell.x + unitData.FootprintX * 0.5f,
+                cell.y + unitData.FootprintY * 0.5f,
+                0f);
+        }
+        else
+        {
+            unit.transform.position = position;
+        }
+
         string displayName = unitData != null ? unitData.DisplayName : prefab.name;
         unit.name = $"{displayName} (P{playerIndex})";
 

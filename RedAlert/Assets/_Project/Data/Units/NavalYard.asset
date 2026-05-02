@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NavalYard
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Naval Yard
-  Sprite: {fileID: 4531499309340347445, guid: d60c6de216da31044983ce8ab2385900, type: 3}
+  Sprite: {fileID: 21300000, guid: d60c6de216da31044983ce8ab2385900, type: 3}
   Icon: {fileID: 0}
   Category: 2
   Faction: 0

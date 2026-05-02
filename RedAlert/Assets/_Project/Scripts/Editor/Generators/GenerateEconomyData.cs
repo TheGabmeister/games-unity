@@ -320,9 +320,17 @@ public static class GenerateEconomyData
             return;
         }
         importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
         importer.spritePixelsPerUnit = 64;
         importer.filterMode = FilterMode.Point;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
+
+        var settings = new TextureImporterSettings();
+        importer.ReadTextureSettings(settings);
+        settings.spriteMeshType = SpriteMeshType.FullRect;
+        settings.spriteAlignment = (int)SpriteAlignment.Center;
+        importer.SetTextureSettings(settings);
+
         importer.SaveAndReimport();
     }
 
