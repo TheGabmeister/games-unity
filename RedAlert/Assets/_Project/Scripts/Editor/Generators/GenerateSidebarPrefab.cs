@@ -67,6 +67,31 @@ public static class GenerateSidebarPrefab
             fillImg.fillOrigin = 0;
             fillImg.fillAmount = 0.5f;
 
+            // Power labels — produced (top) and consumed (bottom)
+            var producedLabel = CreateRect("ProducedLabel", powerBG);
+            producedLabel.anchorMin = new Vector2(0.5f, 1);
+            producedLabel.anchorMax = new Vector2(0.5f, 1);
+            producedLabel.pivot = new Vector2(0.5f, 0);
+            producedLabel.anchoredPosition = new Vector2(0, 2);
+            producedLabel.sizeDelta = new Vector2(40, 14);
+            var producedTMP = producedLabel.gameObject.AddComponent<TextMeshProUGUI>();
+            producedTMP.fontSize = 9;
+            producedTMP.alignment = TextAlignmentOptions.Center;
+            producedTMP.color = Color.green;
+            producedTMP.text = "0";
+
+            var consumedLabel = CreateRect("ConsumedLabel", powerBG);
+            consumedLabel.anchorMin = new Vector2(0.5f, 0);
+            consumedLabel.anchorMax = new Vector2(0.5f, 0);
+            consumedLabel.pivot = new Vector2(0.5f, 1);
+            consumedLabel.anchoredPosition = new Vector2(0, -2);
+            consumedLabel.sizeDelta = new Vector2(40, 14);
+            var consumedTMP = consumedLabel.gameObject.AddComponent<TextMeshProUGUI>();
+            consumedTMP.fontSize = 9;
+            consumedTMP.alignment = TextAlignmentOptions.Center;
+            consumedTMP.color = new Color(1f, 0.5f, 0.5f);
+            consumedTMP.text = "0";
+
             // Sell + Repair buttons — below credits
             var btnRow = CreateRect("ButtonsPanel", sidebar);
             btnRow.anchorMin = new Vector2(0, 1);
@@ -88,7 +113,7 @@ public static class GenerateSidebarPrefab
             buildArea.anchorMin = Vector2.zero;
             buildArea.anchorMax = Vector2.one;
             buildArea.offsetMin = new Vector2(24, 4);
-            buildArea.offsetMax = new Vector2(-4, -72);
+            buildArea.offsetMax = new Vector2(-4, -150);
 
             var buildHLG = buildArea.gameObject.AddComponent<HorizontalLayoutGroup>();
             buildHLG.spacing = 4;
@@ -108,6 +133,8 @@ public static class GenerateSidebarPrefab
             so.FindProperty("_creditsText").objectReferenceValue = creditsText.GetComponent<TMP_Text>();
             so.FindProperty("_powerBarFill").objectReferenceValue = fillImg;
             so.FindProperty("_powerBarBG").objectReferenceValue = powerBG.gameObject.GetComponent<Image>();
+            so.FindProperty("_powerProducedText").objectReferenceValue = producedTMP;
+            so.FindProperty("_powerConsumedText").objectReferenceValue = consumedTMP;
             so.FindProperty("_sellButton").objectReferenceValue = sellBtn.GetComponent<Button>();
             so.FindProperty("_repairButton").objectReferenceValue = repairBtn.GetComponent<Button>();
             so.FindProperty("_sellButtonImage").objectReferenceValue = sellBtn.GetComponent<Image>();

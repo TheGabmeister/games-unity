@@ -13,6 +13,8 @@ public class SidebarUI : MonoBehaviour
     [Header("Power Bar")]
     [SerializeField] private Image _powerBarFill;
     [SerializeField] private Image _powerBarBG;
+    [SerializeField] private TMP_Text _powerProducedText;
+    [SerializeField] private TMP_Text _powerConsumedText;
 
     [Header("Buttons")]
     [SerializeField] private Button _sellButton;
@@ -45,8 +47,10 @@ public class SidebarUI : MonoBehaviour
         if (ProductionManager.Instance != null)
             ProductionManager.Instance.OnProductionStateChanged += RefreshBuildGrid;
 
-        RefreshBuildGrid();
+        _needsRefresh = true;
     }
+
+    private bool _needsRefresh;
 
     void OnDestroy()
     {
@@ -58,6 +62,12 @@ public class SidebarUI : MonoBehaviour
 
     void Update()
     {
+        if (_needsRefresh)
+        {
+            _needsRefresh = false;
+            RefreshBuildGrid();
+        }
+
         UpdateCreditsDisplay();
         UpdatePowerBar();
         UpdateModeButtons();
@@ -100,6 +110,11 @@ public class SidebarUI : MonoBehaviour
             _powerBarFill.color = Color.yellow;
         else
             _powerBarFill.color = Color.green;
+
+        if (_powerProducedText != null)
+            _powerProducedText.text = produced.ToString();
+        if (_powerConsumedText != null)
+            _powerConsumedText.text = consumed.ToString();
     }
 
     void UpdateModeButtons()
@@ -120,6 +135,8 @@ public class SidebarUI : MonoBehaviour
 
         RefreshColumn(_structureGrid, _structureSlots, factionData.BuildableStructures, localPlayer, true);
         RefreshColumn(_unitGrid, _unitSlots, factionData.BuildableUnits, localPlayer, false);
+
+        Canvas.ForceUpdateCanvases();
     }
 
     void RefreshColumn(Transform parent, List<BuildSlot> slots, UnitData[] items,
