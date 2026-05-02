@@ -52,6 +52,9 @@ public class Entity : MonoBehaviour
 
         var player = PlayerManager.Instance?.GetPlayer(_ownerPlayerIndex);
         player?.OwnedEntities.Remove(this);
+
+        if (_unitData != null && _unitData.StorageCapacity > 0 && EconomyManager.Instance != null)
+            EconomyManager.Instance.RecalculateStorage(_ownerPlayerIndex);
     }
 
     public void SetCell(Vector2Int newCell)

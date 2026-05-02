@@ -13,19 +13,10 @@ public class Refinery : MonoBehaviour
         _entity = GetComponent<Entity>();
     }
 
-    void Start()
-    {
-        if (EconomyManager.Instance != null)
-            EconomyManager.Instance.RecalculateStorage(_entity.OwnerPlayerIndex);
-    }
-
     void OnDestroy()
     {
         if (_dockedHarvester != null)
             _dockedHarvester.OnRefineryDestroyed();
-
-        if (EconomyManager.Instance != null && _entity != null)
-            EconomyManager.Instance.RecalculateStorage(_entity.OwnerPlayerIndex);
     }
 
     public bool TryDock(Harvester harvester)

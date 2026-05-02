@@ -254,10 +254,10 @@ public class Harvester : MonoBehaviour
             return;
         }
 
-        int valuePerBail = _cargoValue / _bails;
-        int deposited = EconomyManager.Instance.AddCredits(_entity.OwnerPlayerIndex, valuePerBail);
+        int valueThisBail = _bails == 1 ? _cargoValue : _cargoValue / _bails;
+        EconomyManager.Instance.AddCredits(_entity.OwnerPlayerIndex, valueThisBail);
         _bails--;
-        _cargoValue -= valuePerBail;
+        _cargoValue -= valueThisBail;
     }
 
     void UpdateIdle()
