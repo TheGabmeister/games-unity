@@ -35,6 +35,7 @@ public static class GenerateSystemsPrefab
             AddIfMissing<SellRepairManager>(instance);
             AddIfMissing<SfxManager>(instance);
             AddIfMissing<FogManager>(instance);
+            AddIfMissing<CursorManager>(instance);
 
             var constructionMgr = AddIfMissing<ConstructionManager>(instance);
             WireConstructionManager(constructionMgr);
@@ -56,6 +57,7 @@ public static class GenerateSystemsPrefab
 
             WireMapManager(instance);
             WireFogManager(instance);
+            WireCursorManager(instance);
 
             PrefabUtility.SaveAsPrefabAsset(instance, path);
         }
@@ -129,6 +131,26 @@ public static class GenerateSystemsPrefab
 
         var so = new SerializedObject(fogManager);
         SetTile(so, "_shroudTile", "Assets/_Project/Tiles/Shroud.asset");
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static void WireCursorManager(GameObject instance)
+    {
+        var cursorMgr = instance.GetComponent<CursorManager>();
+        if (cursorMgr == null) return;
+
+        var so = new SerializedObject(cursorMgr);
+        string dir = "Assets/_Project/Sprites/Cursors";
+        string[] names = { "Select", "Move", "Attack", "Harvest", "NoGo", "Sell", "Repair" };
+        string[] fields = { "_selectCursor", "_moveCursor", "_attackCursor", "_harvestCursor", "_noGoCursor", "_sellCursor", "_repairCursor" };
+
+        for (int i = 0; i < names.Length; i++)
+        {
+            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>($"{dir}/{names[i]}.png");
+            if (tex != null)
+                so.FindProperty(fields[i]).objectReferenceValue = tex;
+        }
+
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 

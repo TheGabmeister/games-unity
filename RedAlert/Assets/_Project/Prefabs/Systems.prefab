@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 3518890447839497500}
   - component: {fileID: 4234415432799328651}
   - component: {fileID: 2229366140636539048}
+  - component: {fileID: 4499380699193639029}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -337,4 +338,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogManager
   _shroudTile: {fileID: 11400000, guid: 5778ee3cc363c7f4b8abbb9e1177369f, type: 2}
-  _fogTile: {fileID: 11400000, guid: 7bc6c3bde76065a4c8f54cecf1e2c834, type: 2}
+--- !u!114 &4499380699193639029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74edd23706b06d84fa0a5edb1bbb1731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CursorManager
+  _selectCursor: {fileID: 2800000, guid: 55243e7c1e7dc3a4bb44468f68b8fafb, type: 3}
+  _moveCursor: {fileID: 2800000, guid: c0ffd06a2578c2d4daa0b1ef218c9d35, type: 3}
+  _attackCursor: {fileID: 2800000, guid: aa98a8dd74678a44b801bef71180c43a, type: 3}
+  _harvestCursor: {fileID: 2800000, guid: ba521adcd01d2b7499badd7970845bd2, type: 3}
+  _noGoCursor: {fileID: 2800000, guid: 9a6278b1c9b8bf5428e6a7eb0cc4a1d6, type: 3}
+  _sellCursor: {fileID: 2800000, guid: ed6cdf0e4910adc45b5f24f5cc911f94, type: 3}
+  _repairCursor: {fileID: 2800000, guid: f6613725ff117424c8b1777bf0060178, type: 3}

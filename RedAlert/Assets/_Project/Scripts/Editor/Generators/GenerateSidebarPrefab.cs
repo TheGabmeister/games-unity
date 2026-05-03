@@ -92,12 +92,45 @@ public static class GenerateSidebarPrefab
             consumedTMP.color = new Color(1f, 0.5f, 0.5f);
             consumedTMP.text = "0";
 
-            // Sell + Repair buttons — below credits
+            // Minimap — below credits
+            var minimapPanel = CreateRect("MinimapPanel", sidebar);
+            minimapPanel.anchorMin = new Vector2(0, 1);
+            minimapPanel.anchorMax = new Vector2(1, 1);
+            minimapPanel.pivot = new Vector2(0.5f, 1);
+            minimapPanel.anchoredPosition = new Vector2(0, -38);
+            minimapPanel.sizeDelta = new Vector2(-28, 160);
+            minimapPanel.gameObject.AddComponent<Image>().color = Color.black;
+
+            var minimapImage = CreateRect("MinimapImage", minimapPanel);
+            minimapImage.anchorMin = Vector2.zero;
+            minimapImage.anchorMax = Vector2.one;
+            minimapImage.offsetMin = new Vector2(2, 2);
+            minimapImage.offsetMax = new Vector2(-2, -2);
+            var mapRawImage = minimapImage.gameObject.AddComponent<RawImage>();
+            mapRawImage.color = Color.white;
+
+            var offlineOverlay = CreateRect("OfflineOverlay", minimapPanel);
+            offlineOverlay.anchorMin = Vector2.zero;
+            offlineOverlay.anchorMax = Vector2.one;
+            offlineOverlay.offsetMin = Vector2.zero;
+            offlineOverlay.offsetMax = Vector2.zero;
+            offlineOverlay.gameObject.AddComponent<Image>().color = new Color(0, 0, 0, 0.85f);
+            var offlineText = CreateTMP("OfflineText", offlineOverlay, "RADAR\nOFFLINE", 16,
+                TextAlignmentOptions.Center, new Color(1f, 0.3f, 0.3f));
+            offlineOverlay.gameObject.SetActive(true);
+
+            var minimapComponent = minimapPanel.gameObject.AddComponent<Minimap>();
+            var minimapSO = new SerializedObject(minimapComponent);
+            minimapSO.FindProperty("_mapImage").objectReferenceValue = mapRawImage;
+            minimapSO.FindProperty("_offlineOverlay").objectReferenceValue = offlineOverlay.gameObject;
+            minimapSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Sell + Repair buttons — below minimap
             var btnRow = CreateRect("ButtonsPanel", sidebar);
             btnRow.anchorMin = new Vector2(0, 1);
             btnRow.anchorMax = new Vector2(1, 1);
             btnRow.pivot = new Vector2(0.5f, 1);
-            btnRow.anchoredPosition = new Vector2(0, -38);
+            btnRow.anchoredPosition = new Vector2(0, -202);
             btnRow.sizeDelta = new Vector2(-28, 28);
             var hlg = btnRow.gameObject.AddComponent<HorizontalLayoutGroup>();
             hlg.spacing = 4;
@@ -113,7 +146,7 @@ public static class GenerateSidebarPrefab
             buildArea.anchorMin = Vector2.zero;
             buildArea.anchorMax = Vector2.one;
             buildArea.offsetMin = new Vector2(24, 4);
-            buildArea.offsetMax = new Vector2(-4, -150);
+            buildArea.offsetMax = new Vector2(-4, -236);
 
             var buildHLG = buildArea.gameObject.AddComponent<HorizontalLayoutGroup>();
             buildHLG.spacing = 4;

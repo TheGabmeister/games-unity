@@ -13,7 +13,7 @@ This is a Unity project — there is no CLI build. Open in Unity 6 (6000.3.12f1+
 ## Architecture
 
 ### Systems Prefab
-`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, EconomyManager, PowerManager, SelectionManager, CommandManager, PlacementManager, SellRepairManager, ConstructionManager, ProductionManager, SfxManager, FogManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder. `SidebarCanvas.prefab` is a separate uGUI canvas also placed in the scene.
+`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, EconomyManager, PowerManager, SelectionManager, CommandManager, PlacementManager, SellRepairManager, ConstructionManager, ProductionManager, SfxManager, FogManager, CursorManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder. `SidebarCanvas.prefab` is a separate uGUI canvas also placed in the scene.
 
 ### Scene Structure
 One scene in build settings:
@@ -95,6 +95,12 @@ Building sprites are exported at `FootprintX × 64` by `FootprintY × 64` pixels
 5. Opaque black tiles hide everything beneath them — no entity visibility toggling needed.
 6. Shroud tilemap is created programmatically at runtime (child of Grid GO, sortingOrder 100).
 7. PlacementManager blocks building placement in unexplored shroud.
+
+### Minimap
+`Minimap` component lives on a panel inside `SidebarCanvas.prefab`. Data-driven: renders a `Texture2D` from grid data (terrain colors, unit dots by player color, shroud as black pixels). Updates every 6 frames. Requires a Radar Dome building with power — shows "RADAR OFFLINE" overlay when unavailable. Click or drag on minimap jumps the camera. `RawImage` displays the texture.
+
+### Cursors
+`CursorManager` on Systems prefab swaps hardware cursors based on context: Select (default arrow), Move (4-way arrows), Attack (crosshair), Harvest (dollar sign), NoGo (circle-slash), Sell (down arrow + S), Repair (wrench). Generated as 32×32 PNGs by `GenerateCursors`. Context logic: sell/repair mode → mode cursor; hovering enemy with attacker selected → attack; hovering ore with harvester → harvest; hovering ground with mover → move; else → select.
 
 ### Grid Coordinate System
 - 1 cell = 1 Unity unit. Sprites are 64×64 px at 64 PPU (buildings scale to footprint × 64).

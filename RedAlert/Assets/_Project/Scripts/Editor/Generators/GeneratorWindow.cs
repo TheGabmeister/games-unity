@@ -26,6 +26,7 @@ public class GeneratorWindow : EditorWindow
         {
             Button("Unit Sprites (UI)", GenerateUnitPrefab.GenerateSprites);
             Button("Projectile Sprites", GenerateCombatData.GenerateProjectileSprites);
+            Button("Cursor Textures (7)", GenerateCursors.Generate);
         });
 
         Section("Data", () =>
@@ -107,6 +108,7 @@ public class GeneratorWindow : EditorWindow
         GenerateFogTiles.Generate();
         GenerateTestMap.Generate();
         GenerateUnitPrefab.GenerateSprites();
+        GenerateCursors.Generate();
         GenerateCombatData.GenerateAll();
         GenerateEconomyData.GenerateAll();
         GenerateBuildingData.GenerateSprites();
