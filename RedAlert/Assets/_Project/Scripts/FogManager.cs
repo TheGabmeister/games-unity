@@ -175,6 +175,12 @@ public class FogManager : MonoBehaviour
         return GetFogState(cell) == FogState.Visible;
     }
 
+    public void RevealCell(Vector2Int cell)
+    {
+        if (cell.x < 0 || cell.x >= _width || cell.y < 0 || cell.y >= _height) return;
+        _fog[cell.y * _width + cell.x] = FogState.Visible;
+    }
+
     static Vector2Int[] GetCircleOffsets(int radius)
     {
         if (CircleLUT.TryGetValue(radius, out var cached))

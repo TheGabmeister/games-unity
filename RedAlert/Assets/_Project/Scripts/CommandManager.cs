@@ -55,8 +55,47 @@ public class CommandManager : MonoBehaviour
         if (targetEntity != null && !targetEntity.IsDead)
         {
             int localPlayer = PlayerManager.Instance.LocalPlayer.PlayerIndex;
+            bool isEnemy = PlayerManager.Instance.AreEnemies(localPlayer, targetEntity.OwnerPlayerIndex);
 
-            if (PlayerManager.Instance.AreEnemies(localPlayer, targetEntity.OwnerPlayerIndex))
+            if (isEnemy && targetEntity.IsBuilding)
+            {
+                foreach (var selectable in selected)
+                {
+                    var engineer = selectable.GetComponent<Engineer>();
+                    if (engineer != null)
+                    {
+                        engineer.SendToBuilding(targetEntity);
+                        continue;
+                    }
+
+                    var spy = selectable.GetComponent<Spy>();
+                    if (spy != null)
+                    {
+                        spy.Infiltrate(targetEntity);
+                        continue;
+                    }
+
+                    var c4 = selectable.GetComponent<C4Placer>();
+                    if (c4 != null)
+                    {
+                        c4.PlantC4(targetEntity);
+                        continue;
+                    }
+
+                    var attacker = selectable.GetComponent<Attacker>();
+                    if (attacker != null)
+                        attacker.AttackTarget(targetEntity);
+                    else
+                    {
+                        var mover = selectable.GetComponent<Mover>();
+                        if (mover != null)
+                            mover.MoveTo(targetCell);
+                    }
+                }
+                return;
+            }
+
+            if (isEnemy)
             {
                 foreach (var selectable in selected)
                 {
@@ -71,6 +110,21 @@ public class CommandManager : MonoBehaviour
                     }
                 }
                 return;
+            }
+
+            if (targetEntity.IsBuilding)
+            {
+                bool handled = false;
+                foreach (var selectable in selected)
+                {
+                    var engineer = selectable.GetComponent<Engineer>();
+                    if (engineer != null)
+                    {
+                        engineer.SendToBuilding(targetEntity);
+                        handled = true;
+                    }
+                }
+                if (handled) return;
             }
 
             var refinery = targetEntity.GetComponent<Refinery>();

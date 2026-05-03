@@ -335,6 +335,7 @@ GameObject:
   - component: {fileID: 5318896058560668634}
   - component: {fileID: 5764406392659720101}
   - component: {fileID: 300156599175594111}
+  - component: {fileID: 6256832197006812204}
   - component: {fileID: 7096036120887539175}
   m_Layer: 0
   m_Name: Medic
@@ -469,6 +470,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
+--- !u!114 &6256832197006812204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8773214864424083923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d522236085bd54aa33fe5646c7549c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Medic
 --- !u!114 &7096036120887539175
 MonoBehaviour:
   m_ObjectHideFlags: 0

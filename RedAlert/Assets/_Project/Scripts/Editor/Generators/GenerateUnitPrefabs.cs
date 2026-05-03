@@ -63,6 +63,26 @@ public static class GenerateUnitPrefabs
             root.AddComponent<FacingRenderer>();
             if (unitData.PrimaryWeapon != null)
                 root.AddComponent<Attacker>();
+
+            switch (name)
+            {
+                case "Engineer":
+                    root.AddComponent<Engineer>();
+                    break;
+                case "Medic":
+                    root.AddComponent<Medic>();
+                    break;
+                case "Tanya":
+                    root.AddComponent<C4Placer>();
+                    break;
+                case "Spy":
+                    root.AddComponent<Spy>();
+                    break;
+                case "AttackDog":
+                    root.AddComponent<SpyDetector>();
+                    break;
+            }
+
             var selectable = root.AddComponent<Selectable>();
 
             var entitySO = new SerializedObject(entity);

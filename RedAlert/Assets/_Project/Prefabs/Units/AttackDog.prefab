@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 3235045189010103182}
   - component: {fileID: 9117383020888124706}
   - component: {fileID: 2099079515875663520}
+  - component: {fileID: 8071131893543629295}
   - component: {fileID: 5076322242426167172}
   m_Layer: 0
   m_Name: AttackDog
@@ -300,6 +301,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c60f3e38bbdb7046b3628732db0461d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Attacker
+--- !u!114 &8071131893543629295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152853000497093702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1336ff74cfd42274cae0a0044ad1a7ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpyDetector
 --- !u!114 &5076322242426167172
 MonoBehaviour:
   m_ObjectHideFlags: 0

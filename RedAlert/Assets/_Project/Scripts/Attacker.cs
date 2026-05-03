@@ -179,6 +179,9 @@ public class Attacker : MonoBehaviour
                 var entity = player.OwnedEntities[i];
                 if (entity == null || entity.IsDead) continue;
 
+                var spy = entity.GetComponent<Spy>();
+                if (spy != null && spy.IsDisguised) continue;
+
                 float dist = Vector2.Distance(
                     new Vector2(_entity.Cell.x, _entity.Cell.y),
                     new Vector2(entity.Cell.x, entity.Cell.y));

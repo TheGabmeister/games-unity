@@ -335,6 +335,7 @@ GameObject:
   - component: {fileID: 891321278216073780}
   - component: {fileID: 5178272659964455755}
   - component: {fileID: 1331678690613718034}
+  - component: {fileID: 2151902165710368292}
   - component: {fileID: 1708460833284799875}
   m_Layer: 0
   m_Name: Spy
@@ -469,6 +470,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
+--- !u!114 &2151902165710368292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648570381056661750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627a22d0d4d085c4aa36ee829c8ce91d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spy
 --- !u!114 &1708460833284799875
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -178,6 +178,32 @@ public class Entity : MonoBehaviour
         return Cell;
     }
 
+    public void TransferOwnership(int newPlayerIndex)
+    {
+        if (newPlayerIndex == _ownerPlayerIndex) return;
+
+        int oldPlayer = _ownerPlayerIndex;
+
+        PlayerManager.Instance.GetPlayer(oldPlayer).OwnedEntities.Remove(this);
+        _ownerPlayerIndex = newPlayerIndex;
+        PlayerManager.Instance.GetPlayer(newPlayerIndex).OwnedEntities.Add(this);
+
+        if (TryGetComponent<SpriteRenderer>(out var sr))
+            sr.color = PlayerManager.Instance.GetPlayer(newPlayerIndex).Color;
+
+        if (IsBuilding)
+        {
+            PowerManager.Instance?.Recalculate(oldPlayer);
+            PowerManager.Instance?.Recalculate(newPlayerIndex);
+        }
+
+        if (_unitData != null && _unitData.StorageCapacity > 0)
+        {
+            EconomyManager.Instance?.RecalculateStorage(oldPlayer);
+            EconomyManager.Instance?.RecalculateStorage(newPlayerIndex);
+        }
+    }
+
     public void InitRuntime(int ownerIndex, UnitData data)
     {
         _ownerPlayerIndex = ownerIndex;

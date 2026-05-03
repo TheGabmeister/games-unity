@@ -890,37 +890,45 @@ Created all remaining units (29 new + 7 existing converted to sprite sheets = 36
 - FactionData updated with full Allied + Soviet unit rosters.
 - Unit prefabs include FacingRenderer; Attacker only added when unit has a weapon.
 
-### Phase 7B — Special Unit Behaviors
+### Phase 7B — Infantry Specials ✅
 
-Implement unique behaviors for units created in Phase 7A:
+- `Engineer.cs`: right-click friendly building → walk to it, full heal, consume self. Right-click enemy building → walk to it, deal 1/3 max HP damage, consume self. If enemy building ≤25% HP, capture it via `Entity.TransferOwnership()` instead.
+- `Entity.TransferOwnership(int newPlayerIndex)`: moves entity between player ownership lists, updates sprite color, recalculates power and storage for both old and new player.
+- `Medic.cs`: auto-heals nearest injured friendly infantry within 1.83 cells every 0.5s. Cannot self-heal. Picks most injured target.
+- `C4Placer.cs`: Tanya's C4 ability. Walk to enemy building, plant charge, 1.8s timer, instant kill. Tanya is not consumed.
+- `Spy.cs`: disguise state (starts disguised). Right-click enemy building → walk to it, apply infiltration effect (steal half credits from Refinery/Silo, reveal map from Radar Dome/Sub Pen), consume self. `RevealDisguise()` method for Attack Dog detection.
+- `SpyDetector.cs`: Attack Dog component. Scans for disguised Spies within 7 cells every 0.5s. Reveals disguise and auto-targets.
+- `Attacker.FindNearestEnemy()` updated to skip disguised Spies.
+- `FogManager.RevealCell()` added for Spy map reveal.
+- `CommandManager.HandleContextCommand()` updated: right-click enemy building dispatches to Engineer → Spy → C4Placer → Attacker (priority order). Right-click friendly building dispatches to Engineer for repair.
+- SelfHeal component already existed from prior work (used by Mammoth Tank + Ore Truck in 7C).
 
-**Infantry specials:**
-- Engineer: capture enemy buildings (≤25% HP required, ~1/3 HP damage per engineer), repair friendly buildings (instant full heal).
-- Spy: disguise as enemy infantry, infiltration effects per building type.
-- Tanya: dual pistols (HollowPoint), C4 on buildings/bridges/ships (1.8s delay, instant kill).
-- Attack Dog: instant-kill infantry (Organic warhead), auto-detect spies (7-cell guard range).
-- Field Medic: auto-heal nearby friendly infantry (~1.83 cells), cannot self-heal.
+### Phase 7C — Vehicle Specials
 
-**Vehicle specials:**
-- MCV: deploy into Construction Yard / re-pack.
-- Mammoth Tank + Ore Truck: SelfHeal to 50% HP.
-- Mine Layer: deploy mines.
+- MCV: deploy into Construction Yard / re-pack. Vehicle ↔ Building state transform (destroy MCV, spawn CY and reverse). Placement validation for undeploy.
+- Mammoth Tank + Ore Truck: attach SelfHeal component (built in 7B) configured to 50% HP cap.
+- Mine Layer: deploy mines on cells. Mines invisible to enemies, trigger on contact. New mine cell state or entity type.
+
+**Testable**: MCV deploys and undeploys. Mammoth/Ore Truck self-heal to 50%. Mine Layer places mines that trigger on enemy contact.
+
+### Phase 7D — Transports, Naval & Aircraft
+
+**Transports (APC, Chinook, Naval Transport):**
+- Transport component: boarding/unloading one unit at a time, passenger list.
+- Passenger fate on destruction (APC: eject, Chinook: die, Naval at sea: vehicles die / infantry may survive).
+- Naval Transport: shoreline unloading.
 
 **Naval:**
-- Submarine: cloaked when submerged, surface to fire, detected by Sensors units.
-- Naval Transport: carry infantry + vehicles, shoreline unloading.
+- Submarine: cloaked when submerged, surface to fire, detected by Sensors units. New visibility mechanic interacting with FogManager and Attacker targeting.
 
 **Aircraft:**
 - Ammo tracking (finite shots, must rearm).
 - Helicopters hover at target, return to Helipad to rearm.
 - Fixed-wing (MiG, Yak) do strafing runs, return to Airfield.
 - Rearming: 2.4 sec per ammo point.
+- Aircraft behavior is a new movement/combat loop (takeoff, attack run, return, land, rearm) separate from ground Mover.
 
-**Transports (APC, Chinook, Naval Transport):**
-- Boarding/unloading one at a time.
-- Passenger fate on destruction (APC: eject, Chinook: die, Naval at sea: vehicles die / infantry may survive).
-
-**Testable**: Each special unit behavior works in isolation on the test map.
+**Testable**: APC loads/unloads infantry. Chinook transports and passengers die on destruction. Submarine submerges/surfaces. Helicopter attacks and rearms at Helipad. MiG does a strafing run and returns to Airfield.
 
 ### Phase 8 — Minimap & Cursors
 

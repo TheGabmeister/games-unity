@@ -335,6 +335,7 @@ GameObject:
   - component: {fileID: 4476258336126154919}
   - component: {fileID: 778168747892006376}
   - component: {fileID: 4520255858359916563}
+  - component: {fileID: 2552215157753865517}
   - component: {fileID: 4131509281528966464}
   m_Layer: 0
   m_Name: Engineer
@@ -469,6 +470,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
+--- !u!114 &2552215157753865517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8796998268557358140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 151a9762368024240a35355ab20b5fff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Engineer
 --- !u!114 &4131509281528966464
 MonoBehaviour:
   m_ObjectHideFlags: 0
