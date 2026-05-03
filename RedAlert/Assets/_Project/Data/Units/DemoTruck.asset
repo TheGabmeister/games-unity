@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: DemoTruck
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Demo Truck
-  Sprite: {fileID: -4012147933878400553, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  Sprite: {fileID: 7492256085767409842, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  DirectionSprites:
+  - {fileID: -6541503147415539407, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  - {fileID: 1335262482889101127, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  - {fileID: 2263066971586666229, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  - {fileID: -2431886473777056007, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  - {fileID: 7492256085767409842, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  - {fileID: -3076889572884765690, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  - {fileID: -1671925339119564472, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  - {fileID: 6345017371190106729, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 1

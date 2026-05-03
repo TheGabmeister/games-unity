@@ -5,6 +5,102 @@ TextureImporter:
   - first:
       213: -4418884546393760298
     second: RifleInfantry_0
+  - first:
+      213: 3635391852103690487
+    second: RifleInfantry_0_0
+  - first:
+      213: -7926419851716679220
+    second: RifleInfantry_0_1
+  - first:
+      213: 5750437163253253624
+    second: RifleInfantry_0_2
+  - first:
+      213: -8487590168372939719
+    second: RifleInfantry_0_3
+  - first:
+      213: 4876466752846638215
+    second: RifleInfantry_0_4
+  - first:
+      213: -5298282702264966384
+    second: RifleInfantry_0_5
+  - first:
+      213: -2529695826927875049
+    second: RifleInfantry_0_6
+  - first:
+      213: -6641719410813567337
+    second: RifleInfantry_0_7
+  - first:
+      213: -4023463733378288302
+    second: RifleInfantry_1_0
+  - first:
+      213: -2406911684823800199
+    second: RifleInfantry_1_1
+  - first:
+      213: -1222309212004376544
+    second: RifleInfantry_1_2
+  - first:
+      213: 5612848007898847012
+    second: RifleInfantry_1_3
+  - first:
+      213: 6251793952868139444
+    second: RifleInfantry_1_4
+  - first:
+      213: 328766339796403411
+    second: RifleInfantry_1_5
+  - first:
+      213: -3489743177417585716
+    second: RifleInfantry_1_6
+  - first:
+      213: -2769788972623454752
+    second: RifleInfantry_1_7
+  - first:
+      213: -8029292433491437798
+    second: RifleInfantry_2_0
+  - first:
+      213: -1877018565455509982
+    second: RifleInfantry_2_1
+  - first:
+      213: -7392460383783984412
+    second: RifleInfantry_2_2
+  - first:
+      213: -1165107576473009068
+    second: RifleInfantry_2_3
+  - first:
+      213: -4896833049320505687
+    second: RifleInfantry_2_4
+  - first:
+      213: -63850869331492385
+    second: RifleInfantry_2_5
+  - first:
+      213: -5856767067638970495
+    second: RifleInfantry_2_6
+  - first:
+      213: 1096938963773615024
+    second: RifleInfantry_2_7
+  - first:
+      213: -2314515056699701283
+    second: RifleInfantry_3_0
+  - first:
+      213: 1768504412889030136
+    second: RifleInfantry_3_1
+  - first:
+      213: -653699708241642447
+    second: RifleInfantry_3_2
+  - first:
+      213: -6014568395836488415
+    second: RifleInfantry_3_3
+  - first:
+      213: 2404014412851040144
+    second: RifleInfantry_3_4
+  - first:
+      213: 245865368319037547
+    second: RifleInfantry_3_5
+  - first:
+      213: -7200798340341311048
+    second: RifleInfantry_3_6
+  - first:
+      213: -3263300162312358410
+    second: RifleInfantry_3_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +209,705 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RifleInfantry_0
+      name: RifleInfantry_0_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 6
-        width: 38
-        height: 47
+        x: 0
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6dd9cb4dae7fca2c0800000000000000
-      internalID: -4418884546393760298
+      spriteID: 7f86dfbd0a1837230800000000000000
+      internalID: 3635391852103690487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_0_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc9a2dd0423bff190800000000000000
+      internalID: -7926419851716679220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_0_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f54ae20228adcf40800000000000000
+      internalID: 5750437163253253624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_0_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 934780706b5063a80800000000000000
+      internalID: -8487590168372939719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_0_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78c2d62dca0bca340800000000000000
+      internalID: 4876466752846638215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_0_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01366eb24f7b876b0800000000000000
+      internalID: -5298282702264966384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_0_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71c0d2e5c07b4ecd0800000000000000
+      internalID: -2529695826927875049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_0_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79ef3ac926fd3d3a0800000000000000
+      internalID: -6641719410813567337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 255f15d3d09c928c0800000000000000
+      internalID: -4023463733378288302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9762754339ee89ed0800000000000000
+      internalID: -2406911684823800199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 020aacc6f3c790fe0800000000000000
+      internalID: -1222309212004376544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 427d1196687d4ed40800000000000000
+      internalID: 5612848007898847012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b104a90a75d2c650800000000000000
+      internalID: 6251793952868139444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d48ba18e33009400800000000000000
+      internalID: 328766339796403411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccb8ea0d111f19fc0800000000000000
+      internalID: -3489743177417585716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_1_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ed1cf7ba9bbf89d0800000000000000
+      internalID: -2769788972623454752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a17d200a219329090800000000000000
+      internalID: -8029292433491437798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22606314f8d73f5e0800000000000000
+      internalID: -1877018565455509982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e26868a274b86990800000000000000
+      internalID: -7392460383783984412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 454c53b05d4b4dfe0800000000000000
+      internalID: -1165107576473009068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aebbd24944fa0cb0800000000000000
+      internalID: -4896833049320505687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd185eef8f72d1ff0800000000000000
+      internalID: -63850869331492385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1874c29e16598bea0800000000000000
+      internalID: -5856767067638970495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_2_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bbe20cfc2c193f00800000000000000
+      internalID: 1096938963773615024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd70f1a91d031efd0800000000000000
+      internalID: -2314515056699701283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fd16f1c46dfa8810800000000000000
+      internalID: 1768504412889030136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13cfa7c24979de6f0800000000000000
+      internalID: -653699708241642447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12500e819e5f78ca0800000000000000
+      internalID: -6014568395836488415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09fc7e81f56cc5120800000000000000
+      internalID: 2404014412851040144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b601a35ff3d796300800000000000000
+      internalID: 245865368319037547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b9dbb89f00a11c90800000000000000
+      internalID: -7200798340341311048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RifleInfantry_3_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f5b5e5cacd66b2d0800000000000000
+      internalID: -3263300162312358410
       vertices: []
       indices: 
       edges: []
@@ -149,6 +927,38 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       RifleInfantry_0: -4418884546393760298
+      RifleInfantry_0_0: 3635391852103690487
+      RifleInfantry_0_1: -7926419851716679220
+      RifleInfantry_0_2: 5750437163253253624
+      RifleInfantry_0_3: -8487590168372939719
+      RifleInfantry_0_4: 4876466752846638215
+      RifleInfantry_0_5: -5298282702264966384
+      RifleInfantry_0_6: -2529695826927875049
+      RifleInfantry_0_7: -6641719410813567337
+      RifleInfantry_1_0: -4023463733378288302
+      RifleInfantry_1_1: -2406911684823800199
+      RifleInfantry_1_2: -1222309212004376544
+      RifleInfantry_1_3: 5612848007898847012
+      RifleInfantry_1_4: 6251793952868139444
+      RifleInfantry_1_5: 328766339796403411
+      RifleInfantry_1_6: -3489743177417585716
+      RifleInfantry_1_7: -2769788972623454752
+      RifleInfantry_2_0: -8029292433491437798
+      RifleInfantry_2_1: -1877018565455509982
+      RifleInfantry_2_2: -7392460383783984412
+      RifleInfantry_2_3: -1165107576473009068
+      RifleInfantry_2_4: -4896833049320505687
+      RifleInfantry_2_5: -63850869331492385
+      RifleInfantry_2_6: -5856767067638970495
+      RifleInfantry_2_7: 1096938963773615024
+      RifleInfantry_3_0: -2314515056699701283
+      RifleInfantry_3_1: 1768504412889030136
+      RifleInfantry_3_2: -653699708241642447
+      RifleInfantry_3_3: -6014568395836488415
+      RifleInfantry_3_4: 2404014412851040144
+      RifleInfantry_3_5: 245865368319037547
+      RifleInfantry_3_6: -7200798340341311048
+      RifleInfantry_3_7: -3263300162312358410
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

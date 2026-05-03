@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 8348401289716730038
     second: DemoTruck_7
+  - first:
+      213: -6541503147415539407
+    second: DemoTruck_0_0
+  - first:
+      213: 1335262482889101127
+    second: DemoTruck_0_1
+  - first:
+      213: 2263066971586666229
+    second: DemoTruck_0_2
+  - first:
+      213: -2431886473777056007
+    second: DemoTruck_0_3
+  - first:
+      213: 7492256085767409842
+    second: DemoTruck_0_4
+  - first:
+      213: -3076889572884765690
+    second: DemoTruck_0_5
+  - first:
+      213: -1671925339119564472
+    second: DemoTruck_0_6
+  - first:
+      213: 6345017371190106729
+    second: DemoTruck_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DemoTruck_0
+      name: DemoTruck_0_0
       rect:
         serializedVersion: 2
-        x: 19
-        y: 18
-        width: 26
-        height: 28
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7d94cde16bcf158c0800000000000000
-      internalID: -4012147933878400553
+      spriteID: 1317239bb89e735a0800000000000000
+      internalID: -6541503147415539407
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DemoTruck_1
+      name: DemoTruck_0_1
       rect:
         serializedVersion: 2
-        x: 79
-        y: 15
-        width: 34
-        height: 34
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b8816fe34281a3cd0800000000000000
-      internalID: -2577721292761982837
+      spriteID: 74fc286572ec78210800000000000000
+      internalID: 1335262482889101127
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DemoTruck_2
+      name: DemoTruck_0_2
       rect:
         serializedVersion: 2
-        x: 146
-        y: 19
-        width: 28
-        height: 26
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2377dca2fc9cf20b0800000000000000
-      internalID: -5751156307515312334
+      spriteID: 5fe9750ab67086f10800000000000000
+      internalID: 2263066971586666229
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DemoTruck_3
+      name: DemoTruck_0_3
       rect:
         serializedVersion: 2
-        x: 207
-        y: 15
-        width: 34
-        height: 34
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e758056d9e854cfa0800000000000000
-      internalID: -5781398260290648706
+      spriteID: 9f6f0740324304ed0800000000000000
+      internalID: -2431886473777056007
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DemoTruck_4
+      name: DemoTruck_0_4
       rect:
         serializedVersion: 2
-        x: 275
-        y: 18
-        width: 26
-        height: 28
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d84c590a5ceecab60800000000000000
-      internalID: 7758838790622659725
+      spriteID: 2b0dc6ed637d9f760800000000000000
+      internalID: 7492256085767409842
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DemoTruck_5
+      name: DemoTruck_0_5
       rect:
         serializedVersion: 2
-        x: 335
-        y: 15
-        width: 34
-        height: 34
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 88dc0d9b0270b5ca0800000000000000
-      internalID: -6027215839167459960
+      spriteID: 604a91b4c31bc45d0800000000000000
+      internalID: -3076889572884765690
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DemoTruck_6
+      name: DemoTruck_0_6
       rect:
         serializedVersion: 2
-        x: 402
-        y: 19
-        width: 28
-        height: 26
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 74f0f173b1dbac980800000000000000
-      internalID: -8517787820631322809
+      spriteID: 849cdc623c02cc8e0800000000000000
+      internalID: -1671925339119564472
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DemoTruck_7
+      name: DemoTruck_0_7
       rect:
         serializedVersion: 2
-        x: 463
-        y: 15
-        width: 34
-        height: 34
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6b88af3cdba7bd370800000000000000
-      internalID: 8348401289716730038
+      spriteID: 96a18778ea70e0850800000000000000
+      internalID: 6345017371190106729
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       DemoTruck_0: -4012147933878400553
+      DemoTruck_0_0: -6541503147415539407
+      DemoTruck_0_1: 1335262482889101127
+      DemoTruck_0_2: 2263066971586666229
+      DemoTruck_0_3: -2431886473777056007
+      DemoTruck_0_4: 7492256085767409842
+      DemoTruck_0_5: -3076889572884765690
+      DemoTruck_0_6: -1671925339119564472
+      DemoTruck_0_7: 6345017371190106729
       DemoTruck_1: -2577721292761982837
       DemoTruck_2: -5751156307515312334
       DemoTruck_3: -5781398260290648706

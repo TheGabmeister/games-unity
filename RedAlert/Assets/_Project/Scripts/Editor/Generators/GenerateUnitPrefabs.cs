@@ -60,6 +60,7 @@ public static class GenerateUnitPrefabs
 
             var entity = root.AddComponent<Entity>();
             root.AddComponent<Mover>();
+            root.AddComponent<FacingRenderer>();
             if (unitData.PrimaryWeapon != null)
                 root.AddComponent<Attacker>();
             var selectable = root.AddComponent<Selectable>();

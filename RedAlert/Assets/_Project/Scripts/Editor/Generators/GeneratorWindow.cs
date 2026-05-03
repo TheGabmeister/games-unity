@@ -58,9 +58,11 @@ public class GeneratorWindow : EditorWindow
 
         Section("Phase 7 — Units", () =>
         {
+            Button("Import Sprite Sheets", GeneratePhase7Data.ImportSpriteSheets);
             Button("Phase 7 Weapons + Projectiles", GeneratePhase7Data.GenerateNewWeapons);
             Button("Phase 7 Unit Data (29 units)", GeneratePhase7Data.GenerateNewUnits);
-            Button("Phase 7 All Data", GeneratePhase7Data.GenerateAll);
+            Button("Wire Direction Sprites", GeneratePhase7Data.WireDirectionSprites);
+            Button("Phase 7 All", GeneratePhase7Data.GenerateAll);
         });
 
         Section("UI", () =>

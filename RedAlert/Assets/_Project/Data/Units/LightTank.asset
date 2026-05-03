@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: LightTank
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Light Tank
-  Sprite: {fileID: -8506272095534995724, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  Sprite: {fileID: 4730467377847855321, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  DirectionSprites:
+  - {fileID: -1147911015596026689, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  - {fileID: -2075238618056346850, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  - {fileID: 2646222973908190278, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  - {fileID: 861578944154807957, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  - {fileID: 4730467377847855321, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  - {fileID: 132024436135315484, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  - {fileID: -5418194981836526521, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
+  - {fileID: -6973312257868291326, guid: eb5b3b5b89381eb4f97f7ae57144663d, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

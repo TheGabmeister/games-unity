@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Yak
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Yak
-  Sprite: {fileID: 3141205918888916601, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  Sprite: {fileID: 3907375131075799193, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  DirectionSprites:
+  - {fileID: -703558074270844006, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  - {fileID: -1683536465009895409, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  - {fileID: 54330718595104505, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  - {fileID: 2298989799140719676, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  - {fileID: 3907375131075799193, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  - {fileID: 35596181592327154, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  - {fileID: -160703918756931307, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
+  - {fileID: -5103333571801095043, guid: eb60462b92760a64db3a7afc0394282e, type: 3}
   Icon: {fileID: 0}
   Category: 4
   Faction: 1

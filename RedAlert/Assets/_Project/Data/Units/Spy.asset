@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Spy
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Spy
-  Sprite: {fileID: -9148348609924905823, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  Sprite: {fileID: 9082926444962617708, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  DirectionSprites:
+  - {fileID: 3730097514131466600, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  - {fileID: 2521194909275657600, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  - {fileID: -4186591806343202146, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  - {fileID: -8292308956304270206, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  - {fileID: 9082926444962617708, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  - {fileID: 4252410227526111832, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  - {fileID: 8632447548827194822, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  - {fileID: -7372629613173500315, guid: b071693da2b25de46a4de6413030ed86, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 0

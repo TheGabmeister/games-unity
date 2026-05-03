@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 3263135713298228044
     second: MineLayer_7
+  - first:
+      213: -4067479278004967749
+    second: MineLayer_0_0
+  - first:
+      213: -2815410703574851994
+    second: MineLayer_0_1
+  - first:
+      213: -943609421332753575
+    second: MineLayer_0_2
+  - first:
+      213: -3121326070093341335
+    second: MineLayer_0_3
+  - first:
+      213: 1450068041046766312
+    second: MineLayer_0_4
+  - first:
+      213: -5953240231959053969
+    second: MineLayer_0_5
+  - first:
+      213: -3718107835303998315
+    second: MineLayer_0_6
+  - first:
+      213: -773385617063393868
+    second: MineLayer_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MineLayer_0
+      name: MineLayer_0_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 17
-        width: 40
-        height: 30
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 120c3e71abc263830800000000000000
-      internalID: 4050474092642680865
+      spriteID: bb66047a5296d87c0800000000000000
+      internalID: -4067479278004967749
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MineLayer_1
+      name: MineLayer_0_1
       rect:
         serializedVersion: 2
-        x: 73
-        y: 9
-        width: 46
-        height: 46
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aab69da5da2207110800000000000000
-      internalID: 1256542423985253290
+      spriteID: 66e969cb1e6ade8d0800000000000000
+      internalID: -2815410703574851994
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MineLayer_2
+      name: MineLayer_0_2
       rect:
         serializedVersion: 2
-        x: 145
-        y: 12
-        width: 30
-        height: 40
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cae6735714724a850800000000000000
-      internalID: 6387273333611130540
+      spriteID: 953dfb21b30a7e2f0800000000000000
+      internalID: -943609421332753575
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MineLayer_3
+      name: MineLayer_0_3
       rect:
         serializedVersion: 2
-        x: 201
-        y: 9
-        width: 46
-        height: 46
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 490c7d5a521043710800000000000000
-      internalID: 1671962622869094548
+      spriteID: 96d9beb0a72dea4d0800000000000000
+      internalID: -3121326070093341335
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MineLayer_4
+      name: MineLayer_0_4
       rect:
         serializedVersion: 2
-        x: 268
-        y: 17
-        width: 40
-        height: 30
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 752b1ace0c35333f0800000000000000
-      internalID: -922301410611973545
+      spriteID: 8e23db6533daf1410800000000000000
+      internalID: 1450068041046766312
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MineLayer_5
+      name: MineLayer_0_5
       rect:
         serializedVersion: 2
-        x: 329
-        y: 9
-        width: 46
-        height: 46
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8d4ece93ed36b65b0800000000000000
-      internalID: -5374091924230839080
+      spriteID: f693487fc87d16da0800000000000000
+      internalID: -5953240231959053969
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MineLayer_6
+      name: MineLayer_0_6
       rect:
         serializedVersion: 2
-        x: 401
-        y: 12
-        width: 30
-        height: 40
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d885b1d506864320800000000000000
-      internalID: 2541866399248517329
+      spriteID: 59ccb188f90a66cc0800000000000000
+      internalID: -3718107835303998315
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MineLayer_7
+      name: MineLayer_0_7
       rect:
         serializedVersion: 2
-        x: 457
-        y: 9
-        width: 46
-        height: 46
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c43280574acf84d20800000000000000
-      internalID: 3263135713298228044
+      spriteID: 4b54a8cf0e16445f0800000000000000
+      internalID: -773385617063393868
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       MineLayer_0: 4050474092642680865
+      MineLayer_0_0: -4067479278004967749
+      MineLayer_0_1: -2815410703574851994
+      MineLayer_0_2: -943609421332753575
+      MineLayer_0_3: -3121326070093341335
+      MineLayer_0_4: 1450068041046766312
+      MineLayer_0_5: -5953240231959053969
+      MineLayer_0_6: -3718107835303998315
+      MineLayer_0_7: -773385617063393868
       MineLayer_1: 1256542423985253290
       MineLayer_2: 6387273333611130540
       MineLayer_3: 1671962622869094548

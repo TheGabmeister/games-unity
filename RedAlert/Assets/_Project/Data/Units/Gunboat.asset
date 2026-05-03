@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Gunboat
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Gunboat
-  Sprite: {fileID: 8611870535788190802, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  Sprite: {fileID: -7782311821310493299, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  DirectionSprites:
+  - {fileID: -6312025833741611692, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  - {fileID: -7999970256340084803, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  - {fileID: 2659417264327182969, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  - {fileID: 7570467607132458407, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  - {fileID: -7782311821310493299, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  - {fileID: -2962644491092840276, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  - {fileID: 2089100784499294509, guid: bf929a724588e9648af48075eabbb094, type: 3}
+  - {fileID: -4769139957263878432, guid: bf929a724588e9648af48075eabbb094, type: 3}
   Icon: {fileID: 0}
   Category: 3
   Faction: 0

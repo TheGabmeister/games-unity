@@ -1,5 +1,7 @@
 using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 public static class GeneratePhase7Data
 {
@@ -218,10 +220,109 @@ public static class GeneratePhase7Data
         Debug.Log("Generated Phase 7 unit data (29 new units)");
     }
 
+    public static void ImportSpriteSheets()
+    {
+        string[] allUnits = {
+            "RifleInfantry", "RocketSoldier", "Grenadier", "Flamethrower", "ShockTrooper",
+            "Engineer", "Spy", "Tanya", "Medic", "AttackDog",
+            "LightTank", "HeavyTank", "MammothTank", "TeslaTank", "ChronoTank",
+            "APC", "Artillery", "V2Launcher", "MineLayer", "MCV", "OreTruck",
+            "PhaseTransport", "Ranger", "RadarJammer", "DemoTruck",
+            "Destroyer", "Cruiser", "Submarine", "Gunboat", "TransportShip", "MissileSub",
+            "Longbow", "Hind", "Chinook", "MiG", "Yak",
+        };
+
+        foreach (var name in allUnits)
+        {
+            string path = $"{SpriteDir}/{name}.png";
+            var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            if (importer == null) continue;
+
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Multiple;
+            importer.spritePixelsPerUnit = 64;
+            importer.filterMode = FilterMode.Point;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+
+            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (tex == null) { importer.SaveAndReimport(); tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path); }
+            if (tex == null) continue;
+
+            int cols = 8;
+            int cellW = 64;
+            int cellH = 64;
+            int rows = tex.height / cellH;
+            if (rows < 1) rows = 1;
+
+            var rects = new List<SpriteMetaData>();
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    rects.Add(new SpriteMetaData
+                    {
+                        name = $"{name}_{r}_{c}",
+                        rect = new Rect(c * cellW, (rows - 1 - r) * cellH, cellW, cellH),
+                        alignment = (int)SpriteAlignment.Center,
+                        pivot = new Vector2(0.5f, 0.5f),
+                    });
+                }
+            }
+
+            importer.spritesheet = rects.ToArray();
+            importer.SaveAndReimport();
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Imported sprite sheets for all units");
+    }
+
+    public static void WireDirectionSprites()
+    {
+        string[] allUnits = {
+            "RifleInfantry", "RocketSoldier", "Grenadier", "Flamethrower", "ShockTrooper",
+            "Engineer", "Spy", "Tanya", "Medic", "AttackDog",
+            "LightTank", "HeavyTank", "MammothTank", "TeslaTank", "ChronoTank",
+            "APC", "Artillery", "V2Launcher", "MineLayer", "MCV", "OreTruck",
+            "PhaseTransport", "Ranger", "RadarJammer", "DemoTruck",
+            "Destroyer", "Cruiser", "Submarine", "Gunboat", "TransportShip", "MissileSub",
+            "Longbow", "Hind", "Chinook", "MiG", "Yak",
+        };
+
+        foreach (var name in allUnits)
+        {
+            var unitData = Load<UnitData>($"{UnitDir}/{name}.asset");
+            if (unitData == null) continue;
+
+            string path = $"{SpriteDir}/{name}.png";
+            var allAssets = AssetDatabase.LoadAllAssetsAtPath(path);
+            var sprites = allAssets.OfType<Sprite>().OrderBy(s => s.name).ToArray();
+
+            if (sprites.Length < 8) continue;
+
+            // Row 0 (idle) sprites are indices 0-7: N, NE, E, SE, S, SW, W, NW
+            var dirSprites = new Sprite[8];
+            for (int i = 0; i < 8; i++)
+                dirSprites[i] = sprites[i];
+
+            unitData.DirectionSprites = dirSprites;
+            unitData.Sprite = dirSprites[4]; // south-facing as default
+
+            EditorUtility.SetDirty(unitData);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Wired direction sprites for all units");
+    }
+
     public static void GenerateAll()
     {
+        ImportSpriteSheets();
         GenerateNewWeapons();
         GenerateNewUnits();
+        WireDirectionSprites();
     }
 
     // --- Helpers ---

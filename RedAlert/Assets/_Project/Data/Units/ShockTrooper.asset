@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: ShockTrooper
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Shock Trooper
-  Sprite: {fileID: 3188571597700047487, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  Sprite: {fileID: 7292626955491475506, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  DirectionSprites:
+  - {fileID: -5606857404430609376, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  - {fileID: -7710009871888594803, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  - {fileID: -4891758226394729227, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  - {fileID: 2245220169032135557, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  - {fileID: 7292626955491475506, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  - {fileID: 4086982864943509113, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  - {fileID: -4497752070050681791, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
+  - {fileID: 8903214036337989494, guid: d57b7a5819741e1468cd81ffacb21bf8, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 1

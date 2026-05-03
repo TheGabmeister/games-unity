@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 4384741416363619763
     second: APC_7
+  - first:
+      213: -3601488935126314226
+    second: APC_0_0
+  - first:
+      213: -3211333581079792973
+    second: APC_0_1
+  - first:
+      213: -1849577363066672221
+    second: APC_0_2
+  - first:
+      213: -777747984467204279
+    second: APC_0_3
+  - first:
+      213: 7180825600267966860
+    second: APC_0_4
+  - first:
+      213: 3881208867062751924
+    second: APC_0_5
+  - first:
+      213: 9106808320176185997
+    second: APC_0_6
+  - first:
+      213: 1708653793891367443
+    second: APC_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: APC_0
+      name: APC_0_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 14
-        width: 40
-        height: 38
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8b694abe6b2e2f8d0800000000000000
-      internalID: -2813937541887781192
+      spriteID: e03db4f15e0f40ec0800000000000000
+      internalID: -3601488935126314226
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: APC_1
+      name: APC_0_1
       rect:
         serializedVersion: 2
-        x: 71
-        y: 7
-        width: 50
-        height: 50
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b00fdf0c8236883f0800000000000000
-      internalID: -898359098972704757
+      spriteID: 3b2b4745f1d0f63d0800000000000000
+      internalID: -3211333581079792973
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: APC_2
+      name: APC_0_2
       rect:
         serializedVersion: 2
-        x: 142
-        y: 12
-        width: 38
-        height: 40
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 617801b64764580c0800000000000000
-      internalID: -4574172380698474730
+      spriteID: 3abaec1103bf456e0800000000000000
+      internalID: -1849577363066672221
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: APC_3
+      name: APC_0_3
       rect:
         serializedVersion: 2
-        x: 199
-        y: 7
-        width: 50
-        height: 50
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3d43a9f18807ae610800000000000000
-      internalID: 1651255943332771027
+      spriteID: 9476e0d2452e435f0800000000000000
+      internalID: -777747984467204279
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: APC_4
+      name: APC_0_4
       rect:
         serializedVersion: 2
-        x: 268
-        y: 12
-        width: 40
-        height: 38
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 426a2712641c321c0800000000000000
-      internalID: -4529564293251553756
+      spriteID: c89d00a76da67a360800000000000000
+      internalID: 7180825600267966860
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: APC_5
+      name: APC_0_5
       rect:
         serializedVersion: 2
-        x: 327
-        y: 7
-        width: 50
-        height: 50
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e0546464661debe60800000000000000
-      internalID: 7980045826942977294
+      spriteID: 4b22f5ca6e2dcd530800000000000000
+      internalID: 3881208867062751924
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: APC_6
+      name: APC_0_6
       rect:
         serializedVersion: 2
-        x: 396
-        y: 12
-        width: 38
-        height: 40
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9de4b824d600bbf50800000000000000
-      internalID: 6898107723515907801
+      spriteID: d826ca1dae1e16e70800000000000000
+      internalID: 9106808320176185997
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: APC_7
+      name: APC_0_7
       rect:
         serializedVersion: 2
-        x: 455
-        y: 7
-        width: 50
-        height: 50
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3b5fb4a361bb9dc30800000000000000
-      internalID: 4384741416363619763
+      spriteID: 31ab40d929b56b710800000000000000
+      internalID: 1708653793891367443
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       APC_0: -2813937541887781192
+      APC_0_0: -3601488935126314226
+      APC_0_1: -3211333581079792973
+      APC_0_2: -1849577363066672221
+      APC_0_3: -777747984467204279
+      APC_0_4: 7180825600267966860
+      APC_0_5: 3881208867062751924
+      APC_0_6: 9106808320176185997
+      APC_0_7: 1708653793891367443
       APC_1: -898359098972704757
       APC_2: -4574172380698474730
       APC_3: 1651255943332771027

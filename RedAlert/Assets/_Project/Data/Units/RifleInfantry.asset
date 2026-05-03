@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: RifleInfantry
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Rifle Infantry
-  Sprite: {fileID: -4418884546393760298, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  Sprite: {fileID: 4876466752846638215, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  DirectionSprites:
+  - {fileID: 3635391852103690487, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  - {fileID: -7926419851716679220, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  - {fileID: 5750437163253253624, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  - {fileID: -8487590168372939719, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  - {fileID: 4876466752846638215, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  - {fileID: -5298282702264966384, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  - {fileID: -2529695826927875049, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
+  - {fileID: -6641719410813567337, guid: 577251e9f80851b4ca4af745db8aad56, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 0

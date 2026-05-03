@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Chinook
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Chinook
-  Sprite: {fileID: -3767744695616485829, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  Sprite: {fileID: -3300732712695231524, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  DirectionSprites:
+  - {fileID: 4969287174616053940, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  - {fileID: 1786598355410861614, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  - {fileID: -5335288603343396889, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  - {fileID: -5860615264386572205, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  - {fileID: -3300732712695231524, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  - {fileID: -6184400086476102312, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  - {fileID: 2472863300427477076, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  - {fileID: 7881800797504269078, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
   Icon: {fileID: 0}
   Category: 4
   Faction: 0

@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 4432527004154026514
     second: TeslaTank_7
+  - first:
+      213: 4447633706353656947
+    second: TeslaTank_0_0
+  - first:
+      213: -2343320243681260832
+    second: TeslaTank_0_1
+  - first:
+      213: -3313693114923423755
+    second: TeslaTank_0_2
+  - first:
+      213: -3453480389015208798
+    second: TeslaTank_0_3
+  - first:
+      213: 7989367672835662809
+    second: TeslaTank_0_4
+  - first:
+      213: 522879745701300568
+    second: TeslaTank_0_5
+  - first:
+      213: 1312925108146040442
+    second: TeslaTank_0_6
+  - first:
+      213: -7177848991088259176
+    second: TeslaTank_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TeslaTank_0
+      name: TeslaTank_0_0
       rect:
         serializedVersion: 2
-        x: 10
-        y: 17
-        width: 44
-        height: 30
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bf943f8cba33dbb00800000000000000
-      internalID: 845889117919332859
+      spriteID: 37483469a4b29bd30800000000000000
+      internalID: 4447633706353656947
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TeslaTank_1
+      name: TeslaTank_0_1
       rect:
         serializedVersion: 2
-        x: 72
-        y: 8
-        width: 48
-        height: 48
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2f8f90334c411eb40800000000000000
-      internalID: 5467674255506929906
+      spriteID: 0ea856067aada7fd0800000000000000
+      internalID: -2343320243681260832
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TeslaTank_2
+      name: TeslaTank_0_2
       rect:
         serializedVersion: 2
-        x: 145
-        y: 10
-        width: 30
-        height: 44
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5d65cdb988f7812e0800000000000000
-      internalID: -2154832196989593899
+      spriteID: 5f7e45e2ba56302d0800000000000000
+      internalID: -3313693114923423755
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TeslaTank_3
+      name: TeslaTank_0_3
       rect:
         serializedVersion: 2
-        x: 200
-        y: 8
-        width: 48
-        height: 48
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 61c7eadbe24be2560800000000000000
-      internalID: 7290962959603235862
+      spriteID: 2ac78fd22e5c210d0800000000000000
+      internalID: -3453480389015208798
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TeslaTank_4
+      name: TeslaTank_0_4
       rect:
         serializedVersion: 2
-        x: 266
-        y: 17
-        width: 44
-        height: 30
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: de81d70d75ee63760800000000000000
-      internalID: 7437393895576377581
+      spriteID: 9d3eb57a19fefde60800000000000000
+      internalID: 7989367672835662809
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TeslaTank_5
+      name: TeslaTank_0_5
       rect:
         serializedVersion: 2
-        x: 328
-        y: 8
-        width: 48
-        height: 48
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 99d515126de7596f0800000000000000
-      internalID: -678496710702309991
+      spriteID: 859c5cebb54a14700800000000000000
+      internalID: 522879745701300568
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TeslaTank_6
+      name: TeslaTank_0_6
       rect:
         serializedVersion: 2
-        x: 401
-        y: 10
-        width: 30
-        height: 44
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7cf229d7b929fad40800000000000000
-      internalID: 5597854058369134535
+      spriteID: a7e6cbffd62783210800000000000000
+      internalID: 1312925108146040442
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TeslaTank_7
+      name: TeslaTank_0_7
       rect:
         serializedVersion: 2
-        x: 456
-        y: 8
-        width: 48
-        height: 48
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 21a5de363df738d30800000000000000
-      internalID: 4432527004154026514
+      spriteID: 89fc9ca5f58236c90800000000000000
+      internalID: -7177848991088259176
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       TeslaTank_0: 845889117919332859
+      TeslaTank_0_0: 4447633706353656947
+      TeslaTank_0_1: -2343320243681260832
+      TeslaTank_0_2: -3313693114923423755
+      TeslaTank_0_3: -3453480389015208798
+      TeslaTank_0_4: 7989367672835662809
+      TeslaTank_0_5: 522879745701300568
+      TeslaTank_0_6: 1312925108146040442
+      TeslaTank_0_7: -7177848991088259176
       TeslaTank_1: 5467674255506929906
       TeslaTank_2: -2154832196989593899
       TeslaTank_3: 7290962959603235862

@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: TransportShip
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Naval Transport
-  Sprite: {fileID: -3510124300914468012, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  Sprite: {fileID: 8646057405598785854, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  DirectionSprites:
+  - {fileID: 5802090561103154126, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  - {fileID: -6511208249376433408, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  - {fileID: 2956660926472145904, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  - {fileID: 6668678954378280455, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  - {fileID: 8646057405598785854, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  - {fileID: -5902394262849916740, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  - {fileID: -6564244324244625203, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  - {fileID: -4067415367485590844, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
   Icon: {fileID: 0}
   Category: 3
   Faction: 0

@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 2986823109388039319
     second: MiG_7
+  - first:
+      213: 382457903571905416
+    second: MiG_0_0
+  - first:
+      213: -5512344244582193055
+    second: MiG_0_1
+  - first:
+      213: 4033173236230467319
+    second: MiG_0_2
+  - first:
+      213: -4818889923871347018
+    second: MiG_0_3
+  - first:
+      213: -2174526525790639724
+    second: MiG_0_4
+  - first:
+      213: 7102866659157362211
+    second: MiG_0_5
+  - first:
+      213: 2228489204226060122
+    second: MiG_0_6
+  - first:
+      213: -1430902364425419302
+    second: MiG_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MiG_0
+      name: MiG_0_0
       rect:
         serializedVersion: 2
-        x: 19
-        y: 18
-        width: 26
-        height: 28
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9400618fd2c263910800000000000000
-      internalID: 1816688075637915721
+      spriteID: 88ba1fbdf63ce4500800000000000000
+      internalID: 382457903571905416
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MiG_1
+      name: MiG_0_1
       rect:
         serializedVersion: 2
-        x: 82
-        y: 18
-        width: 26
-        height: 26
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d52faf84331927280800000000000000
-      internalID: -9047009051980139939
+      spriteID: 168620e7d183083b0800000000000000
+      internalID: -5512344244582193055
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MiG_2
+      name: MiG_0_2
       rect:
         serializedVersion: 2
-        x: 146
-        y: 19
-        width: 28
-        height: 26
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 74b7b063c6205e650800000000000000
-      internalID: 6261413520714988359
+      spriteID: 7fe212f80b5b8f730800000000000000
+      internalID: 4033173236230467319
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MiG_3
+      name: MiG_0_3
       rect:
         serializedVersion: 2
-        x: 210
-        y: 20
-        width: 26
-        height: 26
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f12c130b46daa7a10800000000000000
-      internalID: 1908028040109212191
+      spriteID: 6be60f3552ddf1db0800000000000000
+      internalID: -4818889923871347018
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MiG_4
+      name: MiG_0_4
       rect:
         serializedVersion: 2
-        x: 275
-        y: 18
-        width: 26
-        height: 28
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bc9772f1c83b92cf0800000000000000
-      internalID: -276492487707100725
+      spriteID: 499a59b55a782d1e0800000000000000
+      internalID: -2174526525790639724
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MiG_5
+      name: MiG_0_5
       rect:
         serializedVersion: 2
-        x: 340
-        y: 20
-        width: 26
-        height: 26
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8af595270dc463f70800000000000000
-      internalID: 9166598549714591656
+      spriteID: 3264a0a0893729260800000000000000
+      internalID: 7102866659157362211
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MiG_6
+      name: MiG_0_6
       rect:
         serializedVersion: 2
-        x: 402
-        y: 19
-        width: 28
-        height: 26
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 665ea9a1964e494e0800000000000000
-      internalID: -1975703196439747226
+      spriteID: a5fefabcf1f2dee10800000000000000
+      internalID: 2228489204226060122
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MiG_7
+      name: MiG_0_7
       rect:
         serializedVersion: 2
-        x: 468
-        y: 18
-        width: 26
-        height: 26
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 794700a0bc3537920800000000000000
-      internalID: 2986823109388039319
+      spriteID: ad5082c71e9642ce0800000000000000
+      internalID: -1430902364425419302
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       MiG_0: 1816688075637915721
+      MiG_0_0: 382457903571905416
+      MiG_0_1: -5512344244582193055
+      MiG_0_2: 4033173236230467319
+      MiG_0_3: -4818889923871347018
+      MiG_0_4: -2174526525790639724
+      MiG_0_5: 7102866659157362211
+      MiG_0_6: 2228489204226060122
+      MiG_0_7: -1430902364425419302
       MiG_1: -9047009051980139939
       MiG_2: 6261413520714988359
       MiG_3: 1908028040109212191

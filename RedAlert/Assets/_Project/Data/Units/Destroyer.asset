@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Destroyer
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Destroyer
-  Sprite: {fileID: -6871892450741501236, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  Sprite: {fileID: -5798223730535837091, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  DirectionSprites:
+  - {fileID: -8177737015264823699, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  - {fileID: 3079337841002688401, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  - {fileID: -4949169894806106273, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  - {fileID: 8018248223301682441, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  - {fileID: -5798223730535837091, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  - {fileID: -6007864751202031182, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  - {fileID: -163577573910461373, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  - {fileID: 6695809950313158171, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
   Icon: {fileID: 0}
   Category: 3
   Faction: 0

@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Tanya
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Tanya
-  Sprite: {fileID: -5164112022210139852, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  Sprite: {fileID: 141982026737181605, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  DirectionSprites:
+  - {fileID: 4543453763834167233, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  - {fileID: -8439657386430897362, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  - {fileID: 6858368046690213332, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  - {fileID: 335886172007725411, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  - {fileID: 141982026737181605, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  - {fileID: 8650316775871661673, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  - {fileID: -791552821769216106, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
+  - {fileID: -5904440886776345358, guid: 1456d11f57d01ba4fb247e50410a418e, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 0

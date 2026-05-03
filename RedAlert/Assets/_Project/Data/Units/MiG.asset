@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: MiG
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: MiG
-  Sprite: {fileID: 1816688075637915721, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  Sprite: {fileID: -2174526525790639724, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  DirectionSprites:
+  - {fileID: 382457903571905416, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  - {fileID: -5512344244582193055, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  - {fileID: 4033173236230467319, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  - {fileID: -4818889923871347018, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  - {fileID: -2174526525790639724, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  - {fileID: 7102866659157362211, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  - {fileID: 2228489204226060122, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
+  - {fileID: -1430902364425419302, guid: 355004d3d5bed0d489a81fc4d8dbf89b, type: 3}
   Icon: {fileID: 0}
   Category: 4
   Faction: 1

@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Flamethrower
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Flamethrower
-  Sprite: {fileID: -2910323598088949028, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  Sprite: {fileID: 2132067117774359815, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  DirectionSprites:
+  - {fileID: 5990161481073143129, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  - {fileID: 6469619594430298354, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  - {fileID: 489477272593275898, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  - {fileID: 3791845236413182673, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  - {fileID: 2132067117774359815, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  - {fileID: -3537146567707350313, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  - {fileID: 6068901645446980559, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
+  - {fileID: -3627881028794180450, guid: e91ca7488e3d2ce4e8ebc68cff5143ab, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 1

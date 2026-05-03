@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Engineer
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Engineer
-  Sprite: {fileID: 1595982907714843850, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  Sprite: {fileID: -2088488759921714736, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  DirectionSprites:
+  - {fileID: -5050794370792786078, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  - {fileID: -3275707233816226199, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  - {fileID: 6106714400902424549, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  - {fileID: -6212250268209844554, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  - {fileID: -2088488759921714736, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  - {fileID: 6538634362088487840, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  - {fileID: 76188713499644617, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
+  - {fileID: -9217282603963746134, guid: 1ac44cee8b00ab843986b240aa174449, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 0

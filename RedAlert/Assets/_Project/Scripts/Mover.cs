@@ -11,6 +11,8 @@ public class Mover : MonoBehaviour
 
     public bool IsMoving => _path != null && _pathIndex < _path.Count;
 
+    public System.Action<Vector2Int> OnDirectionChanged;
+
     void Awake()
     {
         _entity = GetComponent<Entity>();
@@ -67,6 +69,10 @@ public class Mover : MonoBehaviour
         }
 
         _waitTimer = 0f;
+
+        Vector2Int dir = nextCell - _entity.Cell;
+        if (dir != Vector2Int.zero)
+            OnDirectionChanged?.Invoke(dir);
 
         Vector3 targetPos = MapManager.Instance.CellToWorld(nextCell);
         float speedMult = TerrainMovement.GetSpeedMultiplier(

@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Longbow
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Longbow
-  Sprite: {fileID: 7103278343221358309, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  Sprite: {fileID: 2537503386057522877, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  DirectionSprites:
+  - {fileID: -7228724299640437114, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  - {fileID: -8900674465379130095, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  - {fileID: 5567870840459127766, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  - {fileID: 6818392769093599228, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  - {fileID: 2537503386057522877, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  - {fileID: 134285521883979423, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  - {fileID: -231800635688764090, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  - {fileID: 8307477102346769239, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
   Icon: {fileID: 0}
   Category: 4
   Faction: 0

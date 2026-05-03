@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: MammothTank
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Mammoth Tank
-  Sprite: {fileID: -5491780828276011572, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  Sprite: {fileID: -1451685977093741707, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  DirectionSprites:
+  - {fileID: 4180059789632297932, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  - {fileID: 1249140875494073924, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  - {fileID: 4883520794641350528, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  - {fileID: -2089954300633600305, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  - {fileID: -1451685977093741707, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  - {fileID: -5752139831985723759, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  - {fileID: -3798578910552490701, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
+  - {fileID: -3402344888402551242, guid: eeb27393331ea1e48a6788dfb3e64129, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 1

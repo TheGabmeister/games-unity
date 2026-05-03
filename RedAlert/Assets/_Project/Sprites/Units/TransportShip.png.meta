@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 8012168359408218979
     second: TransportShip_7
+  - first:
+      213: 5802090561103154126
+    second: TransportShip_0_0
+  - first:
+      213: -6511208249376433408
+    second: TransportShip_0_1
+  - first:
+      213: 2956660926472145904
+    second: TransportShip_0_2
+  - first:
+      213: 6668678954378280455
+    second: TransportShip_0_3
+  - first:
+      213: 8646057405598785854
+    second: TransportShip_0_4
+  - first:
+      213: -5902394262849916740
+    second: TransportShip_0_5
+  - first:
+      213: -6564244324244625203
+    second: TransportShip_0_6
+  - first:
+      213: -4067415367485590844
+    second: TransportShip_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TransportShip_0
+      name: TransportShip_0_0
       rect:
         serializedVersion: 2
-        x: 23
-        y: 17
-        width: 18
-        height: 33
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 45bd686bb88894fc0800000000000000
-      internalID: -3510124300914468012
+      spriteID: ecb4331ef9a258050800000000000000
+      internalID: 5802090561103154126
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TransportShip_1
+      name: TransportShip_0_1
       rect:
         serializedVersion: 2
-        x: 80
-        y: 16
-        width: 29
-        height: 29
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a3e7c12020e8f1fd0800000000000000
-      internalID: -2369018739697091014
+      spriteID: 00b1355589a83a5a0800000000000000
+      internalID: -6511208249376433408
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TransportShip_2
+      name: TransportShip_0_2
       rect:
         serializedVersion: 2
-        x: 145
-        y: 23
-        width: 33
-        height: 18
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 473d85ad9254eca70800000000000000
-      internalID: 8849086363888833396
+      spriteID: 0fb46a3927b280920800000000000000
+      internalID: 2956660926472145904
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TransportShip_3
+      name: TransportShip_0_3
       rect:
         serializedVersion: 2
-        x: 208
-        y: 19
-        width: 29
-        height: 29
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7b0b2f6b391b22a20800000000000000
-      internalID: 3036184346788802743
+      spriteID: 70e37d44d28eb8c50800000000000000
+      internalID: 6668678954378280455
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TransportShip_4
+      name: TransportShip_0_4
       rect:
         serializedVersion: 2
-        x: 279
-        y: 14
-        width: 18
-        height: 33
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a5db9a8a0635bbc90800000000000000
-      internalID: -7153031908536238758
+      spriteID: e31e950d667fcf770800000000000000
+      internalID: 8646057405598785854
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TransportShip_5
+      name: TransportShip_0_5
       rect:
         serializedVersion: 2
-        x: 339
-        y: 19
-        width: 29
-        height: 29
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bb9d8574c976b9060800000000000000
-      internalID: 6961271569940797883
+      spriteID: cb0f68ea0bb761ea0800000000000000
+      internalID: -5902394262849916740
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TransportShip_6
+      name: TransportShip_0_6
       rect:
         serializedVersion: 2
-        x: 398
-        y: 23
-        width: 33
-        height: 18
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 58e0caaedb0c62b10800000000000000
-      internalID: 1956463010057555589
+      spriteID: dc86682e09e17e4a0800000000000000
+      internalID: -6564244324244625203
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TransportShip_7
+      name: TransportShip_0_7
       rect:
         serializedVersion: 2
-        x: 467
-        y: 16
-        width: 29
-        height: 29
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 363b62f2ca0f03f60800000000000000
-      internalID: 8012168359408218979
+      spriteID: 4c27e0bf543ad87c0800000000000000
+      internalID: -4067415367485590844
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       TransportShip_0: -3510124300914468012
+      TransportShip_0_0: 5802090561103154126
+      TransportShip_0_1: -6511208249376433408
+      TransportShip_0_2: 2956660926472145904
+      TransportShip_0_3: 6668678954378280455
+      TransportShip_0_4: 8646057405598785854
+      TransportShip_0_5: -5902394262849916740
+      TransportShip_0_6: -6564244324244625203
+      TransportShip_0_7: -4067415367485590844
       TransportShip_1: -2369018739697091014
       TransportShip_2: 8849086363888833396
       TransportShip_3: 3036184346788802743

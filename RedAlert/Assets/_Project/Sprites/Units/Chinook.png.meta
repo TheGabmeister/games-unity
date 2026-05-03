@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 578372317660517996
     second: Chinook_7
+  - first:
+      213: 4969287174616053940
+    second: Chinook_0_0
+  - first:
+      213: 1786598355410861614
+    second: Chinook_0_1
+  - first:
+      213: -5335288603343396889
+    second: Chinook_0_2
+  - first:
+      213: -5860615264386572205
+    second: Chinook_0_3
+  - first:
+      213: -3300732712695231524
+    second: Chinook_0_4
+  - first:
+      213: -6184400086476102312
+    second: Chinook_0_5
+  - first:
+      213: 2472863300427477076
+    second: Chinook_0_6
+  - first:
+      213: 7881800797504269078
+    second: Chinook_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Chinook_0
+      name: Chinook_0_0
       rect:
         serializedVersion: 2
-        x: 21
-        y: 14
-        width: 22
-        height: 32
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b36ca65692846bbc0800000000000000
-      internalID: -3767744695616485829
+      spriteID: 4b8f4ed5b5476f440800000000000000
+      internalID: 4969287174616053940
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chinook_1
+      name: Chinook_0_1
       rect:
         serializedVersion: 2
-        x: 77
-        y: 13
-        width: 35
-        height: 35
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ac13f364452ff0cc0800000000000000
-      internalID: -3742506321551871542
+      spriteID: e2ebf8a0db54bc810800000000000000
+      internalID: 1786598355410861614
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chinook_2
+      name: Chinook_0_2
       rect:
         serializedVersion: 2
-        x: 142
-        y: 21
-        width: 32
-        height: 22
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c60c99d23d66b4fb0800000000000000
-      internalID: -4662519932022833044
+      spriteID: 7efd687684f35f5b0800000000000000
+      internalID: -5335288603343396889
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chinook_3
+      name: Chinook_0_3
       rect:
         serializedVersion: 2
-        x: 205
-        y: 16
-        width: 35
-        height: 35
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bd286cee7907f5ad0800000000000000
-      internalID: -2711324652805389605
+      spriteID: 350a109c779eaaea0800000000000000
+      internalID: -5860615264386572205
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chinook_4
+      name: Chinook_0_4
       rect:
         serializedVersion: 2
-        x: 277
-        y: 18
-        width: 22
-        height: 32
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f9acf7de1f4e54bf0800000000000000
-      internalID: -340614469073778017
+      spriteID: cdb0a49f5117132d0800000000000000
+      internalID: -3300732712695231524
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chinook_5
+      name: Chinook_0_5
       rect:
         serializedVersion: 2
-        x: 336
-        y: 16
-        width: 35
-        height: 35
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 70bf801340e494a30800000000000000
-      internalID: 4199973907409206023
+      spriteID: 85562b043e89c2aa0800000000000000
+      internalID: -6184400086476102312
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chinook_6
+      name: Chinook_0_6
       rect:
         serializedVersion: 2
-        x: 402
-        y: 21
-        width: 32
-        height: 22
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: afcba5232e0c58ac0800000000000000
-      internalID: -3853461828405641990
+      spriteID: 4507418e110615220800000000000000
+      internalID: 2472863300427477076
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Chinook_7
+      name: Chinook_0_7
       rect:
         serializedVersion: 2
-        x: 464
-        y: 13
-        width: 35
-        height: 35
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c66131efe8ac60800800000000000000
-      internalID: 578372317660517996
+      spriteID: 61be1a5d018c16d60800000000000000
+      internalID: 7881800797504269078
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Chinook_0: -3767744695616485829
+      Chinook_0_0: 4969287174616053940
+      Chinook_0_1: 1786598355410861614
+      Chinook_0_2: -5335288603343396889
+      Chinook_0_3: -5860615264386572205
+      Chinook_0_4: -3300732712695231524
+      Chinook_0_5: -6184400086476102312
+      Chinook_0_6: 2472863300427477076
+      Chinook_0_7: 7881800797504269078
       Chinook_1: -3742506321551871542
       Chinook_2: -4662519932022833044
       Chinook_3: -2711324652805389605

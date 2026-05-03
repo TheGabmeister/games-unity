@@ -5,6 +5,30 @@ TextureImporter:
   - first:
       213: 2175045147716456000
     second: OreTruck_0
+  - first:
+      213: 6801965921328507682
+    second: OreTruck_0_0
+  - first:
+      213: -6535133623584943449
+    second: OreTruck_0_1
+  - first:
+      213: -4353409742757794762
+    second: OreTruck_0_2
+  - first:
+      213: 5581950377123690096
+    second: OreTruck_0_3
+  - first:
+      213: -3939500914827958326
+    second: OreTruck_0_4
+  - first:
+      213: 284705016653844201
+    second: OreTruck_0_5
+  - first:
+      213: 4221569510488792181
+    second: OreTruck_0_6
+  - first:
+      213: 6795282019503351213
+    second: OreTruck_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +70,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 0
   alignment: 0
@@ -113,23 +137,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: OreTruck_0
+      name: OreTruck_0_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 14
-        width: 48
-        height: 38
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 04e8318b9005f2e10800000000000000
-      internalID: 2175045147716456000
+      spriteID: 22b291397ff656e50800000000000000
+      internalID: 6801965921328507682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OreTruck_0_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a2128e089a8e45a0800000000000000
+      internalID: -6535133623584943449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OreTruck_0_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63c623187e49593c0800000000000000
+      internalID: -4353409742757794762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OreTruck_0_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 076b0562b42177d40800000000000000
+      internalID: 5581950377123690096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OreTruck_0_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac76a535ac41459c0800000000000000
+      internalID: -3939500914827958326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OreTruck_0_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ee8c6744b973f300800000000000000
+      internalID: 284705016653844201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OreTruck_0_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57cdd4b5a17069a30800000000000000
+      internalID: 4221569510488792181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OreTruck_0_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da5a8196ef0bd4e50800000000000000
+      internalID: 6795282019503351213
       vertices: []
       indices: 
       edges: []
@@ -149,6 +327,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       OreTruck_0: 2175045147716456000
+      OreTruck_0_0: 6801965921328507682
+      OreTruck_0_1: -6535133623584943449
+      OreTruck_0_2: -4353409742757794762
+      OreTruck_0_3: 5581950377123690096
+      OreTruck_0_4: -3939500914827958326
+      OreTruck_0_5: 284705016653844201
+      OreTruck_0_6: 4221569510488792181
+      OreTruck_0_7: 6795282019503351213
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

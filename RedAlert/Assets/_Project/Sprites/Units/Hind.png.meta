@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 1184412554535245998
     second: Hind_7
+  - first:
+      213: -1002633627663323682
+    second: Hind_0_0
+  - first:
+      213: 8238232237252056932
+    second: Hind_0_1
+  - first:
+      213: 2126525089834305720
+    second: Hind_0_2
+  - first:
+      213: 744929313546575355
+    second: Hind_0_3
+  - first:
+      213: -3138400528765238502
+    second: Hind_0_4
+  - first:
+      213: -9114454093032951165
+    second: Hind_0_5
+  - first:
+      213: 1202637015805809551
+    second: Hind_0_6
+  - first:
+      213: 4297971410086218405
+    second: Hind_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Hind_0
+      name: Hind_0_0
       rect:
         serializedVersion: 2
-        x: 18
-        y: 10
-        width: 28
-        height: 35
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 51a8b90d0ca12c730800000000000000
-      internalID: 4017803233003801109
+      spriteID: edd244f170ee512f0800000000000000
+      internalID: -1002633627663323682
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hind_1
+      name: Hind_0_1
       rect:
         serializedVersion: 2
-        x: 79
-        y: 15
-        width: 30
-        height: 30
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6fa44b9ffdb59b740800000000000000
-      internalID: 5168263064909531894
+      spriteID: 467949e5294145270800000000000000
+      internalID: 8238232237252056932
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hind_2
+      name: Hind_0_2
       rect:
         serializedVersion: 2
-        x: 138
-        y: 18
-        width: 35
-        height: 28
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1abff8cdce8a31e70800000000000000
-      internalID: 9084790608602594209
+      spriteID: 8b887896d4fe28d10800000000000000
+      internalID: 2126525089834305720
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hind_3
+      name: Hind_0_3
       rect:
         serializedVersion: 2
-        x: 207
-        y: 19
-        width: 30
-        height: 30
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 791dd689144ebf850800000000000000
-      internalID: 6411969464873374103
+      spriteID: bfd18bc8345865a00800000000000000
+      internalID: 744929313546575355
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hind_4
+      name: Hind_0_4
       rect:
         serializedVersion: 2
-        x: 274
-        y: 19
-        width: 28
-        height: 35
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e78dab44f2e98c0e0800000000000000
-      internalID: -2249374088017815426
+      spriteID: a13cc08d8592274d0800000000000000
+      internalID: -3138400528765238502
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hind_5
+      name: Hind_0_5
       rect:
         serializedVersion: 2
-        x: 339
-        y: 19
-        width: 30
-        height: 30
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eecf9876c1513c3e0800000000000000
-      internalID: -2034759394900968210
+      spriteID: 3827a27fa44f28180800000000000000
+      internalID: -9114454093032951165
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hind_6
+      name: Hind_0_6
       rect:
         serializedVersion: 2
-        x: 403
-        y: 18
-        width: 35
-        height: 28
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7c51eb68ea6f00130800000000000000
-      internalID: 3531093337303815623
+      spriteID: f8357d87eff90b010800000000000000
+      internalID: 1202637015805809551
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hind_7
+      name: Hind_0_7
       rect:
         serializedVersion: 2
-        x: 467
-        y: 15
-        width: 30
-        height: 30
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ea8169c61f0ef6010800000000000000
-      internalID: 1184412554535245998
+      spriteID: 5aa49f0d93675ab30800000000000000
+      internalID: 4297971410086218405
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Hind_0: 4017803233003801109
+      Hind_0_0: -1002633627663323682
+      Hind_0_1: 8238232237252056932
+      Hind_0_2: 2126525089834305720
+      Hind_0_3: 744929313546575355
+      Hind_0_4: -3138400528765238502
+      Hind_0_5: -9114454093032951165
+      Hind_0_6: 1202637015805809551
+      Hind_0_7: 4297971410086218405
       Hind_1: 5168263064909531894
       Hind_2: 9084790608602594209
       Hind_3: 6411969464873374103

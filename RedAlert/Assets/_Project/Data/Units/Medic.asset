@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Medic
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Field Medic
-  Sprite: {fileID: -989085045499774128, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  Sprite: {fileID: -5271989689527084962, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  DirectionSprites:
+  - {fileID: -5932324164819058386, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  - {fileID: -8025978212574521391, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  - {fileID: -1098701943266874176, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  - {fileID: 829322360387802326, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  - {fileID: -5271989689527084962, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  - {fileID: -2642327518284524438, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  - {fileID: -846544101908285146, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
+  - {fileID: -1815200494725376785, guid: 714f05111baf61f4dbe59918a07d2fa1, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 0

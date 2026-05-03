@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Submarine
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Submarine
-  Sprite: {fileID: -941222759849540844, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  Sprite: {fileID: -686948187104979724, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  DirectionSprites:
+  - {fileID: -417733456357519211, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  - {fileID: -48281157939247312, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  - {fileID: 4107876700634020850, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  - {fileID: 6085163257553871068, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  - {fileID: -686948187104979724, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  - {fileID: 2907466784513261947, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  - {fileID: 6626199778866425594, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
+  - {fileID: 6989684365286545375, guid: 6b441dac4e36dbf4b89b8a5b8739163c, type: 3}
   Icon: {fileID: 0}
   Category: 3
   Faction: 1

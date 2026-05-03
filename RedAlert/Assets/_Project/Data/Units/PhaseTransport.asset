@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: PhaseTransport
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Phase Transport
-  Sprite: {fileID: 2145509286013655505, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  Sprite: {fileID: 6672793799298793335, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  DirectionSprites:
+  - {fileID: 5480695018389267717, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  - {fileID: 4003423735752460521, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  - {fileID: 2752046323175215701, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  - {fileID: 7332015237964730799, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  - {fileID: 6672793799298793335, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  - {fileID: 4239312700916579692, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  - {fileID: 5863771592557750262, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
+  - {fileID: -707408438420878044, guid: 39bfc2be5a4fe5249b02a60bead4731c, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

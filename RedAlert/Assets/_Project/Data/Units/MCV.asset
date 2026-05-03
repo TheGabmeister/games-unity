@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: MCV
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: MCV
-  Sprite: {fileID: 9125750795881449693, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  Sprite: {fileID: -3303298008768986993, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  DirectionSprites:
+  - {fileID: 5402021333750330157, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  - {fileID: -6847220212067328513, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  - {fileID: 723771334471815848, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  - {fileID: -7501422401344436764, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  - {fileID: -3303298008768986993, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  - {fileID: -776687321476420784, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  - {fileID: -4862771995608280536, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
+  - {fileID: 2548106949449099664, guid: 35cc4a7b99cef7140945e5fa15fe1000, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

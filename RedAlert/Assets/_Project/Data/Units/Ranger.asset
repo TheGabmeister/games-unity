@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Ranger
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Ranger
-  Sprite: {fileID: -5081659279774951377, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  Sprite: {fileID: -780540378910925761, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  DirectionSprites:
+  - {fileID: -572102401972127875, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  - {fileID: 2224369579019051358, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  - {fileID: -7494162726475290175, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  - {fileID: 2286243810140466234, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  - {fileID: -780540378910925761, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  - {fileID: -3118346392273702082, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  - {fileID: 7362344838991446589, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
+  - {fileID: -7845737487879798555, guid: 669a52b54fc4df249872b7a6e5783d2c, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

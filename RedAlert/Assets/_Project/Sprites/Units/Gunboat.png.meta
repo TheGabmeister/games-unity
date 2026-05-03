@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 5052945129774188333
     second: Gunboat_7
+  - first:
+      213: -6312025833741611692
+    second: Gunboat_0_0
+  - first:
+      213: -7999970256340084803
+    second: Gunboat_0_1
+  - first:
+      213: 2659417264327182969
+    second: Gunboat_0_2
+  - first:
+      213: 7570467607132458407
+    second: Gunboat_0_3
+  - first:
+      213: -7782311821310493299
+    second: Gunboat_0_4
+  - first:
+      213: -2962644491092840276
+    second: Gunboat_0_5
+  - first:
+      213: 2089100784499294509
+    second: Gunboat_0_6
+  - first:
+      213: -4769139957263878432
+    second: Gunboat_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gunboat_0
+      name: Gunboat_0_0
       rect:
         serializedVersion: 2
-        x: 26
-        y: 21
-        width: 12
-        height: 25
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 25cde49ef92838770800000000000000
-      internalID: 8611870535788190802
+      spriteID: 45d0ebe52fd2768a0800000000000000
+      internalID: -6312025833741611692
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gunboat_1
+      name: Gunboat_0_1
       rect:
         serializedVersion: 2
-        x: 85
-        y: 21
-        width: 21
-        height: 21
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 33e7c0571c9e61850800000000000000
-      internalID: 6347517741927005747
+      spriteID: db7982100756af090800000000000000
+      internalID: -7999970256340084803
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gunboat_2
+      name: Gunboat_0_2
       rect:
         serializedVersion: 2
-        x: 149
-        y: 26
-        width: 25
-        height: 12
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1ecf699c6715d7030800000000000000
-      internalID: 3494038456539479265
+      spriteID: 97a43c569e528e420800000000000000
+      internalID: 2659417264327182969
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gunboat_3
+      name: Gunboat_0_3
       rect:
         serializedVersion: 2
-        x: 213
-        y: 22
-        width: 21
-        height: 21
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7ab9d324882013710800000000000000
-      internalID: 1671119720981306279
+      spriteID: 7ad4bbabd24bf0960800000000000000
+      internalID: 7570467607132458407
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gunboat_4
+      name: Gunboat_0_4
       rect:
         serializedVersion: 2
-        x: 282
-        y: 18
-        width: 12
-        height: 25
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fd1dcc0b6e15d64f0800000000000000
-      internalID: -833920304743132705
+      spriteID: d8df67781acaff390800000000000000
+      internalID: -7782311821310493299
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gunboat_5
+      name: Gunboat_0_5
       rect:
         serializedVersion: 2
-        x: 342
-        y: 22
-        width: 21
-        height: 21
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e994ae2d6fb97f790800000000000000
-      internalID: -7496351570332071522
+      spriteID: ca0b4a8388292e6d0800000000000000
+      internalID: -2962644491092840276
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gunboat_6
+      name: Gunboat_0_6
       rect:
         serializedVersion: 2
-        x: 402
-        y: 26
-        width: 25
-        height: 12
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b23c744bb6d626bd0800000000000000
-      internalID: -2638426122332159189
+      spriteID: d210210581afdfc10800000000000000
+      internalID: 2089100784499294509
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gunboat_7
+      name: Gunboat_0_7
       rect:
         serializedVersion: 2
-        x: 470
-        y: 21
-        width: 21
-        height: 21
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d270bb9e2daaf1640800000000000000
-      internalID: 5052945129774188333
+      spriteID: 0e63a231a7c90ddb0800000000000000
+      internalID: -4769139957263878432
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Gunboat_0: 8611870535788190802
+      Gunboat_0_0: -6312025833741611692
+      Gunboat_0_1: -7999970256340084803
+      Gunboat_0_2: 2659417264327182969
+      Gunboat_0_3: 7570467607132458407
+      Gunboat_0_4: -7782311821310493299
+      Gunboat_0_5: -2962644491092840276
+      Gunboat_0_6: 2089100784499294509
+      Gunboat_0_7: -4769139957263878432
       Gunboat_1: 6347517741927005747
       Gunboat_2: 3494038456539479265
       Gunboat_3: 1671119720981306279

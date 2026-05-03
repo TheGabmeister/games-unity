@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: RocketSoldier
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Rocket Soldier
-  Sprite: {fileID: -6369336340890218860, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  Sprite: {fileID: -4692380266086258040, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  DirectionSprites:
+  - {fileID: 578403960594714172, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  - {fileID: -3020667391970331397, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  - {fileID: -9075776822244398913, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  - {fileID: 7830749818662573224, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  - {fileID: -4692380266086258040, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  - {fileID: 2267558849052982427, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  - {fileID: 6352973616333715026, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
+  - {fileID: -3156834359074075261, guid: 166d355ea5dbb4e448b71d630afe6a41, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 0

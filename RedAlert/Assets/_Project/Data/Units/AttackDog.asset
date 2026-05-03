@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: AttackDog
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Attack Dog
-  Sprite: {fileID: 1911934686720803253, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  Sprite: {fileID: 5162285392431836721, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  DirectionSprites:
+  - {fileID: 8172383572390477479, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  - {fileID: 59682504396409586, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  - {fileID: -7379856913166550186, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  - {fileID: -8207365806494715993, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  - {fileID: 5162285392431836721, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  - {fileID: -4230374941259893443, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  - {fileID: -9119647772559124727, guid: f2807712f2c87784b88afa48ca124125, type: 3}
+  - {fileID: -1105735158596135912, guid: f2807712f2c87784b88afa48ca124125, type: 3}
   Icon: {fileID: 0}
   Category: 0
   Faction: 1

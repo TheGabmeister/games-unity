@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: APC
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: APC
-  Sprite: {fileID: -2813937541887781192, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  Sprite: {fileID: 7180825600267966860, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  DirectionSprites:
+  - {fileID: -3601488935126314226, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  - {fileID: -3211333581079792973, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  - {fileID: -1849577363066672221, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  - {fileID: -777747984467204279, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  - {fileID: 7180825600267966860, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  - {fileID: 3881208867062751924, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  - {fileID: 9106808320176185997, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
+  - {fileID: 1708653793891367443, guid: 40601d28829d4cb4da0c368f8cafa739, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: MineLayer
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Mine Layer
-  Sprite: {fileID: 4050474092642680865, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  Sprite: {fileID: 1450068041046766312, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  DirectionSprites:
+  - {fileID: -4067479278004967749, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  - {fileID: -2815410703574851994, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  - {fileID: -943609421332753575, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  - {fileID: -3121326070093341335, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  - {fileID: 1450068041046766312, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  - {fileID: -5953240231959053969, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  - {fileID: -3718107835303998315, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  - {fileID: -773385617063393868, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

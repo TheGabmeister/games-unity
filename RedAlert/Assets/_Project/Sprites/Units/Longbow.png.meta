@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 1428978074699651164
     second: Longbow_7
+  - first:
+      213: -7228724299640437114
+    second: Longbow_0_0
+  - first:
+      213: -8900674465379130095
+    second: Longbow_0_1
+  - first:
+      213: 5567870840459127766
+    second: Longbow_0_2
+  - first:
+      213: 6818392769093599228
+    second: Longbow_0_3
+  - first:
+      213: 2537503386057522877
+    second: Longbow_0_4
+  - first:
+      213: 134285521883979423
+    second: Longbow_0_5
+  - first:
+      213: -231800635688764090
+    second: Longbow_0_6
+  - first:
+      213: 8307477102346769239
+    second: Longbow_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Longbow_0
+      name: Longbow_0_0
       rect:
         serializedVersion: 2
-        x: 17
-        y: 11
-        width: 30
-        height: 34
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5ee2f64b40ae39260800000000000000
-      internalID: 7103278343221358309
+      spriteID: 68682b48c896eab90800000000000000
+      internalID: -7228724299640437114
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Longbow_1
+      name: Longbow_0_1
       rect:
         serializedVersion: 2
-        x: 79
-        y: 15
-        width: 30
-        height: 30
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b078acea3e10e8c80800000000000000
-      internalID: -8318709384305015029
+      spriteID: 115efa54bb37a7480800000000000000
+      internalID: -8900674465379130095
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Longbow_2
+      name: Longbow_0_2
       rect:
         serializedVersion: 2
-        x: 139
-        y: 17
-        width: 34
-        height: 30
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 750c271e947a59980800000000000000
-      internalID: -8532729983226691497
+      spriteID: 6db62d0970d054d40800000000000000
+      internalID: 5567870840459127766
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Longbow_3
+      name: Longbow_0_3
       rect:
         serializedVersion: 2
-        x: 207
-        y: 19
-        width: 30
-        height: 30
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5095e535c7e1aa720800000000000000
-      internalID: 2858130432843471109
+      spriteID: cff7aec191ccf9e50800000000000000
+      internalID: 6818392769093599228
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Longbow_4
+      name: Longbow_0_4
       rect:
         serializedVersion: 2
-        x: 273
-        y: 19
-        width: 30
-        height: 34
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 44abeb8be4e17af00800000000000000
-      internalID: 1127903555135388228
+      spriteID: dbe3f46a2e5073320800000000000000
+      internalID: 2537503386057522877
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Longbow_5
+      name: Longbow_0_5
       rect:
         serializedVersion: 2
-        x: 339
-        y: 19
-        width: 30
-        height: 30
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 64a289ae14de43fd0800000000000000
-      internalID: -2363003037098169786
+      spriteID: f9e5f5e78f31dd100800000000000000
+      internalID: 134285521883979423
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Longbow_6
+      name: Longbow_0_6
       rect:
         serializedVersion: 2
-        x: 403
-        y: 17
-        width: 34
-        height: 30
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b4d6c557cc5ea2270800000000000000
-      internalID: 8226640335650712907
+      spriteID: 64dbf0bcc8a78ccf0800000000000000
+      internalID: -231800635688764090
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Longbow_7
+      name: Longbow_0_7
       rect:
         serializedVersion: 2
-        x: 467
-        y: 15
-        width: 30
-        height: 30
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c585b46ecffb4d310800000000000000
-      internalID: 1428978074699651164
+      spriteID: 7531211e8661a4370800000000000000
+      internalID: 8307477102346769239
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Longbow_0: 7103278343221358309
+      Longbow_0_0: -7228724299640437114
+      Longbow_0_1: -8900674465379130095
+      Longbow_0_2: 5567870840459127766
+      Longbow_0_3: 6818392769093599228
+      Longbow_0_4: 2537503386057522877
+      Longbow_0_5: 134285521883979423
+      Longbow_0_6: -231800635688764090
+      Longbow_0_7: 8307477102346769239
       Longbow_1: -8318709384305015029
       Longbow_2: -8532729983226691497
       Longbow_3: 2858130432843471109

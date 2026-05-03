@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Artillery
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Artillery
-  Sprite: {fileID: -4047491817323079948, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  Sprite: {fileID: 4606227282620880461, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  DirectionSprites:
+  - {fileID: 8780434616397023962, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  - {fileID: 8765899667232849590, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  - {fileID: -3586423668106858669, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  - {fileID: -3105872996408446736, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  - {fileID: 4606227282620880461, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  - {fileID: -2879933440505712249, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  - {fileID: -2513118873596009899, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
+  - {fileID: 2305207774663861996, guid: 87ca62ca5420cc340a4109d4882b2cf7, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 1

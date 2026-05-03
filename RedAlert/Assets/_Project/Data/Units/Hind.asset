@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Hind
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Hind
-  Sprite: {fileID: 4017803233003801109, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  Sprite: {fileID: -3138400528765238502, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  DirectionSprites:
+  - {fileID: -1002633627663323682, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  - {fileID: 8238232237252056932, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  - {fileID: 2126525089834305720, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  - {fileID: 744929313546575355, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  - {fileID: -3138400528765238502, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  - {fileID: -9114454093032951165, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  - {fileID: 1202637015805809551, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
+  - {fileID: 4297971410086218405, guid: edbc283aad3e4eb48ad74d5c33f7a4cf, type: 3}
   Icon: {fileID: 0}
   Category: 4
   Faction: 1

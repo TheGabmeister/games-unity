@@ -5,6 +5,102 @@ TextureImporter:
   - first:
       213: -6369336340890218860
     second: RocketSoldier_0
+  - first:
+      213: 578403960594714172
+    second: RocketSoldier_0_0
+  - first:
+      213: -3020667391970331397
+    second: RocketSoldier_0_1
+  - first:
+      213: -9075776822244398913
+    second: RocketSoldier_0_2
+  - first:
+      213: 7830749818662573224
+    second: RocketSoldier_0_3
+  - first:
+      213: -4692380266086258040
+    second: RocketSoldier_0_4
+  - first:
+      213: 2267558849052982427
+    second: RocketSoldier_0_5
+  - first:
+      213: 6352973616333715026
+    second: RocketSoldier_0_6
+  - first:
+      213: -3156834359074075261
+    second: RocketSoldier_0_7
+  - first:
+      213: -997996379524685616
+    second: RocketSoldier_1_0
+  - first:
+      213: -3496922730842071956
+    second: RocketSoldier_1_1
+  - first:
+      213: -5249960201467646599
+    second: RocketSoldier_1_2
+  - first:
+      213: 5499399277930540062
+    second: RocketSoldier_1_3
+  - first:
+      213: -4013664733118707606
+    second: RocketSoldier_1_4
+  - first:
+      213: 3119123384375707431
+    second: RocketSoldier_1_5
+  - first:
+      213: 2141207604976373234
+    second: RocketSoldier_1_6
+  - first:
+      213: 1689629963334283578
+    second: RocketSoldier_1_7
+  - first:
+      213: 6826581652226619971
+    second: RocketSoldier_2_0
+  - first:
+      213: -6802821644684767965
+    second: RocketSoldier_2_1
+  - first:
+      213: 8879322291208630854
+    second: RocketSoldier_2_2
+  - first:
+      213: 3106074731084729107
+    second: RocketSoldier_2_3
+  - first:
+      213: 6748766990172357592
+    second: RocketSoldier_2_4
+  - first:
+      213: 2430653498228057701
+    second: RocketSoldier_2_5
+  - first:
+      213: -5156392666560383504
+    second: RocketSoldier_2_6
+  - first:
+      213: -4859020731288164772
+    second: RocketSoldier_2_7
+  - first:
+      213: -5089138283538078859
+    second: RocketSoldier_3_0
+  - first:
+      213: 5840090612377327722
+    second: RocketSoldier_3_1
+  - first:
+      213: -4387667966184539613
+    second: RocketSoldier_3_2
+  - first:
+      213: -3127736032159953322
+    second: RocketSoldier_3_3
+  - first:
+      213: -6351766979750696680
+    second: RocketSoldier_3_4
+  - first:
+      213: 3031501921756232868
+    second: RocketSoldier_3_5
+  - first:
+      213: -1922593373965251599
+    second: RocketSoldier_3_6
+  - first:
+      213: 4012803790131558537
+    second: RocketSoldier_3_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +209,705 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RocketSoldier_0
+      name: RocketSoldier_0_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 6
-        width: 39
-        height: 58
+        x: 0
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 49e804a18529b97a0800000000000000
-      internalID: -6369336340890218860
+      spriteID: c3e4def6657e60800800000000000000
+      internalID: 578403960594714172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_0_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf4b00dd20f6416d0800000000000000
+      internalID: -3020667391970331397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_0_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb82661d01d5c0280800000000000000
+      internalID: -9075776822244398913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_0_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a4565298796cac60800000000000000
+      internalID: 7830749818662573224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_0_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88a20e0620151eeb0800000000000000
+      internalID: -4692380266086258040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_0_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9cb81952ccf77f10800000000000000
+      internalID: 2267558849052982427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_0_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 256fff438db4a2850800000000000000
+      internalID: 6352973616333715026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_0_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38d44a440eba034d0800000000000000
+      internalID: -3156834359074075261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d02e4794976622f0800000000000000
+      internalID: -997996379524685616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6c5b25cd4f687fc0800000000000000
+      internalID: -3496922730842071956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97d259223056427b0800000000000000
+      internalID: -5249960201467646599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ce617918ac15c40800000000000000
+      internalID: 5499399277930540062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6842f6c0399c48c0800000000000000
+      internalID: -4013664733118707606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7270458313a594b20800000000000000
+      internalID: 3119123384375707431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fd4bfcd8f817bd10800000000000000
+      internalID: 2141207604976373234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_1_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a317566ef75c27710800000000000000
+      internalID: 1689629963334283578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34aba2b08d3ecbe50800000000000000
+      internalID: 6826581652226619971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32dc93ec1c58791a0800000000000000
+      internalID: -6802821644684767965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 642b2b54490b93b70800000000000000
+      internalID: 8879322291208630854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31b4f10e28efa1b20800000000000000
+      internalID: 3106074731084729107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d30b1132df68ad50800000000000000
+      internalID: 6748766990172357592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 566a1fd7a7a6bb120800000000000000
+      internalID: 2430653498228057701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f53d338030d078b0800000000000000
+      internalID: -5156392666560383504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_2_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c566f4b936a419cb0800000000000000
+      internalID: -4859020731288164772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5732fdcc1bfbf59b0800000000000000
+      internalID: -5089138283538078859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6818d6487b2c0150800000000000000
+      internalID: 5840090612377327722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32ab53b4b3fdb13c0800000000000000
+      internalID: -4387667966184539613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65e8ae376ac0894d0800000000000000
+      internalID: -3127736032159953322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81967e3c59df9d7a0800000000000000
+      internalID: -6351766979750696680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4acb13eafee021a20800000000000000
+      internalID: 3031501921756232868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fb084143839155e0800000000000000
+      internalID: -1922593373965251599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RocketSoldier_3_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 988f12059c750b730800000000000000
+      internalID: 4012803790131558537
       vertices: []
       indices: 
       edges: []
@@ -149,6 +927,38 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       RocketSoldier_0: -6369336340890218860
+      RocketSoldier_0_0: 578403960594714172
+      RocketSoldier_0_1: -3020667391970331397
+      RocketSoldier_0_2: -9075776822244398913
+      RocketSoldier_0_3: 7830749818662573224
+      RocketSoldier_0_4: -4692380266086258040
+      RocketSoldier_0_5: 2267558849052982427
+      RocketSoldier_0_6: 6352973616333715026
+      RocketSoldier_0_7: -3156834359074075261
+      RocketSoldier_1_0: -997996379524685616
+      RocketSoldier_1_1: -3496922730842071956
+      RocketSoldier_1_2: -5249960201467646599
+      RocketSoldier_1_3: 5499399277930540062
+      RocketSoldier_1_4: -4013664733118707606
+      RocketSoldier_1_5: 3119123384375707431
+      RocketSoldier_1_6: 2141207604976373234
+      RocketSoldier_1_7: 1689629963334283578
+      RocketSoldier_2_0: 6826581652226619971
+      RocketSoldier_2_1: -6802821644684767965
+      RocketSoldier_2_2: 8879322291208630854
+      RocketSoldier_2_3: 3106074731084729107
+      RocketSoldier_2_4: 6748766990172357592
+      RocketSoldier_2_5: 2430653498228057701
+      RocketSoldier_2_6: -5156392666560383504
+      RocketSoldier_2_7: -4859020731288164772
+      RocketSoldier_3_0: -5089138283538078859
+      RocketSoldier_3_1: 5840090612377327722
+      RocketSoldier_3_2: -4387667966184539613
+      RocketSoldier_3_3: -3127736032159953322
+      RocketSoldier_3_4: -6351766979750696680
+      RocketSoldier_3_5: 3031501921756232868
+      RocketSoldier_3_6: -1922593373965251599
+      RocketSoldier_3_7: 4012803790131558537
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: TeslaTank
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Tesla Tank
-  Sprite: {fileID: 845889117919332859, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  Sprite: {fileID: 7989367672835662809, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  DirectionSprites:
+  - {fileID: 4447633706353656947, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  - {fileID: -2343320243681260832, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  - {fileID: -3313693114923423755, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  - {fileID: -3453480389015208798, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  - {fileID: 7989367672835662809, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  - {fileID: 522879745701300568, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  - {fileID: 1312925108146040442, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
+  - {fileID: -7177848991088259176, guid: e4664540ae1481c408a74ba64de24f65, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 1

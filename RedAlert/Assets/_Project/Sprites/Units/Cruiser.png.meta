@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: -362970173610107816
     second: Cruiser_7
+  - first:
+      213: -264917037225778722
+    second: Cruiser_0_0
+  - first:
+      213: -7862522000349163551
+    second: Cruiser_0_1
+  - first:
+      213: -7431765834412440583
+    second: Cruiser_0_2
+  - first:
+      213: -4629296741872753231
+    second: Cruiser_0_3
+  - first:
+      213: -2477411720916178552
+    second: Cruiser_0_4
+  - first:
+      213: -8570411653388465336
+    second: Cruiser_0_5
+  - first:
+      213: 7262477410088045590
+    second: Cruiser_0_6
+  - first:
+      213: 7616132921087044391
+    second: Cruiser_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cruiser_0
+      name: Cruiser_0_0
       rect:
         serializedVersion: 2
-        x: 24
-        y: 16
-        width: 16
-        height: 35
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 998731f52aa534720800000000000000
-      internalID: 2829204644345116825
+      spriteID: ed16535bb53d25cf0800000000000000
+      internalID: -264917037225778722
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cruiser_1
+      name: Cruiser_0_1
       rect:
         serializedVersion: 2
-        x: 80
-        y: 16
-        width: 31
-        height: 31
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 566d504496a1e1590800000000000000
-      internalID: -7701689273341847963
+      spriteID: 1ef8e7ae5e5b2e290800000000000000
+      internalID: -7862522000349163551
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cruiser_2
+      name: Cruiser_0_2
       rect:
         serializedVersion: 2
-        x: 144
-        y: 24
-        width: 35
-        height: 16
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 91c69f09c285f0ae0800000000000000
-      internalID: -1580947995749684199
+      spriteID: 9f346f949501dd890800000000000000
+      internalID: -7431765834412440583
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cruiser_3
+      name: Cruiser_0_3
       rect:
         serializedVersion: 2
-        x: 208
-        y: 17
-        width: 31
-        height: 31
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9ff6da1099ab8f7c0800000000000000
-      internalID: -4037271899616743431
+      spriteID: 1b52dcce32f61cfb0800000000000000
+      internalID: -4629296741872753231
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cruiser_4
+      name: Cruiser_0_4
       rect:
         serializedVersion: 2
-        x: 280
-        y: 13
-        width: 16
-        height: 35
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7a80dae817763840800000000000000
-      internalID: 5203477368375642750
+      spriteID: 889e66c6a277e9dd0800000000000000
+      internalID: -2477411720916178552
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cruiser_5
+      name: Cruiser_0_5
       rect:
         serializedVersion: 2
-        x: 337
-        y: 17
-        width: 31
-        height: 31
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d1ffc92f15a4f0530800000000000000
-      internalID: 3823356324484022045
+      spriteID: 84b89ec5208cf0980800000000000000
+      internalID: -8570411653388465336
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cruiser_6
+      name: Cruiser_0_6
       rect:
         serializedVersion: 2
-        x: 397
-        y: 24
-        width: 35
-        height: 16
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 872846cc22422e500800000000000000
-      internalID: 423941046802875000
+      spriteID: 61cc899e9b089c460800000000000000
+      internalID: 7262477410088045590
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cruiser_7
+      name: Cruiser_0_7
       rect:
         serializedVersion: 2
-        x: 465
-        y: 16
-        width: 31
-        height: 31
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 85c58e9dc8876faf0800000000000000
-      internalID: -362970173610107816
+      spriteID: 72b2d8b2a80f1b960800000000000000
+      internalID: 7616132921087044391
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Cruiser_0: 2829204644345116825
+      Cruiser_0_0: -264917037225778722
+      Cruiser_0_1: -7862522000349163551
+      Cruiser_0_2: -7431765834412440583
+      Cruiser_0_3: -4629296741872753231
+      Cruiser_0_4: -2477411720916178552
+      Cruiser_0_5: -8570411653388465336
+      Cruiser_0_6: 7262477410088045590
+      Cruiser_0_7: 7616132921087044391
       Cruiser_1: -7701689273341847963
       Cruiser_2: -1580947995749684199
       Cruiser_3: -4037271899616743431

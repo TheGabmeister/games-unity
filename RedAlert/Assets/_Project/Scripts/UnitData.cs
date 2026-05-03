@@ -5,6 +5,7 @@ public class UnitData : ScriptableObject
 {
     public string DisplayName;
     public Sprite Sprite;
+    public Sprite[] DirectionSprites;
     public Sprite Icon;
     public UnitCategory Category = UnitCategory.Vehicle;
     public Faction Faction = Faction.Allied;

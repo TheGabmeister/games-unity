@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: RadarJammer
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Radar Jammer
-  Sprite: {fileID: 534598564841605445, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  Sprite: {fileID: 7844248201251392051, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  DirectionSprites:
+  - {fileID: 246765435938192512, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  - {fileID: -7844360399815936474, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  - {fileID: 1210276179404675937, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  - {fileID: 8603952362667731120, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  - {fileID: 7844248201251392051, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  - {fileID: -5625120072659253768, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  - {fileID: -634262404026394181, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
+  - {fileID: -3238893772371586809, guid: 20171203306a7fc449fbb20a131ed812, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

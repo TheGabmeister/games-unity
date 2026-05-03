@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: -7400521528730882073
     second: ChronoTank_7
+  - first:
+      213: -1275634496079532708
+    second: ChronoTank_0_0
+  - first:
+      213: -1704872355842155531
+    second: ChronoTank_0_1
+  - first:
+      213: -6944839593235116718
+    second: ChronoTank_0_2
+  - first:
+      213: -2244327747314360729
+    second: ChronoTank_0_3
+  - first:
+      213: 8972610915448581024
+    second: ChronoTank_0_4
+  - first:
+      213: 4428641366436125055
+    second: ChronoTank_0_5
+  - first:
+      213: -8171960440442292776
+    second: ChronoTank_0_6
+  - first:
+      213: -1869503311208152371
+    second: ChronoTank_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChronoTank_0
+      name: ChronoTank_0_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 12
-        width: 42
-        height: 38
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bf0829185c45347e0800000000000000
-      internalID: -1782487820249431813
+      spriteID: c5de1f53f290c4ee0800000000000000
+      internalID: -1275634496079532708
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ChronoTank_1
+      name: ChronoTank_0_1
       rect:
         serializedVersion: 2
-        x: 72
-        y: 8
-        width: 46
-        height: 46
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d355676e76bbeafa0800000000000000
-      internalID: -5787482416201968323
+      spriteID: 5fb15aa00a31758e0800000000000000
+      internalID: -1704872355842155531
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ChronoTank_2
+      name: ChronoTank_0_2
       rect:
         serializedVersion: 2
-        x: 140
-        y: 11
-        width: 38
-        height: 42
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4e9a5c6220f2e6570800000000000000
-      internalID: 8461752436162669028
+      spriteID: 25d072f6f29fe9f90800000000000000
+      internalID: -6944839593235116718
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ChronoTank_3
+      name: ChronoTank_0_3
       rect:
         serializedVersion: 2
-        x: 200
-        y: 10
-        width: 46
-        height: 46
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 89ea4d97482453ad0800000000000000
-      internalID: -2723197262928499048
+      spriteID: 76e56c50ecb8ad0e0800000000000000
+      internalID: -2244327747314360729
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ChronoTank_4
+      name: ChronoTank_0_4
       rect:
         serializedVersion: 2
-        x: 267
-        y: 14
-        width: 42
-        height: 38
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6441da6f275772e80800000000000000
-      internalID: -8203459059606809530
+      spriteID: 0abea13b61e158c70800000000000000
+      internalID: 8972610915448581024
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ChronoTank_5
+      name: ChronoTank_0_5
       rect:
         serializedVersion: 2
-        x: 330
-        y: 10
-        width: 46
-        height: 46
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6054b4f8a91aed5c0800000000000000
-      internalID: -4188732918206872314
+      spriteID: f79960cdbd1b57d30800000000000000
+      internalID: 4428641366436125055
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ChronoTank_6
+      name: ChronoTank_0_6
       rect:
         serializedVersion: 2
-        x: 398
-        y: 11
-        width: 38
-        height: 42
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1fc7d7ea2c0979230800000000000000
-      internalID: 3645541589205220593
+      spriteID: 8d574ecb64d579e80800000000000000
+      internalID: -8171960440442292776
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ChronoTank_7
+      name: ChronoTank_0_7
       rect:
         serializedVersion: 2
-        x: 458
-        y: 8
-        width: 46
-        height: 46
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7ef6d5711e01c4990800000000000000
-      internalID: -7400521528730882073
+      spriteID: dc2850db4a03e06e0800000000000000
+      internalID: -1869503311208152371
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       ChronoTank_0: -1782487820249431813
+      ChronoTank_0_0: -1275634496079532708
+      ChronoTank_0_1: -1704872355842155531
+      ChronoTank_0_2: -6944839593235116718
+      ChronoTank_0_3: -2244327747314360729
+      ChronoTank_0_4: 8972610915448581024
+      ChronoTank_0_5: 4428641366436125055
+      ChronoTank_0_6: -8171960440442292776
+      ChronoTank_0_7: -1869503311208152371
       ChronoTank_1: -5787482416201968323
       ChronoTank_2: 8461752436162669028
       ChronoTank_3: -2723197262928499048

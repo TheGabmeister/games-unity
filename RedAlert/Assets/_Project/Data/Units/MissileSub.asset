@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: MissileSub
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Missile Sub
-  Sprite: {fileID: 8162257148779683440, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  Sprite: {fileID: 2626486914324050927, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  DirectionSprites:
+  - {fileID: -9220043216535806612, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  - {fileID: -384355590064715993, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  - {fileID: 5608692643768785382, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  - {fileID: -3771253136241488455, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  - {fileID: 2626486914324050927, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  - {fileID: 3975393978513298806, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  - {fileID: -4298154863790604176, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  - {fileID: 9164657754930491186, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
   Icon: {fileID: 0}
   Category: 3
   Faction: 1

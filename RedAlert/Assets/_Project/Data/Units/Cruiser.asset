@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: Cruiser
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Cruiser
-  Sprite: {fileID: 2829204644345116825, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  Sprite: {fileID: -2477411720916178552, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  DirectionSprites:
+  - {fileID: -264917037225778722, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  - {fileID: -7862522000349163551, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  - {fileID: -7431765834412440583, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  - {fileID: -4629296741872753231, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  - {fileID: -2477411720916178552, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  - {fileID: -8570411653388465336, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  - {fileID: 7262477410088045590, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
+  - {fileID: 7616132921087044391, guid: a214b3bc7a4f4f54683d9993061f2041, type: 3}
   Icon: {fileID: 0}
   Category: 3
   Faction: 0

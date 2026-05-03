@@ -5,6 +5,30 @@ TextureImporter:
   - first:
       213: -8506272095534995724
     second: LightTank_0
+  - first:
+      213: -1147911015596026689
+    second: LightTank_0_0
+  - first:
+      213: -2075238618056346850
+    second: LightTank_0_1
+  - first:
+      213: 2646222973908190278
+    second: LightTank_0_2
+  - first:
+      213: 861578944154807957
+    second: LightTank_0_3
+  - first:
+      213: 4730467377847855321
+    second: LightTank_0_4
+  - first:
+      213: 132024436135315484
+    second: LightTank_0_5
+  - first:
+      213: -5418194981836526521
+    second: LightTank_0_6
+  - first:
+      213: -6973312257868291326
+    second: LightTank_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +137,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: LightTank_0
+      name: LightTank_0_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 14
-        width: 48
-        height: 42
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4f6a1d6e896a3f980800000000000000
-      internalID: -8506272095534995724
+      spriteID: fb414a1630dc110f0800000000000000
+      internalID: -1147911015596026689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LightTank_0_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e133492d8754333e0800000000000000
+      internalID: -2075238618056346850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LightTank_0_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 644864446c549b420800000000000000
+      internalID: 2646222973908190278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LightTank_0_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59ead402c71f4fb00800000000000000
+      internalID: 861578944154807957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LightTank_0_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d8e13e540ff5a140800000000000000
+      internalID: 4730467377847855321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LightTank_0_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c184481768b05d100800000000000000
+      internalID: 132024436135315484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LightTank_0_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74c64dfee54bec4b0800000000000000
+      internalID: -5418194981836526521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LightTank_0_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20322e99271d93f90800000000000000
+      internalID: -6973312257868291326
       vertices: []
       indices: 
       edges: []
@@ -149,6 +327,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       LightTank_0: -8506272095534995724
+      LightTank_0_0: -1147911015596026689
+      LightTank_0_1: -2075238618056346850
+      LightTank_0_2: 2646222973908190278
+      LightTank_0_3: 861578944154807957
+      LightTank_0_4: 4730467377847855321
+      LightTank_0_5: 132024436135315484
+      LightTank_0_6: -5418194981836526521
+      LightTank_0_7: -6973312257868291326
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

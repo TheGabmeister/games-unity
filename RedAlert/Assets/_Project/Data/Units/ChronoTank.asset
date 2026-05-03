@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: ChronoTank
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Chrono Tank
-  Sprite: {fileID: -1782487820249431813, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  Sprite: {fileID: 8972610915448581024, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  DirectionSprites:
+  - {fileID: -1275634496079532708, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  - {fileID: -1704872355842155531, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  - {fileID: -6944839593235116718, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  - {fileID: -2244327747314360729, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  - {fileID: 8972610915448581024, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  - {fileID: 4428641366436125055, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  - {fileID: -8171960440442292776, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
+  - {fileID: -1869503311208152371, guid: 7a337778c82e5344c817973d16fa91c0, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

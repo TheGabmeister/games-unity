@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: V2Launcher
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: V2 Launcher
-  Sprite: {fileID: 1369475705185684124, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  Sprite: {fileID: -5441608374922628479, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  DirectionSprites:
+  - {fileID: -4767713552130102564, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  - {fileID: -2863373722285266632, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  - {fileID: 8104468860904225858, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  - {fileID: -2431734230951608008, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  - {fileID: -5441608374922628479, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  - {fileID: -241955686061712342, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  - {fileID: 1625607945000469773, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
+  - {fileID: 6863178686715820398, guid: 07511dbdb64966c4e94bde70a6a493a0, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 1

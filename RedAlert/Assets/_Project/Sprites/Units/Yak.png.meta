@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: -5618908060032709954
     second: Yak_7
+  - first:
+      213: -703558074270844006
+    second: Yak_0_0
+  - first:
+      213: -1683536465009895409
+    second: Yak_0_1
+  - first:
+      213: 54330718595104505
+    second: Yak_0_2
+  - first:
+      213: 2298989799140719676
+    second: Yak_0_3
+  - first:
+      213: 3907375131075799193
+    second: Yak_0_4
+  - first:
+      213: 35596181592327154
+    second: Yak_0_5
+  - first:
+      213: -160703918756931307
+    second: Yak_0_6
+  - first:
+      213: -5103333571801095043
+    second: Yak_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Yak_0
+      name: Yak_0_0
       rect:
         serializedVersion: 2
-        x: 18
-        y: 20
-        width: 28
-        height: 24
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9767ab1f32ec79b20800000000000000
-      internalID: 3141205918888916601
+      spriteID: a9b7a38b8a57c36f0800000000000000
+      internalID: -703558074270844006
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Yak_1
+      name: Yak_0_1
       rect:
         serializedVersion: 2
-        x: 83
-        y: 19
-        width: 23
-        height: 23
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fdb875701572f99d0800000000000000
-      internalID: -2765448417213183009
+      spriteID: f081bac3180e2a8e0800000000000000
+      internalID: -1683536465009895409
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Yak_2
+      name: Yak_0_2
       rect:
         serializedVersion: 2
-        x: 148
-        y: 18
-        width: 24
-        height: 28
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5a78b1a780e428a10800000000000000
-      internalID: 1910174990273841061
+      spriteID: 9feb04e208501c000800000000000000
+      internalID: 54330718595104505
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Yak_3
+      name: Yak_0_3
       rect:
         serializedVersion: 2
-        x: 211
-        y: 22
-        width: 23
-        height: 23
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1f847f572f0138cb0800000000000000
-      internalID: -4863024539082733327
+      spriteID: c3c7700ba07a7ef10800000000000000
+      internalID: 2298989799140719676
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Yak_4
+      name: Yak_0_4
       rect:
         serializedVersion: 2
-        x: 274
-        y: 20
-        width: 28
-        height: 24
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 250ce069998552c10800000000000000
-      internalID: 2028124623871066194
+      spriteID: 998e7f3caf8c93630800000000000000
+      internalID: 3907375131075799193
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Yak_5
+      name: Yak_0_5
       rect:
         serializedVersion: 2
-        x: 342
-        y: 22
-        width: 23
-        height: 23
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bbbc06de5451985e0800000000000000
-      internalID: -1906969577135223877
+      spriteID: 2f3cb2fd9867e7000800000000000000
+      internalID: 35596181592327154
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Yak_6
+      name: Yak_0_6
       rect:
         serializedVersion: 2
-        x: 404
-        y: 18
-        width: 24
-        height: 28
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5c667fa51cc164b70800000000000000
-      internalID: 8882818931815311045
+      spriteID: 519da7823a015cdf0800000000000000
+      internalID: -160703918756931307
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Yak_7
+      name: Yak_0_7
       rect:
         serializedVersion: 2
-        x: 470
-        y: 19
-        width: 23
-        height: 23
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ebacb20c3e0a502b0800000000000000
-      internalID: -5618908060032709954
+      spriteID: d746872b7215d29b0800000000000000
+      internalID: -5103333571801095043
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Yak_0: 3141205918888916601
+      Yak_0_0: -703558074270844006
+      Yak_0_1: -1683536465009895409
+      Yak_0_2: 54330718595104505
+      Yak_0_3: 2298989799140719676
+      Yak_0_4: 3907375131075799193
+      Yak_0_5: 35596181592327154
+      Yak_0_6: -160703918756931307
+      Yak_0_7: -5103333571801095043
       Yak_1: -2765448417213183009
       Yak_2: 1910174990273841061
       Yak_3: -4863024539082733327

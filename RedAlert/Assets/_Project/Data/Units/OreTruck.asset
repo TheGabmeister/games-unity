@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: OreTruck
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Ore Truck
-  Sprite: {fileID: 21300000, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  Sprite: {fileID: -3939500914827958326, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  DirectionSprites:
+  - {fileID: 6801965921328507682, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  - {fileID: -6535133623584943449, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  - {fileID: -4353409742757794762, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  - {fileID: 5581950377123690096, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  - {fileID: -3939500914827958326, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  - {fileID: 284705016653844201, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  - {fileID: 4221569510488792181, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
+  - {fileID: 6795282019503351213, guid: 6fd530065b408434f86e4686f98dfafb, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 0

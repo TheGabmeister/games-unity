@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: HeavyTank
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   DisplayName: Heavy Tank
-  Sprite: {fileID: 3345776018585520359, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  Sprite: {fileID: 1955673228288678567, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  DirectionSprites:
+  - {fileID: 8558094554257961305, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  - {fileID: -5045832162353334052, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  - {fileID: 6725831211396097951, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  - {fileID: 1504858342040662287, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  - {fileID: 1955673228288678567, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  - {fileID: 4606913607284854349, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  - {fileID: -7531643995397548668, guid: fa37679c557950f4db28084fe89862cb, type: 3}
+  - {fileID: 664948904481146870, guid: fa37679c557950f4db28084fe89862cb, type: 3}
   Icon: {fileID: 0}
   Category: 1
   Faction: 1

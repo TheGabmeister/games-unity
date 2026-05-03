@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: 9210431456895021568
     second: V2Launcher_7
+  - first:
+      213: -4767713552130102564
+    second: V2Launcher_0_0
+  - first:
+      213: -2863373722285266632
+    second: V2Launcher_0_1
+  - first:
+      213: 8104468860904225858
+    second: V2Launcher_0_2
+  - first:
+      213: -2431734230951608008
+    second: V2Launcher_0_3
+  - first:
+      213: -5441608374922628479
+    second: V2Launcher_0_4
+  - first:
+      213: -241955686061712342
+    second: V2Launcher_0_5
+  - first:
+      213: 1625607945000469773
+    second: V2Launcher_0_6
+  - first:
+      213: 6863178686715820398
+    second: V2Launcher_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: V2Launcher_0
+      name: V2Launcher_0_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 16
-        width: 42
-        height: 43
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c9ace18e5ea510310800000000000000
-      internalID: 1369475705185684124
+      spriteID: cda2876e8cda5ddb0800000000000000
+      internalID: -4767713552130102564
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: V2Launcher_1
+      name: V2Launcher_0_1
       rect:
         serializedVersion: 2
-        x: 72
-        y: 8
-        width: 48
-        height: 48
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 016518fee005d5ac0800000000000000
-      internalID: -3864844880136022512
+      spriteID: 839aff735c04348d0800000000000000
+      internalID: -2863373722285266632
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: V2Launcher_2
+      name: V2Launcher_0_2
       rect:
         serializedVersion: 2
-        x: 144
-        y: 11
-        width: 43
-        height: 42
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 48ef4a0e35ff06920800000000000000
-      internalID: 2981663689035546244
+      spriteID: 24c396b5d7bd87070800000000000000
+      internalID: 8104468860904225858
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: V2Launcher_3
+      name: V2Launcher_0_3
       rect:
         serializedVersion: 2
-        x: 200
-        y: 8
-        width: 48
-        height: 48
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6bafdd252cfd5a990800000000000000
-      internalID: -7375242789042390346
+      spriteID: 831c8ffc99eb04ed0800000000000000
+      internalID: -2431734230951608008
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: V2Launcher_4
+      name: V2Launcher_0_4
       rect:
         serializedVersion: 2
-        x: 267
-        y: 5
-        width: 42
-        height: 43
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3fd8c55d405ed14b0800000000000000
-      internalID: -5467962563635671565
+      spriteID: 18232fd83068b74b0800000000000000
+      internalID: -5441608374922628479
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: V2Launcher_5
+      name: V2Launcher_0_5
       rect:
         serializedVersion: 2
-        x: 328
-        y: 8
-        width: 48
-        height: 48
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 82082371c3bc12ad0800000000000000
-      internalID: -2728676440262148056
+      spriteID: a2cd7e0e59664acf0800000000000000
+      internalID: -241955686061712342
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: V2Launcher_6
+      name: V2Launcher_0_6
       rect:
         serializedVersion: 2
-        x: 389
-        y: 11
-        width: 43
-        height: 42
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9ad7d55957f3b97a0800000000000000
-      internalID: -6369427473735778903
+      spriteID: d054ec920d15f8610800000000000000
+      internalID: 1625607945000469773
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: V2Launcher_7
+      name: V2Launcher_0_7
       rect:
         serializedVersion: 2
-        x: 456
-        y: 8
-        width: 48
-        height: 48
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 002bf407c9602df70800000000000000
-      internalID: 9210431456895021568
+      spriteID: e697ab327a8ee3f50800000000000000
+      internalID: 6863178686715820398
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       V2Launcher_0: 1369475705185684124
+      V2Launcher_0_0: -4767713552130102564
+      V2Launcher_0_1: -2863373722285266632
+      V2Launcher_0_2: 8104468860904225858
+      V2Launcher_0_3: -2431734230951608008
+      V2Launcher_0_4: -5441608374922628479
+      V2Launcher_0_5: -241955686061712342
+      V2Launcher_0_6: 1625607945000469773
+      V2Launcher_0_7: 6863178686715820398
       V2Launcher_1: -3864844880136022512
       V2Launcher_2: 2981663689035546244
       V2Launcher_3: -7375242789042390346

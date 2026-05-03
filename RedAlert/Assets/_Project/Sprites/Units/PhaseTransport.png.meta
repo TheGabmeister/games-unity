@@ -26,6 +26,30 @@ TextureImporter:
   - first:
       213: -8735051042612810321
     second: PhaseTransport_7
+  - first:
+      213: 5480695018389267717
+    second: PhaseTransport_0_0
+  - first:
+      213: 4003423735752460521
+    second: PhaseTransport_0_1
+  - first:
+      213: 2752046323175215701
+    second: PhaseTransport_0_2
+  - first:
+      213: 7332015237964730799
+    second: PhaseTransport_0_3
+  - first:
+      213: 6672793799298793335
+    second: PhaseTransport_0_4
+  - first:
+      213: 4239312700916579692
+    second: PhaseTransport_0_5
+  - first:
+      213: 5863771592557750262
+    second: PhaseTransport_0_6
+  - first:
+      213: -707408438420878044
+    second: PhaseTransport_0_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +82,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +96,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +120,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -134,177 +158,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PhaseTransport_0
+      name: PhaseTransport_0_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 16
-        width: 40
-        height: 32
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d95527045166cd10800000000000000
-      internalID: 2145509286013655505
+      spriteID: 505685dc4175f0c40800000000000000
+      internalID: 5480695018389267717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PhaseTransport_1
+      name: PhaseTransport_0_1
       rect:
         serializedVersion: 2
-        x: 72
-        y: 8
-        width: 48
-        height: 48
+        x: 64
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eac78f6bf65a77a50800000000000000
-      internalID: 6518860884871773358
+      spriteID: 9e884e63da40f8730800000000000000
+      internalID: 4003423735752460521
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PhaseTransport_2
+      name: PhaseTransport_0_2
       rect:
         serializedVersion: 2
-        x: 144
-        y: 12
-        width: 32
-        height: 40
+        x: 128
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f1a94180480a8f670800000000000000
-      internalID: 8572778379631434271
+      spriteID: 552574acc8b313620800000000000000
+      internalID: 2752046323175215701
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PhaseTransport_3
+      name: PhaseTransport_0_3
       rect:
         serializedVersion: 2
-        x: 200
-        y: 8
-        width: 48
-        height: 48
+        x: 192
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 39de7ee1eaf819180800000000000000
-      internalID: -9110342593188205165
+      spriteID: fa193a2230d80c560800000000000000
+      internalID: 7332015237964730799
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PhaseTransport_4
+      name: PhaseTransport_0_4
       rect:
         serializedVersion: 2
-        x: 268
-        y: 16
-        width: 40
-        height: 32
+        x: 256
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6b591cf439e2f5f20800000000000000
-      internalID: 3413498252803282358
+      spriteID: 77f32a24b968a9c50800000000000000
+      internalID: 6672793799298793335
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PhaseTransport_5
+      name: PhaseTransport_0_5
       rect:
         serializedVersion: 2
-        x: 328
-        y: 8
-        width: 48
-        height: 48
+        x: 320
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bc7fb1ea914e20710800000000000000
-      internalID: 1658138411772147659
+      spriteID: c6d3fedc07015da30800000000000000
+      internalID: 4239312700916579692
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PhaseTransport_6
+      name: PhaseTransport_0_6
       rect:
         serializedVersion: 2
-        x: 400
-        y: 12
-        width: 32
-        height: 40
+        x: 384
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 74aed0e654dec29e0800000000000000
-      internalID: -1644678881442141625
+      spriteID: 6f76e62223d406150800000000000000
+      internalID: 5863771592557750262
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PhaseTransport_7
+      name: PhaseTransport_0_7
       rect:
         serializedVersion: 2
-        x: 456
-        y: 8
-        width: 48
-        height: 48
+        x: 448
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fad68266b5dd6c680800000000000000
-      internalID: -8735051042612810321
+      spriteID: 42d4fc4f5c7ce26f0800000000000000
+      internalID: -707408438420878044
       vertices: []
       indices: 
       edges: []
@@ -324,6 +348,14 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       PhaseTransport_0: 2145509286013655505
+      PhaseTransport_0_0: 5480695018389267717
+      PhaseTransport_0_1: 4003423735752460521
+      PhaseTransport_0_2: 2752046323175215701
+      PhaseTransport_0_3: 7332015237964730799
+      PhaseTransport_0_4: 6672793799298793335
+      PhaseTransport_0_5: 4239312700916579692
+      PhaseTransport_0_6: 5863771592557750262
+      PhaseTransport_0_7: -707408438420878044
       PhaseTransport_1: 6518860884871773358
       PhaseTransport_2: 8572778379631434271
       PhaseTransport_3: -9110342593188205165
