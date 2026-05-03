@@ -878,22 +878,17 @@ Buildings, construction, production, and the sidebar are tightly coupled — bui
 
 **Testable**: Move units around, watch shroud reveal. Walk away, area stays revealed. Place a Gap Generator, verify re-shrouding.
 
-### Phase 7A — Unit Roster (Sprites & Data)
+### Phase 7A — Unit Roster (Sprites & Data) ✅
 
-Create all remaining UnitData SOs from the original source code. Generate SVG sprites and export to PNG for every unit not yet created:
+Created all remaining units (29 new + 7 existing converted to sprite sheets = 36 total).
 
-**Infantry:** Engineer, Spy, Tanya, Attack Dog, Field Medic, Rocket Soldier, Shock Trooper, Grenadier, Flamethrower.
-**Vehicles:** MCV, Mammoth Tank, Mine Layer, APC, V2 Rocket, Artillery, Mobile Radar Jammer, Tesla Tank, Chrono Tank, Demolition Truck, Phase Transport.
-**Naval:** Destroyer, Cruiser, Submarine, Gunboat, Naval Transport, Missile Sub.
-**Aircraft:** Longbow, Hind, MiG, Yak, Chinook.
-
-- SVG sprites for each unit (8 rotations where applicable, move/attack/death frames).
-- UnitData SOs with stats from source (`UDATA.CPP`, `IDATA.CPP`, `VDATA.CPP`, `AADATA.CPP`).
-- WeaponData / ProjectileData / WarheadData SOs for any new weapons.
-- Unit prefabs wired with correct components (Entity, Health, Mover, Attacker, etc.).
-- Update FactionData with all new buildable units.
-
-**Testable**: All units spawn on the test map with correct sprites, stats, and basic movement/combat.
+- `Tools/generate_unit_sheets.py` generates 8-direction sprite sheet SVGs: 512×64 for vehicles/naval/aircraft (1 row), 512×256 for infantry (4 rows: idle, walk1, walk2, fire).
+- `Tools/export_sprites.sh` updated to read SVG native dimensions for sheet export.
+- `GeneratePhase7Data.cs`: imports sprite sheets (Multiple mode, 64×64 grid slicing), creates 19 new weapons + 1 projectile (Torpedo) + 29 UnitData SOs, wires `DirectionSprites` arrays.
+- `FacingRenderer` component subscribes to `Mover.OnDirectionChanged` event, picks correct sprite from `UnitData.DirectionSprites` per direction.
+- `LocomotionType.Fly` added — aircraft pass over all terrain at full speed.
+- FactionData updated with full Allied + Soviet unit rosters.
+- Unit prefabs include FacingRenderer; Attacker only added when unit has a weapon.
 
 ### Phase 7B — Special Unit Behaviors
 
@@ -912,12 +907,11 @@ Implement unique behaviors for units created in Phase 7A:
 - Mine Layer: deploy mines.
 
 **Naval:**
-- Float locomotion on water cells.
 - Submarine: cloaked when submerged, surface to fire, detected by Sensors units.
 - Naval Transport: carry infantry + vehicles, shoreline unloading.
 
 **Aircraft:**
-- Fly locomotion (ignore terrain). Ammo tracking.
+- Ammo tracking (finite shots, must rearm).
 - Helicopters hover at target, return to Helipad to rearm.
 - Fixed-wing (MiG, Yak) do strafing runs, return to Airfield.
 - Rearming: 2.4 sec per ammo point.
