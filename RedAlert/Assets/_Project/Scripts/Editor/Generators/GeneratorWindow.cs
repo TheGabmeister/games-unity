@@ -18,6 +18,7 @@ public class GeneratorWindow : EditorWindow
         Section("Terrain", () =>
         {
             Button("Tile Sprites + Tiles", GenerateTerrainTiles.Generate);
+            Button("Fog Tiles (Shroud + Fog)", GenerateFogTiles.Generate);
             Button("Test Map (40x40)", GenerateTestMap.Generate);
         });
 
@@ -103,6 +104,7 @@ public class GeneratorWindow : EditorWindow
     private static void GenerateAll()
     {
         GenerateTerrainTiles.Generate();
+        GenerateFogTiles.Generate();
         GenerateTestMap.Generate();
         GenerateUnitPrefab.GenerateSprites();
         GenerateCombatData.GenerateAll();

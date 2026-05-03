@@ -34,7 +34,7 @@ public class PlacementManager : MonoBehaviour
         {
             _ghostObj = new GameObject("PlacementGhost");
             _ghostRenderer = _ghostObj.AddComponent<SpriteRenderer>();
-            _ghostRenderer.sortingOrder = 100;
+            _ghostRenderer.sortingOrder = 50;
         }
 
         _ghostRenderer.sprite = item.Sprite;
@@ -86,6 +86,9 @@ public class PlacementManager : MonoBehaviour
             {
                 var cell = new Vector2Int(origin.x + dx, origin.y + dy);
                 if (!MapManager.Instance.IsInBounds(cell)) return false;
+
+                if (FogManager.Instance != null && !FogManager.Instance.IsExplored(cell))
+                    return false;
 
                 var terrain = MapManager.Instance.GetTerrain(cell);
                 if (terrain == TerrainType.Water) return false;

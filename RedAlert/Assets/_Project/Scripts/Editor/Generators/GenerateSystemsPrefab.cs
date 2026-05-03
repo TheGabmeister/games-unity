@@ -34,6 +34,7 @@ public static class GenerateSystemsPrefab
             AddIfMissing<PlacementManager>(instance);
             AddIfMissing<SellRepairManager>(instance);
             AddIfMissing<SfxManager>(instance);
+            AddIfMissing<FogManager>(instance);
 
             var constructionMgr = AddIfMissing<ConstructionManager>(instance);
             WireConstructionManager(constructionMgr);
@@ -54,6 +55,7 @@ public static class GenerateSystemsPrefab
             }
 
             WireMapManager(instance);
+            WireFogManager(instance);
 
             PrefabUtility.SaveAsPrefabAsset(instance, path);
         }
@@ -117,6 +119,16 @@ public static class GenerateSystemsPrefab
         var soviet = AssetDatabase.LoadAssetAtPath<FactionData>("Assets/_Project/Data/SovietFaction.asset");
         if (allied != null) so.FindProperty("_alliedFaction").objectReferenceValue = allied;
         if (soviet != null) so.FindProperty("_sovietFaction").objectReferenceValue = soviet;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static void WireFogManager(GameObject instance)
+    {
+        var fogManager = instance.GetComponent<FogManager>();
+        if (fogManager == null) return;
+
+        var so = new SerializedObject(fogManager);
+        SetTile(so, "_shroudTile", "Assets/_Project/Tiles/Shroud.asset");
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 

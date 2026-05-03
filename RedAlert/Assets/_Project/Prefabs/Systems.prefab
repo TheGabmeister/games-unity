@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 4471472386923566496}
   - component: {fileID: 3518890447839497500}
   - component: {fileID: 4234415432799328651}
+  - component: {fileID: 2229366140636539048}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -323,3 +324,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b16cfd1d4a19ea47addaa857267cb22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProductionManager
+--- !u!114 &2229366140636539048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650063663290531705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 789b9bc3a9c81fb4fa7e987e89c3df24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FogManager
+  _shroudTile: {fileID: 11400000, guid: 5778ee3cc363c7f4b8abbb9e1177369f, type: 2}
+  _fogTile: {fileID: 11400000, guid: 7bc6c3bde76065a4c8f54cecf1e2c834, type: 2}

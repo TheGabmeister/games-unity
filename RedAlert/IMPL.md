@@ -544,7 +544,7 @@ public static bool ArePrerequisitesMet(BuildingData[] prereqs, List<BuildingData
 
 ## Fog of War
 
-Human-player-only system. AI opponents have full map vision (singleplayer simplification). Rendered as a Tilemap overlay created programmatically by `FogManager`.
+Shroud-only system matching the original Red Alert. Once explored, areas stay permanently revealed. No fog regrowth. Human-player-only — AI has full map vision.
 
 ### Per-Cell State
 
@@ -554,8 +554,7 @@ A single flat `byte[]` grid (indexed `y * width + x`) for the human player only.
 public enum FogState : byte
 {
     Shroud = 0,   // black — never explored
-    Fog = 1,      // dimmed — explored but no current vision
-    Visible = 2   // clear — inside a unit's sight radius
+    Visible = 1   // explored — permanently clear
 }
 ```
 
@@ -563,21 +562,17 @@ public enum FogState : byte
 
 Runs every 4 frames (~15 Hz at 60 fps):
 
-1. Set all `Visible` cells to `Fog`.
-2. For each human-owned unit and building, mark all cells within their `SightRange` as `Visible` (precomputed circle offsets per integer radius).
-3. Apply Gap Generator effect: for each enemy Gap Generator with power, force cells in its 10-cell radius back to `Shroud`.
-4. Sync only changed cells to the fog tilemap (track dirty cells).
+1. For each human-owned unit and building, mark all cells within their `SightRange` as `Visible` (precomputed circle offsets per integer radius). Once Visible, cells stay Visible permanently.
+2. Apply Gap Generator effect: for each enemy Gap Generator with power, force cells in its 10-cell radius back to `Shroud`.
+3. Sync only changed cells to the fog tilemap (dirty-cell tracking via prev/current comparison).
 
 ### Rendering
 
-`FogManager` creates a Tilemap + TilemapRenderer at runtime on a child GameObject, sorted above all gameplay layers. Simple square tiles:
-- **Shroud tile** — fully black, opaque.
-- **Fog tile** — semi-transparent dark overlay.
-- **Visible** — null tile (transparent).
+`FogManager` creates a Tilemap + TilemapRenderer at runtime on a child GameObject, sorted above all gameplay layers. Two states:
+- **Shroud** — opaque black tile (hides everything beneath it).
+- **Visible** — null tile (transparent, everything beneath is shown).
 
-### Entity Visibility
-
-Enemy units and buildings are hidden (`SpriteRenderer.enabled = false`) when their cell is `Shroud` or `Fog`. Buildings in `Fog` remain visible as "last seen" ghosts (stale sprite, no health bar updates).
+No entity visibility toggling needed — the opaque shroud tiles handle hiding.
 
 ---
 
@@ -871,16 +866,17 @@ Buildings, construction, production, and the sidebar are tightly coupled — bui
 
 **Testable**: Full build loop — construct buildings from sidebar, place them, build units, sell/repair. Power brownout from losing a power plant. Tech tree filtering.
 
-### Phase 6 — Fog of War
+### Phase 6 — Shroud
 
 - FogManager on Systems prefab. Single `byte[]` grid for human player only (AI has full vision).
-- Tilemap created programmatically at runtime, sorted above all gameplay layers. Square tiles (shroud=black, fog=semi-transparent, visible=null).
+- Shroud-only (no fog regrowth) matching original Red Alert. Once explored, cells stay permanently visible.
+- Tilemap created programmatically at runtime, sorted above all gameplay layers. Opaque black tile for shroud, null for visible.
 - Sight range update every 4 frames. Precomputed circle offsets per integer radius.
 - Dirty-cell tracking: only sync changed cells to tilemap each update.
-- Entity visibility: enemy sprites hidden in shroud/fog. Buildings in fog shown as stale "last seen" ghost.
+- PlacementManager blocks building placement in unexplored shroud.
 - Gap Generator: re-shrouds 10-cell radius when powered.
 
-**Testable**: Move units around, watch shroud reveal. Walk away, see fog. Place a Gap Generator, verify re-shrouding.
+**Testable**: Move units around, watch shroud reveal. Walk away, area stays revealed. Place a Gap Generator, verify re-shrouding.
 
 ### Phase 7 — Unit Roster & Special Behaviors
 

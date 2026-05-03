@@ -13,7 +13,7 @@ This is a Unity project — there is no CLI build. Open in Unity 6 (6000.3.12f1+
 ## Architecture
 
 ### Systems Prefab
-`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, EconomyManager, PowerManager, SelectionManager, CommandManager, PlacementManager, SellRepairManager, ConstructionManager, ProductionManager, SfxManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder. `SidebarCanvas.prefab` is a separate uGUI canvas also placed in the scene.
+`Assets/_Project/Prefabs/Systems.prefab` holds all global managers (InputManager, PlayerManager, MapManager, EconomyManager, PowerManager, SelectionManager, CommandManager, PlacementManager, SellRepairManager, ConstructionManager, ProductionManager, SfxManager, FogManager). It is placed directly in the Gameplay scene — no Bootstrapper, no Resources folder. `SidebarCanvas.prefab` is a separate uGUI canvas also placed in the scene.
 
 ### Scene Structure
 One scene in build settings:
@@ -27,7 +27,7 @@ Managers use a static `Instance` property set in `Awake`. All `Awake` calls run 
 2. **Start** — Entity registers itself with MapManager (including multi-cell footprints for buildings) and PlayerManager, initializes Health with MaxHP from UnitData, applies sprite, repositions multi-cell buildings to center over footprint. Harvester begins SeekOre. PowerManager.Start recalculates all players.
 3. **First Update** — SidebarUI defers its initial RefreshBuildGrid to the first Update frame (not Start) because Entity.Start hasn't populated OwnedEntities yet when SidebarUI.Start runs.
 4. **First LateUpdate** — EconomyManager initializes starting credits (after all Start calls have run).
-5. **Update** — SelectionManager polls input for selection, CommandManager polls for orders, Mover follows paths, Attacker scans for targets, Harvester runs state machine, MapManager ticks ore regrowth (2 min interval). ConstructionManager/ProductionManager tick build progress and drain credits incrementally. PlacementManager shows ghost and handles placement clicks. SellRepairManager handles sell clicks and repair ticks.
+5. **Update** — SelectionManager polls input for selection, CommandManager polls for orders, Mover follows paths, Attacker scans for targets, Harvester runs state machine, MapManager ticks ore regrowth (2 min interval). ConstructionManager/ProductionManager tick build progress and drain credits incrementally. PlacementManager shows ghost and handles placement clicks. SellRepairManager handles sell clicks and repair ticks. FogManager refreshes shroud every 4 frames (~15 Hz): marks cells within friendly sight ranges as permanently Visible, applies Gap Generator re-shrouding, syncs dirty cells to shroud tilemap.
 6. **LateUpdate** — RTSCamera reads input for panning and clamps to map bounds (viewport shrunk for sidebar). SelectionManager prunes destroyed units from selection. ProductionManager retries spawning READY units if exit was blocked.
 
 ### Key Design Decisions
@@ -86,6 +86,15 @@ Building sprites are exported at `FootprintX × 64` by `FootprintY × 64` pixels
 9. Sell mode: click building → refund 50% × (HP ratio) × Cost, spawn infantry if crewed.
 10. Repair: click building → 7 HP per tick, drains credits at rate proportional to 20% of Cost.
 11. Building damage: ≤50% HP shows fire overlay. ≤25% HP = critical (Engineer-capturable in Phase 7).
+
+### Data Flow: Shroud
+1. FogManager owns a single `byte[]` grid (Shroud/Visible per cell) for the human player only. AI has full vision.
+2. Every 4 frames: mark cells within each friendly entity's SightRange as Visible (precomputed circle LUT). Once Visible, cells stay Visible permanently (no fog regrowth, matching original Red Alert).
+3. Gap Generators: enemy gap generators with power force cells in 10-cell radius back to Shroud.
+4. Only dirty cells (state changed since last sync) update the shroud tilemap.
+5. Opaque black tiles hide everything beneath them — no entity visibility toggling needed.
+6. Shroud tilemap is created programmatically at runtime (child of Grid GO, sortingOrder 100).
+7. PlacementManager blocks building placement in unexplored shroud.
 
 ### Grid Coordinate System
 - 1 cell = 1 Unity unit. Sprites are 64×64 px at 64 PPU (buildings scale to footprint × 64).
