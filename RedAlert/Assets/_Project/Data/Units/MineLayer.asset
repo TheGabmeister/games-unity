@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: MineLayer
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Mine Layer
+  Sprite: {fileID: 4050474092642680865, guid: 3a944a84952f3814dac74d6087997c38, type: 3}
+  Icon: {fileID: 0}
+  Category: 1
+  Faction: 0
+  Cost: 800
+  Locomotion: 1
+  BaseSpeed: 5
+  MaxHP: 100
+  Armor: 2
+  PrimaryWeapon: {fileID: 0}
+  SightRange: 4
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 1
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 11400000, guid: 4a67bfa78c8a15f48a9ddaa55dc5b38a, type: 2}
+  FootprintX: 1
+  FootprintY: 1
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
+  RequiresPower: 0
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
+  Prefab: {fileID: 5900033959503476687, guid: 63d1aacf29d655945869a855e461096c, type: 3}

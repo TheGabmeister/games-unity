@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: Destroyer
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Destroyer
+  Sprite: {fileID: -6871892450741501236, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  Icon: {fileID: 0}
+  Category: 3
+  Faction: 0
+  Cost: 1000
+  Locomotion: 3
+  BaseSpeed: 7
+  MaxHP: 400
+  Armor: 3
+  PrimaryWeapon: {fileID: 11400000, guid: da26c4441a9b5e8479ac5e353daa6711, type: 2}
+  SightRange: 6
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 1
+  FootprintY: 1
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
+  RequiresPower: 0
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
+  Prefab: {fileID: 7715002477909994269, guid: fee39364b6069f741887d2370c7425f2, type: 3}

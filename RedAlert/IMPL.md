@@ -878,9 +878,26 @@ Buildings, construction, production, and the sidebar are tightly coupled — bui
 
 **Testable**: Move units around, watch shroud reveal. Walk away, area stays revealed. Place a Gap Generator, verify re-shrouding.
 
-### Phase 7 — Unit Roster & Special Behaviors
+### Phase 7A — Unit Roster (Sprites & Data)
 
-Create all remaining UnitData SOs from source code. **Sprites**: all remaining units not yet created (every infantry type, all vehicles, naval units, aircraft — 8 rotations, move/attack/death animations). Implement unique behaviors:
+Create all remaining UnitData SOs from the original source code. Generate SVG sprites and export to PNG for every unit not yet created:
+
+**Infantry:** Engineer, Spy, Tanya, Attack Dog, Field Medic, Rocket Soldier, Shock Trooper, Grenadier, Flamethrower.
+**Vehicles:** MCV, Mammoth Tank, Mine Layer, APC, V2 Rocket, Artillery, Mobile Radar Jammer, Tesla Tank, Chrono Tank, Demolition Truck, Phase Transport.
+**Naval:** Destroyer, Cruiser, Submarine, Gunboat, Naval Transport, Missile Sub.
+**Aircraft:** Longbow, Hind, MiG, Yak, Chinook.
+
+- SVG sprites for each unit (8 rotations where applicable, move/attack/death frames).
+- UnitData SOs with stats from source (`UDATA.CPP`, `IDATA.CPP`, `VDATA.CPP`, `AADATA.CPP`).
+- WeaponData / ProjectileData / WarheadData SOs for any new weapons.
+- Unit prefabs wired with correct components (Entity, Health, Mover, Attacker, etc.).
+- Update FactionData with all new buildable units.
+
+**Testable**: All units spawn on the test map with correct sprites, stats, and basic movement/combat.
+
+### Phase 7B — Special Unit Behaviors
+
+Implement unique behaviors for units created in Phase 7A:
 
 **Infantry specials:**
 - Engineer: capture enemy buildings (≤25% HP required, ~1/3 HP damage per engineer), repair friendly buildings (instant full heal).

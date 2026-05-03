@@ -1,0 +1,962 @@
+fileFormatVersion: 2
+guid: d57b7a5819741e1468cd81ffacb21bf8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3188571597700047487
+    second: ShockTrooper_0
+  - first:
+      213: -8614813415854472360
+    second: ShockTrooper_1
+  - first:
+      213: 7136809793801513284
+    second: ShockTrooper_2
+  - first:
+      213: 7483711221094146263
+    second: ShockTrooper_3
+  - first:
+      213: -3217640660642238796
+    second: ShockTrooper_4
+  - first:
+      213: 4433346287619710995
+    second: ShockTrooper_5
+  - first:
+      213: 2411739969810949969
+    second: ShockTrooper_6
+  - first:
+      213: -4382568291588387042
+    second: ShockTrooper_7
+  - first:
+      213: -553901663525374866
+    second: ShockTrooper_8
+  - first:
+      213: 5985147765014445784
+    second: ShockTrooper_9
+  - first:
+      213: -5317841570872227934
+    second: ShockTrooper_10
+  - first:
+      213: 4431566525244449997
+    second: ShockTrooper_11
+  - first:
+      213: -1035976039784257865
+    second: ShockTrooper_12
+  - first:
+      213: -2223459488229825287
+    second: ShockTrooper_13
+  - first:
+      213: -722064837154245347
+    second: ShockTrooper_14
+  - first:
+      213: 2342989342680426446
+    second: ShockTrooper_15
+  - first:
+      213: 1602442319387550424
+    second: ShockTrooper_16
+  - first:
+      213: -3985116088446454969
+    second: ShockTrooper_17
+  - first:
+      213: -6150003132478508584
+    second: ShockTrooper_18
+  - first:
+      213: 7583784471274835512
+    second: ShockTrooper_19
+  - first:
+      213: -101899999101361552
+    second: ShockTrooper_20
+  - first:
+      213: -7179851845105494008
+    second: ShockTrooper_21
+  - first:
+      213: -2840914262427246451
+    second: ShockTrooper_22
+  - first:
+      213: -1498352841796535623
+    second: ShockTrooper_23
+  - first:
+      213: 434546798542515853
+    second: ShockTrooper_24
+  - first:
+      213: 1930275646527641418
+    second: ShockTrooper_25
+  - first:
+      213: -3721918654538296497
+    second: ShockTrooper_26
+  - first:
+      213: -5270085091301489740
+    second: ShockTrooper_27
+  - first:
+      213: 8608748160994153813
+    second: ShockTrooper_28
+  - first:
+      213: -4107855068814195290
+    second: ShockTrooper_29
+  - first:
+      213: -5783592751639314138
+    second: ShockTrooper_30
+  - first:
+      213: -1521260470078461418
+    second: ShockTrooper_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ShockTrooper_0
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 204
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f72afcd69f4104c20800000000000000
+      internalID: 3188571597700047487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_1
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 205
+        width: 40
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85389bd67d8027880800000000000000
+      internalID: -8614813415854472360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_2
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 210
+        width: 39
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 449611de1ba0b0360800000000000000
+      internalID: 7136809793801513284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_3
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 203
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d0ebe684bb7bd760800000000000000
+      internalID: 7483711221094146263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_4
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 205
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bee09fedd4a853d0800000000000000
+      internalID: -3217640660642238796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_5
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 208
+        width: 40
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 310aedfa5f8668d30800000000000000
+      internalID: 4433346287619710995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_6
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 210
+        width: 39
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 157613f79b8387120800000000000000
+      internalID: 2411739969810949969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_7
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 205
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1fcbffcb5dfd23c0800000000000000
+      internalID: -4382568291588387042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_8
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 137
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6472192f552058f0800000000000000
+      internalID: -553901663525374866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_9
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 139
+        width: 34
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8deb8ed7e248f0350800000000000000
+      internalID: 5985147765014445784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_10
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 146
+        width: 42
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a70b54344b3336b0800000000000000
+      internalID: -5317841570872227934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_11
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 142
+        width: 37
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc425b77646108d30800000000000000
+      internalID: 4431566525244449997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_12
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 141
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b6e7d8d7497f91f0800000000000000
+      internalID: -1035976039784257865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_13
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 144
+        width: 34
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f4e697306fa421e0800000000000000
+      internalID: -2223459488229825287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_14
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 146
+        width: 42
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d15fe943bd5baf5f0800000000000000
+      internalID: -722064837154245347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_15
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 144
+        width: 37
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec72efab468f38020800000000000000
+      internalID: 2342989342680426446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_16
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 73
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d2e524acc40d3610800000000000000
+      internalID: 1602442319387550424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_17
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 80
+        width: 39
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7437477180602b8c0800000000000000
+      internalID: -3985116088446454969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_18
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 82
+        width: 42
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d134113cbcc6aaa0800000000000000
+      internalID: -6150003132478508584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_19
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 78
+        width: 32
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83ec577cbc30f3960800000000000000
+      internalID: 7583784471274835512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_20
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 77
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07263fe9d7af59ef0800000000000000
+      internalID: -101899999101361552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_21
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 80
+        width: 39
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 808dd8099ca0c5c90800000000000000
+      internalID: -7179851845105494008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_22
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 82
+        width: 42
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d80eea6b78b0398d0800000000000000
+      internalID: -2840914262427246451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_23
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 75
+        width: 32
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ba358c6708c43be0800000000000000
+      internalID: -1498352841796535623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_24
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 12
+        width: 24
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8ee86dc202d70600800000000000000
+      internalID: 434546798542515853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_25
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 13
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a471ed53977b9ca10800000000000000
+      internalID: 1930275646527641418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_26
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 20
+        width: 49
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f43585904b6195cc0800000000000000
+      internalID: -3721918654538296497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_27
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 9
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b384e41885ecd6b0800000000000000
+      internalID: -5270085091301489740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_28
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 3
+        width: 24
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5559ad067da687770800000000000000
+      internalID: 8608748160994153813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_29
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 9
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a5ca8a4497fdf6c0800000000000000
+      internalID: -4107855068814195290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_30
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 20
+        width: 49
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 621c301090d8cbfa0800000000000000
+      internalID: -5783592751639314138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ShockTrooper_31
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 13
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61a212699a563eae0800000000000000
+      internalID: -1521260470078461418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ShockTrooper_0: 3188571597700047487
+      ShockTrooper_1: -8614813415854472360
+      ShockTrooper_10: -5317841570872227934
+      ShockTrooper_11: 4431566525244449997
+      ShockTrooper_12: -1035976039784257865
+      ShockTrooper_13: -2223459488229825287
+      ShockTrooper_14: -722064837154245347
+      ShockTrooper_15: 2342989342680426446
+      ShockTrooper_16: 1602442319387550424
+      ShockTrooper_17: -3985116088446454969
+      ShockTrooper_18: -6150003132478508584
+      ShockTrooper_19: 7583784471274835512
+      ShockTrooper_2: 7136809793801513284
+      ShockTrooper_20: -101899999101361552
+      ShockTrooper_21: -7179851845105494008
+      ShockTrooper_22: -2840914262427246451
+      ShockTrooper_23: -1498352841796535623
+      ShockTrooper_24: 434546798542515853
+      ShockTrooper_25: 1930275646527641418
+      ShockTrooper_26: -3721918654538296497
+      ShockTrooper_27: -5270085091301489740
+      ShockTrooper_28: 8608748160994153813
+      ShockTrooper_29: -4107855068814195290
+      ShockTrooper_3: 7483711221094146263
+      ShockTrooper_30: -5783592751639314138
+      ShockTrooper_31: -1521260470078461418
+      ShockTrooper_4: -3217640660642238796
+      ShockTrooper_5: 4433346287619710995
+      ShockTrooper_6: 2411739969810949969
+      ShockTrooper_7: -4382568291588387042
+      ShockTrooper_8: -553901663525374866
+      ShockTrooper_9: 5985147765014445784
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

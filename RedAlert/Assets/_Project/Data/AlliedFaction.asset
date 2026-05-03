@@ -36,7 +36,23 @@ MonoBehaviour:
   BuildableUnits:
   - {fileID: 11400000, guid: 4a67bfa78c8a15f48a9ddaa55dc5b38a, type: 2}
   - {fileID: 11400000, guid: d90ca40b4b710634a970817c5c6536a6, type: 2}
+  - {fileID: 11400000, guid: acbf1f90063bf834ebe387f9a20c97b5, type: 2}
+  - {fileID: 11400000, guid: 6122a545d1c1dfa449879ea98a2e4caf, type: 2}
+  - {fileID: 11400000, guid: 81da6ad8c38d50a469a214941e780752, type: 2}
+  - {fileID: 11400000, guid: 644a70ac40d39a345b90308af0cc64ac, type: 2}
   - {fileID: 11400000, guid: 5456d8ba7f1b94447a1986fa2300740e, type: 2}
   - {fileID: 11400000, guid: 0eee2c914b5b74142bc288241a2b1085, type: 2}
+  - {fileID: 11400000, guid: 7716b89bac727aa42abccb9702aeb906, type: 2}
   - {fileID: 11400000, guid: f691afd206478f143833bd79d4ca458e, type: 2}
+  - {fileID: 11400000, guid: 8651c3b11c16d6342b57c15b96ff144b, type: 2}
+  - {fileID: 11400000, guid: b99052046a6630e438bd47a7477c12db, type: 2}
+  - {fileID: 11400000, guid: 79ae1b6cb31bb4641a2b179abfcfb145, type: 2}
+  - {fileID: 11400000, guid: c2d1f19092fe60f41bf970a2e9d63313, type: 2}
+  - {fileID: 11400000, guid: 53ffc32528c7ef2448b14454d8ce793f, type: 2}
   - {fileID: 11400000, guid: 5fe0f61e49886da438e16245f13bfa3b, type: 2}
+  - {fileID: 11400000, guid: 841f0531a4c98b14b8c469acc879860a, type: 2}
+  - {fileID: 11400000, guid: 64c08a2eafaab0943bf3f319ba7430fa, type: 2}
+  - {fileID: 11400000, guid: 9469f2cb7d3802244844c316062fbd03, type: 2}
+  - {fileID: 11400000, guid: 46d865b5002fd6b488329fa88d3f3784, type: 2}
+  - {fileID: 11400000, guid: 131557e701ce78e4a9ba1af25a5d5295, type: 2}
+  - {fileID: 11400000, guid: 9d738d95733c9ff419ae15b5be58ae63, type: 2}

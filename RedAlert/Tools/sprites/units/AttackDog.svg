@@ -1,0 +1,314 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 256" width="512" height="256">
+  <g transform="translate(32,32) rotate(0)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,32) rotate(45)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(32,96) rotate(0)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,96) rotate(45)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,96) rotate(90)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,96) rotate(135)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,96) rotate(180)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,96) rotate(225)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,96) rotate(270)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,96) rotate(315)">
+    <ellipse cx="0" cy="0" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-14" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(32,160) rotate(0)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,160) rotate(45)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,160) rotate(90)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,160) rotate(135)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,160) rotate(180)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,160) rotate(225)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,160) rotate(270)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,160) rotate(315)">
+    <ellipse cx="0" cy="4" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-10" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="9.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-5.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-5.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="3.0" y="-17.5" width="2" height="3" rx="0" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+  </g>
+  <g transform="translate(32,224) rotate(0)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,224) rotate(45)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,224) rotate(90)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,224) rotate(135)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,224) rotate(180)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,224) rotate(225)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,224) rotate(270)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,224) rotate(315)">
+    <ellipse cx="0" cy="2" rx="6" ry="12" fill="#8B6914" stroke="#6B4914" stroke-width="1"/>
+    <circle cx="0" cy="-12" r="5" fill="#9B7924" stroke="#6B4914" stroke-width="1"/>
+    <rect x="-6.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-6.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="3.5" y="-7.0" width="3" height="6" rx="1" fill="#7B5914" stroke="#5B3914" stroke-width="1"/>
+    <rect x="-2.0" y="-19.5" width="4" height="3" rx="0" fill="#cc3333" stroke="#aa2222" stroke-width="1"/>
+  </g>
+</svg>

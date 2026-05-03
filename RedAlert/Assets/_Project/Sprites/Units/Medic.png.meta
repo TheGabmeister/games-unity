@@ -1,0 +1,962 @@
+fileFormatVersion: 2
+guid: 714f05111baf61f4dbe59918a07d2fa1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -989085045499774128
+    second: Medic_0
+  - first:
+      213: -7600532880668818381
+    second: Medic_1
+  - first:
+      213: -736170810418894871
+    second: Medic_2
+  - first:
+      213: -5434389561254478432
+    second: Medic_3
+  - first:
+      213: 6150788257232039784
+    second: Medic_4
+  - first:
+      213: 2025656586907250227
+    second: Medic_5
+  - first:
+      213: 4971320235876615928
+    second: Medic_6
+  - first:
+      213: 1074945825285285942
+    second: Medic_7
+  - first:
+      213: 6528401372357834209
+    second: Medic_8
+  - first:
+      213: -377593294910829702
+    second: Medic_9
+  - first:
+      213: -3313715971738755374
+    second: Medic_10
+  - first:
+      213: -8095699519662879096
+    second: Medic_11
+  - first:
+      213: -338732496018055790
+    second: Medic_12
+  - first:
+      213: -1474376404097217290
+    second: Medic_13
+  - first:
+      213: 422153507410128689
+    second: Medic_14
+  - first:
+      213: -7529938206353921692
+    second: Medic_15
+  - first:
+      213: -8169019609823076853
+    second: Medic_16
+  - first:
+      213: -7455254938075854764
+    second: Medic_17
+  - first:
+      213: -4459186002028408445
+    second: Medic_18
+  - first:
+      213: -8677216165329701666
+    second: Medic_19
+  - first:
+      213: -1840305361283302984
+    second: Medic_20
+  - first:
+      213: -3649265827813244863
+    second: Medic_21
+  - first:
+      213: 2001509816455279793
+    second: Medic_22
+  - first:
+      213: 7805257579548773758
+    second: Medic_23
+  - first:
+      213: -3262308161297981265
+    second: Medic_24
+  - first:
+      213: 2159209196961991023
+    second: Medic_25
+  - first:
+      213: -8480020971681975847
+    second: Medic_26
+  - first:
+      213: 8198850978847856955
+    second: Medic_27
+  - first:
+      213: -5444073136223364764
+    second: Medic_28
+  - first:
+      213: 8338994264443533406
+    second: Medic_29
+  - first:
+      213: 7011056027586593509
+    second: Medic_30
+  - first:
+      213: 2998237371774992767
+    second: Medic_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Medic_0
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 204
+        width: 30
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05bb55a34601642f0800000000000000
+      internalID: -989085045499774128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_1
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 205
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3340f084d9b758690800000000000000
+      internalID: -7600532880668818381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_2
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 208
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e768fe5c8898c5f0800000000000000
+      internalID: -736170810418894871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_3
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 209
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0adf5569c7b2594b0800000000000000
+      internalID: -5434389561254478432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_4
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 206
+        width: 30
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86fa5f8e45dfb5550800000000000000
+      internalID: 6150788257232039784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_5
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 209
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33e6983fee39c1c10800000000000000
+      internalID: 2025656586907250227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_6
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 210
+        width: 38
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f603245a6dadf440800000000000000
+      internalID: 4971320235876615928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_7
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 205
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6382be46889faee00800000000000000
+      internalID: 1074945825285285942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_8
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 137
+        width: 30
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e5bf8e857a899a50800000000000000
+      internalID: 6528401372357834209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_9
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 139
+        width: 31
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7b454b16e482caf0800000000000000
+      internalID: -377593294910829702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_10
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 144
+        width: 41
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2de19f961e05302d0800000000000000
+      internalID: -3313715971738755374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_11
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 145
+        width: 36
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88e81320e2c46af80800000000000000
+      internalID: -8095699519662879096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_12
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 142
+        width: 30
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29d56fce6949c4bf0800000000000000
+      internalID: -338732496018055790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_13
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 145
+        width: 31
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fc4198d876f98be0800000000000000
+      internalID: -1474376404097217290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_14
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 146
+        width: 41
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13fadd9d06acbd500800000000000000
+      internalID: 422153507410128689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_15
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 144
+        width: 36
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 469e1adb819408790800000000000000
+      internalID: -7529938206353921692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_16
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 73
+        width: 30
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0e9b4932ffc1ae80800000000000000
+      internalID: -8169019609823076853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_17
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 80
+        width: 36
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 458030a222d998890800000000000000
+      internalID: -7455254938075854764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_18
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 80
+        width: 41
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 381d3b9f4f9cd12c0800000000000000
+      internalID: -4459186002028408445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_19
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 81
+        width: 31
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed4fe3a1fd5549780800000000000000
+      internalID: -8677216165329701666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_20
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 78
+        width: 30
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b93676360ce576e0800000000000000
+      internalID: -1840305361283302984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_21
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 81
+        width: 36
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 140483270143b5dc0800000000000000
+      internalID: -3649265827813244863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_22
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 82
+        width: 41
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b43648d29ac6cb10800000000000000
+      internalID: 2001509816455279793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_23
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 75
+        width: 31
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7d0e612a68d15c60800000000000000
+      internalID: 7805257579548773758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_24
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 12
+        width: 24
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa0e9f10304f9b2d0800000000000000
+      internalID: -3262308161297981265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_25
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 13
+        width: 39
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f690dac135d07fd10800000000000000
+      internalID: 2159209196961991023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_26
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 20
+        width: 40
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d17807fad9e05a80800000000000000
+      internalID: -8480020971681975847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_27
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 12
+        width: 34
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b391790a68b28c170800000000000000
+      internalID: 8198850978847856955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_28
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 12
+        width: 24
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 469d8289354c274b0800000000000000
+      internalID: -5444073136223364764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_29
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 17
+        width: 39
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e583d240a1f0ab370800000000000000
+      internalID: 8338994264443533406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_30
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 20
+        width: 40
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e209a89f464c4160800000000000000
+      internalID: 7011056027586593509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Medic_31
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 13
+        width: 34
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7103f81101eb9920800000000000000
+      internalID: 2998237371774992767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Medic_0: -989085045499774128
+      Medic_1: -7600532880668818381
+      Medic_10: -3313715971738755374
+      Medic_11: -8095699519662879096
+      Medic_12: -338732496018055790
+      Medic_13: -1474376404097217290
+      Medic_14: 422153507410128689
+      Medic_15: -7529938206353921692
+      Medic_16: -8169019609823076853
+      Medic_17: -7455254938075854764
+      Medic_18: -4459186002028408445
+      Medic_19: -8677216165329701666
+      Medic_2: -736170810418894871
+      Medic_20: -1840305361283302984
+      Medic_21: -3649265827813244863
+      Medic_22: 2001509816455279793
+      Medic_23: 7805257579548773758
+      Medic_24: -3262308161297981265
+      Medic_25: 2159209196961991023
+      Medic_26: -8480020971681975847
+      Medic_27: 8198850978847856955
+      Medic_28: -5444073136223364764
+      Medic_29: 8338994264443533406
+      Medic_3: -5434389561254478432
+      Medic_30: 7011056027586593509
+      Medic_31: 2998237371774992767
+      Medic_4: 6150788257232039784
+      Medic_5: 2025656586907250227
+      Medic_6: 4971320235876615928
+      Medic_7: 1074945825285285942
+      Medic_8: 6528401372357834209
+      Medic_9: -377593294910829702
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

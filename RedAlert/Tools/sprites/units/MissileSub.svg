@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
+  <g transform="translate(32,32) rotate(0)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,32) rotate(45)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <ellipse cx="0" cy="0" rx="6" ry="18" fill="#505868" stroke="#404858" stroke-width="1"/>
+    <rect x="-2.0" y="-8.0" width="4" height="8" rx="0" fill="#606870" stroke="#505060" stroke-width="1"/>
+    <rect x="-3.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+    <rect x="1.0" y="1.0" width="2" height="6" rx="1" fill="#aa4444" stroke="#883333" stroke-width="1"/>
+  </g>
+</svg>

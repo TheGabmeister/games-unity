@@ -1,22 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- Vehicle body (low-profile) -->
-  <rect x="12" y="28" width="40" height="20" rx="3" fill="#8b7355" stroke="#6b5535" stroke-width="1.5"/>
-  <!-- Treads -->
-  <rect x="8" y="26" width="9" height="24" rx="3" fill="#a0a0a0" stroke="#707070" stroke-width="1"/>
-  <rect x="47" y="26" width="9" height="24" rx="3" fill="#a0a0a0" stroke="#707070" stroke-width="1"/>
-  <!-- Tread details -->
-  <g stroke="#808080" stroke-width="0.8" opacity="0.5">
-    <line x1="9" y1="32" x2="16" y2="32"/>
-    <line x1="9" y1="38" x2="16" y2="38"/>
-    <line x1="9" y1="44" x2="16" y2="44"/>
-    <line x1="48" y1="32" x2="55" y2="32"/>
-    <line x1="48" y1="38" x2="55" y2="38"/>
-    <line x1="48" y1="44" x2="55" y2="44"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
+  <g transform="translate(32,32) rotate(0)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
   </g>
-  <!-- Gun mount -->
-  <rect x="28" y="24" width="12" height="10" rx="2" fill="#7a6545" stroke="#6b5535" stroke-width="1"/>
-  <!-- Long barrel (angled up) -->
-  <rect x="30" y="4" width="4" height="24" rx="1" fill="#606060" stroke="#404040" stroke-width="1" transform="rotate(-8 32 16)"/>
-  <!-- Muzzle brake -->
-  <rect x="29" y="4" width="6" height="3" rx="1" fill="#505050" stroke="#404040" stroke-width="0.8" transform="rotate(-8 32 5)"/>
+  <g transform="translate(96,32) rotate(45)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <rect x="-18.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="11.0" y="-13.0" width="7" height="26" rx="2" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-11.0" y="-11.0" width="22" height="22" rx="2" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.5" y="-24.0" width="3" height="20" rx="1" fill="#808080" stroke="#606060" stroke-width="1"/>
+    <rect x="-8.0" y="-5.0" width="16" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+  </g>
 </svg>

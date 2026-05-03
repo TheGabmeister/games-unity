@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
+  <g transform="translate(32,32) rotate(0)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,32) rotate(45)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <polygon points="0,-14.0 5.0,-4.0 5.0,12.0 -5.0,12.0 -5.0,-4.0" fill="#808090" stroke="#505060" stroke-width="1"/>
+    <rect x="-4.0" y="-1.0" width="8" height="10" rx="2" fill="#707880" stroke="#505860" stroke-width="1"/>
+    <rect x="-1.5" y="-11.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <circle cx="0" cy="10" r="3" fill="#555555" stroke="#444444" stroke-width="1"/>
+  </g>
+</svg>

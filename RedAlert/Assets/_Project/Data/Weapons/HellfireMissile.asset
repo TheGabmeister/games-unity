@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87acf26f653508746abbdf5ecd9af5da, type: 3}
+  m_Name: HellfireMissile
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  DisplayName: Hellfire Missile
+  Damage: 50
+  Range: 6
+  ROF: 2
+  Burst: 1
+  Projectile: {fileID: 11400000, guid: 455ebbdebb9d7964ea1eeefaa5b64531, type: 2}
+  Warhead: {fileID: 11400000, guid: 599a8e10d0bebcd4dafda31b41d5748e, type: 2}
+  FireSound: {fileID: 8300000, guid: 95a501bab6f1bd34f93bb5ce5f5e2932, type: 3}

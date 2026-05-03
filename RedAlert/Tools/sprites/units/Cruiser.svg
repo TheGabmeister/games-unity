@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
+  <g transform="translate(32,32) rotate(0)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,32) rotate(45)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <polygon points="0,-16.0 6.0,-4.0 6.0,14.0 -6.0,14.0 -6.0,-4.0" fill="#707888" stroke="#505060" stroke-width="1"/>
+    <rect x="-5.0" y="-7.0" width="10" height="14" rx="2" fill="#808890" stroke="#606870" stroke-width="1"/>
+    <rect x="-4.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+    <rect x="1.5" y="-15.0" width="3" height="10" rx="1" fill="#606870" stroke="#404850" stroke-width="1"/>
+  </g>
+</svg>

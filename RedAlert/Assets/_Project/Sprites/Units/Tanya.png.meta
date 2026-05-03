@@ -1,0 +1,962 @@
+fileFormatVersion: 2
+guid: 1456d11f57d01ba4fb247e50410a418e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5164112022210139852
+    second: Tanya_0
+  - first:
+      213: -3457895723980261497
+    second: Tanya_1
+  - first:
+      213: 4408718208957435744
+    second: Tanya_2
+  - first:
+      213: 1806647133254476693
+    second: Tanya_3
+  - first:
+      213: -6072578325668276013
+    second: Tanya_4
+  - first:
+      213: -4460288855974677518
+    second: Tanya_5
+  - first:
+      213: -4350262025780024144
+    second: Tanya_6
+  - first:
+      213: 2611392503940192140
+    second: Tanya_7
+  - first:
+      213: 6860652976714989371
+    second: Tanya_8
+  - first:
+      213: 1305607992496269314
+    second: Tanya_9
+  - first:
+      213: -7009314838446888667
+    second: Tanya_10
+  - first:
+      213: -4146200697806317213
+    second: Tanya_11
+  - first:
+      213: 7316085319223444028
+    second: Tanya_12
+  - first:
+      213: 7604008143536998578
+    second: Tanya_13
+  - first:
+      213: 4567320914986120973
+    second: Tanya_14
+  - first:
+      213: 2486212797782932418
+    second: Tanya_15
+  - first:
+      213: -7749730251794733405
+    second: Tanya_16
+  - first:
+      213: -5895700611662839523
+    second: Tanya_17
+  - first:
+      213: -4699232156480416559
+    second: Tanya_18
+  - first:
+      213: 4012520961665901281
+    second: Tanya_19
+  - first:
+      213: 7912007452939338232
+    second: Tanya_20
+  - first:
+      213: 3339777115548523141
+    second: Tanya_21
+  - first:
+      213: -3731843416181795497
+    second: Tanya_22
+  - first:
+      213: 7519858953462254864
+    second: Tanya_23
+  - first:
+      213: 93896344520232759
+    second: Tanya_24
+  - first:
+      213: -8469125083891601814
+    second: Tanya_25
+  - first:
+      213: -1460838168778493728
+    second: Tanya_26
+  - first:
+      213: 251659357314526548
+    second: Tanya_27
+  - first:
+      213: -2241450763673975371
+    second: Tanya_28
+  - first:
+      213: -1592477517904964850
+    second: Tanya_29
+  - first:
+      213: -4283515820857253840
+    second: Tanya_30
+  - first:
+      213: -126157958290571020
+    second: Tanya_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tanya_0
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 204
+        width: 28
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43927d7f9736558b0800000000000000
+      internalID: -5164112022210139852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_1
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 205
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78770d5e8261300d0800000000000000
+      internalID: -3457895723980261497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_2
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 210
+        width: 37
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06f44b74ad9ee2d30800000000000000
+      internalID: 4408718208957435744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_3
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 207
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5936c14eeff721910800000000000000
+      internalID: 1806647133254476693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_4
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 207
+        width: 28
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d85ecbcf2ed9bba0800000000000000
+      internalID: -6072578325668276013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_5
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 207
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f3fef7caeed912c0800000000000000
+      internalID: -4460288855974677518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_6
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 210
+        width: 37
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bca2897cb3c0a3c0800000000000000
+      internalID: -4350262025780024144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_7
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 205
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c87197685a78d3420800000000000000
+      internalID: 2611392503940192140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_8
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 137
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3fb254788fe53f50800000000000000
+      internalID: 6860652976714989371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_9
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 139
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 208a6a04d837e1210800000000000000
+      internalID: 1305607992496269314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_10
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 146
+        width: 40
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 529af779a49e9be90800000000000000
+      internalID: -7009314838446888667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_11
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 143
+        width: 38
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36917cfce6cb576c0800000000000000
+      internalID: -4146200697806317213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_12
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 143
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3283c6e5d4f78560800000000000000
+      internalID: 7316085319223444028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_13
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 143
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b843b86e1dd68960800000000000000
+      internalID: 7604008143536998578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_14
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 146
+        width: 40
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d07b5f86c22626f30800000000000000
+      internalID: 4567320914986120973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_15
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 144
+        width: 38
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cbb1e7fd5dc08220800000000000000
+      internalID: 2486212797782932418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_16
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 73
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a62da4556d637490800000000000000
+      internalID: -7749730251794733405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_17
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 80
+        width: 38
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1188cbc7834e2ea0800000000000000
+      internalID: -5895700611662839523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_18
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 82
+        width: 40
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d454e35049f8ceb0800000000000000
+      internalID: -4699232156480416559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_19
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 79
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e2a7ed2e865fa730800000000000000
+      internalID: 4012520961665901281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_20
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 79
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f141bcdbd81dcd60800000000000000
+      internalID: 7912007452939338232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_21
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 79
+        width: 38
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58a9f397795495e20800000000000000
+      internalID: 3339777115548523141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_22
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 82
+        width: 40
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7559a156f24d53cc0800000000000000
+      internalID: -3731843416181795497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_23
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 75
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01d882250e7eb5860800000000000000
+      internalID: 7519858953462254864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_24
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 12
+        width: 24
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73f06d45a369d4100800000000000000
+      internalID: 93896344520232759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_25
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 13
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6e6a488b9f977a80800000000000000
+      internalID: -8469125083891601814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_26
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 20
+        width: 48
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e030a3ec6f0abbe0800000000000000
+      internalID: -1460838168778493728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_27
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 9
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45da2252ad21e7300800000000000000
+      internalID: 251659357314526548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_28
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 4
+        width: 24
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b54fa9f764c4e0e0800000000000000
+      internalID: -2241450763673975371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_29
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 9
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e039a70822266e9e0800000000000000
+      internalID: -1592477517904964850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_30
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 20
+        width: 48
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 030a9045e05ed84c0800000000000000
+      internalID: -4283515820857253840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tanya_31
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 13
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f0808e510ccf3ef0800000000000000
+      internalID: -126157958290571020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Tanya_0: -5164112022210139852
+      Tanya_1: -3457895723980261497
+      Tanya_10: -7009314838446888667
+      Tanya_11: -4146200697806317213
+      Tanya_12: 7316085319223444028
+      Tanya_13: 7604008143536998578
+      Tanya_14: 4567320914986120973
+      Tanya_15: 2486212797782932418
+      Tanya_16: -7749730251794733405
+      Tanya_17: -5895700611662839523
+      Tanya_18: -4699232156480416559
+      Tanya_19: 4012520961665901281
+      Tanya_2: 4408718208957435744
+      Tanya_20: 7912007452939338232
+      Tanya_21: 3339777115548523141
+      Tanya_22: -3731843416181795497
+      Tanya_23: 7519858953462254864
+      Tanya_24: 93896344520232759
+      Tanya_25: -8469125083891601814
+      Tanya_26: -1460838168778493728
+      Tanya_27: 251659357314526548
+      Tanya_28: -2241450763673975371
+      Tanya_29: -1592477517904964850
+      Tanya_3: 1806647133254476693
+      Tanya_30: -4283515820857253840
+      Tanya_31: -126157958290571020
+      Tanya_4: -6072578325668276013
+      Tanya_5: -4460288855974677518
+      Tanya_6: -4350262025780024144
+      Tanya_7: 2611392503940192140
+      Tanya_8: 6860652976714989371
+      Tanya_9: 1305607992496269314
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

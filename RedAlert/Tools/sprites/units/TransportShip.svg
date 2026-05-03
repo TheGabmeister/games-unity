@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
+  <g transform="translate(32,32) rotate(0)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,32) rotate(45)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <polygon points="0,-15.0 7.0,-1.0 7.0,13.0 -7.0,13.0 -7.0,-1.0" fill="#808078" stroke="#505060" stroke-width="1"/>
+    <rect x="-6.0" y="-9.0" width="12" height="18" rx="2" fill="#909088" stroke="#707068" stroke-width="1"/>
+    <rect x="-4.0" y="-7.0" width="8" height="10" rx="1" fill="#a0a098" stroke="#808078" stroke-width="1"/>
+  </g>
+</svg>

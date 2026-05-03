@@ -13,7 +13,19 @@ public static class GenerateUnitPrefabs
         var barBGSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Sprites/UI/HealthBarBG.png");
         var barFillSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Sprites/UI/HealthBarFill.png");
 
-        string[] unitNames = { "RifleInfantry", "RocketSoldier", "LightTank", "Ranger", "HeavyTank", "Artillery" };
+        string[] unitNames = {
+            // Existing
+            "RifleInfantry", "RocketSoldier", "LightTank", "Ranger", "HeavyTank", "Artillery",
+            // Phase 7 infantry
+            "Engineer", "Grenadier", "Flamethrower", "Tanya", "AttackDog", "Medic", "ShockTrooper", "Spy",
+            // Phase 7 vehicles
+            "MCV", "MammothTank", "APC", "V2Launcher", "MineLayer", "RadarJammer",
+            "TeslaTank", "ChronoTank", "DemoTruck", "PhaseTransport",
+            // Phase 7 naval
+            "Destroyer", "Cruiser", "Submarine", "Gunboat", "TransportShip", "MissileSub",
+            // Phase 7 aircraft
+            "Longbow", "Hind", "MiG", "Yak", "Chinook",
+        };
 
         foreach (var unitName in unitNames)
         {
@@ -48,7 +60,8 @@ public static class GenerateUnitPrefabs
 
             var entity = root.AddComponent<Entity>();
             root.AddComponent<Mover>();
-            root.AddComponent<Attacker>();
+            if (unitData.PrimaryWeapon != null)
+                root.AddComponent<Attacker>();
             var selectable = root.AddComponent<Selectable>();
 
             var entitySO = new SerializedObject(entity);

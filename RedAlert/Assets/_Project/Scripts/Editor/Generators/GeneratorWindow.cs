@@ -56,6 +56,13 @@ public class GeneratorWindow : EditorWindow
             Button("Building Prefabs (all)", GenerateBuildingPrefabs.Generate);
         });
 
+        Section("Phase 7 — Units", () =>
+        {
+            Button("Phase 7 Weapons + Projectiles", GeneratePhase7Data.GenerateNewWeapons);
+            Button("Phase 7 Unit Data (29 units)", GeneratePhase7Data.GenerateNewUnits);
+            Button("Phase 7 All Data", GeneratePhase7Data.GenerateAll);
+        });
+
         Section("UI", () =>
         {
             Button("Build Slot Prefab", GenerateSidebarPrefab.GenerateBuildSlotPrefab);
@@ -111,6 +118,7 @@ public class GeneratorWindow : EditorWindow
         GenerateCursors.Generate();
         GenerateCombatData.GenerateAll();
         GenerateEconomyData.GenerateAll();
+        GeneratePhase7Data.GenerateAll();
         GenerateBuildingData.GenerateSprites();
         GenerateBuildingData.Generate();
         GenerateFactionData.Generate();

@@ -23,8 +23,13 @@ done
 echo "Exporting unit sprites..."
 for svg in "$TOOLS_DIR/sprites/units/"*.svg; do
     name=$(basename "$svg" .svg)
-    "$INKSCAPE" "$svg" --export-type=png --export-filename="$SPRITE_DIR/Units/$name.png" --export-width=64 --export-height=64 2>/dev/null
-    echo "  $name"
+    # Read native dimensions from SVG width/height attributes for sprite sheets
+    w=$(sed -n 's/.*width="\([0-9]*\)".*/\1/p' "$svg" | head -1)
+    h=$(sed -n 's/.*height="\([0-9]*\)".*/\1/p' "$svg" | head -1)
+    w=${w:-64}
+    h=${h:-64}
+    "$INKSCAPE" "$svg" --export-type=png --export-filename="$SPRITE_DIR/Units/$name.png" --export-width=$w --export-height=$h 2>/dev/null
+    echo "  $name (${w}x${h})"
 done
 
 echo "Exporting building sprites..."

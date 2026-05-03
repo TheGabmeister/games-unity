@@ -1,23 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- Jeep body -->
-  <rect x="16" y="16" width="32" height="32" rx="4" fill="#e0e0e0" stroke="#808080" stroke-width="1.5"/>
-  <!-- Hood -->
-  <rect x="22" y="10" width="20" height="10" rx="2" fill="#d0d0d0" stroke="#808080" stroke-width="1"/>
-  <!-- Windshield -->
-  <rect x="24" y="24" width="16" height="3" rx="1" fill="#6aa0d0" stroke="#508090" stroke-width="0.8"/>
-  <!-- Open top interior -->
-  <rect x="20" y="28" width="24" height="14" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="0.8"/>
-  <!-- Wheels -->
-  <circle cx="14" cy="20" r="5" fill="#606060" stroke="#404040" stroke-width="1.5"/>
-  <circle cx="50" cy="20" r="5" fill="#606060" stroke="#404040" stroke-width="1.5"/>
-  <circle cx="14" cy="44" r="5" fill="#606060" stroke="#404040" stroke-width="1.5"/>
-  <circle cx="50" cy="44" r="5" fill="#606060" stroke="#404040" stroke-width="1.5"/>
-  <!-- Wheel hubs -->
-  <circle cx="14" cy="20" r="2" fill="#808080"/>
-  <circle cx="50" cy="20" r="2" fill="#808080"/>
-  <circle cx="14" cy="44" r="2" fill="#808080"/>
-  <circle cx="50" cy="44" r="2" fill="#808080"/>
-  <!-- Mounted gun -->
-  <rect x="30" y="30" width="4" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="0.8"/>
-  <rect x="29" y="26" width="6" height="6" rx="2" fill="#808080" stroke="#606060" stroke-width="0.8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
+  <g transform="translate(32,32) rotate(0)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
+  <g transform="translate(96,32) rotate(45)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <rect x="-10.0" y="-11.0" width="20" height="22" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="-7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="7.0" cy="7.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-7.0" y="-9.0" width="14" height="14" rx="2" fill="#b8b8b8" stroke="#808080" stroke-width="1"/>
+    <rect x="-1.0" y="-15.0" width="2" height="10" rx="1" fill="#707070" stroke="#505050" stroke-width="1"/>
+  </g>
 </svg>

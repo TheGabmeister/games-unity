@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: Longbow
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Longbow
+  Sprite: {fileID: 7103278343221358309, guid: 3e0a1ae41b1d49a4da6371f31ee2689a, type: 3}
+  Icon: {fileID: 0}
+  Category: 4
+  Faction: 0
+  Cost: 1200
+  Locomotion: 4
+  BaseSpeed: 6
+  MaxHP: 125
+  Armor: 2
+  PrimaryWeapon: {fileID: 11400000, guid: 992f160c30b69314fb39108f30fc4bc1, type: 2}
+  SightRange: 4
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 1
+  FootprintY: 1
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
+  RequiresPower: 0
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
+  Prefab: {fileID: 1332340533382963630, guid: ae66de113d67e3b49a7901ca89bd48cc, type: 3}

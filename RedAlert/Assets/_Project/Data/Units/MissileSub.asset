@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c07a2ceb1808d4a9b8cc6c9f2509ad, type: 3}
+  m_Name: MissileSub
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  DisplayName: Missile Sub
+  Sprite: {fileID: 8162257148779683440, guid: 0e474ab5c2625f14cb61332e3534cb85, type: 3}
+  Icon: {fileID: 0}
+  Category: 3
+  Faction: 1
+  Cost: 1800
+  Locomotion: 3
+  BaseSpeed: 4
+  MaxHP: 150
+  Armor: 2
+  PrimaryWeapon: {fileID: 11400000, guid: c9a3407d43a599c429507672a6942606, type: 2}
+  SightRange: 5
+  IsCrusher: 0
+  NoMovingFire: 0
+  IsCrewedVehicle: 0
+  ExplodesOnDeath: 0
+  DeathWarhead: {fileID: 0}
+  DeathSound: {fileID: 8300000, guid: 123956a326010074f986e26ccf271f9a, type: 3}
+  BailOutUnit: {fileID: 0}
+  FootprintX: 1
+  FootprintY: 1
+  StorageCapacity: 0
+  PowerProduced: 0
+  PowerConsumed: 0
+  RequiresPower: 0
+  IsWall: 0
+  FreeUnit: {fileID: 0}
+  ProducesCategory: 0
+  ExitCellOffset: {x: 0, y: 0}
+  Prerequisites: []
+  Prefab: {fileID: 8573959638009622937, guid: 03e342f7cfcf2544d99bde39e896bd45, type: 3}

@@ -4,7 +4,10 @@
       "Bash(Get-ChildItem -Path \"c:\\\\dev\\\\games-unity\\\\RedAlert\" -Depth 0)",
       "Bash(Select-Object Name, Mode)",
       "WebSearch",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Read(//d/CnC_Red_Alert/CODE/**)",
+      "Bash(\"C:/Users/Admin/AppData/Local/Python/pythoncore-3.14-64/python.exe\" Tools/generate_unit_sheets.py)",
+      "Bash(bash Tools/export_sprites.sh)"
     ]
   }
 }

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 64" width="512" height="64">
+  <g transform="translate(32,32) rotate(0)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+  <g transform="translate(96,32) rotate(45)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+  <g transform="translate(160,32) rotate(90)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+  <g transform="translate(224,32) rotate(135)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+  <g transform="translate(288,32) rotate(180)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+  <g transform="translate(352,32) rotate(225)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+  <g transform="translate(416,32) rotate(270)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+  <g transform="translate(480,32) rotate(315)">
+    <rect x="-11.0" y="-12.0" width="22" height="24" rx="3" fill="#c8c8c8" stroke="#808080" stroke-width="1"/>
+    <circle cx="-8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="-8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="-8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <circle cx="8.0" cy="8.0" r="3" fill="#505050" stroke="#404040" stroke-width="1"/>
+    <rect x="-8.0" y="-6.0" width="16" height="16" rx="2" fill="#b0b0b0" stroke="#808080" stroke-width="1"/>
+    <circle cx="0" cy="-2" r="6" fill="#557755" stroke="#446644" stroke-width="1"/>
+    <line x1="0" y1="-2" x2="0" y2="-10" stroke="#446644" stroke-width="2"/>
+  </g>
+</svg>

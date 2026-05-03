@@ -1,0 +1,962 @@
+fileFormatVersion: 2
+guid: f2807712f2c87784b88afa48ca124125
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1911934686720803253
+    second: AttackDog_0
+  - first:
+      213: -8122061608305219357
+    second: AttackDog_1
+  - first:
+      213: 5397761074733265651
+    second: AttackDog_2
+  - first:
+      213: 7209539193481671070
+    second: AttackDog_3
+  - first:
+      213: -1680289707333440379
+    second: AttackDog_4
+  - first:
+      213: 1409132900485843188
+    second: AttackDog_5
+  - first:
+      213: 2785395766085674774
+    second: AttackDog_6
+  - first:
+      213: -840884904837041648
+    second: AttackDog_7
+  - first:
+      213: 7631769178400134536
+    second: AttackDog_8
+  - first:
+      213: 9098060453148114150
+    second: AttackDog_9
+  - first:
+      213: -240299534817474165
+    second: AttackDog_10
+  - first:
+      213: -6791578187061831865
+    second: AttackDog_11
+  - first:
+      213: 8343267186191147651
+    second: AttackDog_12
+  - first:
+      213: 7279377096794238310
+    second: AttackDog_13
+  - first:
+      213: 161846459868836569
+    second: AttackDog_14
+  - first:
+      213: 1726017362150107658
+    second: AttackDog_15
+  - first:
+      213: 2950785801969773227
+    second: AttackDog_16
+  - first:
+      213: -2294206778635766125
+    second: AttackDog_17
+  - first:
+      213: 264142595362589122
+    second: AttackDog_18
+  - first:
+      213: -7389944828589818747
+    second: AttackDog_19
+  - first:
+      213: 4931949007230668826
+    second: AttackDog_20
+  - first:
+      213: 5208478400698303275
+    second: AttackDog_21
+  - first:
+      213: -6569792741850747507
+    second: AttackDog_22
+  - first:
+      213: 1708685944451336505
+    second: AttackDog_23
+  - first:
+      213: -6558223295282692217
+    second: AttackDog_24
+  - first:
+      213: 3542257685420486298
+    second: AttackDog_25
+  - first:
+      213: -7118010715556783396
+    second: AttackDog_26
+  - first:
+      213: 2114329408227843076
+    second: AttackDog_27
+  - first:
+      213: -1458640197480264815
+    second: AttackDog_28
+  - first:
+      213: 5648698934759953672
+    second: AttackDog_29
+  - first:
+      213: 688719730342329962
+    second: AttackDog_30
+  - first:
+      213: 7236107051271459659
+    second: AttackDog_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AttackDog_0
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 208
+        width: 16
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b1cdbbb77e888a10800000000000000
+      internalID: 1911934686720803253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_1
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 209
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e82121fff3a84f80800000000000000
+      internalID: -8122061608305219357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_2
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 216
+        width: 35
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f238e15913b8ea40800000000000000
+      internalID: 5397761074733265651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_3
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 206
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e913bbdd2bd6d0460800000000000000
+      internalID: 7209539193481671070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_4
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 205
+        width: 16
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58c25aae9696ea8e0800000000000000
+      internalID: -1680289707333440379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_5
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 206
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f846c638ee3e8310800000000000000
+      internalID: 1409132900485843188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_6
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 216
+        width: 35
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 617e96c01b6b7a620800000000000000
+      internalID: 2785395766085674774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_7
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 209
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 012333e52a39454f0800000000000000
+      internalID: -840884904837041648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_8
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 146
+        width: 16
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 885905602ad79e960800000000000000
+      internalID: 7631769178400134536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_9
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 146
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ec3cee47cdc24e70800000000000000
+      internalID: 9098060453148114150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_10
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 152
+        width: 35
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b894383a8d84aacf0800000000000000
+      internalID: -240299534817474165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_11
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 142
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74753e74f977fb1a0800000000000000
+      internalID: -6791578187061831865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_12
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 139
+        width: 16
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 382a8132d4d39c370800000000000000
+      internalID: 8343267186191147651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_13
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 142
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66de888d6ea850560800000000000000
+      internalID: 7279377096794238310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_14
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 152
+        width: 35
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d2f2ac6f7efe3200800000000000000
+      internalID: 161846459868836569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_15
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 146
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0a2d1365ab04f710800000000000000
+      internalID: 1726017362150107658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_16
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 78
+        width: 16
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baaacae8d0c43f820800000000000000
+      internalID: 2950785801969773227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_17
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 79
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3963f1e07175920e0800000000000000
+      internalID: -2294206778635766125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_18
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 88
+        width: 37
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c903ae7a4c6aa300800000000000000
+      internalID: 264142595362589122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_19
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 78
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58c3b2ef454a17990800000000000000
+      internalID: -7389944828589818747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_20
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 77
+        width: 16
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a101352dd7dc17440800000000000000
+      internalID: 4931949007230668826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_21
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 78
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b23caed728b384840800000000000000
+      internalID: 5208478400698303275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_22
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 88
+        width: 37
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8deb0e3f4863d4a0800000000000000
+      internalID: -6569792741850747507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_23
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 79
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93989bf30d876b710800000000000000
+      internalID: 1708685944451336505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_24
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 16
+        width: 16
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78fbbfee8a28cf4a0800000000000000
+      internalID: -6558223295282692217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_25
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 17
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9ea262e890a82130800000000000000
+      internalID: 3542257685420486298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_26
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 24
+        width: 37
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cda50df87feb73d90800000000000000
+      internalID: -7118010715556783396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_27
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 15
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40c1593056b975d10800000000000000
+      internalID: 2114329408227843076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_28
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 11
+        width: 16
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19b4516f77ed1cbe0800000000000000
+      internalID: -1458640197480264815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_29
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 15
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8059e79c0c5346e40800000000000000
+      internalID: 5648698934759953672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_30
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 24
+        width: 37
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6e7bdc12f2de8900800000000000000
+      internalID: 688719730342329962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AttackDog_31
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 17
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b431cbb4601db6460800000000000000
+      internalID: 7236107051271459659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AttackDog_0: 1911934686720803253
+      AttackDog_1: -8122061608305219357
+      AttackDog_10: -240299534817474165
+      AttackDog_11: -6791578187061831865
+      AttackDog_12: 8343267186191147651
+      AttackDog_13: 7279377096794238310
+      AttackDog_14: 161846459868836569
+      AttackDog_15: 1726017362150107658
+      AttackDog_16: 2950785801969773227
+      AttackDog_17: -2294206778635766125
+      AttackDog_18: 264142595362589122
+      AttackDog_19: -7389944828589818747
+      AttackDog_2: 5397761074733265651
+      AttackDog_20: 4931949007230668826
+      AttackDog_21: 5208478400698303275
+      AttackDog_22: -6569792741850747507
+      AttackDog_23: 1708685944451336505
+      AttackDog_24: -6558223295282692217
+      AttackDog_25: 3542257685420486298
+      AttackDog_26: -7118010715556783396
+      AttackDog_27: 2114329408227843076
+      AttackDog_28: -1458640197480264815
+      AttackDog_29: 5648698934759953672
+      AttackDog_3: 7209539193481671070
+      AttackDog_30: 688719730342329962
+      AttackDog_31: 7236107051271459659
+      AttackDog_4: -1680289707333440379
+      AttackDog_5: 1409132900485843188
+      AttackDog_6: 2785395766085674774
+      AttackDog_7: -840884904837041648
+      AttackDog_8: 7631769178400134536
+      AttackDog_9: 9098060453148114150
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
