@@ -146,7 +146,7 @@ public static class GenerateSidebarPrefab
             buildArea.anchorMin = Vector2.zero;
             buildArea.anchorMax = Vector2.one;
             buildArea.offsetMin = new Vector2(24, 4);
-            buildArea.offsetMax = new Vector2(-4, -236);
+            buildArea.offsetMax = new Vector2(-4, -300);
 
             var buildHLG = buildArea.gameObject.AddComponent<HorizontalLayoutGroup>();
             buildHLG.spacing = 4;
