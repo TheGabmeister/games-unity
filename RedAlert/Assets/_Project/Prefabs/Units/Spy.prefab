@@ -334,6 +334,7 @@ GameObject:
   - component: {fileID: 8348423589828513804}
   - component: {fileID: 891321278216073780}
   - component: {fileID: 5178272659964455755}
+  - component: {fileID: 1331678690613718034}
   - component: {fileID: 1708460833284799875}
   m_Layer: 0
   m_Name: Spy
@@ -408,12 +409,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -9148348609924905823, guid: b071693da2b25de46a4de6413030ed86, type: 3}
+  m_Sprite: {fileID: 9082926444962617708, guid: b071693da2b25de46a4de6413030ed86, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.28, y: 0.38}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -456,6 +457,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b73bb722aef3c244fbe06407d9c88795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mover
+--- !u!114 &1331678690613718034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648570381056661750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
 --- !u!114 &1708460833284799875
 MonoBehaviour:
   m_ObjectHideFlags: 0

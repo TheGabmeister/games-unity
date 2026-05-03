@@ -152,6 +152,7 @@ GameObject:
   - component: {fileID: 7014187987624409166}
   - component: {fileID: 4432237135573900984}
   - component: {fileID: 4653944838649125432}
+  - component: {fileID: 1141520803298553565}
   - component: {fileID: 6997503137908292098}
   m_Layer: 0
   m_Name: Chinook
@@ -226,12 +227,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -3767744695616485829, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
+  m_Sprite: {fileID: -3300732712695231524, guid: 32124a838348f9a4eb449c8ec1d1fb4a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.22, y: 0.32}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -274,6 +275,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b73bb722aef3c244fbe06407d9c88795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mover
+--- !u!114 &1141520803298553565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2591370669382881013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
 --- !u!114 &6997503137908292098
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -334,6 +334,7 @@ GameObject:
   - component: {fileID: 4070407024601704581}
   - component: {fileID: 4630379362745419463}
   - component: {fileID: 4355578056378711969}
+  - component: {fileID: 6058686626652623800}
   - component: {fileID: 768686658738378845}
   m_Layer: 0
   m_Name: DemoTruck
@@ -408,12 +409,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -4012147933878400553, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
+  m_Sprite: {fileID: 7492256085767409842, guid: 12ba2ea00a50d074896693b8d71a583c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.26, y: 0.28}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -456,6 +457,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b73bb722aef3c244fbe06407d9c88795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mover
+--- !u!114 &6058686626652623800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8656994721503538627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
 --- !u!114 &768686658738378845
 MonoBehaviour:
   m_ObjectHideFlags: 0

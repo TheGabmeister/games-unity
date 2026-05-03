@@ -243,6 +243,7 @@ GameObject:
   - component: {fileID: 788437161336986528}
   - component: {fileID: 3179601205207542426}
   - component: {fileID: 2955675030400732188}
+  - component: {fileID: 3752043314871661750}
   - component: {fileID: 8050511512209442438}
   m_Layer: 0
   m_Name: TransportShip
@@ -317,12 +318,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -3510124300914468012, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
+  m_Sprite: {fileID: 8646057405598785854, guid: e86a337453502134aa9c2f0aeb8673f5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.18, y: 0.33}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -365,6 +366,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b73bb722aef3c244fbe06407d9c88795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mover
+--- !u!114 &3752043314871661750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4102214777217650008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
 --- !u!114 &8050511512209442438
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -195,6 +195,7 @@ GameObject:
   - component: {fileID: 5017379526000938398}
   - component: {fileID: 4774082170318461303}
   - component: {fileID: 6752367765239741153}
+  - component: {fileID: 3309704868590325100}
   - component: {fileID: 3674661449447354903}
   - component: {fileID: 627486601004571384}
   m_Layer: 0
@@ -270,12 +271,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -6871892450741501236, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
+  m_Sprite: {fileID: -5798223730535837091, guid: 63bf7e9f32082444990580c277a44eee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.14, y: 0.32}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -318,6 +319,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b73bb722aef3c244fbe06407d9c88795, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mover
+--- !u!114 &3309704868590325100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7715002477909994269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe19c1f7d3506c74a9705542ff25bc49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FacingRenderer
 --- !u!114 &3674661449447354903
 MonoBehaviour:
   m_ObjectHideFlags: 0
