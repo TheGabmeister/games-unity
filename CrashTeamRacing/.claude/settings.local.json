@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl *http://localhost:3000/*)",
+      "Bash(\"C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe\" *)",
+      "Bash(\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" *)",
+      "Bash('C:\\\\Program Files\\\\Blender Foundation\\\\Blender 5.1\\\\blender.exe' *)",
+      "Bash(blender --background *)",
+      "Bash(\"D:\\fluidsynth-v2.5.4-win10-x64-cpp11\\bin\\fluidsynth.exe\" *)",
+      "Bash(\"D:\\ffmpeg-8.1-essentials_build\\bin\\ffmpeg.exe\" *)",
+      "Bash(\"C:\\Program Files\\Inkscape\\bin\\inkscape.exe\" *)",
+      "Bash(rm -rf *)",
+      "mcp__blender__get_scene_info",
+      "mcp__blender__execute_python",
+      "WebSearch",
+      "WebFetch",
+      "Read(//c/Users/Admin/.claude/**)",
+      "Bash(curl -s *)",
+      "Bash(curl -sL *)",
+      "Bash(ls /tmp/CTR-ModSDK/)",
+      "Read(//tmp/**)",
+      "Bash(xargs grep -l \"wumpa\\\\|Wumpa\\\\|numWumpa\\\\|WUMPA\")",
+      "Bash(xargs grep -l \"item\\\\|weapon\\\\|missile\\\\|bowling\\\\|mask\\\\|clock\\\\|warp\\\\|beaker\\\\|shield\\\\|super.engine\\\\|turbo.item\")",
+      "Bash(xargs grep -l \"Item\\\\|heldItem\\\\|WEAPON\\\\|weaponID\\\\|numHeldItems\")",
+      "Bash(xargs grep -l \"pickup\\\\|Pickup\\\\|itemRoll\\\\|Item_Roll\\\\|VehPickup\")",
+      "Bash(xargs grep -l \"VehPickupItem\\\\|Item_Roll\\\\|GetRandom\\\\|itemRoll\")",
+      "Bash(xargs grep -l \"CAM_\\\\|Camera\\\\|camera\")",
+      "Bash(xargs grep -l \"CAM_Follow\\\\|FollowDriver\\\\|rearview\\\\|reverse_camera\\\\|BTN_R2\")",
+      "Bash(xargs grep -l \"VehPickupItem\\\\|RANDOMIZE_WEAPON\\\\|weaponRoll\\\\|prob\\\\|itemTable\\\\|rollResult\\\\|slotTable\\\\|itemSlot\")",
+      "Bash(rm -rf /tmp/CTR-ModSDK)",
+      "Read(//c/dev/games-unity/CrashTeamRating/**)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}
