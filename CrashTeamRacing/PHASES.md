@@ -11,12 +11,13 @@ The minimum to drive around a track and feel the basic handling.
 - Lap detection (checkpoint/sector system, 3-lap race)
 - Basic camera: behind-car follow with speed-based zoom-out
 - Race HUD: elapsed timer, lap counter, speedometer
-- Audio: engine idle loop, engine acceleration loop (pitch scales with speed), hop SFX, wall bump SFX, checkpoint chime
+- Audio: engine idle loop, engine acceleration loop (pitch scales with speed), hop SFX, brake SFX, wall bump SFX, checkpoint chime
 
 ### Assets
 
 **3D Models**
-- Generic kart
+- Generic kart with placeholder Crash driver
+- Kart tires (2D billboard sprites, matching original PS1 optimization)
 - Crash Cove track (geometry, collision mesh, checkpoints)
 - Wumpa Fruit crate (basic destructible)
 
@@ -24,6 +25,7 @@ The minimum to drive around a track and feel the basic handling.
 - Engine idle loop
 - Engine acceleration loop (pitch-shiftable)
 - Hop SFX
+- Brake SFX
 - Wall bump SFX
 - Checkpoint chime
 
@@ -42,18 +44,17 @@ The signature mechanic that makes CTR feel like CTR.
 - Backfire on overfill; spin-out after 60 drift frames without a successful boost
 - Reserve system: invisible reserve timer, frame-by-frame depletion, exponential gain for late boosts
 - Fire levels (None / Green / Yellow / Sacred Fire) with corresponding speed caps
-- Reserve-preserving techniques: mid-air brake, U-Turn
+- Reserve-preserving techniques: mid-air brake, U-Turn (Down + Brake + direction for sharp turn without reserve loss)
 - Turbo pads: grant Sacred Fire + reserves on contact, freeze reserve drain while on pad
 - Wumpa Fruit: collect from crates/track, speed bonus per fruit, Juiced Up at 10
 - Hang-time boost: airborne duration grants landing speed boost based on jump-o-meter thresholds
-- Audio: drift loop, mini-turbo trigger SFX (escalating pitch per chain), backfire SFX, spin-out SFX, Wumpa collect SFX, turbo pad whoosh, fire level transition SFX, Juiced Up activation SFX
+- Audio: drift loop, mini-turbo trigger SFX (escalating pitch per chain), backfire SFX, spin-out SFX, U-Turn tire screech, Wumpa collect SFX, turbo pad whoosh, fire level transition SFX, Juiced Up activation SFX
 
 ### Assets
 
 **3D Models**
 - Turbo pad (glowing arrow surface)
 - Wumpa Fruit collectible
-- Fruit crate
 
 **VFX**
 - Exhaust fire (green, yellow, red/Sacred Fire tiers)
@@ -67,6 +68,7 @@ The signature mechanic that makes CTR feel like CTR.
 - Mini-turbo trigger SFX (3 variants: 1st/2nd/3rd boost)
 - Backfire SFX
 - Spin-out SFX
+- U-Turn tire screech
 - Wumpa Fruit collect SFX
 - Turbo pad whoosh
 - Fire level up transition SFX
@@ -83,7 +85,8 @@ The signature mechanic that makes CTR feel like CTR.
 Weapons, defense, and the chaos that makes races unpredictable.
 
 - ? Crate placement on track and drive-through pickup
-- Item roulette animation and HUD (held item window, Wumpa counter)
+- Item roulette animation and HUD (held item window)
+- Item firing: Circle fires forward, Circle + Down drops behind
 - Position-based item distribution (4 item sets weighted by race position)
 - All 9 item types:
   - Tracking Missile (single and triple)
@@ -96,10 +99,9 @@ Weapons, defense, and the chaos that makes races unpredictable.
   - N. Tropy Clock (all opponents spin out and slow down)
   - Warp Orb (homing strike on 1st place, hits anyone in path)
 - Juiced Up variants for all items (Nitro Crate, Red Beaker, Blue Shield, enhanced effects)
-- Hit recovery: tumble animation, Wumpa scatter, reserve loss, brief invincibility frames
-- Special item rules: one Warp Orb at a time, Lap 1 item set downgrade
-- Respawn system: mask pickup on fall-off, reserve/fire level reset
-- Audio: crate pickup SFX, roulette shuffle loop, roulette stop SFX, per-item launch/deploy SFX, per-item impact/explosion SFX, mask activation jingle, mask invincibility music (replaces track music), hit tumble SFX, respawn SFX
+- Hit recovery: tumble animation, Wumpa scatter (2–4 fruit), reserve loss, brief invincibility frames; held item is preserved on hit (except Red Beaker, which replaces it)
+- Special item rules: one Warp Orb at a time, max 2 players with triple Missiles, Lap 1 item set 4 downgraded to set 3
+- Respawn system: mask pickup on fall-off, reserve/fire level reset, Wumpa loss, active Mask cancelled
 
 ### Assets
 
@@ -166,13 +168,13 @@ Complete the vertical slice: a full 8-racer race from countdown to results.
 - Race start countdown: traffic light (red/yellow/green), voice cue, engine idle
 - Start Boost: timed X press on green light, engine stall on early press
 - AI driving: NavFrame path following (3 parallel paths per track, RNG assignment)
-- AI item pickup and usage (weapon cooldown, simulated turbo meter)
+- AI item pickup and usage (weapon cooldown, simulated turbo meter, fire level tracking)
 - Difficulty system: 14-parameter table interpolated by currDifficulty value
 - 8-racer field with real-time position tracking
 - Ranked driver icons on HUD
-- Race finish: results screen with positions
-- Wrong way detection and warning
-- Audio: countdown voice lines ("3", "2", "GO!"), start boost SFX, engine stall SFX, race finish jingle, wrong way warning SFX, results screen music, Crash Cove track music
+- Race finish: "FINISHED!" for non-last human, "LOSER!" for last; results screen with positions
+- Wrong way detection and warning (triggers after `distanceDrivenBackwards > 0x1F5`)
+- Audio: countdown voice lines ("3", "2", "GO!"), start boost SFX, engine stall SFX, race finish jingle, lose sting, wrong way warning SFX, results screen music, Crash Cove track music
 
 ### Assets
 
@@ -191,7 +193,8 @@ Complete the vertical slice: a full 8-racer race from countdown to results.
 - Countdown voice — "GO!"
 - Start boost SFX
 - Engine stall SFX
-- Race finish jingle (positive)
+- Race finish jingle (win)
+- Race finish sting (lose)
 - "WRONG WAY" voice/SFX
 - Results screen music
 - Crash Cove track music loop
@@ -220,11 +223,11 @@ Flesh out the character roster, track surfaces, and standalone game modes.
 - Alignment system: Good characters use Aku Aku, Evil use Uka Uka (functionally identical)
 - Terrain types: grass/dirt, sand, mud, ice (reduced traction), shallow water, deep water/void
 - Terrain friction applied per surface; Mask negates off-road friction
-- Single Race mode: track select, lap count (3/5/7), difficulty (Easy/Medium/Hard)
+- Single Race mode: track select (available tracks), lap count (3/5/7), difficulty (Easy/Medium/Hard)
 - Time Trial mode: solo, no items, race clock, ghost recording and playback
-- N. Tropy ghost times per track (beat all to unlock N. Tropy)
+- N. Tropy ghost times per track (character unlock deferred to Phase 8)
 - Camera modes: Near / Far / First-Person cycle (L2), rear view (R2)
-- Audio: per-terrain drive sounds, character voice lines (celebration, hit reaction, select), ghost playback ambience, menu navigation SFX, menu music
+- Audio: per-terrain drive sounds, character voice lines (celebration, hit reaction, select), menu navigation SFX, menu music
 
 ### Assets
 
@@ -265,36 +268,42 @@ Flesh out the character roster, track surfaces, and standalone game modes.
 
 ## Phase 6 — Adventure Mode
 
-The single-player campaign with hub worlds and progression.
+The single-player campaign with hub worlds and progression. All 18 track layouts are built here (basic racing surfaces); hazards and shortcuts are added in Phase 8.
 
+- 17 remaining track layouts (geometry, collision, checkpoints, turbo pad placement — no hazards or shortcuts yet)
+- 4 bonus arena layouts (Skull Rock, Rampage Ruins, Rocky Road, Nitro Court)
 - Hub world navigation: on-foot player movement in 3D hub spaces
 - 5 hub worlds (N. Sanity Beach, The Lost Ruins, Glacier Park, Citadel City, Gemstone Valley)
 - Track portals: enter portals to load race tracks
 - Trophy progression: win 1st to earn Trophy, Trophy count gates hub/boss access
 - Boss races: 1v1 with unique weapon patterns per boss (Ripper Roo, Papu Papu, Komodo Joe, Pinstripe, Oxide)
 - Boss difficulty scaling: base difficulty from bossID, reduced on each loss
+- Boss item tables: items improve with player loss count (0–2 losses restricted, 5+ losses full table)
 - Oxide special behavior: early start, hovercraft (no spin-out), escalating weapon types
 - CTR Challenge: C-T-R letters placed on track, collect all three + finish 1st for a CTR Token
-- Relic Race: solo time trial with Time Crates (1/2/3 second freeze), all-crate bonus, Sapphire/Gold/Platinum thresholds
+- Relic Race: solo time trial with Time Crates (1/2/3 second freeze), all-crate 10-second bonus, Sapphire/Gold/Platinum thresholds
 - Crystal Bonus Rounds: collect 20 crystals in arena within time limit, TNT/Nitro obstacles
 - Boss Keys: earned per boss, unlock next hub and ultimately Oxide race
-- Gem Cups: 5 cups unlocked by matching-color CTR Tokens, each awards a Gem + secret character
-- Save/load system: adventure progress slots, collectible tracking
+- Gem Cups: 5 cups unlocked by matching-color CTR Tokens, each awards a Gem (character unlock rewards deferred to Phase 8)
+- Save/load system: adventure progress slots (4 slots, 18-char player name), collectible tracking
 - Adventure endings: Bad (incomplete collection), Good (100%), Best (101% all Gold/Platinum Relics)
-- Audio: hub ambient music per world, hub footstep SFX, portal entry SFX, boss intro fanfare, boss defeat jingle, trophy/key/gem/relic earned fanfares, CTR letter collect SFX, crystal collect SFX, time crate break SFX, clock freeze SFX, ending music themes
+- Audio: per-track race music (17 remaining tracks), hub ambient music per world, hub footstep SFX, portal entry SFX, boss intro fanfare, boss defeat jingle, collectible fanfares, ending music themes
 
 ### Assets
 
 **3D Models**
+- 15 standard track layouts: Roo's Tubes, Mystery Caves, Sewer Speedway, Coco Park, Tiger Temple, Papu's Pyramid, Dingo Canyon, Blizzard Bluff, Dragon Mines, Polar Pass, Tiny Arena, N. Gin Labs, Cortex Castle, Hot Air Skyway, Oxide Station
+- 2 Gemstone Valley track layouts: Slide Coliseum, Turbo Track
+- 4 bonus arena layouts: Skull Rock, Rampage Ruins, Rocky Road, Nitro Court
 - 5 hub world environments (N. Sanity Beach, The Lost Ruins, Glacier Park, Citadel City, Gemstone Valley)
 - Hub player character (on-foot Crash)
 - Track portals (per hub style)
 - Save point terminals (green-screen kiosks)
-- Boss karts: Ripper Roo's kart, Papu Papu's kart, Komodo Joe's kart, Pinstripe's kart, Oxide's hovercraft
+- 5 boss driver models (opponent-only, not yet playable): Ripper Roo, Papu Papu, Komodo Joe, Pinstripe, Nitros Oxide
+- 5 boss karts: Ripper Roo's kart, Papu Papu's kart, Komodo Joe's kart, Pinstripe's kart, Oxide's hovercraft
 - CTR letter pickups (C, T, R — glowing 3D letters)
 - Time Crates (variants: 1, 2, 3)
 - Crystal collectible
-- 4 bonus arenas: Skull Rock, Rampage Ruins, Rocky Road, Nitro Court
 
 **VFX**
 - Portal shimmer/glow
@@ -308,6 +317,23 @@ The single-player campaign with hub worlds and progression.
 - Boss defeat explosion
 
 **Audio**
+- Track music — Roo's Tubes
+- Track music — Mystery Caves
+- Track music — Sewer Speedway
+- Track music — Coco Park
+- Track music — Tiger Temple
+- Track music — Papu's Pyramid
+- Track music — Dingo Canyon
+- Track music — Blizzard Bluff
+- Track music — Dragon Mines
+- Track music — Polar Pass
+- Track music — Tiny Arena
+- Track music — N. Gin Labs
+- Track music — Cortex Castle
+- Track music — Hot Air Skyway
+- Track music — Oxide Station
+- Track music — Slide Coliseum
+- Track music — Turbo Track
 - Hub music — N. Sanity Beach
 - Hub music — The Lost Ruins
 - Hub music — Glacier Park
@@ -345,15 +371,16 @@ The single-player campaign with hub worlds and progression.
 
 Split-screen racing and arena combat.
 
-- 2-player split-screen with adjusted camera zoom
+- 2-player split-screen with adjusted camera zoom data
 - Versus mode: player-only races, no CPU opponents
-- Cup Race mode: 4 Arcade Cups (Wumpa, Crystal, Nitro, Crash), cumulative points across 4 races
-- Battle mode: 7 arenas (4 default + 3 unlocked via Arcade Cup wins)
-- Battle rules: Point Limit, Time Limit, Life Limit with configurable thresholds
+- Cup Race mode: 4 Arcade Cups (Wumpa, Crystal, Nitro, Crash), cumulative points (9/6/3/1/0 by position) across 4 races
+- Battle mode: 7 arenas (4 default + 3 unlocked by winning all Arcade Cups on Easy/Medium/Hard)
+- Battle rules: Point Limit (5/10/15), Time Limit (3/6/9 min), Life Limit (3/6/9 lives; timer: 3 min, 6 min, or Forever)
 - Team configurations: 2v1, 2v2, 3v1, 1v1v2
-- Battle-only items: Invisibility, Super Engine
+- Battle-only items: Invisibility (kart invisible, missiles can't track, position arrow hidden), Super Engine (constant turbo speed)
 - Weapon type customization before battle
-- 3-4 player support
+- 3-4 player support (reduced-polygon track meshes for performance)
+- Oxide Station unavailable in multiplayer (memory constraint from original)
 - Audio: battle arena music, point scored SFX, life lost SFX, battle results music, team select SFX, Invisibility activate SFX, Super Engine loop
 
 ### Assets
@@ -388,31 +415,30 @@ Split-screen racing and arena combat.
 - Cup Race standings (cumulative points across races)
 - Cup Race results screen
 
-## Phase 8 — Content Expansion & Polish
+## Phase 8 — Full Roster, Track Hazards & Polish
 
-All 18 tracks, full roster, hazards, shortcuts, and final unlockables.
+Remaining characters, track hazards, shortcuts, and final unlockables. Tracks already exist from Phase 6; this phase adds depth and detail.
 
-- Remaining 13 characters: Cortex, N. Gin, Dingodile, Polar, Pura, Ripper Roo, Papu Papu, Komodo Joe, Pinstripe, Fake Crash, N. Tropy, Penta Penguin, Nitros Oxide
+- Remaining 8 character models: Cortex, N. Gin, Dingodile, Polar, Pura, Fake Crash, N. Tropy, Penta Penguin
 - Turn and Max engine classes (Polar, Pura, Ripper Roo, Penta Penguin)
-- Remaining 17 tracks built out (Roo's Tubes through Turbo Track)
-- Track-specific hazards: turtles, fireballs, rolling barrels, mine carts, seals, man-eating plants, rolling armadillos, spiders, mud traps, boulders
-- Track shortcuts: Sewer Speedway halfpipe hole, Tiger Temple statue teeth, Blizzard Bluff river jump, Dragon Mines rail hop, Papu's Pyramid jumps, etc.
-- Super Turbo Pads on Hub 4 tracks (USF mechanic: no jump on contact, reserve requirement, rapid drain)
+- 5 boss characters become playable (Ripper Roo, Papu Papu, Komodo Joe, Pinstripe, Nitros Oxide — models reused from Phase 6)
+- Gem Cup and Time Trial character unlock rewards activated
+- Track hazards added to existing tracks: turtles, fireballs, rolling barrels, mine carts, seals, man-eating plants, rolling armadillos, spiders, mud traps, boulders
+- Track shortcuts added: Sewer Speedway halfpipe hole, Tiger Temple statue teeth, Blizzard Bluff river jump, Dragon Mines rail hop, Papu's Pyramid jumps, Cortex Castle stair/ramp jumps, Hot Air Skyway secret ramp, etc.
+- Super Turbo Pads on Hub 4 tracks (USF mechanic: no jump on contact, must have reserves, rapid drain)
 - Oxide ghost times per track (beat all Oxide ghosts to unlock Nitros Oxide)
-- Unlockable characters: progression-gated via Gem Cups, Time Trial ghosts, and cheat codes
-- Cheat code system: character unlocks and gameplay cheats entered at main menu
+- Cheat code system: character unlocks and gameplay cheats entered at main menu while holding L1 + R1
 - Minimap toggle (Triangle): switch between speedometer and top-down track map with racer dots
-- Audio: unique track music for all 18 tracks, per-hazard SFX, shortcut ambient sounds, main menu music, cheat code input/activated SFX
+- Audio: per-hazard SFX, remaining character voice lines, main menu music, cheat code SFX
 
 ### Assets
 
 **3D Models**
-- 17 track environments: Roo's Tubes, Mystery Caves, Sewer Speedway, Coco Park, Tiger Temple, Papu's Pyramid, Dingo Canyon, Blizzard Bluff, Dragon Mines, Polar Pass, Tiny Arena, N. Gin Labs, Cortex Castle, Hot Air Skyway, Oxide Station, Slide Coliseum, Turbo Track
+- 8 character driver models: Cortex, N. Gin, Dingodile, Polar, Pura, Fake Crash, N. Tropy, Penta Penguin
+- 8 kart color/skin variants (one per character)
 - Track hazards: turtles (Mystery Caves), fireballs (Mystery Caves), rolling toxic barrels (Sewer Speedway, N. Gin Labs), mine carts (Dragon Mines), seals (Polar Pass), man-eating plants (Papu's Pyramid), rolling armadillos (Dingo Canyon), spiders (Cortex Castle), rolling boulder (Blizzard Bluff), wooden corkscrew (Dragon Mines)
 - Super Turbo Pads
 - Shortcut geometry (ramps, alternate paths, breakable walls)
-- 13 character driver models: Cortex, N. Gin, Dingodile, Polar, Pura, Ripper Roo, Papu Papu, Komodo Joe, Pinstripe, Fake Crash, N. Tropy, Penta Penguin, Nitros Oxide
-- 13 kart color/skin variants (one per character)
 - N. Tropy ghost kart model
 - Oxide ghost kart model
 
@@ -423,25 +449,8 @@ All 18 tracks, full roster, hazards, shortcuts, and final unlockables.
 - Confetti (101% best ending)
 
 **Audio**
-- Track music — Roo's Tubes
-- Track music — Mystery Caves
-- Track music — Sewer Speedway
-- Track music — Coco Park
-- Track music — Tiger Temple
-- Track music — Papu's Pyramid
-- Track music — Dingo Canyon
-- Track music — Blizzard Bluff
-- Track music — Dragon Mines
-- Track music — Polar Pass
-- Track music — Tiny Arena
-- Track music — N. Gin Labs
-- Track music — Cortex Castle
-- Track music — Hot Air Skyway
-- Track music — Oxide Station
-- Track music — Slide Coliseum
-- Track music — Turbo Track
 - Per-hazard SFX: turtle bump, fireball whoosh/burn, barrel roll/hit, mine cart rumble/crush, seal bark/bump, plant chomp, armadillo roll/hit, spider drop/web, boulder roll
-- Per-character voice lines (select/confirm, celebration, hit reaction) for all 13 remaining characters
+- Per-character voice lines (select/confirm, celebration, hit reaction) for all 8 remaining characters
 - Main menu music
 - Cheat code input SFX
 - Cheat activated SFX
