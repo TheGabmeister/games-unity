@@ -133,7 +133,7 @@ Companion document to [SPEC.md](../SPEC.md) §6.
 | Collect Stick | Long | No | Beach → Cafeteria | Find a stick on the beach, roast marshmallows at the campfire |
 | Hoist Supplies | Long | No | The Cliffs | Multi-stage cliff climbing supply hauling |
 | Repair Drill | Long | No | Mining Pit | Click highlighted components to fix the drill |
-| Submit Scan | Long | Yes | MedBay / Dropship | Stand on scanner for 10 seconds |
+| Submit Scan | Long | Yes | Dropship | Stand on scanner for 10 seconds |
 | Upload Data | Long | No | Various → Dropship | Download, walk, upload |
 
 ---

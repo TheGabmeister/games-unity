@@ -41,7 +41,6 @@ A lobby of 4–15 players is assigned roles: most become **Crewmates**, 1–3 be
 - Impostors (and Engineers, §4) can enter and travel through vents — openings in the floor connected in map-specific networks (§5).
 - Entering or exiting a vent plays a visible animation that nearby players can witness, making venting risky near others.
 - While inside a vent, the player is hidden from all living players and can navigate to any connected vent in the same network.
-- Kill cooldown pauses while inside a vent.
 
 ### 1.6 Vision System
 
@@ -226,7 +225,7 @@ Among Us has five maps. Each map has a unique layout, room set, vent network, sa
 
 **Sabotages**: Reactor Meltdown (45s timer), O2 Depletion (45s timer), Fix Lights, Fix Communications. **No door sabotage** on MIRA HQ.
 
-**Surveillance**: Admin Table (anonymous room occupancy), Door Log (tracks the last 20 players passing through 3 sensors on the Skywalk corridor: North/Blue, Southwest/Green, Southeast/Red). No security cameras.
+**Surveillance**: Admin Table, Door Log (§8.4). No security cameras.
 
 ### 5.3 Polus
 
@@ -248,7 +247,7 @@ Among Us has five maps. Each map has a unique layout, room set, vent network, sa
 
 **Sabotages**: Seismic Stabilizers (60s timer — requires fixing at two locations), Fix Lights, Fix Communications, Close Doors.
 
-**Surveillance**: Security Cameras (6 fixed views), Admin Table, Vitals (Office — shows alive/dead/disconnected status for each player).
+**Surveillance**: Security Cameras (6 fixed views), Admin Table, Vitals (Office).
 
 ### 5.4 The Airship
 
@@ -308,7 +307,7 @@ Impostors receive a **fake task list** identical in structure to a real assignme
 | **Common** | Assigned identically to every player — if one player has it, all players have it. Useful for identifying Impostors who fake a common task nobody else has. |
 | **Short** | Single-step tasks; quick to complete. |
 | **Long** | Multi-step tasks requiring travel between rooms, waiting, or extended interaction. |
-| **Visual** | Tasks with a visible animation when completed (e.g., scan beam, shield glow, asteroid shots). Can be used to prove innocence when Visual Tasks are enabled. |
+| **Visual** | Tasks with a visible animation when completed (e.g., scan beam, shield glow, asteroid shots). |
 
 ### 6.2 Tasks by Map
 
@@ -572,6 +571,7 @@ Red, Blue, Green, Pink, Orange, Yellow, Black, White, Purple, Brown, Cyan, Lime,
 - Camera follows the player's movement.
 - Vision fog obscures areas outside the player's range and behind walls (§1.6).
 - During meetings: camera shows the meeting table with all player avatars.
+- Ghost camera: unrestricted — ghosts see the entire map without fog.
 
 ### 13.4 Networking
 
