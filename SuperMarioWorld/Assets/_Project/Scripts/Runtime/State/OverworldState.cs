@@ -1,11 +1,8 @@
-namespace SMW
+public sealed class OverworldState : IGameState
 {
-    public sealed class OverworldState : IGameState
+    public void OnEnter()
     {
-        public void OnEnter()
-        {
-            GameServices.SwitchMapOnAllPlayers(InputMapNames.Overworld);
-        }
-        public void OnExit() { }
+        GameServices.SwitchMapOnAllPlayers(InputMapNames.Overworld);
     }
+    public void OnExit() { }
 }

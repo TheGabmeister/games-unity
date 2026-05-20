@@ -1,16 +1,13 @@
 using UnityEngine;
 
-namespace SMW
+public sealed class OverworldRoot : MonoBehaviour
 {
-    public sealed class OverworldRoot : MonoBehaviour
+    private void Awake()
     {
-        private void Awake()
-        {
-            if (!GameServices.IsRegistered) return;
-            if (GameServices.GameState.Current is OverworldState) return;
+        if (!GameServices.IsRegistered) return;
+        if (GameServices.GameState.Current is OverworldState) return;
 #if UNITY_EDITOR
-            GameServices.GameState.EnterDirectOverworld();
+        GameServices.GameState.EnterDirectOverworld();
 #endif
-        }
     }
 }

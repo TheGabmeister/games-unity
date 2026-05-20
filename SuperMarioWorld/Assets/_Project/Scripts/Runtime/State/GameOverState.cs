@@ -1,8 +1,5 @@
-namespace SMW
+public sealed class GameOverState : IGameState
 {
-    public sealed class GameOverState : IGameState
-    {
-        public void OnEnter() { }
-        public void OnExit() { }
-    }
+    public void OnEnter() { }
+    public void OnExit() { }
 }

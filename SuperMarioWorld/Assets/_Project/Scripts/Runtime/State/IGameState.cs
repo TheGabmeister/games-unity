@@ -1,8 +1,5 @@
-namespace SMW
+public interface IGameState
 {
-    public interface IGameState
-    {
-        void OnEnter();
-        void OnExit();
-    }
+    void OnEnter();
+    void OnExit();
 }
