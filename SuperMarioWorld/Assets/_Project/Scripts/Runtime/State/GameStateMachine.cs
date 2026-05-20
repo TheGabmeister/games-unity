@@ -1,15 +1,27 @@
 using System;
-using System.Collections.Generic;
+using Eflatun.SceneReference;
 using UnityEngine;
+
+public enum GameState
+{
+    None,
+    Title,
+    Overworld,
+    Level,
+}
 
 public sealed class GameStateMachine : MonoBehaviour
 {
     public static GameStateMachine Instance { get; private set; }
 
-    private readonly Stack<IGameState> _stack = new();
+    [SerializeField] private SceneReference titleScene;
+    [SerializeField] private SceneReference overworldScene;
 
-    public IGameState Current => _stack.Count > 0 ? _stack.Peek() : null;
-    public event Action<IGameState, IGameState> StateChanged;
+    public GameState Current { get; private set; }
+    public LevelData CurrentLevelData { get; private set; }
+    public string CurrentEntryPoint { get; private set; }
+
+    public event Action<GameState, GameState> StateChanged;
 
     private void Awake()
     {
@@ -22,59 +34,61 @@ public sealed class GameStateMachine : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    public void Transition(IGameState next)
+    public async void TransitionToTitle()
     {
         var prev = Current;
-        if (prev != null)
-        {
-            prev.OnExit();
-            _stack.Pop();
-        }
-        if (next != null)
-        {
-            _stack.Push(next);
-            next.OnEnter();
-        }
-        StateChanged?.Invoke(prev, next);
+        Current = GameState.Title;
+        CurrentLevelData = null;
+        CurrentEntryPoint = null;
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.UI);
+        StateChanged?.Invoke(prev, Current);
+        await SceneLoader.Instance.LoadAsync(titleScene);
     }
 
-    public void Push(IGameState modal)
+    public async void TransitionToOverworld()
     {
-        _stack.Push(modal);
-        modal.OnEnter();
-        StateChanged?.Invoke(null, modal);
+        var prev = Current;
+        Current = GameState.Overworld;
+        CurrentLevelData = null;
+        CurrentEntryPoint = null;
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Overworld);
+        StateChanged?.Invoke(prev, Current);
+        await SceneLoader.Instance.LoadAsync(overworldScene);
     }
 
-    public void Pop()
+    public async void TransitionToLevel(LevelData data, string entryPoint)
     {
-        if (_stack.Count == 0) return;
-        var top = _stack.Pop();
-        top.OnExit();
-        StateChanged?.Invoke(top, Current);
+        var prev = Current;
+        Current = GameState.Level;
+        CurrentLevelData = data;
+        CurrentEntryPoint = entryPoint;
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Player);
+        StateChanged?.Invoke(prev, Current);
+        await SceneLoader.Instance.LoadAsync(data.SceneRef);
     }
-
-    public void TransitionToTitle() => Transition(new TitleState());
-    public void TransitionToOverworld() => Transition(new OverworldState());
-    public void TransitionToLevel(LevelData data, string entryPoint) =>
-        Transition(new LevelState(data, entryPoint));
 
 #if UNITY_EDITOR
     public void EnterDirectLevel(LevelData data, string entryPoint)
     {
-        if (Current is LevelState) return;
-        Transition(new LevelState(data, entryPoint));
+        if (Current == GameState.Level) return;
+        Current = GameState.Level;
+        CurrentLevelData = data;
+        CurrentEntryPoint = entryPoint;
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Player);
     }
 
     public void EnterDirectTitle()
     {
-        if (Current is TitleState) return;
-        Transition(new TitleState());
+        if (Current == GameState.Title) return;
+        Current = GameState.Title;
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.UI);
     }
 
     public void EnterDirectOverworld()
     {
-        if (Current is OverworldState) return;
-        Transition(new OverworldState());
+        if (Current == GameState.Overworld) return;
+        Current = GameState.Overworld;
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Overworld);
     }
 #endif
 }

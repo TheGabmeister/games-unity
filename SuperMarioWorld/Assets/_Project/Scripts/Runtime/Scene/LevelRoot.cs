@@ -26,10 +26,10 @@ public sealed class LevelRoot : MonoBehaviour
 
         string entryPoint = defaultEntryPoint;
 
-        if (GameStateMachine.Instance.Current is LevelState existing)
+        if (GameStateMachine.Instance.Current == GameState.Level)
         {
-            if (existing.Data != null) levelData = existing.Data;
-            if (!string.IsNullOrEmpty(existing.EntryPoint)) entryPoint = existing.EntryPoint;
+            if (GameStateMachine.Instance.CurrentLevelData != null) levelData = GameStateMachine.Instance.CurrentLevelData;
+            if (!string.IsNullOrEmpty(GameStateMachine.Instance.CurrentEntryPoint)) entryPoint = GameStateMachine.Instance.CurrentEntryPoint;
         }
         else
         {

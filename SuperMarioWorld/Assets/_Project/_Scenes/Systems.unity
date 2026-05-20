@@ -603,6 +603,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf34a3da767fe794383ed60eda52a088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SMW.Runtime::SMW.GameStateMachine
+  titleScene:
+    asset: {fileID: 102900000, guid: 01d071023bc4c384f89f6ca703ae0753, type: 3}
+    guid: 01d071023bc4c384f89f6ca703ae0753
+  overworldScene:
+    asset: {fileID: 102900000, guid: d6af7f75310a16d4ab85b229d444339e, type: 3}
+    guid: d6af7f75310a16d4ab85b229d444339e
 --- !u!114 &899413671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1361,7 +1367,6 @@ GameObject:
   - component: {fileID: 2133185476}
   - component: {fileID: 2133185475}
   - component: {fileID: 2133185474}
-  - component: {fileID: 2133185473}
   m_Layer: 0
   m_Name: HUDRoot
   m_TagString: Untagged
@@ -1369,18 +1374,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2133185473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2133185472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5ad50aed78e99b478e81a90d5c8e66b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.CanvasScalerPresetApplier
 --- !u!114 &2133185474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1410,12 +1403,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1280, y: 720}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
