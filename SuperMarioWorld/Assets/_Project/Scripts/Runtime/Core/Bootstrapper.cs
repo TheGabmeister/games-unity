@@ -4,9 +4,6 @@ using UnityEngine.SceneManagement;
 public sealed class Bootstrapper : MonoBehaviour
 {
     public const string SystemsSceneName = "Systems";
-    public const string BootSceneName = "Boot";
-    public const string TitleSceneName = "Title";
-    public const string OverworldSceneName = "Overworld";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void EnsureSystemsLoaded()
@@ -22,14 +19,6 @@ public sealed class Bootstrapper : MonoBehaviour
         if (!SceneManager.GetSceneByName(SystemsSceneName).isLoaded)
         {
             SceneManager.LoadScene(SystemsSceneName, LoadSceneMode.Additive);
-        }
-    }
-
-    private void Start()
-    {
-        if (GameStateMachine.Instance != null)
-        {
-            GameStateMachine.Instance.TransitionToTitle();
         }
     }
 }
