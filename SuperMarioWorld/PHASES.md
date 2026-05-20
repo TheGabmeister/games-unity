@@ -28,8 +28,6 @@ Core player physics and camera behavior — the foundation everything else build
 **Sprites**
 - Small Mario: idle, walk, run, sprint (arms spread), jump, spin jump, crouch, slide, skid, turn, fall, look up
 
-**Tilemaps**
-- Ground/platform/slope tileset (grass theme)
 - Debug level layout (multi-screen horizontal with slope and platform sections)
 
 **Audio**

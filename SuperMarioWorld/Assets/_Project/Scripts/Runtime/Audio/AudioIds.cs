@@ -2,7 +2,8 @@ public enum SfxId
 {
     None = 0,
     Jump, SpinJump, Stomp, Coin, OneUp, Kick, Bump, BreakBlock,
-    Fireball, CapeSwing, PowerUp, PowerDown, Death, ShellHit, DragonCoin
+    Fireball, CapeSwing, PowerUp, PowerDown, Death, ShellHit, DragonCoin,
+    Skid, Land
 }
 
 public enum MusicId
