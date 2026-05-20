@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 260783577}
   - component: {fileID: 260783576}
   - component: {fileID: 260783575}
-  - component: {fileID: 260783574}
   m_Layer: 0
   m_Name: OverworldCanvas
   m_TagString: Untagged
@@ -139,18 +138,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &260783574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260783573}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5ad50aed78e99b478e81a90d5c8e66b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.CanvasScalerPresetApplier
 --- !u!114 &260783575
 MonoBehaviour:
   m_ObjectHideFlags: 0
