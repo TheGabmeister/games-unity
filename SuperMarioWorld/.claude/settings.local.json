@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Find \"c:\\\\dev\\\\games-unity\\\\SuperMarioWorld\\\\Assets\\\\_Project\\\\Scripts\\\\Runtime\" -name \"*.cs\")"
+    ]
+  }
+}

@@ -15,6 +15,8 @@ public sealed class PlayerInputBinding : MonoBehaviour
     private InputAction _spinJump;
     private InputAction _action;
     private InputAction _pause;
+    private InputAction _cameraNudgeLeft;
+    private InputAction _cameraNudgeRight;
 
     public Vector2 Move { get; private set; }
     public float MoveX => Move.x;
@@ -33,6 +35,9 @@ public sealed class PlayerInputBinding : MonoBehaviour
 
     public bool PausePressedThisFrame { get; private set; }
 
+    public bool CameraNudgeLeftHeld { get; private set; }
+    public bool CameraNudgeRightHeld { get; private set; }
+
     public static void SwitchMapOnAllPlayers(string mapName)
     {
         foreach (var p in PlayerInput.all)
@@ -49,6 +54,8 @@ public sealed class PlayerInputBinding : MonoBehaviour
         _spinJump = asset.FindAction("Player/SpinJump", throwIfNotFound: false);
         _action = asset.FindAction("Player/Action", throwIfNotFound: false);
         _pause = asset.FindAction("Player/Pause", throwIfNotFound: false);
+        _cameraNudgeLeft = asset.FindAction("Player/CameraNudgeLeft", throwIfNotFound: false);
+        _cameraNudgeRight = asset.FindAction("Player/CameraNudgeRight", throwIfNotFound: false);
     }
 
     private void Update()
@@ -71,6 +78,9 @@ public sealed class PlayerInputBinding : MonoBehaviour
         ActionHeld = _action != null && _action.IsPressed();
 
         PausePressedThisFrame = _pause != null && _pause.WasPressedThisFrame();
+
+        CameraNudgeLeftHeld = _cameraNudgeLeft != null && _cameraNudgeLeft.IsPressed();
+        CameraNudgeRightHeld = _cameraNudgeRight != null && _cameraNudgeRight.IsPressed();
     }
 
     // Test / scripted-input hook: let tests inject synthetic state without routing
@@ -79,7 +89,8 @@ public sealed class PlayerInputBinding : MonoBehaviour
         Vector2 move,
         bool jumpHeld, bool jumpPressed, bool jumpReleased,
         bool spinJumpHeld, bool spinJumpPressed,
-        bool actionHeld, bool actionPressed, bool actionReleased)
+        bool actionHeld, bool actionPressed, bool actionReleased,
+        bool cameraNudgeLeft = false, bool cameraNudgeRight = false)
     {
         Move = move;
         JumpHeld = jumpHeld;
@@ -90,5 +101,7 @@ public sealed class PlayerInputBinding : MonoBehaviour
         ActionHeld = actionHeld;
         ActionPressedThisFrame = actionPressed;
         ActionReleasedThisFrame = actionReleased;
+        CameraNudgeLeftHeld = cameraNudgeLeft;
+        CameraNudgeRightHeld = cameraNudgeRight;
     }
 }

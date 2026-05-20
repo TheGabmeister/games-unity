@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 1003446477}
   - component: {fileID: 1003446476}
   m_Layer: 0
-  m_Name: OverworldRoot
+  m_Name: OverworldController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
