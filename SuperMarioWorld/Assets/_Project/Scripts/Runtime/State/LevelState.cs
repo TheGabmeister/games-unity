@@ -11,7 +11,7 @@ public sealed class LevelState : IGameState
 
     public void OnEnter()
     {
-        GameServices.SwitchMapOnAllPlayers(InputMapNames.Player);
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Player);
     }
     public void OnExit() { }
 }

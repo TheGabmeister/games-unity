@@ -10,12 +10,12 @@ public sealed class LevelContext : MonoBehaviour
 {
     [SerializeField] private LevelCamera levelCamera;
     [SerializeField] private LevelBounds levelBounds;
-    [SerializeField] private LevelRunState runState;
 
     public LevelCamera Camera => levelCamera;
     public LevelBounds Bounds => levelBounds;
-    public LevelRunState RunState => runState;
     public GameObject CurrentPlayer { get; private set; }
+
+    private PlayerInputManager _inputManager;
 
     private bool _begun;
 
@@ -24,6 +24,7 @@ public sealed class LevelContext : MonoBehaviour
         if (_begun) return;
         _begun = true;
 
+        _inputManager = FindAnyObjectByType<PlayerInputManager>();
         if (levelCamera != null && levelBounds != null) levelCamera.SetBounds(levelBounds);
 
         var spawnPos = ResolveSpawnPosition(data, entryPoint);
@@ -39,13 +40,9 @@ public sealed class LevelContext : MonoBehaviour
         if (!_begun) return;
         _begun = false;
 
-        var manager = GameServices.InputManager;
-        if (manager != null)
+        foreach (var p in PlayerInput.all)
         {
-            foreach (var p in PlayerInput.all)
-            {
-                if (p != null) Destroy(p.gameObject);
-            }
+            if (p != null) Destroy(p.gameObject);
         }
         CurrentPlayer = null;
     }
@@ -69,14 +66,13 @@ public sealed class LevelContext : MonoBehaviour
 
     private GameObject SpawnPlayer(Vector2 spawnPos)
     {
-        var manager = GameServices.InputManager;
-        if (manager == null || manager.playerPrefab == null)
+        if (_inputManager == null || _inputManager.playerPrefab == null)
         {
             Debug.LogError("[LevelContext] PlayerInputManager or playerPrefab missing — can't spawn player.");
             return null;
         }
 
-        var playerInput = manager.JoinPlayer(playerIndex: 0);
+        var playerInput = _inputManager.JoinPlayer(playerIndex: 0);
         if (playerInput == null)
         {
             Debug.LogError("[LevelContext] JoinPlayer returned null.");

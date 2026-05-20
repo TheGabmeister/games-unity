@@ -33,6 +33,12 @@ public sealed class PlayerInputBinding : MonoBehaviour
 
     public bool PausePressedThisFrame { get; private set; }
 
+    public static void SwitchMapOnAllPlayers(string mapName)
+    {
+        foreach (var p in PlayerInput.all)
+            if (p != null) p.SwitchCurrentActionMap(mapName);
+    }
+
     private void Awake()
     {
         _input = GetComponent<PlayerInput>();

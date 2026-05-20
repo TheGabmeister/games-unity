@@ -2,7 +2,7 @@ public sealed class OverworldState : IGameState
 {
     public void OnEnter()
     {
-        GameServices.SwitchMapOnAllPlayers(InputMapNames.Overworld);
+        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Overworld);
     }
     public void OnExit() { }
 }

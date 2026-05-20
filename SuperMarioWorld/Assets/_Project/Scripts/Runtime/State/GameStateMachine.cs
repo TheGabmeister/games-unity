@@ -4,13 +4,23 @@ using UnityEngine;
 
 public sealed class GameStateMachine : MonoBehaviour
 {
+    public static GameStateMachine Instance { get; private set; }
+
     private readonly Stack<IGameState> _stack = new();
-    private GameServices _services;
 
     public IGameState Current => _stack.Count > 0 ? _stack.Peek() : null;
     public event Action<IGameState, IGameState> StateChanged;
 
-    public void Bind(GameServices services) => _services = services;
+    private void Awake()
+    {
+        if (Instance != null && Instance != this) { Destroy(this); return; }
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
 
     public void Transition(IGameState next)
     {

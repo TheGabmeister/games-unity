@@ -13,23 +13,24 @@ Super Mario World recreation in Unity 6 (6000.3.15f1). Mechanics-first approach 
 The game uses additive scene loading with a persistent Systems scene:
 
 1. **Bootstrapper** (`[RuntimeInitializeOnLoadMethod]`) loads Systems.unity additively before any scene runs
-2. **Systems.unity** holds the GameServices singleton (never unloaded)
-3. Scene-specific roots (LevelRoot, TitleRoot, OverworldRoot) bind to GameServices on Start
+2. **Systems.unity** holds singleton services as scene components (no DontDestroyOnLoad — lifetimes managed manually)
+3. Scene-specific roots (LevelRoot, TitleRoot, OverworldRoot) check `GameStateMachine.Instance` on Start
 4. Never press Play on Systems.unity directly — use Boot, Title, Overworld, or a Level scene
 
-### GameServices Singleton
+### Singletons
 
-Central hub on Systems.unity. All subsystems are SerializeField references wired in the inspector. Access via static properties: `GameServices.Save`, `GameServices.SceneLoader`, `GameServices.Fader`, `GameServices.GameState`, `GameServices.Session`, `GameServices.Audio`, etc.
+Services use a simple singleton pattern: `Instance` set in Awake, cleared in OnDestroy, no DontDestroyOnLoad. Access via `X.Instance`:
 
-### State Machine
-
-`GameStateMachine` manages game-wide state via `IGameState` implementations: TitleState, OverworldState, LevelState, PausedState, GameOverState. States drive scene loading and input map switching.
+- **GameStateMachine** — game-wide state via `IGameState` implementations (TitleState, OverworldState, LevelState, PausedState, GameOverState)
+- **AudioBus** — audio playback (SFX, music, jingles, UI sounds) via AudioCatalog
+- **SceneLoader** — async scene transitions with ScreenFader
+- **ScreenFader** — fade in/out transitions via PrimeTween
 
 ### Player System
 
 - **PlayerController**: Dynamic Rigidbody2D with `gravityScale = 0` — all physics (gravity, acceleration, jump) applied manually in FixedUpdate. Subpixel-precision movement matching SNES behavior.
 - **GroundProbe**: OverlapBox collision sampling for ground/ceiling/wall detection
-- **PlayerInputBinding**: Adapts New Input System actions into intent fields; supports test override mode
+- **PlayerInputBinding**: Adapts New Input System actions into intent fields; supports test override mode; hosts `SwitchMapOnAllPlayers` static helper
 - **PlayerCarry**: Carry/throw mechanics
 
 ### Level Loading
@@ -39,7 +40,6 @@ SceneLoader handles async scene transitions with ScreenFader. LevelRoot spawns t
 ### Data
 
 - **LevelData** (ScriptableObject): level metadata, scene reference (Eflatun.SceneReference), entry points, unlock chains
-- **SaveData**: serialized via Newtonsoft.Json — 3 save slots with lives, score, coins, level completions, switch palace states
 - **AudioCatalog** (ScriptableObject): maps SfxId/MusicId/JingleId enums to AudioClips
 
 ## Code Conventions

@@ -6,14 +6,25 @@ using UnityEngine.SceneManagement;
 
 public sealed class SceneLoader : MonoBehaviour
 {
-    private ScreenFader _fader;
+    public static SceneLoader Instance { get; private set; }
+
+    [SerializeField] private ScreenFader _fader;
     private bool _isTransitioning;
     private string _previousSceneName;
     private string _currentLevelSceneName;
 
     public event Action<SceneReference, object> OnTransitionPeak;
 
-    public void Bind(ScreenFader fader) => _fader = fader;
+    private void Awake()
+    {
+        if (Instance != null && Instance != this) { Destroy(this); return; }
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
 
     public async Task LoadAsync(SceneReference target, SceneLoadOptions opts = default)
     {

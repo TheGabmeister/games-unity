@@ -4,10 +4,10 @@ public sealed class TitleRoot : MonoBehaviour
 {
     private void Awake()
     {
-        if (!GameServices.IsRegistered) return;
-        if (GameServices.GameState.Current is TitleState) return;
+        if (GameStateMachine.Instance == null) return;
+        if (GameStateMachine.Instance.Current is TitleState) return;
 #if UNITY_EDITOR
-        GameServices.GameState.EnterDirectTitle();
+        GameStateMachine.Instance.EnterDirectTitle();
 #endif
     }
 }

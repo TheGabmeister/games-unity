@@ -27,10 +27,9 @@ public sealed class Bootstrapper : MonoBehaviour
 
     private void Start()
     {
-        // Systems is loaded by EnsureSystemsLoaded above; GameServices.Awake has already run.
-        if (GameServices.IsRegistered && GameServices.GameState != null)
+        if (GameStateMachine.Instance != null)
         {
-            GameServices.GameState.TransitionToTitle();
+            GameStateMachine.Instance.TransitionToTitle();
         }
     }
 }

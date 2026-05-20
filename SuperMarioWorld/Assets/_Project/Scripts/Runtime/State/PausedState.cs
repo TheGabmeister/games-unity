@@ -21,7 +21,7 @@ public sealed class PausedState : IGameState
             p.SwitchCurrentActionMap(InputMapNames.UI);
         }
 
-        GameServices.Audio?.PlayUiSfx(UiSfxId.Pause);
+        AudioBus.Instance?.PlayUiSfx(UiSfxId.Pause);
     }
 
     public void OnExit()
@@ -37,6 +37,6 @@ public sealed class PausedState : IGameState
         }
         _previousMaps.Clear();
 
-        GameServices.Audio?.PlayUiSfx(UiSfxId.Unpause);
+        AudioBus.Instance?.PlayUiSfx(UiSfxId.Unpause);
     }
 }

@@ -582,12 +582,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 899413674}
-  - component: {fileID: 899413673}
-  - component: {fileID: 899413672}
   - component: {fileID: 899413671}
   - component: {fileID: 899413670}
-  - component: {fileID: 899413669}
-  - component: {fileID: 899413668}
   m_Layer: 0
   m_Name: GameServices
   m_TagString: Untagged
@@ -595,30 +591,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &899413668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899413667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dac406af00ed90242a2e8b09d9124c50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.GameSession
---- !u!114 &899413669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899413667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2260caa753beaf04199e280e6f15a446, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.FeedbackService
 --- !u!114 &899413670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -643,38 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1303a68a1d345894198fab787de24501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SMW.Runtime::SMW.SceneLoader
---- !u!114 &899413672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899413667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 719e4cdd2129fe04b8800cf44315517e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.SaveManager
---- !u!114 &899413673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899413667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1d43012d67212d42ade438879426c39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.GameServices
-  saveManager: {fileID: 899413672}
-  sceneLoader: {fileID: 899413671}
-  screenFader: {fileID: 1087500154}
-  gameState: {fileID: 899413670}
-  feedbackService: {fileID: 899413669}
-  gameSession: {fileID: 899413668}
-  audioBus: {fileID: 535122987}
-  playerInputManager: {fileID: 43941171}
+  _fader: {fileID: 1087500154}
 --- !u!4 &899413674
 Transform:
   m_ObjectHideFlags: 0

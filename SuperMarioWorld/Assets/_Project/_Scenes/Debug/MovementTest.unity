@@ -200,7 +200,6 @@ GameObject:
   - component: {fileID: 43941174}
   - component: {fileID: 43941173}
   - component: {fileID: 43941172}
-  - component: {fileID: 43941171}
   m_Layer: 0
   m_Name: LevelRoot
   m_TagString: Untagged
@@ -208,21 +207,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &43941171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 43941170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd4c65fa8f4b6b3428a225676416b1ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.LevelRunState
-  CheckpointId: 
-  DragonCoinsCollectedThisAttempt: 0
-  PSwitchActive: 0
 --- !u!114 &43941172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,7 +221,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: SMW.Runtime::SMW.LevelContext
   levelCamera: {fileID: 1630467654}
   levelBounds: {fileID: 899413668}
-  runState: {fileID: 43941171}
 --- !u!114 &43941173
 MonoBehaviour:
   m_ObjectHideFlags: 0

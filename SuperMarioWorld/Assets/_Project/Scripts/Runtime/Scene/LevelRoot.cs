@@ -18,15 +18,15 @@ public sealed class LevelRoot : MonoBehaviour
     // of scene-load order between Systems (additive) and the level (primary).
     private void Start()
     {
-        if (!GameServices.IsRegistered)
+        if (GameStateMachine.Instance == null)
         {
-            Debug.LogError($"[LevelRoot] GameServices not registered by Start on {gameObject.name}. Systems scene did not load — check Build Settings.");
+            Debug.LogError($"[LevelRoot] GameStateMachine not found by Start on {gameObject.name}. Systems scene did not load — check Build Settings.");
             return;
         }
 
         string entryPoint = defaultEntryPoint;
 
-        if (GameServices.GameState.Current is LevelState existing)
+        if (GameStateMachine.Instance.Current is LevelState existing)
         {
             if (existing.Data != null) levelData = existing.Data;
             if (!string.IsNullOrEmpty(existing.EntryPoint)) entryPoint = existing.EntryPoint;
@@ -39,7 +39,7 @@ public sealed class LevelRoot : MonoBehaviour
                 Debug.LogError($"[LevelRoot] No LevelData assigned on {gameObject.name}. Direct-entry aborted.");
                 return;
             }
-            GameServices.GameState.EnterDirectLevel(levelData, entryPoint);
+            GameStateMachine.Instance.EnterDirectLevel(levelData, entryPoint);
 #else
             var levelId = levelData != null ? levelData.LevelId : "<unassigned>";
             Debug.LogError($"Level {levelId} loaded without GameStateMachine entry. Build config bug.");

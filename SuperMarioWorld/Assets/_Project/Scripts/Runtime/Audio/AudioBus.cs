@@ -3,6 +3,8 @@ using UnityEngine;
 
 public sealed class AudioBus : MonoBehaviour
 {
+    public static AudioBus Instance { get; private set; }
+
     [SerializeField] private AudioCatalog catalog;
     [SerializeField] private AudioSource musicChannel;
     [SerializeField] private AudioSource sfxChannel;
@@ -21,7 +23,14 @@ public sealed class AudioBus : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this) { Destroy(this); return; }
+        Instance = this;
         if (uiSfxChannel != null) uiSfxChannel.ignoreListenerPause = true;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     public void PlaySfx(SfxId id)

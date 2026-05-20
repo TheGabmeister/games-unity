@@ -7,6 +7,8 @@ using PrimeTween;
 [RequireComponent(typeof(Canvas))]
 public sealed class ScreenFader : MonoBehaviour
 {
+    public static ScreenFader Instance { get; private set; }
+
     [SerializeField] private Image fadeImage;
 
     // Fires at the start of each fade. Exposed for test observability; no production caller uses these.
@@ -15,6 +17,8 @@ public sealed class ScreenFader : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this) { Destroy(this); return; }
+        Instance = this;
         if (fadeImage != null)
         {
             var c = fadeImage.color;
@@ -22,6 +26,11 @@ public sealed class ScreenFader : MonoBehaviour
             fadeImage.color = c;
             fadeImage.raycastTarget = false;
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     public async Task FadeOutAsync(float duration)

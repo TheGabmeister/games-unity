@@ -6,19 +6,19 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project/Scenes/Boot.unity
+    path: Assets/_Project/_Scenes/Boot.unity
     guid: 3630c4e8cae35d44f912478668ba5108
   - enabled: 1
-    path: Assets/_Project/Scenes/Systems.unity
+    path: Assets/_Project/_Scenes/Systems.unity
     guid: a0df2d989551e46489945fe615fe9aa2
   - enabled: 1
-    path: Assets/_Project/Scenes/Title.unity
+    path: Assets/_Project/_Scenes/Title.unity
     guid: 01d071023bc4c384f89f6ca703ae0753
   - enabled: 1
-    path: Assets/_Project/Scenes/Overworld.unity
+    path: Assets/_Project/_Scenes/Overworld.unity
     guid: d6af7f75310a16d4ab85b229d444339e
   - enabled: 1
-    path: Assets/_Project/Scenes/Debug/MovementTest.unity
+    path: Assets/_Project/_Scenes/Debug/MovementTest.unity
     guid: 8d6dba5695b221e4496f8eda2f6ad669
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
