@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public sealed class Bootstrapper : MonoBehaviour
 {
-    public const string SystemsSceneName = "Systems";
+    const string SystemsSceneName = "Systems";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void EnsureSystemsLoaded()
