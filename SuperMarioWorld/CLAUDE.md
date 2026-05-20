@@ -14,14 +14,14 @@ The game uses additive scene loading with a persistent Systems scene:
 
 1. **Bootstrapper** (`[RuntimeInitializeOnLoadMethod]`) loads Systems.unity additively before any scene runs
 2. **Systems.unity** holds singleton services as scene components (no DontDestroyOnLoad — lifetimes managed manually)
-3. Scene-specific roots (LevelRoot, TitleRoot, OverworldRoot) check `GameStateMachine.Instance` on Start
-4. Never press Play on Systems.unity directly — use Boot, Title, Overworld, or a Level scene
+3. Scene-specific controllers (TitleScene, OverworldRoot, LevelRoot) check `GameStateMachine.Instance` on Awake/Start
+4. Never press Play on Systems.unity directly — use Title, Overworld, or a Level scene
 
 ### Singletons
 
 Services use a simple singleton pattern: `Instance` set in Awake, cleared in OnDestroy, no DontDestroyOnLoad. Access via `X.Instance`:
 
-- **GameStateMachine** — game-wide state via `IGameState` implementations (TitleState, OverworldState, LevelState, PausedState, GameOverState)
+- **GameStateMachine** — owns game-wide state (`GameState` enum: None, Title, Overworld, Level) and scene loading. Transition methods (`TransitionToTitle`, `TransitionToOverworld`, `TransitionToLevel`) set state, switch input maps, and load the target scene via SceneLoader.
 - **AudioBus** — audio playback (SFX, music, jingles, UI sounds) via AudioCatalog
 - **SceneLoader** — async scene transitions with ScreenFader
 - **ScreenFader** — fade in/out transitions via PrimeTween
@@ -35,7 +35,7 @@ Services use a simple singleton pattern: `Instance` set in Awake, cleared in OnD
 
 ### Level Loading
 
-SceneLoader handles async scene transitions with ScreenFader. LevelRoot spawns the player via LevelContext, resolving spawn position from SpawnMarker components or LevelData coordinates. LevelCamera follows the player with configurable horizontal/vertical scroll modes.
+GameStateMachine.TransitionToLevel() loads level scenes via SceneLoader. LevelRoot spawns the player via LevelContext, resolving spawn position from SpawnMarker components or LevelData coordinates. LevelCamera follows the player with configurable horizontal/vertical scroll modes.
 
 ### Data
 
@@ -52,11 +52,10 @@ SceneLoader handles async scene transitions with ScreenFader. LevelRoot spawns t
 
 ## Key Packages
 
-- **Eflatun.SceneReference**: type-safe scene references by GUID (used in LevelData)
+- **Eflatun.SceneReference**: type-safe scene references by GUID (used in LevelData, GameStateMachine)
 - **PrimeTween**: tweening/animation (used for screen fades, UI transitions)
 - **Unity.InputSystem**: New Input System with InputSystem_Actions.inputactions asset
 - **Unity.VectorGraphics**: SVG/vector rendering for procedural sprites
-- **Newtonsoft.Json**: save serialization (precompiled reference)
 
 ## Project Layout
 
@@ -64,7 +63,7 @@ SceneLoader handles async scene transitions with ScreenFader. LevelRoot spawns t
 Assets/_Project/
   Scripts/Runtime/   — all gameplay code, organized by system folder
   Scripts/Editor/    — editor-only tools
-  Scenes/            — Boot, Systems, Title, Overworld, Debug/
+  _Scenes/           — Systems, Title, Overworld, Debug/
   Prefabs/           — Player/, Environment/
   Data/              — ScriptableObject assets (LevelData, AudioCatalog)
   Art/Sprites/       — sprite assets
