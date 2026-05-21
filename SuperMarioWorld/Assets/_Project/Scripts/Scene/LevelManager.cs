@@ -13,12 +13,13 @@ public class LevelManager : MonoBehaviour
     {
         var playerStart = GameObject.FindGameObjectWithTag("PlayerStart").transform.position;
 
-        Instantiate(_playerPrefab, playerStart, Quaternion.identity);
+        var player = Instantiate(_playerPrefab, playerStart, Quaternion.identity);
 
-        Instantiate(_cameraPrefab, playerStart - new Vector3(0,-10,0), Quaternion.identity);
-        if (_cameraPrefab.TryGetComponent<LevelCamera>(out var levelCamera))
+        var cameraStart = new Vector3(playerStart.x, playerStart.y, _cameraPrefab.transform.position.z);
+        var levelCameraObject = Instantiate(_cameraPrefab, cameraStart, Quaternion.identity);
+        if (levelCameraObject.TryGetComponent<LevelCamera>(out var levelCamera))
         {
-            levelCamera.SetTarget(_playerPrefab.transform);
+            levelCamera.SetTarget(player.transform);
         }
     }
 }
