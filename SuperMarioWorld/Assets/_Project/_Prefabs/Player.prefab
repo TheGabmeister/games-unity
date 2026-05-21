@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 1145349621165704812}
   - component: {fileID: 7725215744249077575}
   - component: {fileID: 4517641870768624708}
-  - component: {fileID: 5889458818779504704}
   - component: {fileID: 4413098481394589752}
   - component: {fileID: 7142090339507013521}
   m_Layer: 8
@@ -202,36 +201,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1970601a78d61c44ab5de352ee1ab83f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SMW.Runtime::SMW.PlayerCarry
---- !u!114 &5889458818779504704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8493242955625353841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: d8ccf722d1d75924b86e4ce6910b56c5, type: 3}
-  m_NotificationBehavior: 3
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!114 &4413098481394589752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,6 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b9bb3c57f6c5d45b5cf0d59547cd12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SMW.Runtime::SMW.PlayerInputBinding
+  actions: {fileID: -944628639613478452, guid: d8ccf722d1d75924b86e4ce6910b56c5, type: 3}
 --- !u!114 &7142090339507013521
 MonoBehaviour:
   m_ObjectHideFlags: 0

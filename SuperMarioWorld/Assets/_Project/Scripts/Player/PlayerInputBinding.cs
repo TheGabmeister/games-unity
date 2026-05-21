@@ -1,15 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Translates the New Input System's PlayerInput callbacks into plain intent fields
-// the controller can read each FixedUpdate. Tests bypass this layer and write the
-// fields directly via DebugOverride — the component tolerates a missing PlayerInput
-// so tests can build a stripped player without the Input System dependency.
-//
-// Crouch is derived, not bound — Move.y < -0.5 per SPEC §4.1.
 public sealed class PlayerInputBinding : MonoBehaviour
 {
-    private PlayerInput _input;
+    [SerializeField] private InputActionAsset actions;
+
     private InputAction _move;
     private InputAction _jump;
     private InputAction _spinJump;
@@ -17,6 +12,8 @@ public sealed class PlayerInputBinding : MonoBehaviour
     private InputAction _pause;
     private InputAction _cameraNudgeLeft;
     private InputAction _cameraNudgeRight;
+
+    private bool _debugMode;
 
     public Vector2 Move { get; private set; }
     public float MoveX => Move.x;
@@ -38,31 +35,49 @@ public sealed class PlayerInputBinding : MonoBehaviour
     public bool CameraNudgeLeftHeld { get; private set; }
     public bool CameraNudgeRightHeld { get; private set; }
 
-    public static void SwitchMapOnAllPlayers(string mapName)
+    public static PlayerInputBinding Instance { get; private set; }
+
+    public void SwitchActionMap(string mapName)
     {
-        foreach (var p in PlayerInput.all)
-            if (p != null) p.SwitchCurrentActionMap(mapName);
+        if (actions == null) return;
+        foreach (var map in actions.actionMaps)
+            map.Disable();
+        var target = actions.FindActionMap(mapName);
+        target?.Enable();
     }
 
     private void Awake()
     {
-        _input = GetComponent<PlayerInput>();
-        if (_input == null || _input.actions == null) return;
-        var asset = _input.actions;
-        _move = asset.FindAction("Player/Move", throwIfNotFound: false);
-        _jump = asset.FindAction("Player/Jump", throwIfNotFound: false);
-        _spinJump = asset.FindAction("Player/SpinJump", throwIfNotFound: false);
-        _action = asset.FindAction("Player/Action", throwIfNotFound: false);
-        _pause = asset.FindAction("Player/Pause", throwIfNotFound: false);
-        _cameraNudgeLeft = asset.FindAction("Player/CameraNudgeLeft", throwIfNotFound: false);
-        _cameraNudgeRight = asset.FindAction("Player/CameraNudgeRight", throwIfNotFound: false);
+        Instance = this;
+
+        if (actions == null) return;
+        _move = actions.FindAction("Player/Move");
+        _jump = actions.FindAction("Player/Jump");
+        _spinJump = actions.FindAction("Player/SpinJump");
+        _action = actions.FindAction("Player/Action");
+        _pause = actions.FindAction("Player/Pause");
+        _cameraNudgeLeft = actions.FindAction("Player/CameraNudgeLeft");
+        _cameraNudgeRight = actions.FindAction("Player/CameraNudgeRight");
+    }
+
+    private void OnEnable()
+    {
+        if (actions != null) actions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        if (actions != null) actions.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     private void Update()
     {
-        // No-op when driven by DebugOverride (tests build a stripped player with
-        // no PlayerInput; real gameplay always has one).
-        if (_input == null) return;
+        if (_debugMode || actions == null) return;
 
         if (_move != null) Move = _move.ReadValue<Vector2>();
 
@@ -81,27 +96,5 @@ public sealed class PlayerInputBinding : MonoBehaviour
 
         CameraNudgeLeftHeld = _cameraNudgeLeft != null && _cameraNudgeLeft.IsPressed();
         CameraNudgeRightHeld = _cameraNudgeRight != null && _cameraNudgeRight.IsPressed();
-    }
-
-    // Test / scripted-input hook: let tests inject synthetic state without routing
-    // through the Input System. Writes bypass the Input-System read in Update().
-    public void DebugOverride(
-        Vector2 move,
-        bool jumpHeld, bool jumpPressed, bool jumpReleased,
-        bool spinJumpHeld, bool spinJumpPressed,
-        bool actionHeld, bool actionPressed, bool actionReleased,
-        bool cameraNudgeLeft = false, bool cameraNudgeRight = false)
-    {
-        Move = move;
-        JumpHeld = jumpHeld;
-        JumpPressedThisFrame = jumpPressed;
-        JumpReleasedThisFrame = jumpReleased;
-        SpinJumpHeld = spinJumpHeld;
-        SpinJumpPressedThisFrame = spinJumpPressed;
-        ActionHeld = actionHeld;
-        ActionPressedThisFrame = actionPressed;
-        ActionReleasedThisFrame = actionReleased;
-        CameraNudgeLeftHeld = cameraNudgeLeft;
-        CameraNudgeRightHeld = cameraNudgeRight;
     }
 }

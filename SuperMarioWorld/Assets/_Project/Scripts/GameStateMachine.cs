@@ -40,7 +40,7 @@ public sealed class GameStateMachine : MonoBehaviour
         Current = GameState.Title;
         CurrentLevelData = null;
         CurrentEntryPoint = null;
-        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.UI);
+        PlayerInputBinding.Instance?.SwitchActionMap(InputMapNames.UI);
         StateChanged?.Invoke(prev, Current);
         await SceneLoader.Instance.LoadAsync(titleScene);
     }
@@ -51,7 +51,7 @@ public sealed class GameStateMachine : MonoBehaviour
         Current = GameState.Overworld;
         CurrentLevelData = null;
         CurrentEntryPoint = null;
-        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Overworld);
+        PlayerInputBinding.Instance?.SwitchActionMap(InputMapNames.Overworld);
         StateChanged?.Invoke(prev, Current);
         await SceneLoader.Instance.LoadAsync(overworldScene);
     }
@@ -62,7 +62,7 @@ public sealed class GameStateMachine : MonoBehaviour
         Current = GameState.Level;
         CurrentLevelData = data;
         CurrentEntryPoint = entryPoint;
-        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Player);
+        PlayerInputBinding.Instance?.SwitchActionMap(InputMapNames.Player);
         StateChanged?.Invoke(prev, Current);
         await SceneLoader.Instance.LoadAsync(data.SceneRef);
     }
@@ -74,21 +74,21 @@ public sealed class GameStateMachine : MonoBehaviour
         Current = GameState.Level;
         CurrentLevelData = data;
         CurrentEntryPoint = entryPoint;
-        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Player);
+        PlayerInputBinding.Instance?.SwitchActionMap(InputMapNames.Player);
     }
 
     public void EnterDirectTitle()
     {
         if (Current == GameState.Title) return;
         Current = GameState.Title;
-        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.UI);
+        PlayerInputBinding.Instance?.SwitchActionMap(InputMapNames.UI);
     }
 
     public void EnterDirectOverworld()
     {
         if (Current == GameState.Overworld) return;
         Current = GameState.Overworld;
-        PlayerInputBinding.SwitchMapOnAllPlayers(InputMapNames.Overworld);
+        PlayerInputBinding.Instance?.SwitchActionMap(InputMapNames.Overworld);
     }
 #endif
 }
