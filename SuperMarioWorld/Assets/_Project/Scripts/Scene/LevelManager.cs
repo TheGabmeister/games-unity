@@ -19,7 +19,7 @@ public class LevelManager : MonoBehaviour
         var levelCameraObject = Instantiate(_cameraPrefab, cameraStart, Quaternion.identity);
         if (levelCameraObject.TryGetComponent<LevelCamera>(out var levelCamera))
         {
-            levelCamera.SetTarget(player.transform);
+            levelCamera.Target = player.transform;
         }
     }
 }
