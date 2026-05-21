@@ -100,17 +100,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.95}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.64, y: 0.64}
+    newSize: {x: 0.16, y: 0.32}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.9, y: 1.9}
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
 --- !u!212 &1145349621165704812
 SpriteRenderer:
@@ -258,17 +258,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: SMW.Runtime::SMW.PlayerController
   walkMaxSpeed: 6
   runMaxSpeed: 10
+  sprintMaxSpeed: 14
   groundAccel: 80
   airAccel: 50
   groundFriction: 40
   skidDecel: 100
   skidSpeedThreshold: 4
+  pMeterMax: 112
+  pMeterFillRate: 2
+  pMeterDrainRate: 1
+  pMeterMinSpeed: 8
   gravity: 60
   jumpHoldGravity: 20
-  jumpVelocity: 15
-  spinJumpVelocity: 12
+  jumpVelocityMin: 15
+  jumpVelocityMax: 18
+  spinJumpVelocityMin: 12
+  spinJumpVelocityMax: 14.4
   maxFallSpeed: 22
   jumpHoldMaxTicks: 18
-  coyoteTicks: 7
   bufferTicks: 7
   downhillSpeedBoost: 1.3
+  slideAccel: 20
+  slideMaxSpeed: 12
+  slideMinAngle: 5

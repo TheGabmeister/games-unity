@@ -2,9 +2,7 @@ using UnityEngine;
 
 // Marker component defining a rectangular clamp region for the LevelCamera and
 // for kill-floor logic. Uses a BoxCollider2D as the underlying shape (trigger),
-// on the "LevelBounds" layer per SPEC §4.19. The collider is only a convenient
-// inspector handle — no physics interaction is expected with it (the collision
-// matrix disables LevelBounds ↔ everything).
+// on the "LevelBounds" layer
 [RequireComponent(typeof(BoxCollider2D))]
 public sealed class LevelBounds : MonoBehaviour
 {
