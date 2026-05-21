@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 674544638346164092}
   - component: {fileID: 1145349621165704812}
   - component: {fileID: 7725215744249077575}
-  - component: {fileID: 4517641870768624708}
   - component: {fileID: 7142090339507013521}
   m_Layer: 8
   m_Name: Player
@@ -180,26 +179,14 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7aabedf2f8ba00945a0068058188c8c7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.GroundProbe
-  body: {fileID: 674544638346164092}
-  solidMask:
+  m_EditorClassIdentifier:
+  _solidLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
-  probeDistance: 0.1
-  probeShrink: 0.06
-  maxSlopeDegrees: 60
---- !u!114 &4517641870768624708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8493242955625353841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1970601a78d61c44ab5de352ee1ab83f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.PlayerCarry
+    m_Bits: 8192
+  _oneWayLayers:
+    serializedVersion: 2
+    m_Bits: 16384
+  _skinWidth: 0.02
 --- !u!114 &7142090339507013521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,29 +198,4 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d36a4dd2f56c84747af706567b9495b2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: SMW.Runtime::SMW.PlayerController
-  walkMaxSpeed: 6
-  runMaxSpeed: 10
-  sprintMaxSpeed: 14
-  groundAccel: 80
-  airAccel: 50
-  groundFriction: 40
-  skidDecel: 100
-  skidSpeedThreshold: 4
-  pMeterMax: 112
-  pMeterFillRate: 2
-  pMeterDrainRate: 1
-  pMeterMinSpeed: 8
-  gravity: 60
-  jumpHoldGravity: 20
-  jumpVelocityMin: 15
-  jumpVelocityMax: 18
-  spinJumpVelocityMin: 12
-  spinJumpVelocityMax: 14.4
-  maxFallSpeed: 22
-  jumpHoldMaxTicks: 18
-  bufferTicks: 7
-  downhillSpeedBoost: 1.3
-  slideAccel: 20
-  slideMaxSpeed: 12
-  slideMinAngle: 5
+  m_EditorClassIdentifier:

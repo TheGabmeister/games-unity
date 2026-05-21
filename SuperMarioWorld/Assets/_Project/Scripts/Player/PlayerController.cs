@@ -83,6 +83,7 @@ public class PlayerController : MonoBehaviour
         }
 
         ApplyVelocity();
+        input.ConsumeFixedUpdate();
     }
 
     // --- Ground ---
@@ -371,7 +372,7 @@ public class PlayerController : MonoBehaviour
         if (_probe.HitWallRight && _velX > 0) _velX = 0;
 
         _subX += _velX;
-        _subY += _velY;
+        _subY -= _velY;
 
         float newX = _subX * InvSubpixels;
         float newY = _subY * InvSubpixels;

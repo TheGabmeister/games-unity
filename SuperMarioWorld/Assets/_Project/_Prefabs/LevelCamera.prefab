@@ -69,7 +69,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 5.625
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -105,16 +105,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd685da38fe2016468974f796fa267af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SMW.Runtime::SMW.LevelCamera
-  target: {fileID: 0}
-  bounds: {fileID: 0}
-  forwardBias: 2.5
-  biasResponseSpeed: 3
-  reversalThreshold: 0.65
-  reversalTransitionSpeed: 12
-  verticalMode: 1
-  verticalLockWindow: 2
-  scrollAtWillDamping: 8
-  followDamping: 8
-  nudgeDistance: 3
-  nudgeSpeed: 6
-  nudgeEnabled: 1
+  Target: {fileID: 0}
+  _zOffset: 10
+  _horizontalDeadZone: 0.1
+  _horizontalRecenterSpeed: 8
+  _nudgeSpeed: 3
+  _nudgeMaxOffset: 1.5
+  _verticalSmoothSpeed: 6

@@ -32,6 +32,13 @@ public sealed class PlayerInputBinding : MonoBehaviour
 
     public bool PausePressedThisFrame { get; private set; }
 
+    bool _jumpPressLatched;
+    bool _jumpReleaseLatched;
+    bool _spinJumpPressLatched;
+    bool _actionPressLatched;
+    bool _actionReleaseLatched;
+    bool _pausePressLatched;
+
     public bool CameraNudgeLeftHeld { get; private set; }
     public bool CameraNudgeRightHeld { get; private set; }
 
@@ -75,26 +82,43 @@ public sealed class PlayerInputBinding : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    public void ConsumeFixedUpdate()
+    {
+        _jumpPressLatched = false;
+        _jumpReleaseLatched = false;
+        _spinJumpPressLatched = false;
+        _actionPressLatched = false;
+        _actionReleaseLatched = false;
+        _pausePressLatched = false;
+    }
+
     private void Update()
     {
         if (_debugMode || actions == null) return;
 
         if (_move != null) Move = _move.ReadValue<Vector2>();
 
-        JumpPressedThisFrame = _jump != null && _jump.WasPressedThisFrame();
-        JumpReleasedThisFrame = _jump != null && _jump.WasReleasedThisFrame();
+        if (_jump != null && _jump.WasPressedThisFrame()) _jumpPressLatched = true;
+        if (_jump != null && _jump.WasReleasedThisFrame()) _jumpReleaseLatched = true;
         JumpHeld = _jump != null && _jump.IsPressed();
 
-        SpinJumpPressedThisFrame = _spinJump != null && _spinJump.WasPressedThisFrame();
+        if (_spinJump != null && _spinJump.WasPressedThisFrame()) _spinJumpPressLatched = true;
         SpinJumpHeld = _spinJump != null && _spinJump.IsPressed();
 
-        ActionPressedThisFrame = _action != null && _action.WasPressedThisFrame();
-        ActionReleasedThisFrame = _action != null && _action.WasReleasedThisFrame();
+        if (_action != null && _action.WasPressedThisFrame()) _actionPressLatched = true;
+        if (_action != null && _action.WasReleasedThisFrame()) _actionReleaseLatched = true;
         ActionHeld = _action != null && _action.IsPressed();
 
-        PausePressedThisFrame = _pause != null && _pause.WasPressedThisFrame();
+        if (_pause != null && _pause.WasPressedThisFrame()) _pausePressLatched = true;
 
         CameraNudgeLeftHeld = _cameraNudgeLeft != null && _cameraNudgeLeft.IsPressed();
         CameraNudgeRightHeld = _cameraNudgeRight != null && _cameraNudgeRight.IsPressed();
+
+        JumpPressedThisFrame = _jumpPressLatched;
+        JumpReleasedThisFrame = _jumpReleaseLatched;
+        SpinJumpPressedThisFrame = _spinJumpPressLatched;
+        ActionPressedThisFrame = _actionPressLatched;
+        ActionReleasedThisFrame = _actionReleaseLatched;
+        PausePressedThisFrame = _pausePressLatched;
     }
 }
