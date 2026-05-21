@@ -179,7 +179,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7aabedf2f8ba00945a0068058188c8c7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   _solidLayers:
     serializedVersion: 2
     m_Bits: 8192
@@ -198,4 +198,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d36a4dd2f56c84747af706567b9495b2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
+  _jumpSfx: {fileID: 8300000, guid: 71df53a40d86a6149b5b5c665ca88d69, type: 3}
+  _spinJumpSfx: {fileID: 8300000, guid: caf79fffa565ff54a8d9ba974bfb4923, type: 3}
+  _skidSfx: {fileID: 8300000, guid: e502d609515c16b41a9afd1e59e68eb9, type: 3}
+  _landSfx: {fileID: 8300000, guid: 211c8b97f4f7eb74993a9e6042466587, type: 3}

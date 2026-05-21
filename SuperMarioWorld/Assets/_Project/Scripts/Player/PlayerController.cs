@@ -25,6 +25,12 @@ public class PlayerController : MonoBehaviour
     // Spin jump: indexed by abs(xSpeed) / 8
     static readonly int[] JumpTableSpin = { -74, -76, -78, -80, -82, -85, -87 };
 
+    [Header("SFX")]
+    [SerializeField] AudioClip _jumpSfx;
+    [SerializeField] AudioClip _spinJumpSfx;
+    [SerializeField] AudioClip _skidSfx;
+    [SerializeField] AudioClip _landSfx;
+
     enum Mode { Ground, Air, Crouch, Slide }
 
     Rigidbody2D _rb;
@@ -33,6 +39,7 @@ public class PlayerController : MonoBehaviour
     Mode _mode = Mode.Air;
     int _facingDir = 1; // 1 = right, -1 = left
     bool _isSpinning;
+    bool _wasSkidding;
 
     // Subpixel position accumulator
     long _subX;
@@ -143,6 +150,7 @@ public class PlayerController : MonoBehaviour
 
         if (inputDir == 0)
         {
+            _wasSkidding = false;
             ApplyFriction();
             return;
         }
@@ -150,9 +158,16 @@ public class PlayerController : MonoBehaviour
         bool skidding = (_velX > 0 && inputDir < 0) || (_velX < 0 && inputDir > 0);
         if (skidding)
         {
+            if (!_wasSkidding)
+            {
+                _wasSkidding = true;
+                SfxManager.Instance?.Play(_skidSfx);
+            }
             ApplySkidDecel(inputDir);
             return;
         }
+
+        _wasSkidding = false;
 
         int accel = runHeld ? 2 : 1;
         _velX += inputDir * accel;
@@ -273,6 +288,7 @@ public class PlayerController : MonoBehaviour
         _velY = table[index];
         _jumpHeld = true;
         EnterAir(true);
+        SfxManager.Instance?.Play(spin ? _spinJumpSfx : _jumpSfx);
     }
 
     void EnterAir(bool fromJump)
@@ -288,6 +304,7 @@ public class PlayerController : MonoBehaviour
         _velY = 0;
         _isSpinning = false;
         _oscillationIndex = 0;
+        SfxManager.Instance?.Play(_landSfx);
     }
 
     // --- Crouch ---

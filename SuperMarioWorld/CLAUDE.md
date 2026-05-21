@@ -23,7 +23,8 @@ Services use a simple singleton pattern: `Instance` set in Awake, cleared in OnD
 
 - **GameStateMachine** — owns game-wide state (`GameState` enum: None, Title, Overworld, Level) and scene transitions. Transition methods set state, switch input maps via `PlayerInputBinding.Instance.SwitchActionMap()`, and load the target scene via SceneLoader.
 - **PlayerInputBinding** — lives in the Systems scene (not on the player prefab). Reads the `InputActionAsset` directly (no Unity `PlayerInput` component). Exposes intent properties (Move, JumpHeld, ActionPressedThisFrame, etc.) that gameplay code polls. `SwitchActionMap()` toggles between Player/Overworld/UI maps. **Input latching**: button presses are latched in `Update()` and persist until `ConsumeFixedUpdate()` is called at the end of `FixedUpdate()`, ensuring presses are never missed across the Update/FixedUpdate boundary.
-- **AudioBus** — audio playback across 5 channels (music, SFX, jingles, ambient, UI) via AudioCatalog. Music channel supports push/pop stack for temporary music (e.g. star invincibility).
+- **SfxManager** — plays one-shot sound effects. Callers pass an `AudioClip` directly via `Play(clip)`.
+- **MusicManager** — plays looping background music. `Play(clip)` swaps the current track; `Stop()` silences it. Callers pass an `AudioClip` directly.
 - **SceneLoader** — async scene transitions with ScreenFader; tracks previous/current scene for unload
 - **ScreenFader** — fade in/out transitions via PrimeTween
 
@@ -50,7 +51,6 @@ Services use a simple singleton pattern: `Instance` set in Awake, cleared in OnD
 ### Data
 
 - **LevelData** (ScriptableObject): level metadata, scene reference (Eflatun.SceneReference), entry points, sub-areas, music, unlock chains, vertical camera mode
-- **AudioCatalog** (ScriptableObject): maps SfxId/MusicId/JingleId/UiSfxId enums to AudioClips
 - **HudViewModel**: event-driven viewmodel for HUD updates (lives, coins, score, timer, dragon coins, power state)
 
 ## Physics Constants

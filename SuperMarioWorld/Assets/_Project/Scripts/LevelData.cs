@@ -32,7 +32,7 @@ public sealed class LevelData : ScriptableObject
     [SerializeField] private string displayName;
     [SerializeField] private SceneReference sceneRef;
     [SerializeField] private int timeLimitSeconds = 300;
-    [SerializeField] private MusicId musicId = MusicId.Overworld;
+    [SerializeField] private AudioClip music;
     [SerializeField] private VerticalCameraMode verticalCameraMode = VerticalCameraMode.NoScrollUnlessTriggered;
     [SerializeField] private List<EntryPoint> entryPoints = new();
     [SerializeField] private List<SubArea> subAreas = new();
@@ -43,7 +43,7 @@ public sealed class LevelData : ScriptableObject
     public string DisplayName => displayName;
     public SceneReference SceneRef => sceneRef;
     public int TimeLimitSeconds => timeLimitSeconds;
-    public MusicId MusicId => musicId;
+    public AudioClip Music => music;
     public VerticalCameraMode VerticalCameraMode => verticalCameraMode;
     public IReadOnlyList<EntryPoint> EntryPoints => entryPoints;
     public IReadOnlyList<SubArea> SubAreas => subAreas;
