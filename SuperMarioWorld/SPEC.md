@@ -39,16 +39,45 @@ Sprint speed oscillates through 5 values each frame: 48, 47, 48, 47, 49. Running
 
 ### 1.3 Jump Physics
 
-Jump initial Y-speed varies with current X-speed via a lookup table (indexed by X-speed ÷ 8). Holding the jump button extends jump height (variable-height jump); releasing early produces a short hop.
+Jump initial Y-speed varies with current X-speed via a lookup table (indexed by abs(X-speed) ÷ 8). Holding the jump button extends jump height (variable-height jump); releasing early produces a short hop.
 
 | Jump Type | Height (standing/walking) | Height (max sprint) |
 |-----------|---------------------------|---------------------|
 | Normal Jump (B) | ~5 tiles | ~6 tiles |
 | Spin Jump (A) | ~4 tiles | ~5 tiles |
 
-**Spin Jump:** Lower and floatier than normal jump. Destroys Rotating Blocks from above (Super Mario or larger). Allows safe bounce off normally hazardous enemies (Spinies, Piranha Plants, Lava Bubbles, Thwomps, Thwimps, Grinders, Munchers). Cannot safely bounce on: Circling Boo Buddies, Boo Buddy Snakes, Reznor, Bowser. As Fire Mario, spin jumping releases 2 fireballs (one left, one right).
+**Jump Y-Speed Lookup Table** (ROM $00D2BD, values in subpx/f, negative = upward):
+
+| X-Speed Range (subpx/f) | Normal Jump (B) | Spin Jump (A) |
+|--------------------------|-----------------|----------------|
+| 0–7                      | -80             | -74            |
+| 8–15                     | -82             | -76            |
+| 16–23                    | -85             | -78            |
+| 24–31                    | -87             | -80            |
+| 32–39                    | -90             | -82            |
+| 40–47                    | -92             | -85            |
+| 48–55                    | -95             | -87            |
+
+**Gravity:** Two values control variable-height jumps. Gravity is identical for normal and spin jumps — the spin jump feels floatier solely due to its weaker initial Y-speed.
+
+| Condition            | Gravity (subpx/f²) |
+|----------------------|---------------------|
+| Jump button held     | +3                  |
+| Jump button released | +6                  |
+
+**Terminal Fall Velocity:** 64 subpx/f (applies whether jump button is held or released). No upward speed cap — initial jump speed is the maximum upward speed, and gravity decelerates it each frame.
+
+**Ceiling Bonk:** When ascending and head is blocked, Y-speed is set to 0.
+
+**Spin Jump:** Lower than normal jump (weaker initial velocity, same gravity). Destroys Rotating Blocks from above (Super Mario or larger). Allows safe bounce off normally hazardous enemies (Spinies, Piranha Plants, Lava Bubbles, Thwomps, Thwimps, Grinders, Munchers). Cannot safely bounce on: Circling Boo Buddies, Boo Buddy Snakes, Reznor, Bowser. As Fire Mario, spin jumping releases 2 fireballs (one left, one right).
 
 **Enemy Bounce:** Stomping an enemy while holding the jump button gives a higher bounce than without.
+
+| Bounce Type                      | Y-Speed (subpx/f) |
+|----------------------------------|--------------------|
+| Stomp (not holding jump)         | -48                |
+| Stomp (holding jump)             | -88                |
+| Spin jump kill                   | -8                 |
 
 **Yoshi Dismount Jump:** Pressing A while riding Yoshi mid-air ejects Mario upward with a jump significantly higher than normal. Yoshi continues on its prior trajectory (usually falls into a pit).
 

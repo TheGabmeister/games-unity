@@ -20,6 +20,8 @@ public class LevelManager : MonoBehaviour
         if (levelCameraObject.TryGetComponent<LevelCamera>(out var levelCamera))
         {
             levelCamera.Target = player.transform;
+            if (_levelData != null)
+                levelCamera.SetVerticalMode(_levelData.VerticalCameraMode);
         }
     }
 }

@@ -10,13 +10,12 @@ Core player physics and camera behavior — the foundation everything else build
 - Walk (max 21 subpx/f), run with Y/X held (max 37 subpx/f), sprint at full P-meter (max 49 subpx/f)
 - Speed oscillation at sprint (48, 47, 48, 47, 49 cycle) and run (36, 35, 36, 35, 37 cycle)
 - Acceleration curve from standstill (0, 1, 3, 4, 6, 7, 9…); ~90 frames to reach max sprint
-- P-Meter: internal value, max 112, fills while holding Y/X + direction on ground, arm-spread animation at max (no on-screen gauge)
+- P-Meter: internal value, max 112, fills while holding Y/X + direction on ground (no on-screen gauge)
 - Normal Jump (B): variable height based on hold duration, initial Y-speed varies with X-speed via lookup table, ~5 tiles standing / ~6 tiles at sprint
-- Spin Jump (A): lower and floatier (~4 tiles / ~5 tiles); block-breaking interaction wired in Phase 2 (Rotating Blocks) and requires Super Mario (Phase 3)
-- Higher enemy bounce when holding jump button on stomp (enemy interactions deferred to Phase 4)
+- Spin Jump (A): lower (~4 tiles / ~5 tiles), same gravity as normal jump; block-breaking and enemy interactions deferred to later phases
 - Crouch (Down), facing direction tracking
-- Slope sliding: press Down on slope, gain speed downhill, defeats enemies on contact, ends at flat ground or wall
-- Terminal velocity: Y-speed capped at 67–70 subpx/f
+- Slope sliding: press Down on slope, gain speed downhill, ends at flat ground or wall
+- Terminal velocity: Y-speed capped at 64 subpx/f
 - No coyote time (original SNES behavior)
 - Horizontal camera: Mario positioned off-center in travel direction; on reversal, camera holds until ~65% screen width, then fast linear transition to re-center
 - Vertical camera: two per-level modes — (1) scroll-at-will centers on Mario vertically, (2) no-scroll-unless-triggered stays at fixed points unless climbing/flying/swimming/full-speed jump; during normal jump camera does NOT follow Mario upward unless he lands at a different elevation
@@ -44,7 +43,7 @@ Tilemap system, warp transitions, and all block types — the building blocks of
 - Pipes: vertical (Down to enter downward, Up for upward) and horizontal (Left/Right to enter), warp destinations per pipe, exit animation
 - Doors: press Up to enter, warp to linked destination room
 - ? Block: hit from below to reveal contents — coins for now; power-up spawning wired in Phase 3; becomes Empty Block after use
-- Rotating Block (Turn Block): hit from below → spins temporarily allowing passage; Spin Jump from above (Super+) destroys permanently; max 4 spinning simultaneously
+- Rotating Block (Turn Block): hit from below → spins temporarily allowing passage; Spin Jump from above (Super+) destroys permanently (requires Super Mario from Phase 3); max 4 spinning simultaneously
 - Note Block: bounces Mario upward on landing; timed jump press = higher bounce
 - ON/OFF Switch block: toggles between ON/OFF states on hit (jump, cape, or shell); controls dotted-line blocks in level (solid in one state, passable in the other)
 - Message Block: hit from below to display text overlay
@@ -81,6 +80,7 @@ Power-up state machine, fire and cape ground attacks, Item Reserve, Super Star, 
 
 - Power-up state machine: Small → Super (Mushroom) → Fire (Fire Flower) / Cape (Cape Feather); Small can go directly to Fire or Cape from a single pickup (skipping Super)
 - Damage regression (SNES): Fire/Cape → Small directly (skips Super); Super → Small; Small → lose a life
+- P-Meter sprint visual: arm-spread animation at P-meter max (deferred from Phase 1 — requires Super Mario sprites)
 - Post-damage invincibility: ~2 seconds of blinking i-frames
 - ? Block power-up spawning: Small Mario → Super Mushroom; Super/Fire/Cape Mario → Fire Flower or Cape Feather (contextual per block)
 - Super Mushroom: slides along ground after spawning, touch to collect
@@ -130,6 +130,8 @@ Enemy framework, ground and aerial enemies, shell physics, and the consecutive k
 
 - Enemy spawning/despawning based on camera proximity
 - Collision system: stomp (land on top), spin-jump interactions, fireball hit, cape spin/hit, Star contact kill
+- Higher enemy bounce when holding jump button on stomp (-88 subpx/f held, -48 released, -8 spin kill; deferred from Phase 1)
+- Slope sliding defeats enemies on contact (deferred from Phase 1)
 - Galoomba: walks forward, falls off edges; stomp flips over (kickable), fireball/cape/shell/star defeat
 - Koopa Troopa (Green): walks forward, falls off edges; stomp → shell; fireball → coin; cape/star defeat
 - Koopa Troopa (Red): walks forward, turns at edges; otherwise same as Green

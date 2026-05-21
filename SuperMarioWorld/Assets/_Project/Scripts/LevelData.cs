@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using Eflatun.SceneReference;
 using UnityEngine;
 
+public enum VerticalCameraMode
+{
+    ScrollAtWill,
+    NoScrollUnlessTriggered
+}
+
 [CreateAssetMenu(fileName = "LevelData", menuName = "SMW/Level/Level Data")]
 public sealed class LevelData : ScriptableObject
 {
@@ -27,6 +33,7 @@ public sealed class LevelData : ScriptableObject
     [SerializeField] private SceneReference sceneRef;
     [SerializeField] private int timeLimitSeconds = 300;
     [SerializeField] private MusicId musicId = MusicId.Overworld;
+    [SerializeField] private VerticalCameraMode verticalCameraMode = VerticalCameraMode.NoScrollUnlessTriggered;
     [SerializeField] private List<EntryPoint> entryPoints = new();
     [SerializeField] private List<SubArea> subAreas = new();
     [SerializeField] private List<LevelData> unlocksOnNormalExit = new();
@@ -37,6 +44,7 @@ public sealed class LevelData : ScriptableObject
     public SceneReference SceneRef => sceneRef;
     public int TimeLimitSeconds => timeLimitSeconds;
     public MusicId MusicId => musicId;
+    public VerticalCameraMode VerticalCameraMode => verticalCameraMode;
     public IReadOnlyList<EntryPoint> EntryPoints => entryPoints;
     public IReadOnlyList<SubArea> SubAreas => subAreas;
     public IReadOnlyList<LevelData> UnlocksOnNormalExit => unlocksOnNormalExit;
