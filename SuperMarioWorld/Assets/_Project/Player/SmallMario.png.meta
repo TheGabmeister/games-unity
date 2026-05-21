@@ -127,7 +127,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -206,12 +206,12 @@ TextureImporter:
       name: SmallMario_0
       rect:
         serializedVersion: 2
-        x: 18
-        y: 736
-        width: 28
-        height: 27
+        x: 0
+        y: 704
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -228,12 +228,12 @@ TextureImporter:
       name: SmallMario_1
       rect:
         serializedVersion: 2
-        x: 18
-        y: 710
-        width: 28
-        height: 26
+        x: 0
+        y: 640
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -250,12 +250,12 @@ TextureImporter:
       name: SmallMario_2
       rect:
         serializedVersion: 2
-        x: 14
-        y: 646
-        width: 36
-        height: 27
+        x: 64
+        y: 640
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -272,12 +272,12 @@ TextureImporter:
       name: SmallMario_3
       rect:
         serializedVersion: 2
-        x: 18
-        y: 672
-        width: 28
-        height: 27
+        x: 128
+        y: 640
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -294,12 +294,12 @@ TextureImporter:
       name: SmallMario_4
       rect:
         serializedVersion: 2
-        x: 82
-        y: 672
-        width: 28
-        height: 27
+        x: 0
+        y: 576
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -316,12 +316,12 @@ TextureImporter:
       name: SmallMario_5
       rect:
         serializedVersion: 2
-        x: 82
-        y: 646
-        width: 28
-        height: 26
+        x: 64
+        y: 576
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -338,12 +338,12 @@ TextureImporter:
       name: SmallMario_6
       rect:
         serializedVersion: 2
-        x: 146
-        y: 672
-        width: 28
-        height: 27
+        x: 128
+        y: 576
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -360,12 +360,12 @@ TextureImporter:
       name: SmallMario_7
       rect:
         serializedVersion: 2
-        x: 146
-        y: 646
-        width: 28
-        height: 27
+        x: 0
+        y: 512
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -382,12 +382,12 @@ TextureImporter:
       name: SmallMario_8
       rect:
         serializedVersion: 2
-        x: 10
-        y: 582
-        width: 44
-        height: 53
+        x: 64
+        y: 512
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -404,12 +404,12 @@ TextureImporter:
       name: SmallMario_9
       rect:
         serializedVersion: 2
-        x: 82
-        y: 608
-        width: 28
-        height: 27
+        x: 128
+        y: 512
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -426,12 +426,12 @@ TextureImporter:
       name: SmallMario_10
       rect:
         serializedVersion: 2
-        x: 82
-        y: 582
-        width: 28
-        height: 26
+        x: 0
+        y: 448
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -448,12 +448,12 @@ TextureImporter:
       name: SmallMario_11
       rect:
         serializedVersion: 2
-        x: 146
-        y: 582
-        width: 28
-        height: 53
+        x: 0
+        y: 384
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -470,12 +470,12 @@ TextureImporter:
       name: SmallMario_12
       rect:
         serializedVersion: 2
-        x: 18
-        y: 528
-        width: 28
-        height: 43
+        x: 64
+        y: 384
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -492,12 +492,12 @@ TextureImporter:
       name: SmallMario_13
       rect:
         serializedVersion: 2
-        x: 82
-        y: 544
-        width: 28
-        height: 27
+        x: 128
+        y: 384
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -514,12 +514,12 @@ TextureImporter:
       name: SmallMario_14
       rect:
         serializedVersion: 2
-        x: 82
-        y: 518
-        width: 28
-        height: 27
+        x: 192
+        y: 384
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -536,12 +536,12 @@ TextureImporter:
       name: SmallMario_15
       rect:
         serializedVersion: 2
-        x: 146
-        y: 518
-        width: 28
-        height: 53
+        x: 0
+        y: 320
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -558,12 +558,12 @@ TextureImporter:
       name: SmallMario_16
       rect:
         serializedVersion: 2
-        x: 8
-        y: 518
-        width: 12
-        height: 20
+        x: 0
+        y: 256
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -580,12 +580,12 @@ TextureImporter:
       name: SmallMario_17
       rect:
         serializedVersion: 2
-        x: 44
-        y: 518
-        width: 12
-        height: 20
+        x: 0
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -602,12 +602,12 @@ TextureImporter:
       name: SmallMario_18
       rect:
         serializedVersion: 2
-        x: 18
-        y: 458
-        width: 28
-        height: 53
+        x: 0
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -624,12 +624,12 @@ TextureImporter:
       name: SmallMario_19
       rect:
         serializedVersion: 2
-        x: 17
-        y: 396
-        width: 30
-        height: 44
+        x: 0
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -646,12 +646,12 @@ TextureImporter:
       name: SmallMario_20
       rect:
         serializedVersion: 2
-        x: 81
-        y: 396
-        width: 30
-        height: 44
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -664,231 +664,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: SmallMario_21
-      rect:
-        serializedVersion: 2
-        x: 145
-        y: 396
-        width: 30
-        height: 44
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 286b8afa8a9a9e9a0800000000000000
-      internalID: -6203240469759478142
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_22
-      rect:
-        serializedVersion: 2
-        x: 209
-        y: 396
-        width: 30
-        height: 44
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ab240802ce9b15000800000000000000
-      internalID: 23003896922260154
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_23
-      rect:
-        serializedVersion: 2
-        x: 18
-        y: 326
-        width: 28
-        height: 45
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: aabb025c52594b830800000000000000
-      internalID: 4086054751385467818
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_24
-      rect:
-        serializedVersion: 2
-        x: 15
-        y: 260
-        width: 34
-        height: 46
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 09cc9bdd47588fb50800000000000000
-      internalID: 6627193588658326672
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_25
-      rect:
-        serializedVersion: 2
-        x: 14
-        y: 197
-        width: 32
-        height: 55
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3aebba5b5381ff3d0800000000000000
-      internalID: -3170788993685274973
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_26
-      rect:
-        serializedVersion: 2
-        x: 18
-        y: 160
-        width: 28
-        height: 27
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 90c42bd794ae604d0800000000000000
-      internalID: -3168587686446216183
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_27
-      rect:
-        serializedVersion: 2
-        x: 18
-        y: 134
-        width: 28
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 047675a4dccd0c3e0800000000000000
-      internalID: -2035384257297815744
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_28
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 67
-        width: 32
-        height: 53
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a159ba262e22b8630800000000000000
-      internalID: 3930273455524255002
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_29
-      rect:
-        serializedVersion: 2
-        x: 18
-        y: 37
-        width: 28
-        height: 27
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 88f013d720f7ef870800000000000000
-      internalID: 8718545577302888328
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SmallMario_30
-      rect:
-        serializedVersion: 2
-        x: 18
-        y: 6
-        width: 28
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5e0720cab7faf61c0800000000000000
-      internalID: -4508191756272897819
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: b20ef1fafda7e1a4696d5a1d3a1f36a7
     internalID: 0
     vertices: []
     indices: 
@@ -896,7 +676,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       SmallMario_0: 4631641477635956311
       SmallMario_1: 4125614927182793665
@@ -912,17 +694,7 @@ TextureImporter:
       SmallMario_19: -2888943311223882209
       SmallMario_2: -8608894045619873119
       SmallMario_20: -6718455846047310105
-      SmallMario_21: -6203240469759478142
-      SmallMario_22: 23003896922260154
-      SmallMario_23: 4086054751385467818
-      SmallMario_24: 6627193588658326672
-      SmallMario_25: -3170788993685274973
-      SmallMario_26: -3168587686446216183
-      SmallMario_27: -2035384257297815744
-      SmallMario_28: 3930273455524255002
-      SmallMario_29: 8718545577302888328
       SmallMario_3: -8164256142862466224
-      SmallMario_30: -4508191756272897819
       SmallMario_4: 2701194288024415295
       SmallMario_5: 6192447214869025795
       SmallMario_6: 527785346298508166
