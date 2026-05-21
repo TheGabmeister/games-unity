@@ -3,7 +3,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(GroundProbe))]
-[RequireComponent(typeof(PlayerInputBinding))]
 public sealed class PlayerController : MonoBehaviour
 {
     // Unit conversion: 1 SNES subpx/frame ≈ 6/21 Unity velocity (units/sec).
@@ -85,7 +84,7 @@ public sealed class PlayerController : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _probe = GetComponent<GroundProbe>();
-        _input = GetComponent<PlayerInputBinding>();
+        _input = PlayerInputBinding.Instance;
         _carry = GetComponent<PlayerCarry>();
 
         _rb.gravityScale = 0f;
